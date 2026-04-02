@@ -181,3 +181,17 @@ export const Logout = async (req, res) => {
 };
 
 ////////
+
+export const SedVerifyEmailOtp = async (req, res) => {
+  try {
+    const { userId } = req.body;
+
+    const user = await userModel.findById(userId);
+
+    if (user.isAccountVerified) {
+      returnres.json({ success: false, message: "Account already Verified" });
+    }
+  } catch (error) {
+    return res.json({ success: false, message: error.message });
+  }
+};
