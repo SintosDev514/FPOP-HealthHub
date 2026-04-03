@@ -18,7 +18,9 @@ export const SignUp = async (req, res) => {
     const existingUser = await userModel.findOne({ email });
 
     if (existingUser) {
-      return res.json({ success: false, message: "User already exists" });
+      return res
+        .status(400)
+        .json({ success: false, message: "User already exists" });
     }
 
     const hashPassword = await bcrypt.hash(password, 10);
@@ -109,12 +111,12 @@ export const SignUp = async (req, res) => {
 
     await transporter.sendMail(mailOptions);
 
-    res.json({
+    res.status(201).json({
       success: true,
       message: "User registered successfully",
     });
   } catch (error) {
-    res.json({ success: false, message: error.message });
+    return res.status(500).json({ success: false, message: error.message });
   }
 };
 
@@ -140,7 +142,9 @@ export const SignIn = async (req, res) => {
     const isMatch = await bcrypt.compare(password, user.password);
 
     if (!isMatch) {
-      return res.json({ success: false, message: "Invalid Password" });
+      return res
+        .status(400)
+        .json({ success: false, message: "Invalid Password" });
     }
 
     const token = jwt.sign({ id: user._id }, process.env.JWT_SECRET, {
@@ -159,7 +163,7 @@ export const SignIn = async (req, res) => {
       message: "User Login successfully",
     });
   } catch (error) {
-    res.json({ success: false, message: error.message });
+    return res.status(500).json({ success: false, message: error.message });
   }
 };
 
@@ -171,27 +175,154 @@ export const Logout = async (req, res) => {
       httpOnly: true,
       secure: process.env.NODE_ENV === "production",
       sameSite: process.env.NODE_ENV === "production" ? "none" : "strict",
-      maxAge: 7 * 24 * 60 * 60 * 1000,
     });
 
-    return res.json({ success: true, message: "Logged Out Success" });
+    return res.status(200).json({
+      success: true,
+      message: "Logged Out Successfully",
+    });
   } catch (error) {
-    return res.json({ success: false, message: error.message });
+    return res.status(500).json({ success: false, message: error.message });
   }
 };
 
 ////////
 
-export const SedVerifyEmailOtp = async (req, res) => {
+export const SendVerifyEmailOtp = async (req, res) => {
   try {
-    const { userId } = req.body;
+    const userId = req.user?.userId;
 
     const user = await userModel.findById(userId);
 
-    if (user.isAccountVerified) {
-      returnres.json({ success: false, message: "Account already Verified" });
+    if (!user) {
+      return res.status(404).json({
+        success: false,
+        message: "User not found",
+      });
     }
+
+    if (user.isAccountVerified) {
+      return res.status(400).json({
+        success: false,
+        message: "Account already verified",
+      });
+    }
+
+    const OTP = String(Math.floor(100000 + Math.random() * 900000));
+
+    user.verifyOtp = OTP;
+    user.verifyOtpExpAt = Date.now() + 10 * 60 * 1000;
+
+    await user.save();
+
+    //otp email ine
+
+    const mailOption = {
+      from: process.env.SENDER_EMAIL,
+      to: user.email,
+      subject: "FPOP HealthHub - Account Verification OTP",
+      html: `
+  <div style="font-family: Arial, sans-serif; background-color: #f4f8fb; padding: 20px;">
+    <div style="max-width: 500px; margin: auto; background: #ffffff; border-radius: 10px; overflow: hidden; box-shadow: 0 4px 10px rgba(0,0,0,0.1);">
+      
+      <!-- Header -->
+      <div style="background-color: #1e88e5; padding: 20px; text-align: center; color: white;">
+        <h2 style="margin: 0;">FPOP HealthHub</h2>
+        <p style="margin: 5px 0 0; font-size: 14px;">Secure Account Verification</p>
+      </div>
+
+      <!-- Body -->
+      <div style="padding: 30px; text-align: center;">
+        <h3 style="color: #333;">Verify Your Account</h3>
+        <p style="color: #555; font-size: 14px;">
+          Use the One-Time Password (OTP) below to verify your account.
+        </p>
+
+        <!-- OTP Box -->
+        <div style="margin: 20px 0;">
+          <span style="display: inline-block; padding: 15px 25px; font-size: 24px; letter-spacing: 5px; color: #1e88e5; border: 2px dashed #1e88e5; border-radius: 8px;">
+            ${OTP}
+          </span>
+        </div>
+
+        <p style="color: #777; font-size: 12px;">
+          This OTP is valid for a limited time. Do not share it with anyone.
+        </p>
+      </div>
+
+      <!-- Footer -->
+      <div style="background-color: #f1f5f9; padding: 15px; text-align: center; font-size: 12px; color: #888;">
+        © ${new Date().getFullYear()} FPOP HealthHub. All rights reserved.
+      </div>
+
+    </div>
+  </div>
+  `,
+    };
+
+    await transporter.sendMail(mailOption);
+    res
+      .status(200)
+      .json({ success: true, message: "Verification sent Successful" });
   } catch (error) {
-    return res.json({ success: false, message: error.message });
+    return res.status(500).json({ success: false, message: error.message });
+  }
+};
+
+///////
+
+export const VerifyEmail = async (req, res) => {
+  const { OTP } = req.body;
+  const userId = req.user?.userId;
+
+  if (!userId || !OTP) {
+    return res.status(400).json({
+      success: false,
+      message: "Missing Details",
+    });
+  }
+
+  try {
+    const user = await userModel.findById(userId);
+
+    if (!user) {
+      return res.status(404).json({
+        success: false,
+        message: "User not found",
+      });
+    }
+
+    // Better OTP check
+    if (!user.verifyOtp || user.verifyOtp !== OTP) {
+      return res.status(400).json({
+        success: false,
+        message: "Invalid OTP",
+      });
+    }
+
+    // Expiry check
+    if (user.verifyOtpExpAt < Date.now()) {
+      return res.status(400).json({
+        success: false,
+        message: "OTP Expired",
+      });
+    }
+
+    // Update user
+    user.isAccountVerified = true;
+    user.verifyOtp = null; // cleaner than ""
+    user.verifyOtpExpAt = null;
+
+    await user.save();
+
+    return res.json({
+      success: true,
+      message: "Email Verified successfully",
+    });
+  } catch (error) {
+    return res.status(500).json({
+      success: false,
+      message: "Server error",
+    });
   }
 };
