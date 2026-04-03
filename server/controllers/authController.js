@@ -190,7 +190,7 @@ export const Logout = async (req, res) => {
 
 export const SendVerifyEmailOtp = async (req, res) => {
   try {
-    const userId = req.user?.userId;
+    const userId = req.user?.id;
 
     const user = await userModel.findById(userId);
 
@@ -273,7 +273,7 @@ export const SendVerifyEmailOtp = async (req, res) => {
 
 export const VerifyEmail = async (req, res) => {
   const { OTP } = req.body;
-  const userId = req.user?.userId;
+  const userId = req.user?.id;
 
   if (!userId || !OTP) {
     return res.status(400).json({
@@ -292,7 +292,6 @@ export const VerifyEmail = async (req, res) => {
       });
     }
 
-    // Better OTP check
     if (!user.verifyOtp || user.verifyOtp !== OTP) {
       return res.status(400).json({
         success: false,
@@ -300,22 +299,20 @@ export const VerifyEmail = async (req, res) => {
       });
     }
 
-    // Expiry check
-    if (user.verifyOtpExpAt < Date.now()) {
+    if (!user.verifyOtpExpAt || user.verifyOtpExpAt < Date.now()) {
       return res.status(400).json({
         success: false,
         message: "OTP Expired",
       });
     }
 
-    // Update user
     user.isAccountVerified = true;
-    user.verifyOtp = null; // cleaner than ""
-    user.verifyOtpExpAt = null;
+    user.verifyOtp = undefined;
+    user.verifyOtpExpAt = undefined;
 
     await user.save();
 
-    return res.json({
+    return res.status(200).json({
       success: true,
       message: "Email Verified successfully",
     });
@@ -323,6 +320,158 @@ export const VerifyEmail = async (req, res) => {
     return res.status(500).json({
       success: false,
       message: "Server error",
+    });
+  }
+};
+
+//////////
+
+export const isAuthenticated = async (req, res) => {
+  try {
+    return res.json({ success: true });
+  } catch (error) {
+    res.status(500).json({ success: false, message: error.message });
+  }
+};
+
+////////////
+
+export const sendResetOtp = async (req, res) => {
+  const { email } = req.body;
+
+  if (!email) {
+    return res.status(400).json({
+      success: false,
+      message: "Email is required",
+    });
+  }
+
+  try {
+    const user = await userModel.findOne({ email });
+
+    if (!user) {
+      return res.status(404).json({
+        success: false,
+        message: "User not found",
+      });
+    }
+
+    const OTP = String(Math.floor(100000 + Math.random() * 900000));
+
+    user.resetOtp = OTP;
+    user.resetOtpExpireAt = Date.now() + 15 * 60 * 1000;
+
+    await user.save();
+
+    const mailOption = {
+      from: process.env.SENDER_EMAIL,
+      to: user.email,
+      subject: "FPOP HealthHub - Password Reset OTP",
+      html: `
+  <div style="font-family: Arial, sans-serif; background-color: #f4f8fb; padding: 20px;">
+    <div style="max-width: 500px; margin: auto; background: #ffffff; border-radius: 10px; overflow: hidden; box-shadow: 0 4px 10px rgba(0,0,0,0.1);">
+      
+      <!-- Header -->
+      <div style="background-color: #e53935; padding: 20px; text-align: center; color: white;">
+        <h2 style="margin: 0;">FPOP HealthHub</h2>
+        <p style="margin: 5px 0 0; font-size: 14px;">Password Reset Request</p>
+      </div>
+
+      <!-- Body -->
+      <div style="padding: 30px; text-align: center;">
+        <h3 style="color: #333;">Reset Your Password</h3>
+        <p style="color: #555; font-size: 14px;">
+          Use the One-Time Password (OTP) below to reset your password.
+        </p>
+
+        <!-- OTP Box -->
+        <div style="margin: 20px 0;">
+          <span style="display: inline-block; padding: 15px 25px; font-size: 24px; letter-spacing: 5px; color: #e53935; border: 2px dashed #e53935; border-radius: 8px;">
+            ${OTP}
+          </span>
+        </div>
+
+        <p style="color: #777; font-size: 12px;">
+          This OTP is valid for 15 minutes. Do not share it with anyone.
+        </p>
+      </div>
+
+      <!-- Footer -->
+      <div style="background-color: #f1f5f9; padding: 15px; text-align: center; font-size: 12px; color: #888;">
+        © ${new Date().getFullYear()} FPOP HealthHub. All rights reserved.
+      </div>
+
+    </div>
+  </div>
+  `,
+    };
+
+    await transporter.sendMail(mailOption);
+
+    return res.status(200).json({
+      success: true,
+      message: "OTP sent successfully",
+    });
+  } catch (error) {
+    return res.status(500).json({
+      success: false,
+      message: error.message,
+    });
+  }
+};
+
+////////////
+
+export const resetPassword = async (req, res) => {
+  const { newPassword, OTP, email } = req.body;
+
+  if (!email || !OTP || !newPassword) {
+    return res.status(400).json({
+      success: false,
+      message: "Email, OTP, and New Password are required.",
+    });
+  }
+
+  try {
+    const user = await userModel.findOne({ email });
+
+    if (!user) {
+      return res.status(404).json({
+        success: false,
+        message: "User not found",
+      });
+    }
+
+    if (!user.resetOtp || user.resetOtp !== OTP) {
+      return res.status(400).json({
+        success: false,
+        message: "Invalid OTP",
+      });
+    }
+
+    if (!user.resetOtpExpireAt || user.resetOtpExpireAt < Date.now()) {
+      return res.status(400).json({
+        success: false,
+        message: "OTP has expired",
+      });
+    }
+
+    const hashPassword = await bcrypt.hash(newPassword, 10);
+
+    user.password = hashPassword;
+    user.resetOtp = undefined;
+    user.resetOtpExpireAt = undefined;
+
+    await user.save();
+
+    return res.status(200).json({
+      success: true,
+      message: "Password has been reset successfully.",
+    });
+  } catch (error) {
+    return res.status(500).json({
+      success: false,
+      message: error.message,
     });
   }
 };
