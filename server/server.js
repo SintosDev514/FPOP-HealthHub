@@ -3,6 +3,7 @@ import cors from "cors";
 import "dotenv/config";
 import cookieParser from "cookie-parser";
 import authRouter from "./routes/authRoutes.js";
+import userRoute from "./routes/userRoute.js";
 
 import connectDB from "./config/Mongodb.js";
 
@@ -17,6 +18,7 @@ connectDB();
 
 /// API ENDPOINTS
 app.use("/api/auth", authRouter);
+app.use("/api/user", userRoute);
 
 app.listen(port, () => {
   console.log(`Running on Port: ${port}`);
