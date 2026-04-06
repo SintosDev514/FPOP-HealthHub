@@ -1,4 +1,6 @@
 import { useState } from "react";
+import axios from "axios";
+import { toast } from "react-toastify";
 
 function HeartIcon() {
   return (
@@ -15,6 +17,7 @@ function HeartIcon() {
   );
 }
 
+/*
 function LoginForm({ onOpenSignup }) {
   return (
     <div className="w-full max-w-lg bg-white rounded-3xl border border-slate-200 shadow-md p-6 md:p-8">
@@ -32,10 +35,10 @@ function LoginForm({ onOpenSignup }) {
       </div>
 
       <form className="space-y-6">
-
-
         <div>
-          <label className="block text-slate-800 font-semibold mb-3">Email Address</label>
+          <label className="block text-slate-800 font-semibold mb-3">
+            Email Address
+          </label>
           <input
             type="email"
             placeholder="alvarezdareen776@gmail.com"
@@ -44,7 +47,9 @@ function LoginForm({ onOpenSignup }) {
         </div>
 
         <div>
-          <label className="block text-slate-800 font-semibold mb-3">Password</label>
+          <label className="block text-slate-800 font-semibold mb-3">
+            Password
+          </label>
           <input
             type="password"
             placeholder="••••••••"
@@ -54,7 +59,10 @@ function LoginForm({ onOpenSignup }) {
 
         <div className="flex items-center justify-between gap-4 text-sm md:text-base">
           <label className="flex items-center gap-2 text-slate-700">
-            <input type="checkbox" className="h-4 w-4 rounded border-slate-300" />
+            <input
+              type="checkbox"
+              className="h-4 w-4 rounded border-slate-300"
+            />
             <span>Remember me</span>
           </label>
 
@@ -66,6 +74,99 @@ function LoginForm({ onOpenSignup }) {
         <button
           type="submit"
           className="w-full h-14 rounded-2xl bg-blue-600 text-white font-semibold text-xl hover:bg-blue-700 transition"
+        >
+          Sign In
+        </button>
+
+        <p className="text-center text-slate-600 text-base">
+          Don't have an account?{" "}
+          <button
+            type="button"
+            onClick={onOpenSignup}
+            className="text-blue-600 font-semibold"
+          >
+            Sign Up
+          </button>
+        </p>
+      </form>
+    </div>
+  );
+}*/
+
+function LoginForm({ onOpenSignup }) {
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+
+  const handleLogin = async (e) => {
+    e.preventDefault();
+
+    try {
+      const res = await axios.post(
+        "http://localhost:5000/api/auth/login", // 🔥 change to your backend URL
+        { email, password },
+        { withCredentials: true }, // if using cookies
+      );
+
+      if (res.data.success) {
+        toast.success("Login successful!");
+        console.log(res.data);
+
+        // optional: redirect
+        // navigate("/dashboard");
+      } else {
+        toast.error(res.data.message);
+      }
+    } catch (err) {
+      toast.error(err.response?.data?.message || "Login failed");
+    }
+  };
+
+  return (
+    <div className="w-full max-w-lg bg-white rounded-3xl border border-slate-200 shadow-md p-6 md:p-8">
+      <div className="flex flex-col items-center text-center mb-8">
+        <div className="w-16 h-16 rounded-2xl bg-blue-600 flex items-center justify-center mb-5">
+          <HeartIcon />
+        </div>
+
+        <h2 className="text-3xl md:text-4xl font-bold text-slate-900">
+          FPOP Clinic Portal
+        </h2>
+        <p className="mt-3 text-slate-500 text-lg">
+          Welcome back! Please login to continue
+        </p>
+      </div>
+
+      {/* 🔥 CONNECTED FORM */}
+      <form className="space-y-6" onSubmit={handleLogin}>
+        <div>
+          <label className="block text-slate-800 font-semibold mb-3">
+            Email Address
+          </label>
+          <input
+            type="email"
+            placeholder="email@gmail.com"
+            value={email}
+            onChange={(e) => setEmail(e.target.value)}
+            className="w-full h-14 rounded-2xl border border-slate-200 bg-slate-50 px-4"
+          />
+        </div>
+
+        <div>
+          <label className="block text-slate-800 font-semibold mb-3">
+            Password
+          </label>
+          <input
+            type="password"
+            placeholder="••••••••"
+            value={password}
+            onChange={(e) => setPassword(e.target.value)}
+            className="w-full h-14 rounded-2xl border border-slate-200 bg-slate-50 px-4"
+          />
+        </div>
+
+        <button
+          type="submit"
+          className="w-full h-14 rounded-2xl bg-blue-600 text-white font-semibold text-xl"
         >
           Sign In
         </button>
@@ -101,7 +202,9 @@ function SignupForm({ onOpenLogin }) {
 
       <form className="space-y-5">
         <div>
-          <label className="block text-slate-800 font-semibold mb-2">I am a</label>
+          <label className="block text-slate-800 font-semibold mb-2">
+            I am a
+          </label>
           <button
             type="button"
             className="w-full rounded-xl border-2 border-blue-600 text-blue-600 font-semibold py-3 bg-blue-50"
@@ -112,7 +215,9 @@ function SignupForm({ onOpenLogin }) {
 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           <div>
-            <label className="block text-slate-800 font-medium mb-2">First Name</label>
+            <label className="block text-slate-800 font-medium mb-2">
+              First Name
+            </label>
             <input
               type="text"
               placeholder="John"
@@ -121,7 +226,9 @@ function SignupForm({ onOpenLogin }) {
           </div>
 
           <div>
-            <label className="block text-slate-800 font-medium mb-2">Last Name</label>
+            <label className="block text-slate-800 font-medium mb-2">
+              Last Name
+            </label>
             <input
               type="text"
               placeholder="Doe"
@@ -131,26 +238,21 @@ function SignupForm({ onOpenLogin }) {
         </div>
 
         <div>
-          <label className="block text-slate-800 font-medium mb-2">Email Address</label>
+          <label className="block text-slate-800 font-medium mb-2">
+            Email Address
+          </label>
           <input
             type="email"
-            placeholder="alvarezdareen776@gmail.com"
+            placeholder="FPOPClinicPortal@gmail.com"
             className="w-full h-12 rounded-xl border border-slate-200 px-4 outline-none focus:ring-2 focus:ring-blue-500 bg-slate-50"
-          />
-        </div>
-
-        <div>
-          <label className="block text-slate-800 font-medium mb-2">Phone Number</label>
-          <input
-            type="tel"
-            placeholder="+1 (555) 000-0000"
-            className="w-full h-12 rounded-xl border border-slate-200 px-4 outline-none focus:ring-2 focus:ring-blue-500"
           />
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           <div>
-            <label className="block text-slate-800 font-medium mb-2">Password</label>
+            <label className="block text-slate-800 font-medium mb-2">
+              Password
+            </label>
             <input
               type="password"
               placeholder="••••••••"
@@ -159,7 +261,9 @@ function SignupForm({ onOpenLogin }) {
           </div>
 
           <div>
-            <label className="block text-slate-800 font-medium mb-2">Confirm Password</label>
+            <label className="block text-slate-800 font-medium mb-2">
+              Confirm Password
+            </label>
             <input
               type="password"
               placeholder="••••••••"
@@ -257,19 +361,30 @@ export default function App() {
               <div className="grid grid-cols-2 gap-4">
                 <div className="rounded-2xl bg-slate-50 p-5 border border-slate-200">
                   <p className="text-sm text-slate-500">Appointments</p>
-                  <h3 className="text-2xl font-bold text-slate-900 mt-2">24/7</h3>
-                  <p className="text-sm text-slate-600 mt-2">Book and manage visits anytime.</p>
+                  <h3 className="text-2xl font-bold text-slate-900 mt-2">
+                    24/7
+                  </h3>
+                  <p className="text-sm text-slate-600 mt-2">
+                    Book and manage visits anytime.
+                  </p>
                 </div>
                 <div className="rounded-2xl bg-slate-50 p-5 border border-slate-200">
                   <p className="text-sm text-slate-500">Patient Access</p>
-                  <h3 className="text-2xl font-bold text-slate-900 mt-2">Secure</h3>
-                  <p className="text-sm text-slate-600 mt-2">Private access to your clinic account.</p>
+                  <h3 className="text-2xl font-bold text-slate-900 mt-2">
+                    Secure
+                  </h3>
+                  <p className="text-sm text-slate-600 mt-2">
+                    Private access to your clinic account.
+                  </p>
                 </div>
                 <div className="rounded-2xl bg-blue-600 p-5 text-white col-span-2">
                   <p className="text-sm text-blue-100">Portal Experience</p>
-                  <h3 className="text-3xl font-bold mt-2">Fast, simple, and patient-friendly</h3>
+                  <h3 className="text-3xl font-bold mt-2">
+                    Fast, simple, and patient-friendly
+                  </h3>
                   <p className="text-sm text-blue-100 mt-3">
-                    Built for patients, staff, and clinic admins with a clean and easy workflow.
+                    Built for patients, staff, and clinic admins with a clean
+                    and easy workflow.
                   </p>
                 </div>
               </div>
