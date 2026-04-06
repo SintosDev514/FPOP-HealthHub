@@ -1,4 +1,14 @@
+// LoginForm.jsx
+import React, { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
+
 export default function LoginForm() {
+  const navigate = useNavigate();
+
+  const handleForgotPassword = () => {
+    navigate('/forgot-password');
+  };
+
   return (
     <div className="min-h-screen bg-slate-100 flex items-center justify-center px-4 py-10">
       <div className="w-full max-w-lg">
@@ -104,9 +114,13 @@ export default function LoginForm() {
                 <span>Remember me</span>
               </label>
 
-              <a href="#" className="text-blue-600 font-medium">
+              <button
+                type="button"
+                onClick={handleForgotPassword}
+                className="text-blue-600 font-medium hover:text-blue-700 hover:underline transition"
+              >
                 Forgot password?
-              </a>
+              </button>
             </div>
 
             <button
