@@ -1,4 +1,3 @@
-// ForgotPasswordForm.jsx
 import { useState } from "react";
 import MessageIcon from "./MessageIcon";
 
@@ -50,7 +49,9 @@ export default function ForgotPasswordForm({ onBackToLogin, onResetPassword }) {
         <div className="w-16 h-16 rounded-2xl bg-blue-600 flex items-center justify-center mb-5 mx-auto">
           <MessageIcon />
         </div>
-        <h2 className="text-3xl font-bold text-gray-900 mb-2">Forgot Password?</h2>
+        <h2 className="text-3xl font-bold text-gray-900 mb-2">
+          Forgot Password?
+        </h2>
         <p className="text-gray-600 text-sm">
           Enter your email address and we'll send you an OTP
           <br />
@@ -60,7 +61,10 @@ export default function ForgotPasswordForm({ onBackToLogin, onResetPassword }) {
 
       <form onSubmit={handleSubmit} className="space-y-6">
         <div>
-          <label htmlFor="email" className="block text-sm font-medium text-gray-700 mb-2">
+          <label
+            htmlFor="email"
+            className="block text-sm font-medium text-gray-700 mb-2"
+          >
             Email Address
           </label>
           <input
