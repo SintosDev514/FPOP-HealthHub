@@ -26,10 +26,10 @@ export default function ForgotPasswordForm({ onBackToLogin, onResetPassword }) {
 
     setIsLoading(true);
 
-    // Simulate API call to send OTP
+   
     setTimeout(() => {
       setIsLoading(false);
-      // Directly go to reset password page after sending OTP
+
       onResetPassword(email);
       console.log("Sending OTP to:", email);
     }, 1500);

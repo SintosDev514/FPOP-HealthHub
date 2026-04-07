@@ -1,8 +1,8 @@
-// ResetPasswordForm.jsx
-import { useState } from "react";
-import logo from "./assets/logo.png"; // Import the logo from assets folder
 
-// Eye Icon SVG Components
+import { useState } from "react";
+import logo from "./assets/logo.png"; 
+
+
 const EyeIcon = () => (
   <svg
     xmlns="http://www.w3.org/2000/svg"
@@ -35,7 +35,7 @@ const EyeOffIcon = () => (
   </svg>
 );
 
-// Alert Circle Icon
+
 const AlertCircleIcon = () => (
   <svg
     xmlns="http://www.w3.org/2000/svg"
@@ -53,7 +53,7 @@ const AlertCircleIcon = () => (
   </svg>
 );
 
-// Check Circle Icon
+
 const CheckCircleIcon = () => (
   <svg
     xmlns="http://www.w3.org/2000/svg"
@@ -70,7 +70,7 @@ const CheckCircleIcon = () => (
   </svg>
 );
 
-// Spinner Icon
+
 const SpinnerIcon = () => (
   <svg
     xmlns="http://www.w3.org/2000/svg"
@@ -130,7 +130,7 @@ export default function ResetPasswordForm({
     newOtp[index] = value;
     setOtp(newOtp);
 
-    // Auto-focus next input
+    
     if (value && index < 5) {
       const nextInput = document.getElementById(`otp-input-${index + 1}`);
       if (nextInput) nextInput.focus();
@@ -140,7 +140,7 @@ export default function ResetPasswordForm({
   };
 
   const handleOtpKeyDown = (index, e) => {
-    // Move to previous input on backspace
+   
     if (e.key === "Backspace" && !otp[index] && index > 0) {
       const prevInput = document.getElementById(`otp-input-${index - 1}`);
       if (prevInput) prevInput.focus();
@@ -169,7 +169,7 @@ export default function ResetPasswordForm({
     setResendCooldown(30);
     console.log("Resending OTP to:", email);
 
-    // Countdown timer
+  
     const timer = setInterval(() => {
       setResendCooldown((prev) => {
         if (prev <= 1) {
@@ -204,7 +204,7 @@ export default function ResetPasswordForm({
 
     setIsLoading(true);
 
-    // Simulate API call to verify OTP and reset password
+    
     setTimeout(() => {
       setIsLoading(false);
       onComplete();
@@ -222,7 +222,9 @@ export default function ResetPasswordForm({
       </button>
 
       <div className="text-center mb-8">
-        {/* Logo PNG instead of message icon */}
+        {
+
+        }
         <img 
           src={logo} 
           alt="FPOP Clinic Portal Logo" 
@@ -237,7 +239,9 @@ export default function ResetPasswordForm({
       </div>
 
       <form onSubmit={handleSubmit} className="space-y-6">
-        {/* Email Display */}
+        {
+
+        }
         <div>
           <label className="block text-sm font-medium text-gray-700 mb-2">
             Email Address
@@ -247,7 +251,9 @@ export default function ResetPasswordForm({
           </div>
         </div>
 
-        {/* OTP Input */}
+        {
+
+        }
         <div>
           <label className="block text-sm font-medium text-gray-700 mb-2">
             Enter 6-Digit OTP
@@ -288,7 +294,9 @@ export default function ResetPasswordForm({
           </div>
         </div>
 
-        {/* New Password */}
+        {
+
+        }
         <div>
           <label className="block text-sm font-medium text-gray-700 mb-2">
             New Password
@@ -314,7 +322,9 @@ export default function ResetPasswordForm({
           </div>
         </div>
 
-        {/* Confirm New Password */}
+        {
+
+        }
         <div>
           <label className="block text-sm font-medium text-gray-700 mb-2">
             Confirm New Password
@@ -340,7 +350,9 @@ export default function ResetPasswordForm({
           </div>
         </div>
 
-        {/* Error Message */}
+        {
+
+        }
         {error && (
           <div className="flex items-center text-sm text-red-600 bg-red-50 rounded-xl p-3">
             <AlertCircleIcon />
@@ -348,7 +360,9 @@ export default function ResetPasswordForm({
           </div>
         )}
 
-        {/* Password Requirements */}
+        {
+          
+        }
         <div className="bg-blue-50 rounded-xl p-4">
           <p className="text-sm font-medium text-gray-700 mb-2">
             Password requirements:
@@ -373,7 +387,9 @@ export default function ResetPasswordForm({
           </ul>
         </div>
 
-        {/* Submit Button */}
+        {
+
+        }
         <button
           type="submit"
           disabled={isLoading}
