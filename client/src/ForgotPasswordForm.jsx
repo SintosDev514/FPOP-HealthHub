@@ -1,6 +1,6 @@
 // ForgotPasswordForm.jsx
 import { useState } from "react";
-import MessageIcon from "./MessageIcon";
+import logo from "./assets/logo.png"; // Import the logo from assets folder
 
 export default function ForgotPasswordForm({ onBackToLogin, onResetPassword }) {
   const [email, setEmail] = useState("");
@@ -47,9 +47,12 @@ export default function ForgotPasswordForm({ onBackToLogin, onResetPassword }) {
       </button>
 
       <div className="text-center mb-8">
-        <div className="w-16 h-16 rounded-2xl bg-blue-600 flex items-center justify-center mb-5 mx-auto">
-          <MessageIcon />
-        </div>
+        {/* Logo PNG instead of MessageIcon */}
+        <img 
+          src={logo} 
+          alt="FPOP Clinic Portal Logo" 
+          className="w-16 h-16 rounded-2xl object-cover mb-5 mx-auto shadow-sm"
+        />
         <h2 className="text-3xl font-bold text-gray-900 mb-2">Forgot Password?</h2>
         <p className="text-gray-600 text-sm">
           Enter your email address and we'll send you an OTP
@@ -77,8 +80,7 @@ export default function ForgotPasswordForm({ onBackToLogin, onResetPassword }) {
             placeholder="your.email@example.com"
           />
           {error && (
-            <div className="mt-2 flex items-center text-sm text-red-600">
-              <span className="mr-1">⚠️</span>
+            <div className="mt-2 text-sm text-red-600">
               {error}
             </div>
           )}
