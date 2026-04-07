@@ -1,14 +1,55 @@
 import { useState } from "react";
 import ForgotPasswordForm from "./ForgotPasswordForm";
 import ResetPasswordForm from "./ResetPasswordForm";
+import logo from "./assets/logo.png"; // Import the logo from assets folder
 
-import "react-toastify/dist/ReactToastify.css";
+// Eye Icon for password visibility
+const EyeIcon = () => (
+  <svg
+    xmlns="http://www.w3.org/2000/svg"
+    viewBox="0 0 24 24"
+    fill="none"
+    stroke="currentColor"
+    strokeWidth="2"
+    strokeLinecap="round"
+    strokeLinejoin="round"
+    className="w-5 h-5"
+  >
+    <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z" />
+    <circle cx="12" cy="12" r="3" />
+  </svg>
+);
+
+const EyeOffIcon = () => (
+  <svg
+    xmlns="http://www.w3.org/2000/svg"
+    viewBox="0 0 24 24"
+    fill="none"
+    stroke="currentColor"
+    strokeWidth="2"
+    strokeLinecap="round"
+    strokeLinejoin="round"
+    className="w-5 h-5"
+  >
+    <path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24" />
+    <line x1="1" y1="1" x2="23" y2="23" />
+  </svg>
+);
 
 function LoginForm({ onOpenSignup, onOpenForgotPassword }) {
+  const [showPassword, setShowPassword] = useState(false);
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+
   return (
     <div className="w-full max-w-lg bg-white rounded-3xl border border-slate-200 shadow-md p-6 md:p-8">
       <div className="flex flex-col items-center text-center mb-8">
-        <div className="w-16 h-16 rounded-2xl bg-blue-600 flex items-center justify-center mb-5"></div>
+        {/* Logo PNG instead of MessageIcon */}
+        <img 
+          src={logo} 
+          alt="FPOP Clinic Portal Logo" 
+          className="w-16 h-16 rounded-2xl object-cover mb-5 shadow-sm"
+        />
 
         <h2 className="text-3xl md:text-4xl font-bold text-slate-900">
           FPOP Clinic Portal
@@ -25,6 +66,8 @@ function LoginForm({ onOpenSignup, onOpenForgotPassword }) {
           </label>
           <input
             type="email"
+            value={email}
+            onChange={(e) => setEmail(e.target.value)}
             placeholder="alvarezdareen776@gmail.com"
             className="w-full h-14 rounded-2xl border border-slate-200 bg-slate-50 px-4 text-slate-700 outline-none focus:ring-2 focus:ring-blue-500"
           />
@@ -34,11 +77,22 @@ function LoginForm({ onOpenSignup, onOpenForgotPassword }) {
           <label className="block text-slate-800 font-semibold mb-3">
             Password
           </label>
-          <input
-            type="password"
-            placeholder="••••••••"
-            className="w-full h-14 rounded-2xl border border-slate-200 bg-slate-50 px-4 text-slate-700 outline-none focus:ring-2 focus:ring-blue-500"
-          />
+          <div className="relative">
+            <input
+              type={showPassword ? "text" : "password"}
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+              placeholder="••••••••"
+              className="w-full h-14 rounded-2xl border border-slate-200 bg-slate-50 px-4 pr-12 text-slate-700 outline-none focus:ring-2 focus:ring-blue-500"
+            />
+            <button
+              type="button"
+              onClick={() => setShowPassword(!showPassword)}
+              className="absolute right-4 top-1/2 transform -translate-y-1/2 text-gray-500 hover:text-gray-700 focus:outline-none"
+            >
+              {showPassword ? <EyeOffIcon /> : <EyeIcon />}
+            </button>
+          </div>
         </div>
 
         <div className="flex items-center justify-between gap-4 text-sm md:text-base">
@@ -82,10 +136,18 @@ function LoginForm({ onOpenSignup, onOpenForgotPassword }) {
 }
 
 function SignupForm({ onOpenLogin }) {
+  const [showPassword, setShowPassword] = useState(false);
+  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
+
   return (
     <div className="w-full max-w-xl bg-white rounded-3xl border border-slate-200 shadow-md p-6 md:p-8">
       <div className="flex flex-col items-center text-center mb-8">
-        <div className="w-14 h-14 rounded-2xl bg-blue-600 flex items-center justify-center mb-4"></div>
+        {/* Logo PNG instead of MessageIcon */}
+        <img 
+          src={logo} 
+          alt="FPOP Clinic Portal Logo" 
+          className="w-14 h-14 rounded-2xl object-cover mb-4 shadow-sm"
+        />
 
         <h2 className="text-2xl font-bold text-slate-900">Create Account</h2>
         <p className="mt-2 text-slate-500">
@@ -146,22 +208,40 @@ function SignupForm({ onOpenLogin }) {
             <label className="block text-slate-800 font-medium mb-2">
               Password
             </label>
-            <input
-              type="password"
-              placeholder="••••••••"
-              className="w-full h-12 rounded-xl border border-slate-200 px-4 outline-none focus:ring-2 focus:ring-blue-500 bg-slate-50"
-            />
+            <div className="relative">
+              <input
+                type={showPassword ? "text" : "password"}
+                placeholder="••••••••"
+                className="w-full h-12 rounded-xl border border-slate-200 px-4 pr-10 outline-none focus:ring-2 focus:ring-blue-500 bg-slate-50"
+              />
+              <button
+                type="button"
+                onClick={() => setShowPassword(!showPassword)}
+                className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-500 hover:text-gray-700"
+              >
+                {showPassword ? <EyeOffIcon /> : <EyeIcon />}
+              </button>
+            </div>
           </div>
 
           <div>
             <label className="block text-slate-800 font-medium mb-2">
               Confirm Password
             </label>
-            <input
-              type="password"
-              placeholder="••••••••"
-              className="w-full h-12 rounded-xl border border-slate-200 px-4 outline-none focus:ring-2 focus:ring-blue-500"
-            />
+            <div className="relative">
+              <input
+                type={showConfirmPassword ? "text" : "password"}
+                placeholder="••••••••"
+                className="w-full h-12 rounded-xl border border-slate-200 px-4 pr-10 outline-none focus:ring-2 focus:ring-blue-500"
+              />
+              <button
+                type="button"
+                onClick={() => setShowConfirmPassword(!showConfirmPassword)}
+                className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-500 hover:text-gray-700"
+              >
+                {showConfirmPassword ? <EyeOffIcon /> : <EyeIcon />}
+              </button>
+            </div>
           </div>
         </div>
 
@@ -211,7 +291,8 @@ export default function App() {
   };
 
   const handleComplete = () => {
-    setScreen("success");
+    // After successful reset, go directly back to login
+    setScreen("login");
   };
 
   return (
@@ -221,7 +302,12 @@ export default function App() {
           <div className="w-full max-w-6xl grid lg:grid-cols-2 gap-10 items-center">
             <div>
               <div className="inline-flex items-center gap-3 px-4 py-2 rounded-full bg-blue-50 text-blue-700 font-medium mb-6">
-                <div className="w-8 h-8 rounded-xl bg-blue-600 flex items-center justify-center"></div>
+                {/* Logo PNG in the badge */}
+                <img 
+                  src={logo} 
+                  alt="FPOP Logo" 
+                  className="w-8 h-8 rounded-xl object-cover"
+                />
                 <span>FPOP Clinic Portal</span>
               </div>
 
@@ -339,14 +425,6 @@ export default function App() {
               onBackToLogin={() => setScreen("login")}
               onComplete={handleComplete}
             />
-          </div>
-        </section>
-      )}
-
-      {screen === "success" && (
-        <section className="min-h-screen flex items-center justify-center px-4 py-10">
-          <div className="w-full max-w-lg">
-            <SuccessMessage onBackToLogin={() => setScreen("login")} />
           </div>
         </section>
       )}

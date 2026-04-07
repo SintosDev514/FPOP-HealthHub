@@ -1,5 +1,4 @@
 import { useState } from "react";
-import MessageIcon from "./MessageIcon";
 
 export default function ForgotPasswordForm({ onBackToLogin, onResetPassword }) {
   const [email, setEmail] = useState("");
@@ -46,9 +45,7 @@ export default function ForgotPasswordForm({ onBackToLogin, onResetPassword }) {
       </button>
 
       <div className="text-center mb-8">
-        <div className="w-16 h-16 rounded-2xl bg-blue-600 flex items-center justify-center mb-5 mx-auto">
-          <MessageIcon />
-        </div>
+        <div className="w-16 h-16 rounded-2xl bg-blue-600 flex items-center justify-center mb-5 mx-auto"></div>
         <h2 className="text-3xl font-bold text-gray-900 mb-2">
           Forgot Password?
         </h2>
