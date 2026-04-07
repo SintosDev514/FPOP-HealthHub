@@ -1,9 +1,9 @@
 import { useState } from "react";
 import ForgotPasswordForm from "./ForgotPasswordForm";
 import ResetPasswordForm from "./ResetPasswordForm";
-import logo from "./assets/logo.png"; // Import the logo from assets folder
+import logo from "./assets/logo.png"; 
 
-// Eye Icon for password visibility
+
 const EyeIcon = () => (
   <svg
     xmlns="http://www.w3.org/2000/svg"
@@ -44,7 +44,9 @@ function LoginForm({ onOpenSignup, onOpenForgotPassword }) {
   return (
     <div className="w-full max-w-lg bg-white rounded-3xl border border-slate-200 shadow-md p-6 md:p-8">
       <div className="flex flex-col items-center text-center mb-8">
-        {/* Logo PNG instead of MessageIcon */}
+        {
+
+        }
         <img 
           src={logo} 
           alt="FPOP Clinic Portal Logo" 
@@ -142,7 +144,9 @@ function SignupForm({ onOpenLogin }) {
   return (
     <div className="w-full max-w-xl bg-white rounded-3xl border border-slate-200 shadow-md p-6 md:p-8">
       <div className="flex flex-col items-center text-center mb-8">
-        {/* Logo PNG instead of MessageIcon */}
+        {
+
+        }
         <img 
           src={logo} 
           alt="FPOP Clinic Portal Logo" 
@@ -291,7 +295,7 @@ export default function App() {
   };
 
   const handleComplete = () => {
-    // After successful reset, go directly back to login
+   
     setScreen("login");
   };
 
@@ -302,7 +306,9 @@ export default function App() {
           <div className="w-full max-w-6xl grid lg:grid-cols-2 gap-10 items-center">
             <div>
               <div className="inline-flex items-center gap-3 px-4 py-2 rounded-full bg-blue-50 text-blue-700 font-medium mb-6">
-                {/* Logo PNG in the badge */}
+                {
+                  
+                }
                 <img 
                   src={logo} 
                   alt="FPOP Logo" 
