@@ -1,6 +1,7 @@
 import { useState } from "react";
 import ForgotPasswordForm from "./ForgotPasswordForm";
 import ResetPasswordForm from "./ResetPasswordForm";
+import NavBar from "./components/navBar";
 
 import "react-toastify/dist/ReactToastify.css";
 
@@ -201,10 +202,109 @@ function SignupForm({ onOpenLogin }) {
   );
 }
 
+function ServicesPage() {
+  return (
+    <section className="min-h-screen bg-slate-100 px-4 py-8">
+      <div className="relative max-w-5xl mx-auto bg-white/80 backdrop-blur-sm rounded-[2rem] shadow-md p-6 overflow-hidden">
+
+        <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
+          <img
+            src="/FPOPLOGO2.jpg"
+            alt="bg-logo"
+            className="w-[320px] md:w-[450px] opacity-50 object-contain"
+          />
+        </div>
+
+        <div className="relative z-10">
+
+          <div className="text-center mb-8">
+            <h1 className="font-poppins text-2xl md:text-3xl font-bold text-slate-900">
+              Offered Services
+            </h1>
+            <p className="font-poppins text-sm text-slate-500">
+              FPOP Calbayog Clinic
+            </p>
+          </div>
+
+          <div className="grid gap-5 md:grid-cols-2">
+
+            <div className="bg-white/5 backdrop-blur-sm border border-blue-200 rounded-3xl p-5 shadow-sm transition duration-300 hover:-translate-y-1 hover:shadow-lg">
+              <div className="flex items-center gap-3 mb-4">
+               <div className="w-12 h-12 rounded-2xl bg-white-400 flex items-center justify-center shadow-sm">
+                  <img
+                    src="/capsule2.png"
+                    alt="capsule"
+                    className="w-10 h-10 object-contain drop-shadow-sm"
+                  />
+                </div>
+                <h2 className="font-poppins font-bold text-base md:text-lg text-slate-900">
+                  Family Planning & Contraceptive Services
+                </h2>
+              </div>
+
+              <ul className="font-poppins text-sm space-y-2 text-slate-700">
+                <li>✔ Counseling / Consultation</li>
+                <li>✔ Oral Contraceptives</li>
+                <li>✔ Combined Oral Contraceptive (COC)</li>
+                <li>✔ Lady Pill / Trust / Althea</li>
+                <li>✔ Progestin-Only Pill (POP)</li>
+                <li>✔ Injectable (1 Month / 3 Months)</li>
+                <li>✔ IUD (Insertion / Removal)</li>
+                <li>✔ Implant (PSI)</li>
+                <li>✔ Condom</li>
+              </ul>
+            </div>
+
+            <div className="bg-white/5 backdrop-blur-sm border border-emerald-200 rounded-3xl p-5 shadow-sm transition duration-300 hover:-translate-y-1 hover:shadow-lg">
+              <div className="flex items-center gap-3 mb-4">
+                <div className="w-12 h-12 rounded-2xl bg-white-500 flex items-center justify-center shadow-sm">
+                  <img
+                    src="/AIDS.png"
+                    alt="test"
+                    className="w-19 h-19 object-contain drop-shadow-sm"
+                  />
+                </div>
+                <h2 className="font-poppins font-bold text-base md:text-lg text-slate-900">
+                  STI & HIV-AIDS Services
+                </h2>
+              </div>
+
+              <ul className="font-poppins text-sm space-y-2 text-slate-700">
+                <li>✔ Awareness & Counseling</li>
+                <li>✔ Community-Based Screening (HIV Testing)</li>
+              </ul>
+            </div>
+
+            <div className="bg-white/5 backdrop-blur-sm border border-rose-200 rounded-3xl p-5 shadow-sm transition duration-300 hover:-translate-y-1 hover:shadow-lg md:col-span-2">
+              <div className="flex items-center gap-3 mb-4">
+                <div className="w-12 h-12 rounded-2xl bg-gray-450 flex items-center justify-center shadow-sm">
+                  <img
+                    src="/doctor2.png"
+                    alt="education"
+                    className="w-14 h-14 object-contain drop-shadow-sm"
+                  />
+                </div>
+                <h2 className="font-poppins font-bold text-base md:text-lg text-slate-900">
+                  Adolescent Sexual Reproductive Health (ASRH)
+                </h2>
+              </div>
+
+              <ul className="font-poppins text-sm space-y-2 text-slate-700">
+                <li>✔ Counseling & Education</li>
+              </ul>
+            </div>
+
+          </div>
+
+        </div>
+      </div>
+    </section>
+  );
+}
+
 export default function App() {
   const [screen, setScreen] = useState("landing");
   const [resetEmail, setResetEmail] = useState("");
-  const [menuOpen, setMenuOpen] = useState(false);
 
   const handleResetPassword = (email) => {
     setResetEmail(email);
@@ -219,99 +319,10 @@ export default function App() {
     <div className="min-h-screen bg-slate-100">
       {screen === "landing" && (
         <>
-          <header className="sticky top-0 z-50 bg-white/90 backdrop-blur border-b border-slate-200">
-            <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-              <div className="h-16 flex items-center justify-between">
-                
-                <div className="flex items-center gap-1">
-                  <img
-                    src="public/FPOPLOGO1.png"
-                    alt="Logo"
-                    className="w-20 h-20 rounded-xl object-cover"
-                  />
-                  <h2 className="text-xl font-bold tracking-tight text-slate-600">
-                    FPOP Clinic Portal
-                  </h2>
-                </div>
-
-                <nav className="hidden md:flex items-center gap-6 lg:gap-8">
-                  <button className="text-slate-600 hover:text-blue-600 font-medium">
-                    Contact
-                  </button>
-                  <button className="text-slate-600 hover:text-blue-600 font-medium">
-                    About Us
-                  </button>
-                  <button className="text-slate-600 hover:text-blue-600 font-medium">
-                    Location
-                  </button>
-                </nav>
-
-                <div className="hidden md:flex items-center gap-3">
-                  <button
-                    onClick={() => setScreen("login")}
-                    className="h-10 px-5 rounded-xl bg-blue-600 text-white font-semibold hover:bg-blue-700 transition"
-                  >
-                    Login
-                  </button>
-                  <button
-                    onClick={() => setScreen("signup")}
-                    className="h-10 px-5 rounded-xl border border-slate-300 bg-white text-slate-800 font-semibold hover:bg-slate-50 transition"
-                  >
-                    Sign Up
-                  </button>
-                </div>
-
-                <button
-                  onClick={() => setMenuOpen(!menuOpen)}
-                  className="md:hidden inline-flex items-center justify-center w-10 h-10 rounded-lg border border-slate-300 text-slate-700"
-                >
-                  <span className="text-xl">{menuOpen ? "✕" : "☰"}</span>
-                </button>
-              </div>
-
-              {/* MOBILE MENU */}
-              {menuOpen && (
-                <div className="md:hidden pb-4">
-                  <nav className="flex flex-col gap-3 pt-2">
-                    <button className="text-left text-slate-600 hover:text-blue-600 font-medium">
-                      Contact
-                    </button>
-                    <button className="text-left text-slate-600 hover:text-blue-600 font-medium">
-                      About Us
-                    </button>
-                    <button className="text-left text-slate-600 hover:text-blue-600 font-medium">
-                      Location
-                    </button>
-
-                    <div className="flex flex-col gap-3 pt-3">
-                      <button
-                        onClick={() => {
-                          setScreen("login");
-                          setMenuOpen(false);
-                        }}
-                        className="h-11 px-5 rounded-xl bg-blue-600 text-white font-semibold hover:bg-blue-700 transition"
-                      >
-                        Login
-                      </button>
-                      <button
-                        onClick={() => {
-                          setScreen("signup");
-                          setMenuOpen(false);
-                        }}
-                        className="h-11 px-5 rounded-xl border border-slate-300 bg-white text-slate-800 font-semibold hover:bg-slate-50 transition"
-                      >
-                        Sign Up
-                      </button>
-                    </div>
-                  </nav>
-                </div>
-              )}
-            </div>
-          </header>
+          <NavBar setScreen={setScreen} />
 
           <section className="min-h-screen flex items-center justify-center px-4 py-10">
             <div className="w-full max-w-6xl grid lg:grid-cols-2 gap-10 items-center">
-              
               <div>
                 <div className="inline-flex items-center gap-3 px-4 py-2 rounded-full bg-blue-50 text-blue-700 font-medium mb-6">
                   <div className="w-8 h-8 rounded-xl bg-blue-600 flex items-center justify-center"></div>
@@ -327,19 +338,12 @@ export default function App() {
                   with your clinic in one secure place.
                 </p>
 
-                <div className="mt-8 flex flex-col sm:flex-row gap-4">
+                <div className="mt-8">
                   <button
-                    onClick={() => setScreen("login")}
+                    onClick={() => setScreen("services")}
                     className="h-14 px-8 rounded-2xl bg-blue-600 text-white font-semibold hover:bg-blue-700 transition"
                   >
-                    Login
-                  </button>
-
-                  <button
-                    onClick={() => setScreen("signup")}
-                    className="h-14 px-8 rounded-2xl border border-slate-300 bg-white text-slate-800 font-semibold hover:bg-slate-50 transition"
-                  >
-                    Sign Up
+                     Offered Services
                   </button>
                 </div>
               </div>
@@ -379,6 +383,13 @@ export default function App() {
               </div>
             </div>
           </section>
+        </>
+      )}
+
+      {screen === "services" && (
+        <>
+          <NavBar setScreen={setScreen} />
+          <ServicesPage onBack={() => setScreen("landing")} />
         </>
       )}
 
