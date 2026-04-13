@@ -202,7 +202,7 @@ function SignupForm({ onOpenLogin }) {
   );
 }
 
-function ServicesPage() {
+function ServicesPage({ onBack }) {
   return (
     <section className="min-h-screen bg-slate-100 px-4 py-8">
       <div className="relative max-w-5xl mx-auto bg-white/80 backdrop-blur-sm rounded-[2rem] shadow-md p-6 overflow-hidden">
@@ -214,8 +214,13 @@ function ServicesPage() {
             className="w-[320px] md:w-[450px] opacity-50 object-contain"
           />
         </div>
-
         <div className="relative z-10">
+          <button
+            onClick={onBack}
+            className="mb-6 text-sm text-slate-600 hover:text-slate-900 transition"
+          >
+            ← Back
+          </button>
 
           <div className="text-center mb-8">
             <h1 className="font-poppins text-2xl md:text-3xl font-bold text-slate-900">
@@ -228,15 +233,16 @@ function ServicesPage() {
 
           <div className="grid gap-5 md:grid-cols-2">
 
-            <div className="bg-white/5 backdrop-blur-sm border border-blue-200 rounded-3xl p-5 shadow-sm transition duration-300 hover:-translate-y-1 hover:shadow-lg">
+            <div className="bg-white-400 backdrop-blur-sm border border-blue-200 rounded-3xl p-5 shadow-sm transition duration-300 hover:-translate-y-1 hover:shadow-lg">
               <div className="flex items-center gap-3 mb-4">
                <div className="w-12 h-12 rounded-2xl bg-white-400 flex items-center justify-center shadow-sm">
                   <img
                     src="/capsule2.png"
                     alt="capsule"
                     className="w-10 h-10 object-contain drop-shadow-sm"
-                  />
+                  /> 
                 </div>
+
                 <h2 className="font-poppins font-bold text-base md:text-lg text-slate-900">
                   Family Planning & Contraceptive Services
                 </h2>
@@ -255,7 +261,7 @@ function ServicesPage() {
               </ul>
             </div>
 
-            <div className="bg-white/5 backdrop-blur-sm border border-emerald-200 rounded-3xl p-5 shadow-sm transition duration-300 hover:-translate-y-1 hover:shadow-lg">
+            <div className="bg-white-400 backdrop-blur-sm border border-emerald-200 rounded-3xl p-5 shadow-sm transition duration-300 hover:-translate-y-1 hover:shadow-lg">
               <div className="flex items-center gap-3 mb-4">
                 <div className="w-12 h-12 rounded-2xl bg-white-500 flex items-center justify-center shadow-sm">
                   <img
@@ -275,7 +281,7 @@ function ServicesPage() {
               </ul>
             </div>
 
-            <div className="bg-white/5 backdrop-blur-sm border border-rose-200 rounded-3xl p-5 shadow-sm transition duration-300 hover:-translate-y-1 hover:shadow-lg md:col-span-2">
+            <div className="bg-white-400 backdrop-blur-sm border border-rose-200 rounded-3xl p-5 shadow-sm transition duration-300 hover:-translate-y-1 hover:shadow-lg md:col-span-2">
               <div className="flex items-center gap-3 mb-4">
                 <div className="w-12 h-12 rounded-2xl bg-gray-450 flex items-center justify-center shadow-sm">
                   <img
@@ -390,6 +396,27 @@ export default function App() {
         <>
           <NavBar setScreen={setScreen} />
           <ServicesPage onBack={() => setScreen("landing")} />
+        </>
+      )}
+
+      {screen === "contact" && (
+        <>
+          <NavBar setScreen={setScreen} />
+          <ContactPage onBack={() => setScreen("landing")} />
+        </>
+      )}
+
+      {screen === "about" && (
+        <>
+          <NavBar setScreen={setScreen} />
+          <AboutPage onBack={() => setScreen("landing")} />
+        </>
+      )}
+
+      {screen === "location" && (
+        <>
+          <NavBar setScreen={setScreen} />
+          <LocationPage onBack={() => setScreen("landing")} />
         </>
       )}
 

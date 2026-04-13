@@ -18,16 +18,24 @@ export default function NavBar({ setScreen }) {
               FPOP Clinic Portal
             </h2>
           </div>
-
-          {/* DESKTOP NAV */}
+ 
           <nav className="hidden md:flex items-center gap-6 lg:gap-8">
-            <button className="text-slate-600 hover:text-blue-600 font-medium">
+            <button
+              onClick={() => setScreen("contact")}
+              className="text-slate-600 hover:text-blue-600 font-medium"
+            >
               Contact
             </button>
-            <button className="text-slate-600 hover:text-blue-600 font-medium">
+            <button
+              onClick={() => setScreen("about")}
+              className="text-slate-600 hover:text-blue-600 font-medium"
+            >
               About Us
             </button>
-            <button className="text-slate-600 hover:text-blue-600 font-medium">
+            <button
+              onClick={() => setScreen("location")}
+              className="text-slate-600 hover:text-blue-600 font-medium"
+            >
               Location
             </button>
           </nav>
@@ -49,6 +57,9 @@ export default function NavBar({ setScreen }) {
 
           <button
             onClick={() => setMenuOpen(!menuOpen)}
+            aria-label="Toggle navigation menu"
+            aria-expanded={menuOpen}
+            aria-controls="mobile-menu"
             className="md:hidden inline-flex items-center justify-center w-10 h-10 rounded-lg border border-slate-300 text-slate-700"
           >
             <span className="text-xl">{menuOpen ? "✕" : "☰"}</span>
@@ -56,16 +67,34 @@ export default function NavBar({ setScreen }) {
         </div>
 
         {menuOpen && (
-          <div className="md:hidden pb-4">
+          <div id="mobile-menu" className="md:hidden pb-4">
             <nav className="flex flex-col gap-3 pt-2">
 
-              <button className="text-left text-slate-600 hover:text-blue-600 font-medium">
+              <button
+                onClick={() => {
+                  setScreen("contact");
+                  setMenuOpen(false);
+                }}
+                className="text-left text-slate-600 hover:text-blue-600 font-medium"
+              >
                 Contact
               </button>
-              <button className="text-left text-slate-600 hover:text-blue-600 font-medium">
+              <button
+                onClick={() => {
+                  setScreen("about");
+                  setMenuOpen(false);
+                }}
+                className="text-left text-slate-600 hover:text-blue-600 font-medium"
+              >
                 About Us
               </button>
-              <button className="text-left text-slate-600 hover:text-blue-600 font-medium">
+              <button
+                onClick={() => {
+                  setScreen("location");
+                  setMenuOpen(false);
+                }}
+                className="text-left text-slate-600 hover:text-blue-600 font-medium"
+              >
                 Location
               </button>
 
