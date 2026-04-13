@@ -2,10 +2,10 @@ import { useState } from "react";
 import ForgotPasswordForm from "./ForgotPasswordForm";
 import ResetPasswordForm from "./ResetPasswordForm";
 import NavBar from "./components/navBar";
+import bgImage from "./assets/staff.png";
 
 import "react-toastify/dist/ReactToastify.css";
-import logo from "./assets/logo.png"; 
-
+import logo from "./assets/logo.png";
 
 const EyeIcon = () => (
   <svg
@@ -47,12 +47,10 @@ function LoginForm({ onOpenSignup, onOpenForgotPassword }) {
   return (
     <div className="w-full max-w-lg bg-white rounded-3xl border border-slate-200 shadow-md p-6 md:p-8">
       <div className="flex flex-col items-center text-center mb-8">
-        {
-
-        }
-        <img 
-          src={logo} 
-          alt="FPOP Clinic Portal Logo" 
+        {}
+        <img
+          src={logo}
+          alt="FPOP Clinic Portal Logo"
           className="w-16 h-16 rounded-2xl object-cover mb-5 shadow-sm"
         />
 
@@ -147,12 +145,10 @@ function SignupForm({ onOpenLogin }) {
   return (
     <div className="w-full max-w-xl bg-white rounded-3xl border border-slate-200 shadow-md p-6 md:p-8">
       <div className="flex flex-col items-center text-center mb-8">
-        {
-
-        }
-        <img 
-          src={logo} 
-          alt="FPOP Clinic Portal Logo" 
+        {}
+        <img
+          src={logo}
+          alt="FPOP Clinic Portal Logo"
           className="w-14 h-14 rounded-2xl object-cover mb-4 shadow-sm"
         />
 
@@ -292,7 +288,6 @@ function ServicesPage({ onBack }) {
   return (
     <section className="min-h-screen bg-slate-100 px-4 py-8">
       <div className="relative max-w-5xl mx-auto bg-white/80 backdrop-blur-sm rounded-[2rem] shadow-md p-6 overflow-hidden">
-
         <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
           <img
             src="/FPOPLOGO2.jpg"
@@ -318,15 +313,14 @@ function ServicesPage({ onBack }) {
           </div>
 
           <div className="grid gap-5 md:grid-cols-2">
-
             <div className="bg-white-400 backdrop-blur-sm border border-blue-200 rounded-3xl p-5 shadow-sm transition duration-300 hover:-translate-y-1 hover:shadow-lg">
               <div className="flex items-center gap-3 mb-4">
-               <div className="w-12 h-12 rounded-2xl bg-white-400 flex items-center justify-center shadow-sm">
+                <div className="w-12 h-12 rounded-2xl bg-white-400 flex items-center justify-center shadow-sm">
                   <img
                     src="/capsule2.png"
                     alt="capsule"
                     className="w-10 h-10 object-contain drop-shadow-sm"
-                  /> 
+                  />
                 </div>
 
                 <h2 className="font-poppins font-bold text-base md:text-lg text-slate-900">
@@ -385,9 +379,7 @@ function ServicesPage({ onBack }) {
                 <li>✔ Counseling & Education</li>
               </ul>
             </div>
-
           </div>
-
         </div>
       </div>
     </section>
@@ -404,38 +396,21 @@ export default function App() {
   };
 
   const handleComplete = () => {
-   
     setScreen("login");
   };
 
   return (
     <div className="min-h-screen bg-slate-100">
+      {/* ================= LANDING ================= */}
       {screen === "landing" && (
         <>
           <NavBar setScreen={setScreen} />
 
-          <section className="min-h-screen flex items-center justify-center px-4 py-10">
+          <section className="min-h-screen  flex items-center justify-center px-4 py-10">
             <div className="w-full max-w-6xl grid lg:grid-cols-2 gap-10 items-center">
-              <div>
-                <div className="inline-flex items-center gap-3 px-4 py-2 rounded-full bg-blue-50 text-blue-700 font-medium mb-6">
-                  <div className="w-8 h-8 rounded-xl bg-blue-600 flex items-center justify-center"></div>
-                  <span>FPOP Clinic Portal</span>
-                </div>
-        <section className="min-h-screen flex items-center justify-center px-4 py-10">
-          <div className="w-full max-w-6xl grid lg:grid-cols-2 gap-10 items-center">
-            <div>
-              <div className="inline-flex items-center gap-3 px-4 py-2 rounded-full bg-blue-50 text-blue-700 font-medium mb-6">
-                {
-                  
-                }
-                <img 
-                  src={logo} 
-                  alt="FPOP Logo" 
-                  className="w-8 h-8 rounded-xl object-cover"
-                />
-                <span>FPOP Clinic Portal</span>
-              </div>
+              {/* LEFT SIDE */}
 
+              <div>
                 <h1 className="text-4xl md:text-6xl font-bold text-slate-900 leading-tight">
                   Better healthcare starts with a simpler patient portal.
                 </h1>
@@ -448,51 +423,68 @@ export default function App() {
                 <div className="mt-8">
                   <button
                     onClick={() => setScreen("services")}
-                    className="h-14 px-8 rounded-2xl bg-blue-600 text-white font-semibold hover:bg-blue-700 transition"
+                    className="h-14 rounded-sm px-8 border bg-[#1E3A5F] text-white font-semibold 
+           hover:bg-white hover:border-[#F5C518] hover:text-[#1E3A5F]  
+           transition duration-300 hover:scale-105"
                   >
-                     Offered Services
+                    Offered Services
                   </button>
                 </div>
               </div>
+              {/* RIGHT SIDE */}
+              <div className="w-full p-4">
+                <div className="relative overflow-hidden rounded-lg transition-all duration-300 group bg-[#1E3A5F] hover:scale-[1.02] backdrop-blur-[2px] p-6 hover:shadow-lg hover:shadow-[#1E3A5F]/20">
+                  <div
+                    className="absolute inset-0 -z-10 bg-center bg-no-repeat"
+                    style={{
+                      backgroundImage: `url(${bgImage})`,
+                      backgroundSize: "100%",
+                    }}
+                  ></div>
 
-              <div className="bg-white border border-slate-200 rounded-[2rem] shadow-md p-6 md:p-8">
-                <div className="grid grid-cols-2 gap-4">
-                  <div className="rounded-2xl bg-slate-50 p-5 border border-slate-200">
-                    <p className="text-sm text-slate-500">Appointments</p>
-                    <h3 className="text-2xl font-bold text-slate-900 mt-2">
-                      24/7
-                    </h3>
-                    <p className="text-sm text-slate-600 mt-2">
-                      Book anytime
-                    </p>
+                  <div className="absolute inset-0 -z-10 bg-black/50"></div>
+
+                  <div className="absolute inset-0 z-0 rounded-lg pointer-events-none shadow-[0_0_6px_rgba(0,0,0,0.03),0_2px_6px_rgba(0,0,0,0.08),inset_3px_3px_0.5px_-3px_rgba(0,0,0,0.9),inset_-3px_-3px_0.5px_-3px_rgba(0,0,0,0.85),inset_1px_1px_1px_-0.5px_rgba(0,0,0,0.6),inset_-1px_-1px_1px_-0.5px_rgba(0,0,0,0.6),inset_0_0_6px_6px_rgba(0,0,0,0.12),inset_0_0_2px_2px_rgba(0,0,0,0.06),0_0_12px_rgba(255,255,255,0.15)]"></div>
+
+                  <div className="relative z-10 grid grid-cols-2 gap-4 text-white">
+                    {/* Card 1 */}
+                    <div className="rounded-xl p-5 border border-white/10 bg-white/5 backdrop-blur-md">
+                      <p className="text-sm text-white/70">Appointments</p>
+                      <h3 className="text-2xl font-bold mt-2">24/7</h3>
+                      <p className="text-sm text-white/60 mt-2">Book anytime</p>
+                    </div>
+
+                    {/* Card 2 */}
+                    <div className="rounded-xl p-5 border border-white/10 bg-white/5 backdrop-blur-md">
+                      <p className="text-sm text-white/70">Patient Access</p>
+                      <h3 className="text-2xl font-bold mt-2">Secure</h3>
+                      <p className="text-sm text-white/60 mt-2">
+                        Safe & private
+                      </p>
+                    </div>
+
+                    {/* Card 3 */}
+                    <div className="col-span-2 rounded-xl p-5 bg-[#1E3A5F]/50 backdrop-blur-md">
+                      <p className="text-sm text-blue-100">Portal Experience</p>
+                      <h3 className="text-3xl font-bold mt-2">Fast & Simple</h3>
+                      <p className="text-sm text-blue-100 mt-3">
+                        Clean and easy workflow for patients and staff.
+                      </p>
+                    </div>
                   </div>
 
-                  <div className="rounded-2xl bg-slate-50 p-5 border border-slate-200">
-                    <p className="text-sm text-slate-500">Patient Access</p>
-                    <h3 className="text-2xl font-bold text-slate-900 mt-2">
-                      Secure
-                    </h3>
-                    <p className="text-sm text-slate-600 mt-2">
-                      Safe & private
-                    </p>
-                  </div>
-
-                  <div className="rounded-2xl bg-blue-600 p-5 text-white col-span-2">
-                    <p className="text-sm text-blue-100">Portal Experience</p>
-                    <h3 className="text-3xl font-bold mt-2">
-                      Fast & Simple
-                    </h3>
-                    <p className="text-sm text-blue-100 mt-3">
-                      Clean and easy workflow for patients and staff.
-                    </p>
-                  </div>
+                  {/* Hover shine */}
+                  <div className="absolute inset-0 z-20 rounded-lg bg-gradient-to-r from-transparent via-white/10 to-transparent opacity-0 transition-opacity duration-200 group-hover:opacity-100 pointer-events-none"></div>
                 </div>
               </div>
+
+              {/*ened*/}
             </div>
           </section>
         </>
       )}
 
+      {/* ================= SERVICES ================= */}
       {screen === "services" && (
         <>
           <NavBar setScreen={setScreen} />
@@ -500,6 +492,7 @@ export default function App() {
         </>
       )}
 
+      {/* ================= CONTACT ================= */}
       {screen === "contact" && (
         <>
           <NavBar setScreen={setScreen} />
@@ -507,6 +500,7 @@ export default function App() {
         </>
       )}
 
+      {/* ================= ABOUT ================= */}
       {screen === "about" && (
         <>
           <NavBar setScreen={setScreen} />
@@ -514,6 +508,7 @@ export default function App() {
         </>
       )}
 
+      {/* ================= LOCATION ================= */}
       {screen === "location" && (
         <>
           <NavBar setScreen={setScreen} />
@@ -521,6 +516,7 @@ export default function App() {
         </>
       )}
 
+      {/* ================= LOGIN ================= */}
       {screen === "login" && (
         <section className="min-h-screen flex items-center justify-center px-4 py-10">
           <div className="w-full max-w-lg">
@@ -538,6 +534,7 @@ export default function App() {
         </section>
       )}
 
+      {/* ================= SIGNUP ================= */}
       {screen === "signup" && (
         <section className="min-h-screen flex items-center justify-center px-4 py-10">
           <div className="w-full max-w-xl">
@@ -552,6 +549,7 @@ export default function App() {
         </section>
       )}
 
+      {/* ================= FORGOT PASSWORD ================= */}
       {screen === "forgotpassword" && (
         <section className="min-h-screen flex items-center justify-center px-4 py-10">
           <div className="w-full max-w-lg">
@@ -563,6 +561,7 @@ export default function App() {
         </section>
       )}
 
+      {/* ================= RESET PASSWORD ================= */}
       {screen === "reset" && (
         <section className="min-h-screen flex items-center justify-center px-4 py-10">
           <div className="w-full max-w-lg">
