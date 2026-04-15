@@ -1,14 +1,20 @@
 import { useState } from "react";
 
-export default function NavBar({ setScreen }) {
+import { useNavigate } from "react-router-dom";
+
+export default function NavBar() {
+  const navigate = useNavigate();
+
   const [menuOpen, setMenuOpen] = useState(false);
 
   return (
     <header className="sticky top-0 z-50 bg-white/90 backdrop-blur border-b border-slate-200">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="min-h-[72px] flex items-center justify-between">
-          
-          <div className="flex items-center gap-1">
+          <div
+            onClick={() => navigate("/")}
+            className="flex items-center gap-1 cursor-pointer"
+          >
             <img
               src="/FPOPLOGO1.png"
               alt="Logo"
@@ -18,22 +24,22 @@ export default function NavBar({ setScreen }) {
               FPOP Clinic Portal
             </h2>
           </div>
- 
+
           <nav className="hidden md:flex items-center gap-6 lg:gap-8">
             <button
-              onClick={() => setScreen("contact")}
+              onClick={() => navigate("/contact")}
               className="text-slate-600 hover:text-blue-600 font-medium"
             >
               Contact
             </button>
             <button
-              onClick={() => setScreen("about")}
+              onClick={() => navigate("/about")}
               className="text-slate-600 hover:text-blue-600 font-medium"
             >
               About Us
             </button>
             <button
-              onClick={() => setScreen("location")}
+              onClick={() => navigate("/location")}
               className="text-slate-600 hover:text-blue-600 font-medium"
             >
               Location
@@ -42,13 +48,13 @@ export default function NavBar({ setScreen }) {
 
           <div className="hidden md:flex items-center gap-3">
             <button
-              onClick={() => setScreen("login")}
+              onClick={() => navigate("/login")}
               className="h-10 px-5 rounded-xl bg-blue-600 text-white font-semibold hover:bg-blue-700 transition"
             >
               Login
             </button>
             <button
-              onClick={() => setScreen("signup")}
+              onClick={() => navigate("/signup")}
               className="h-10 px-5 rounded-xl border border-slate-300 bg-white text-slate-800 font-semibold hover:bg-slate-50 transition"
             >
               Sign Up
@@ -69,10 +75,9 @@ export default function NavBar({ setScreen }) {
         {menuOpen && (
           <div id="mobile-menu" className="md:hidden pb-4">
             <nav className="flex flex-col gap-3 pt-2">
-
               <button
                 onClick={() => {
-                  setScreen("contact");
+                  navigate("/contact");
                   setMenuOpen(false);
                 }}
                 className="text-left text-slate-600 hover:text-blue-600 font-medium"
@@ -81,7 +86,7 @@ export default function NavBar({ setScreen }) {
               </button>
               <button
                 onClick={() => {
-                  setScreen("about");
+                  navigate("/about");
                   setMenuOpen(false);
                 }}
                 className="text-left text-slate-600 hover:text-blue-600 font-medium"
@@ -90,7 +95,7 @@ export default function NavBar({ setScreen }) {
               </button>
               <button
                 onClick={() => {
-                  setScreen("location");
+                  navigate("/location");
                   setMenuOpen(false);
                 }}
                 className="text-left text-slate-600 hover:text-blue-600 font-medium"
@@ -101,7 +106,7 @@ export default function NavBar({ setScreen }) {
               <div className="flex flex-col gap-3 pt-3">
                 <button
                   onClick={() => {
-                    setScreen("login");
+                    navigate("/login");
                     setMenuOpen(false);
                   }}
                   className="h-11 px-5 rounded-xl bg-blue-600 text-white font-semibold hover:bg-blue-700 transition"
@@ -110,7 +115,7 @@ export default function NavBar({ setScreen }) {
                 </button>
                 <button
                   onClick={() => {
-                    setScreen("signup");
+                    navigate("/signup");
                     setMenuOpen(false);
                   }}
                   className="h-11 px-5 rounded-xl border border-slate-300 bg-white text-slate-800 font-semibold hover:bg-slate-50 transition"
@@ -118,7 +123,6 @@ export default function NavBar({ setScreen }) {
                   Sign Up
                 </button>
               </div>
-
             </nav>
           </div>
         )}
