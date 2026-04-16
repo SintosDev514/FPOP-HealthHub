@@ -4,7 +4,7 @@ import logo from "../assets/logo.png";
 import { EyeIcon, EyeOffIcon } from "../components/eyeIcon/EyeIcons";
 import { useAuth } from "../context/AuthContext";
 
-function LoginForm({ onOpenSignup, onOpenForgotPassword }) {
+function LoginForm() {
   const [showPassword, setShowPassword] = useState(false);
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -107,7 +107,7 @@ function LoginForm({ onOpenSignup, onOpenForgotPassword }) {
 
               <button
                 type="button"
-                onClick={onOpenForgotPassword}
+                onClick={() => navigate("/forgotpass")}
                 className="text-sm text-blue-600 hover:text-blue-700 font-medium"
               >
                 Forgot Password?
@@ -125,7 +125,7 @@ function LoginForm({ onOpenSignup, onOpenForgotPassword }) {
               Don't have an account?{" "}
               <button
                 type="button"
-                onClick={onOpenSignup}
+                onClick={() => navigate("/signup")}
                 className="text-blue-600 font-semibold"
               >
                 Sign Up

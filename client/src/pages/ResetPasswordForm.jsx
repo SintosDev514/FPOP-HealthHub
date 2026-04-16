@@ -1,7 +1,5 @@
-
 import { useState } from "react";
-import logo from "./assets/logo.png"; 
-
+import logo from "../assets/logo.png";
 
 const EyeIcon = () => (
   <svg
@@ -35,7 +33,6 @@ const EyeOffIcon = () => (
   </svg>
 );
 
-
 const AlertCircleIcon = () => (
   <svg
     xmlns="http://www.w3.org/2000/svg"
@@ -53,7 +50,6 @@ const AlertCircleIcon = () => (
   </svg>
 );
 
-
 const CheckCircleIcon = () => (
   <svg
     xmlns="http://www.w3.org/2000/svg"
@@ -69,7 +65,6 @@ const CheckCircleIcon = () => (
     <polyline points="22 4 12 14.01 9 11.01" />
   </svg>
 );
-
 
 const SpinnerIcon = () => (
   <svg
@@ -130,7 +125,6 @@ export default function ResetPasswordForm({
     newOtp[index] = value;
     setOtp(newOtp);
 
-    
     if (value && index < 5) {
       const nextInput = document.getElementById(`otp-input-${index + 1}`);
       if (nextInput) nextInput.focus();
@@ -140,7 +134,6 @@ export default function ResetPasswordForm({
   };
 
   const handleOtpKeyDown = (index, e) => {
-   
     if (e.key === "Backspace" && !otp[index] && index > 0) {
       const prevInput = document.getElementById(`otp-input-${index - 1}`);
       if (prevInput) prevInput.focus();
@@ -169,7 +162,6 @@ export default function ResetPasswordForm({
     setResendCooldown(30);
     console.log("Resending OTP to:", email);
 
-  
     const timer = setInterval(() => {
       setResendCooldown((prev) => {
         if (prev <= 1) {
@@ -204,7 +196,6 @@ export default function ResetPasswordForm({
 
     setIsLoading(true);
 
-    
     setTimeout(() => {
       setIsLoading(false);
       onComplete();
@@ -222,12 +213,10 @@ export default function ResetPasswordForm({
       </button>
 
       <div className="text-center mb-8">
-        {
-
-        }
-        <img 
-          src={logo} 
-          alt="FPOP Clinic Portal Logo" 
+        {}
+        <img
+          src={logo}
+          alt="FPOP Clinic Portal Logo"
           className="w-16 h-16 rounded-2xl object-cover mb-5 mx-auto shadow-sm"
         />
         <h2 className="text-3xl font-bold text-gray-900 mb-2">
@@ -239,9 +228,7 @@ export default function ResetPasswordForm({
       </div>
 
       <form onSubmit={handleSubmit} className="space-y-6">
-        {
-
-        }
+        {}
         <div>
           <label className="block text-sm font-medium text-gray-700 mb-2">
             Email Address
@@ -251,9 +238,7 @@ export default function ResetPasswordForm({
           </div>
         </div>
 
-        {
-
-        }
+        {}
         <div>
           <label className="block text-sm font-medium text-gray-700 mb-2">
             Enter 6-Digit OTP
@@ -294,9 +279,7 @@ export default function ResetPasswordForm({
           </div>
         </div>
 
-        {
-
-        }
+        {}
         <div>
           <label className="block text-sm font-medium text-gray-700 mb-2">
             New Password
@@ -322,9 +305,7 @@ export default function ResetPasswordForm({
           </div>
         </div>
 
-        {
-
-        }
+        {}
         <div>
           <label className="block text-sm font-medium text-gray-700 mb-2">
             Confirm New Password
@@ -350,9 +331,7 @@ export default function ResetPasswordForm({
           </div>
         </div>
 
-        {
-
-        }
+        {}
         {error && (
           <div className="flex items-center text-sm text-red-600 bg-red-50 rounded-xl p-3">
             <AlertCircleIcon />
@@ -360,9 +339,7 @@ export default function ResetPasswordForm({
           </div>
         )}
 
-        {
-          
-        }
+        {}
         <div className="bg-blue-50 rounded-xl p-4">
           <p className="text-sm font-medium text-gray-700 mb-2">
             Password requirements:
@@ -387,9 +364,7 @@ export default function ResetPasswordForm({
           </ul>
         </div>
 
-        {
-
-        }
+        {}
         <button
           type="submit"
           disabled={isLoading}

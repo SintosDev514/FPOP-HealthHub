@@ -4,7 +4,7 @@ import { EyeIcon, EyeOffIcon } from "../components/eyeIcon/EyeIcons";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
 
-function SignupForm({ onOpenLogin }) {
+function SignupForm() {
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
 
@@ -199,7 +199,7 @@ function SignupForm({ onOpenLogin }) {
               Already have an account?{" "}
               <button
                 type="button"
-                onClick={onOpenLogin}
+                onClick={() => navigate("/login")}
                 className="text-blue-600 font-semibold"
               >
                 Sign In

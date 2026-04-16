@@ -9,6 +9,8 @@ import ContactPage from "./pages/ContactPage";
 import AboutUs from "./pages/AboutPage";
 import Location from "./pages/LocationPage";
 import Home from "./pages/patient/home";
+import ForgotPass from "./pages/ForgotPasswordForm";
+import ResetPass from "./pages/ResetPasswordForm";
 
 import ProtectedRoute from "./components/protectedRoute/ProtectedRoute";
 import AppointmentBooking from "./pages/patient/patientPages/AppointmentBooking";
@@ -90,6 +92,24 @@ function App() {
           element={
             <PublicLayout>
               <SignupForm />
+            </PublicLayout>
+          }
+        />
+
+        <Route
+          path="/forgotpass"
+          element={
+            <PublicLayout>
+              <ForgotPass />
+            </PublicLayout>
+          }
+        />
+
+        <Route
+          path="/resetpass"
+          element={
+            <PublicLayout>
+              <ResetPass />
             </PublicLayout>
           }
         />
