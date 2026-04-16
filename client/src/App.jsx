@@ -11,6 +11,10 @@ import Location from "./pages/LocationPage";
 import Home from "./pages/patient/home";
 
 import ProtectedRoute from "./components/protectedRoute/ProtectedRoute";
+import AppointmentBooking from "./pages/patient/patientPages/AppointmentBooking";
+import DashboardView from "./pages/patient/patientPages/DashboardView";
+import MyAppointmentsView from "./pages/patient/patientPages/AppointmentsView";
+import MyProfileView from "./pages/patient/patientPages/ProfileView";
 
 function PublicLayout({ children }) {
   return (
@@ -97,6 +101,50 @@ function App() {
             <ProtectedRoute>
               <PrivateLayout>
                 <Home />
+              </PrivateLayout>
+            </ProtectedRoute>
+          }
+        />
+
+        <Route
+          path="/dashboard"
+          element={
+            <ProtectedRoute>
+              <PrivateLayout>
+                <DashboardView />
+              </PrivateLayout>
+            </ProtectedRoute>
+          }
+        />
+
+        <Route
+          path="/appointments"
+          element={
+            <ProtectedRoute>
+              <PrivateLayout>
+                <MyAppointmentsView />
+              </PrivateLayout>
+            </ProtectedRoute>
+          }
+        />
+
+        <Route
+          path="/profile"
+          element={
+            <ProtectedRoute>
+              <PrivateLayout>
+                <MyProfileView />
+              </PrivateLayout>
+            </ProtectedRoute>
+          }
+        />
+
+        <Route
+          path="/booking"
+          element={
+            <ProtectedRoute>
+              <PrivateLayout>
+                <AppointmentBooking />
               </PrivateLayout>
             </ProtectedRoute>
           }
