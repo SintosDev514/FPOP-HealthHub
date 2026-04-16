@@ -2,12 +2,14 @@ import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import logo from "../assets/logo.png";
 import { EyeIcon, EyeOffIcon } from "../components/eyeIcon/EyeIcons";
+import { useAuth } from "../context/AuthContext";
 
 function LoginForm({ onOpenSignup, onOpenForgotPassword }) {
   const [showPassword, setShowPassword] = useState(false);
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const navigate = useNavigate();
+  const { checkAuth } = useAuth();
 
   const handleLogin = async (e) => {
     e.preventDefault();
@@ -28,7 +30,8 @@ function LoginForm({ onOpenSignup, onOpenForgotPassword }) {
       const data = await res.json();
 
       if (res.ok) {
-        navigate("");
+        await checkAuth();
+        navigate("/home");
       } else {
         console.log("Error:", data.message);
       }

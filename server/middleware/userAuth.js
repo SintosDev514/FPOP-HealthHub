@@ -20,9 +20,7 @@ const userAuth = (req, res, next) => {
       });
     }
 
-    req.user = {
-      id: decoded.id,
-    };
+    req.user = decoded;
 
     next();
   } catch (error) {

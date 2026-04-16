@@ -26,4 +26,11 @@ authRouter.get("/isAuthenticated", userAuth, isAuthenticated);
 authRouter.post("/sendResetOtp", sendResetOtp);
 authRouter.post("/resetPassword", resetPassword);
 
+authRouter.get("/me", userAuth, (req, res) => {
+  res.json({
+    authenticated: true,
+    user: req.user,
+  });
+});
+
 export default authRouter;

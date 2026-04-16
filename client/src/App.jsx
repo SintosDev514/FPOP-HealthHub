@@ -8,20 +8,99 @@ import LandingPage from "./pages/LandingPage";
 import ContactPage from "./pages/ContactPage";
 import AboutUs from "./pages/AboutPage";
 import Location from "./pages/LocationPage";
+import Home from "./pages/patient/home";
+
+import ProtectedRoute from "./components/protectedRoute/ProtectedRoute";
+
+function PublicLayout({ children }) {
+  return (
+    <>
+      <NavBar />
+      {children}
+    </>
+  );
+}
+
+function PrivateLayout({ children }) {
+  return <>{children}</>;
+}
 
 function App() {
   return (
     <Router>
-      <NavBar />
-
       <Routes>
-        <Route path="/" element={<LandingPage />} />
-        <Route path="/contact" element={<ContactPage />} />
-        <Route path="/services" element={<ServicesPage />} />
-        <Route path="/login" element={<LoginForm />} />
-        <Route path="/signup" element={<SignupForm />} />
-        <Route path="/about" element={<AboutUs />} />
-        <Route path="/location" element={<Location />} />
+        {/* PUBLIC ROUTES  */}
+        <Route
+          path="/"
+          element={
+            <PublicLayout>
+              <LandingPage />
+            </PublicLayout>
+          }
+        />
+        <Route
+          path="/contact"
+          element={
+            <PublicLayout>
+              <ContactPage />
+            </PublicLayout>
+          }
+        />
+        <Route
+          path="/services"
+          element={
+            <PublicLayout>
+              <ServicesPage />
+            </PublicLayout>
+          }
+        />
+        <Route
+          path="/about"
+          element={
+            <PublicLayout>
+              <AboutUs />
+            </PublicLayout>
+          }
+        />
+        <Route
+          path="/location"
+          element={
+            <PublicLayout>
+              <Location />
+            </PublicLayout>
+          }
+        />
+
+        {/* AUTH ROUTES */}
+        <Route
+          path="/login"
+          element={
+            <PublicLayout>
+              <LoginForm />
+            </PublicLayout>
+          }
+        />
+
+        <Route
+          path="/signup"
+          element={
+            <PublicLayout>
+              <SignupForm />
+            </PublicLayout>
+          }
+        />
+
+        {/* PROTECTED ROUTE */}
+        <Route
+          path="/home"
+          element={
+            <ProtectedRoute>
+              <PrivateLayout>
+                <Home />
+              </PrivateLayout>
+            </ProtectedRoute>
+          }
+        />
       </Routes>
     </Router>
   );
