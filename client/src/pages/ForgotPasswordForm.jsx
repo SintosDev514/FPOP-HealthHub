@@ -1,9 +1,12 @@
 import { useState } from "react";
+import { useNavigate } from "react-router-dom";
 
-export default function ForgotPasswordForm({ onResetPassword }) {
+export default function ForgotPasswordForm() {
   const [email, setEmail] = useState("");
   const [error, setError] = useState("");
   const [isLoading, setIsLoading] = useState(false);
+
+  const navigate = useNavigate();
 
   const validateEmail = (email) => {
     const re = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
@@ -24,19 +27,37 @@ export default function ForgotPasswordForm({ onResetPassword }) {
       return;
     }
 
-    setIsLoading(true);
+    setIsLoading(true); // ✅ move here
 
-    setTimeout(() => {
-      setIsLoading(false);
-      onResetPassword(email);
-      console.log("Sending OTP to:", email);
-    }, 1500);
+    try {
+      const res = await fetch("http://localhost:5000/api/auth/sendResetOtp", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        credentials: "include",
+        body: JSON.stringify({ email }),
+      });
+
+      const data = await res.json(); // ✅ use this
+
+      if (res.ok) {
+        localStorage.setItem("resetEmail", email);
+        navigate("/resetpass");
+      } else {
+        setError(data.message || "Something went wrong");
+      }
+    } catch (err) {
+      setError("Network error. Try again.");
+      console.error(err);
+    } finally {
+      setIsLoading(false); // ✅ always stop loading
+    }
   };
 
   return (
     <div className="min-h-screen flex items-center justify-center px-4 bg-slate-50">
       <div className="w-full max-w-lg bg-white rounded-3xl border border-slate-200 shadow-md p-6 md:p-8">
-        {/* HEADER */}
         <div className="text-center mb-8">
           <div className="w-16 h-16 rounded-2xl bg-blue-600 mx-auto mb-5"></div>
 
@@ -46,24 +67,17 @@ export default function ForgotPasswordForm({ onResetPassword }) {
 
           <p className="text-gray-600 text-sm">
             Enter your email address and we'll send you an OTP
-            <br />
-            to reset your password
           </p>
         </div>
 
-        {/* FORM */}
         <form onSubmit={handleSubmit} className="space-y-6">
           <div>
-            <label
-              htmlFor="email"
-              className="block text-sm font-medium text-gray-700 mb-2"
-            >
+            <label className="block text-sm font-medium text-gray-700 mb-2">
               Email Address
             </label>
 
             <input
               type="email"
-              id="email"
               value={email}
               onChange={(e) => {
                 setEmail(e.target.value);
@@ -71,26 +85,21 @@ export default function ForgotPasswordForm({ onResetPassword }) {
               }}
               className={`w-full h-14 rounded-2xl border ${
                 error ? "border-red-300" : "border-slate-200"
-              } bg-slate-50 px-4 text-slate-700 outline-none focus:ring-2 focus:ring-blue-500`}
+              } bg-slate-50 px-4 outline-none focus:ring-2 focus:ring-blue-500`}
               placeholder="your.email@example.com"
             />
 
-            {error && (
-              <div className="mt-2 flex items-center text-sm text-red-600">
-                <span className="mr-1">⚠️</span>
-                {error}
-              </div>
-            )}
+            {error && <div className="mt-2 text-sm text-red-600">{error}</div>}
           </div>
 
           <button
             type="submit"
             disabled={isLoading}
-            className="w-full h-14 rounded-2xl bg-blue-600 text-white font-semibold text-xl hover:bg-blue-700 transition disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
+            className="w-full h-14 rounded-2xl bg-blue-600 text-white font-semibold text-xl hover:bg-blue-700 transition disabled:opacity-50 flex items-center justify-center gap-2"
           >
             {isLoading ? (
               <>
-                <div className="animate-spin rounded-full h-5 w-5 border-b-2 border-white"></div>
+                <div className="animate-spin h-5 w-5 border-b-2 border-white rounded-full"></div>
                 Sending OTP...
               </>
             ) : (
