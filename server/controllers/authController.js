@@ -5,9 +5,9 @@ import transporter from "../config/nodeMailer.js";
 import userModel from "../models/userModel.js";
 
 export const SignUp = async (req, res) => {
-  const { name, email, password } = req.body;
+  const { firstName, lastName, email, password } = req.body;
 
-  if (!name || !email || !password) {
+  if (!firstName || !lastName || !email || !password) {
     return res.status(400).json({
       success: false,
       message: "Missing required information",
@@ -25,7 +25,12 @@ export const SignUp = async (req, res) => {
 
     const hashPassword = await bcrypt.hash(password, 10);
 
-    const user = new userModel({ name, email, password: hashPassword });
+    const user = new userModel({
+      firstName,
+      lastName,
+      email,
+      password: hashPassword,
+    });
 
     await user.save();
 

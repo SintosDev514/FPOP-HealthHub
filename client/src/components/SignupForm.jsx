@@ -1,10 +1,58 @@
 import { useState } from "react";
 import logo from "../assets/logo.png";
 import { EyeIcon, EyeOffIcon } from "../components/eyeIcon/EyeIcons";
+import { useNavigate } from "react-router-dom";
+import { useAuth } from "../context/AuthContext";
 
 function SignupForm({ onOpenLogin }) {
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
+
+  const [firstName, setFirstName] = useState("");
+  const [lastName, setLastName] = useState("");
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [confirmPassword, setConfirmPassword] = useState("");
+
+  const { checkAuth } = useAuth();
+
+  const navigate = useNavigate();
+
+  const handleSignup = async (e) => {
+    e.preventDefault();
+
+    if (password !== confirmPassword) {
+      console.log("Passwords do not match");
+      return;
+    }
+
+    try {
+      const res = await fetch("http://localhost:5000/api/auth/register", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        credentials: "include",
+        body: JSON.stringify({
+          firstName,
+          lastName,
+          email,
+          password,
+        }),
+      });
+
+      const data = await res.json();
+
+      if (res.ok) {
+        await checkAuth();
+        navigate("/home");
+      } else {
+        console.log("Error:", data.message);
+      }
+    } catch (err) {
+      console.error("Signup failed:", err);
+    }
+  };
 
   return (
     <div className="min-h-screen flex items-center justify-center py-6 px-4">
@@ -26,7 +74,7 @@ function SignupForm({ onOpenLogin }) {
             </p>
           </div>
 
-          <form className="space-y-5">
+          <form className="space-y-5" onSubmit={handleSignup}>
             <div>
               <label className="block text-slate-800 font-semibold mb-2">
                 I am a
@@ -47,6 +95,8 @@ function SignupForm({ onOpenLogin }) {
                 <input
                   type="text"
                   placeholder="John"
+                  value={firstName}
+                  onChange={(e) => setFirstName(e.target.value)}
                   className="w-full h-12 rounded-xl border border-slate-200 px-4 outline-none focus:ring-2 focus:ring-blue-500"
                 />
               </div>
@@ -58,6 +108,8 @@ function SignupForm({ onOpenLogin }) {
                 <input
                   type="text"
                   placeholder="Doe"
+                  value={lastName}
+                  onChange={(e) => setLastName(e.target.value)}
                   className="w-full h-12 rounded-xl border border-slate-200 px-4 outline-none focus:ring-2 focus:ring-blue-500"
                 />
               </div>
@@ -70,6 +122,8 @@ function SignupForm({ onOpenLogin }) {
               <input
                 type="email"
                 placeholder="FPOPClinicPortal@gmail.com"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
                 className="w-full h-12 rounded-xl border border-slate-200 px-4 outline-none focus:ring-2 focus:ring-blue-500 bg-slate-50"
               />
             </div>
@@ -83,6 +137,8 @@ function SignupForm({ onOpenLogin }) {
                   <input
                     type={showPassword ? "text" : "password"}
                     placeholder="••••••••"
+                    value={password}
+                    onChange={(e) => setPassword(e.target.value)}
                     className="w-full h-12 rounded-xl border border-slate-200 px-4 pr-10 outline-none focus:ring-2 focus:ring-blue-500 bg-slate-50"
                   />
                   <button
@@ -103,6 +159,8 @@ function SignupForm({ onOpenLogin }) {
                   <input
                     type={showConfirmPassword ? "text" : "password"}
                     placeholder="••••••••"
+                    value={confirmPassword}
+                    onChange={(e) => setConfirmPassword(e.target.value)}
                     className="w-full h-12 rounded-xl border border-slate-200 px-4 pr-10 outline-none focus:ring-2 focus:ring-blue-500"
                   />
                   <button
