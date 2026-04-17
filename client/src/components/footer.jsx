@@ -117,7 +117,11 @@ const Footer = () => {
                 aria-label="Facebook"
                 title="Facebook"
               >
-                <svg className="h-5 w-5" fill="currentColor" viewBox="0 0 24 24">
+                <svg
+                  className="h-5 w-5"
+                  fill="currentColor"
+                  viewBox="0 0 24 24"
+                >
                   <path d="M22 12c0-5.523-4.477-10-10-10S2 6.477 2 12c0 4.991 3.657 9.128 8.438 9.879v-6.99h-2.54V12h2.54V9.797c0-2.506 1.492-3.89 3.777-3.89 1.094 0 2.238.195 2.238.195v2.46h-1.26c-1.243 0-1.63.771-1.63 1.562V12h2.773l-.443 2.89h-2.33v6.99C18.343 21.128 22 16.991 22 12z" />
                 </svg>
               </a>
@@ -128,7 +132,12 @@ const Footer = () => {
                 aria-label="Copy email address"
                 title={copiedItem === "email" ? "Copied" : "Copy email address"}
               >
-                <svg className="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <svg
+                  className="h-5 w-5"
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
+                >
                   <path
                     strokeLinecap="round"
                     strokeLinejoin="round"
@@ -144,7 +153,9 @@ const Footer = () => {
                 </svg>
               </button>
               {copiedItem === "email" ? (
-                <span className="text-xs font-medium text-[#F5C518]">Copied</span>
+                <span className="text-xs font-medium text-[#F5C518]">
+                  Copied
+                </span>
               ) : null}
               <button
                 type="button"
@@ -153,7 +164,12 @@ const Footer = () => {
                 aria-label="Copy phone number"
                 title={copiedItem === "phone" ? "Copied" : "Copy phone number"}
               >
-                <svg className="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <svg
+                  className="h-5 w-5"
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
+                >
                   <path
                     strokeLinecap="round"
                     strokeLinejoin="round"
@@ -163,7 +179,9 @@ const Footer = () => {
                 </svg>
               </button>
               {copiedItem === "phone" ? (
-                <span className="text-xs font-medium text-[#F5C518]">Copied</span>
+                <span className="text-xs font-medium text-[#F5C518]">
+                  Copied
+                </span>
               ) : null}
             </div>
           </div>
@@ -175,7 +193,8 @@ const Footer = () => {
       <div className="border-t border-white/10">
         <div className="mx-auto max-w-7xl px-4 py-4 sm:px-6 lg:px-8">
           <p className="text-center text-xs text-white/50">
-            (c) 2026 Family Planning Organization of the Philippines. All Rights Reserved.
+            © {new Date().getFullYear()}Family Planning Organization of the
+            Philippines. All Rights Reserved.
           </p>
         </div>
       </div>

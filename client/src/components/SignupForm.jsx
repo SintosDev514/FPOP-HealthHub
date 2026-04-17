@@ -53,7 +53,8 @@ function SignupForm() {
         setError(data.message);
       }
     } catch (err) {
-      setError("Signup failed:", err);
+      console.error(err);
+      setError("Something went wrong. Please try again");
     }
   };
 
