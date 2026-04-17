@@ -94,7 +94,11 @@ export default function ForgotPasswordForm() {
               placeholder="your.email@example.com"
             />
 
-            {error && <div className="mt-2 text-sm text-red-600">{error}</div>}
+            {error && (
+              <div className="mb-4 p-3 rounded-xl bg-red-100 text-red-700 text-sm mt-1">
+                {error}
+              </div>
+            )}
           </div>
 
           <button
