@@ -1,6 +1,6 @@
 import { useState } from "react";
 import logo from "../assets/logo.png";
-import { EyeIcon, EyeOffIcon } from "../components/eyeIcon/EyeIcons";
+import { EyeIcon, EyeOffIcon } from "../components/icon/EyeIcons";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
 
@@ -63,7 +63,7 @@ function SignupForm() {
             <img
               src={logo}
               alt="FPOP Clinic Portal Logo"
-              className="w-14 h-14 rounded-2xl object-cover mb-4 shadow-sm"
+              className="w-14 h-14 rounded-4xl object-cover mb-4 shadow-sm"
             />
 
             <h2 className="text-2xl font-bold text-slate-900">

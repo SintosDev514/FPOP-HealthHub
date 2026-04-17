@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import logo from "../assets/logo.png";
-import { EyeIcon, EyeOffIcon } from "../components/eyeIcon/EyeIcons";
+import { EyeIcon, EyeOffIcon } from "../components/icon/EyeIcons";
 import { useAuth } from "../context/AuthContext";
 
 function LoginForm() {
@@ -10,6 +10,9 @@ function LoginForm() {
   const [password, setPassword] = useState("");
   const navigate = useNavigate();
   const { checkAuth } = useAuth();
+
+  const [message, setMessage] = useState("");
+  const [error, setError] = useState("");
 
   const handleLogin = async (e) => {
     e.preventDefault();
@@ -30,13 +33,14 @@ function LoginForm() {
       const data = await res.json();
 
       if (res.ok) {
+        setMessage(data.message);
         await checkAuth();
         navigate("/home");
       } else {
-        console.log("Error:", data.message);
+        setError(data.message);
       }
-    } catch (err) {
-      console.error("Login failed:", err);
+    } catch (error) {
+      setError("Something went wrong. Please try again: " + error);
     }
   };
 
@@ -49,7 +53,7 @@ function LoginForm() {
             <img
               src={logo}
               alt="FPOP Clinic Portal Logo"
-              className="w-16 h-16 rounded-2xl object-cover mb-5 shadow-sm"
+              className="w-16 h-16 rounded-4xl object-cover mb-5 shadow-sm"
             />
 
             <h2 className="text-3xl md:text-4xl font-bold text-slate-900">
@@ -69,7 +73,7 @@ function LoginForm() {
                 type="email"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
-                placeholder="alvarezdareen776@gmail.com"
+                placeholder="FPOPHealthHub@gmail.com"
                 className="w-full h-14 rounded-2xl border border-slate-200 bg-slate-50 px-4 text-slate-700 outline-none focus:ring-2 focus:ring-blue-500"
               />
             </div>
@@ -113,6 +117,18 @@ function LoginForm() {
                 Forgot Password?
               </button>
             </div>
+
+            {error && (
+              <div className="mb-4 p-3 rounded-xl bg-red-100 text-red-700 text-sm">
+                {error}
+              </div>
+            )}
+
+            {message && (
+              <div className="mb-4 p-3 rounded-xl bg-green-100 text-green-700 text-sm">
+                {message}
+              </div>
+            )}
 
             <button
               type="submit"

@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
+import logo from "../assets/logo.png";
 
 export default function ForgotPasswordForm() {
   const [email, setEmail] = useState("");
@@ -27,7 +28,7 @@ export default function ForgotPasswordForm() {
       return;
     }
 
-    setIsLoading(true); // ✅ move here
+    setIsLoading(true);
 
     try {
       const res = await fetch("http://localhost:5000/api/auth/sendResetOtp", {
@@ -39,7 +40,7 @@ export default function ForgotPasswordForm() {
         body: JSON.stringify({ email }),
       });
 
-      const data = await res.json(); // ✅ use this
+      const data = await res.json();
 
       if (res.ok) {
         localStorage.setItem("resetEmail", email);
@@ -51,15 +52,19 @@ export default function ForgotPasswordForm() {
       setError("Network error. Try again.");
       console.error(err);
     } finally {
-      setIsLoading(false); // ✅ always stop loading
+      setIsLoading(false);
     }
   };
 
   return (
     <div className="min-h-screen flex items-center justify-center px-4 bg-slate-50">
-      <div className="w-full max-w-lg bg-white rounded-3xl border border-slate-200 shadow-md p-6 md:p-8">
-        <div className="text-center mb-8">
-          <div className="w-16 h-16 rounded-2xl bg-blue-600 mx-auto mb-5"></div>
+      <div className="w-full max-w-lg bg-white  rounded-3xl border border-slate-200 shadow-md p-6 md:p-8">
+        <div className="text-center flex flex-col items-center   mb-8">
+          <img
+            src={logo}
+            alt="FPOP Clinic Portal Logo"
+            className="w-16 h-16 rounded-4xl object-cover mb-5 shadow-sm"
+          />
 
           <h2 className="text-3xl font-bold text-gray-900 mb-2">
             Forgot Password?
