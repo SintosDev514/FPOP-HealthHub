@@ -1,6 +1,7 @@
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 
 import NavBar from "./components/navBar";
+import Footer from "./components/footer";
 import LoginForm from "./components/LoginForm";
 import SignupForm from "./components/SignupForm";
 import ServicesPage from "./pages/ServicesPage";
@@ -23,6 +24,7 @@ function PublicLayout({ children }) {
     <>
       <NavBar />
       {children}
+      <Footer />
     </>
   );
 }
