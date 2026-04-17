@@ -1,6 +1,7 @@
-import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
+import { BrowserRouter as Router, Routes, Route, useLocation } from "react-router-dom";
 
 import NavBar from "./components/navBar";
+import Footer from "./components/footer";
 import LoginForm from "./components/LoginForm";
 import SignupForm from "./components/SignupForm";
 import ServicesPage from "./pages/ServicesPage";
@@ -23,12 +24,21 @@ function PublicLayout({ children }) {
     <>
       <NavBar />
       {children}
+      <Footer />
     </>
   );
 }
 
 function PrivateLayout({ children }) {
-  return <>{children}</>;
+  const location = useLocation();
+  const showFooter = location.pathname !== "/home";
+
+  return (
+    <>
+      {children}
+      {showFooter && <Footer />}
+    </>
+  );
 }
 
 function App() {
