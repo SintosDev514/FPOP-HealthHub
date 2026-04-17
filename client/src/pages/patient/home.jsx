@@ -1,7 +1,6 @@
 
 import React, { useState } from 'react';
 import Navbar from '../../components/patient/navbar';
-import Footer from '../../components/footer';
 import AppointmentBooking from './patientPages/AppointmentBooking';
 import DashboardView from './patientPages/DashboardView';
 import MyAppointmentsView from './patientPages/AppointmentsView';
@@ -83,7 +82,6 @@ const CombinedDashboard = () => {
           onViewAppointments={() => setCurrentView('appointments')}
         />
       )}
-      <Footer />
     </div>
   );
 };

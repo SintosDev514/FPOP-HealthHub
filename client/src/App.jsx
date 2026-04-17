@@ -1,4 +1,4 @@
-import { BrowserRouter as Router, Routes, Route, useLocation } from "react-router-dom";
+import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 
 import NavBar from "./components/navBar";
 import Footer from "./components/footer";
@@ -30,15 +30,7 @@ function PublicLayout({ children }) {
 }
 
 function PrivateLayout({ children }) {
-  const location = useLocation();
-  const showFooter = location.pathname !== "/home";
-
-  return (
-    <>
-      {children}
-      {showFooter && <Footer />}
-    </>
-  );
+  return <>{children}</>;
 }
 
 function App() {
