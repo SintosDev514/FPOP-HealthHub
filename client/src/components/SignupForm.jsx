@@ -280,13 +280,7 @@ function SignupForm() {
       {isModalOpen && (
         <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 px-4">
           <div className="bg-white w-full max-w-2xl rounded-2xl shadow-xl p-6 relative">
-            {/* NEW CODE: close button sa taas */}
-            <button
-              onClick={closeModal}
-              className="absolute top-3 right-4 text-gray-500 text-xl hover:text-gray-700"
-            >
-              ×
-            </button>
+        
 
   
             <h2 className="text-xl font-bold text-slate-900 mb-1">
