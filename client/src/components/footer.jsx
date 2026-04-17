@@ -43,10 +43,10 @@ const Footer = () => {
 
   return (
     <footer className="mt-auto w-full bg-[#1E3A5F] text-white/80">
-      <div className="mx-auto max-w-7xl px-4 py-10 sm:px-6 lg:px-8 md:py-12">
-        <div className="grid grid-cols-1 gap-8 md:grid-cols-2 lg:grid-cols-4">
-          <div>
-            <p className="text-sm font-semibold text-white">
+      <div className="mx-auto max-w-6xl px-4 py-10 sm:px-6 lg:px-8 md:py-12">
+        <div className="grid grid-cols-1 gap-10 md:grid-cols-3 md:items-start">
+          <div className="flex w-full max-w-sm flex-col items-start text-left">
+            <p className="max-w-[260px] text-sm font-semibold leading-tight text-white">
               Family Planning Organization of the Philippines
             </p>
             <p className="mt-1 text-xs text-[#F5C518]">- Established 1969</p>
@@ -56,7 +56,7 @@ const Footer = () => {
             </p>
           </div>
 
-          <div>
+          <div className="flex w-full max-w-sm flex-col items-start text-left">
             <h3 className="mb-3 flex items-center gap-2 text-sm font-semibold text-white">
               <svg
                 className="h-4 w-4 text-[#F5C518]"
@@ -68,18 +68,18 @@ const Footer = () => {
                   strokeLinecap="round"
                   strokeLinejoin="round"
                   strokeWidth="2"
-                  d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z"
+                  d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.828 0l-4.243-4.243a8 8 0 1111.314 0z"
+                />
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth="2"
+                  d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"
                 />
               </svg>
-              Contact Information
+              Location
             </h3>
             <div className="space-y-2 text-sm">
-              <div className="flex items-center gap-2">
-                <span className="text-white/70">{phoneNumber}</span>
-              </div>
-              <div className="flex items-center gap-2">
-                <span className="text-white/70">{emailAddress}</span>
-              </div>
               <div className="leading-relaxed text-white/70">
                 Rosales Blvd Corner Galit St.
                 <br />
@@ -90,7 +90,7 @@ const Footer = () => {
             </div>
           </div>
 
-          <div>
+          <div className="flex w-full max-w-sm flex-col items-start text-left">
             <h3 className="mb-3 flex items-center gap-2 text-sm font-semibold text-white">
               <svg
                 className="h-4 w-4 text-[#F5C518]"
@@ -167,15 +167,13 @@ const Footer = () => {
               ) : null}
             </div>
           </div>
-
-          <div />
         </div>
       </div>
 
       <div className="border-t border-white/10">
         <div className="mx-auto max-w-7xl px-4 py-4 sm:px-6 lg:px-8">
           <p className="text-center text-xs text-white/50">
-            (c) 2026 Family Planning Organization of the Philippines. All Rights Reserved.
+            &copy; {new Date().getFullYear()} Family Planning Organization of the Philippines. All Rights Reserved.
           </p>
         </div>
       </div>
