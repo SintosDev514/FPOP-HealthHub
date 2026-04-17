@@ -14,6 +14,9 @@ function SignupForm() {
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
 
+  const [message, setMessage] = useState("");
+  const [error, setError] = useState("");
+
   const { checkAuth } = useAuth();
 
   const navigate = useNavigate();
@@ -22,8 +25,7 @@ function SignupForm() {
     e.preventDefault();
 
     if (password !== confirmPassword) {
-      console.log("Passwords do not match");
-      return;
+      setMessage("Passwords do not match. Please try again.");
     }
 
     try {
@@ -44,13 +46,14 @@ function SignupForm() {
       const data = await res.json();
 
       if (res.ok) {
+        setMessage(data.message);
         await checkAuth();
         navigate("/home");
       } else {
-        console.log("Error:", data.message);
+        setError(data.message);
       }
     } catch (err) {
-      console.error("Signup failed:", err);
+      setError("Signup failed:", err);
     }
   };
 
@@ -187,6 +190,18 @@ function SignupForm() {
                 </a>
               </span>
             </label>
+
+            {error && (
+              <div className="mb-4 p-3 rounded-xl bg-red-100 text-red-700 text-sm">
+                {error}
+              </div>
+            )}
+
+            {message && (
+              <div className="mb-4 p-3 rounded-xl bg-green-100 text-green-700 text-sm">
+                {message}
+              </div>
+            )}
 
             <button
               type="submit"
