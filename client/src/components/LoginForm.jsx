@@ -14,6 +14,8 @@ function LoginForm() {
   const [message, setMessage] = useState("");
   const [error, setError] = useState("");
 
+  const [rememberMe, setRememberMe] = useState("");
+
   const handleLogin = async (e) => {
     e.preventDefault();
 
@@ -27,6 +29,7 @@ function LoginForm() {
         body: JSON.stringify({
           email,
           password,
+          rememberMe,
         }),
       });
 
@@ -104,6 +107,8 @@ function LoginForm() {
               <label className="flex items-center gap-2 text-slate-700">
                 <input
                   type="checkbox"
+                  checked={rememberMe}
+                  onChange={(e) => setRememberMe(e.target.checked)}
                   className="h-4 w-4 rounded border-slate-300"
                 />
                 <span>Remember me</span>

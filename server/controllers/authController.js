@@ -128,7 +128,7 @@ export const SignUp = async (req, res) => {
 ////////
 
 export const SignIn = async (req, res) => {
-  const { email, password } = req.body;
+  const { email, password, rememberMe } = req.body;
 
   if (!email || !password) {
     return res.status(400).json({
@@ -156,11 +156,13 @@ export const SignIn = async (req, res) => {
       expiresIn: "7d",
     });
 
+    const maxAge = rememberMe ? 7 * 24 * 60 * 60 * 1000 : 24 * 60 * 60 * 1000;
+
     res.cookie("token", token, {
       httpOnly: true,
       secure: process.env.NODE_ENV === "production",
       sameSite: process.env.NODE_ENV === "production" ? "none" : "strict",
-      maxAge: 7 * 24 * 60 * 60 * 1000,
+      maxAge,
     });
 
     res.json({
