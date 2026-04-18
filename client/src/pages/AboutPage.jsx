@@ -110,20 +110,31 @@ function AboutPage() {
       });
 
       if (secondTextRef.current) {
-        secondTextRef.current.addEventListener("mouseenter", () => {
+        const el = secondTextRef.current;
+        const onEnter = () => {
           gsap.to(secondTextRef.current, {
             y: -8,
             duration: 0.3,
             ease: "power2.out",
           });
-        });
-        secondTextRef.current.addEventListener("mouseleave", () => {
+        };
+
+        const onLeave = () => {
           gsap.to(secondTextRef.current, {
             y: 0,
             duration: 0.3,
             ease: "power2.out",
           });
-        });
+        };
+        
+        el.addEventListener("mouseenter", onEnter);
+        el.addEventListener("mouseleave", onLeave);
+         
+          return () => {            
+            el.removeEventListener("mouseenter", onEnter);
+            el.removeEventListener("mouseleave", onLeave);
+          };
+       
       }
 
       gsap.from(featureRefs.current, {
@@ -284,11 +295,10 @@ function AboutPage() {
 
             <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
               <article className="rounded-xl bg-[#1E3A5F] px-6 py-8 text-left text-white shadow-[0_16px_28px_rgba(30,58,95,0.18)] transition-all duration-300 border-2 border-transparent hover:bg-white hover:border-[#F5C518] hover:shadow-[0_0_20px_rgba(245,197,24,0.3)] hover:text-[#1E3A5F] md:px-8">
-                <p className="text-sm font-black uppercase tracking-[0.16em] text-blue  transition-colors duration-300">
+                <p className="text-sm font-black uppercase tracking-[0.16em] text-white/90 transition-colors duration-300">
                   Community Outreach
                 </p>
-                <p className="mt-4 text-[15px] leading-7 text-blue  transition-colors duration-300">
-                  Bringing family planning information, health counseling, and
+                <p className="mt-4 text-[15px] leading-7 text-blue  transition-colors duration-300">                  Bringing family planning information, health counseling, and
                   support directly to underserved communities.
                 </p>
               </article>
