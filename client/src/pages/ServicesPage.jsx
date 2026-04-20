@@ -1,3 +1,4 @@
+//import svgs
 import checkIcon from "../assets/checkmark.svg";
 import capsuleIcon from "../assets/capsule.svg";
 import heartIcon from "../assets/heart.svg";
