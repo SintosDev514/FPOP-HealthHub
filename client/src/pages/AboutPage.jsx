@@ -126,15 +126,14 @@ function AboutPage() {
             ease: "power2.out",
           });
         };
-        
+
         el.addEventListener("mouseenter", onEnter);
         el.addEventListener("mouseleave", onLeave);
-         
-          return () => {            
-            el.removeEventListener("mouseenter", onEnter);
-            el.removeEventListener("mouseleave", onLeave);
-          };
-       
+
+        return () => {
+          el.removeEventListener("mouseenter", onEnter);
+          el.removeEventListener("mouseleave", onLeave);
+        };
       }
 
       gsap.from(featureRefs.current, {
@@ -159,7 +158,7 @@ function AboutPage() {
   };
 
   const handleNurseEnter = () => {
-    if (!nurseCardRef.current) return;
+    if (!nurseCardRef.current || window.innerWidth < 768) return;
     gsap.to(nurseCardRef.current, {
       y: -10,
       scale: 1.02,
@@ -181,30 +180,42 @@ function AboutPage() {
   };
 
   return (
-    <div ref={rootRef} className="min-h-screen bg-[#F9FAFB] text-[#1F2937]">
+    <div
+      ref={rootRef}
+      className="min-h-screen bg-[#F9FAFB] text-[#1F2937]"
+    >
       {/* HERO */}
-      <section className="mx-auto max-w-[1400px] px-6 py-6 md:px-10 lg:px-16">
+      <section className="mx-auto max-w-[1400px] px-4 py-6 sm:px-6 md:px-10 lg:px-16">
         <div
           ref={heroRef}
-          className="overflow-visible rounded-[28px] bg-[#1E3A5F] px-6 pt-6 pb-2 shadow-[0_16px_40px_rgba(30,58,95,0.25)] md:px-10 md:pt-6 md:pb-2"
+          className="overflow-visible rounded-[28px] bg-[#1E3A5F] px-4 pt-6 pb-2 shadow-[0_16px_40px_rgba(30,58,95,0.25)] sm:px-6 md:px-10 md:pt-6 md:pb-2"
         >
           <div className="grid items-center gap-6 md:grid-cols-2">
-            <div ref={heroTextRef} className="text-center md:text-left text-white">
-              <h1 className="text-3xl font-extrabold md:text-5xl">About Us</h1>
+            <div
+              ref={heroTextRef}
+              className="text-center text-white md:text-left"
+            >
+              <h1 className="text-3xl font-extrabold sm:text-4xl md:text-5xl">
+                About Us
+              </h1>
 
-              <p className="mt-4 max-w-[520px] text-base leading-7 text-white/80">
+              <p className="mt-4 max-w-[520px] text-base leading-7 text-white/80 mx-auto md:mx-0">
                 Building healthier communities through education, outreach, and
                 accessible reproductive health services.
               </p>
 
-              <p className="mt-6 max-w-[520px] text-sm leading-7 text-white/75">
-                At FPOP, we are committed to providing comprehensive reproductive health services with compassion and expertise. Our mission is to empower individuals and families with knowledge, resources, and quality care that respects their needs and values.
+              <p className="mt-6 max-w-[520px] text-sm leading-7 text-white/75 mx-auto md:mx-0">
+                At FPOP, we are committed to providing comprehensive
+                reproductive health services with compassion and expertise. Our
+                mission is to empower individuals and families with knowledge,
+                resources, and quality care that respects their needs and
+                values.
               </p>
             </div>
 
             <div
               ref={heroImageRef}
-              className="relative flex min-h-[300px] items-end justify-center md:min-h-[380px]"
+              className="relative flex min-h-[260px] items-end justify-center md:min-h-[380px]"
             >
               <div
                 ref={(el) => setHeroCardRef(el, 0)}
@@ -238,9 +249,9 @@ function AboutPage() {
               </div>
 
               <img
-                src="/DOCTOR1.png"
+                src="/doc2.png"
                 alt="Doctor"
-                className="relative z-20 -mb-8 h-[380px] w-auto object-contain md:-mb-8 md:h-[450px] lg:-mb-12 lg:h-[580px]"
+                className="relative z-20 -mb-6 h-[260px] w-auto max-w-full object-contain sm:h-[340px] md:-mb-16 md:h-[550px] lg:-mb-20 lg:h-[538px]"
               />
             </div>
           </div>
@@ -250,83 +261,85 @@ function AboutPage() {
       {/* SECOND SECTION */}
       <section
         ref={secondSectionRef}
-        className="mx-auto max-w-[1400px] px-6 py-16 md:px-10 lg:px-16"
+        className="mx-auto max-w-[1400px] px-4 py-12 sm:px-6 md:px-10 md:py-16 lg:px-16"
       >
-        <div className="grid items-stretch gap-12 lg:grid-cols-3">
+        <div className="grid items-stretch gap-8 lg:grid-cols-3 lg:gap-12">
           {/* LEFT - NURSE DESIGN */}
           <div ref={secondImageRef} className="relative flex justify-center">
             <div
               ref={nurseCardRef}
               onMouseEnter={handleNurseEnter}
               onMouseLeave={handleNurseLeave}
-              className="relative flex h-[280px] w-[120px] items-center justify-center rounded-[38px] bg-[#1E3A5F] shadow-[0_18px_45px_rgba(30,58,95,0.16)] md:h-[380px] md:w-[380px]"
+              className="relative flex h-[260px] w-[260px] items-center justify-center rounded-[28px] bg-[#1E3A5F] shadow-[0_18px_45px_rgba(30,58,95,0.16)] sm:h-[320px] sm:w-[320px] md:h-[380px] md:w-[380px]"
             >
               <div className="pointer-events-none absolute inset-0 rounded-[38px] bg-gradient-to-br from-white/10 to-transparent opacity-40" />
 
-              <div className="absolute -bottom-8 -left-8 h-28 w-24 rounded-[24px] bg-black md:h-32 md:w-28" />
-              <div className="absolute -bottom-20 left-12 h-28 w-24 rounded-[24px] bg-black md:h-32 md:w-28" />
+              <div className="absolute -bottom-6 -left-4 h-20 w-16 rounded-[20px] bg-black sm:h-24 sm:w-20 md:-bottom-8 md:-left-8 md:h-28 md:w-24" />
+              <div className="absolute -bottom-12 left-10 h-20 w-16 rounded-[20px] bg-black sm:h-24 sm:w-20 md:-bottom-20 md:left-12 md:h-28 md:w-24" />
 
               <img
                 src="/NURSE1.png"
                 alt="Nurse"
-                className="relative z-10 h-[1100px] w-auto object-contain md:h-[950px]"
+                className="relative z-10 h-[320px] w-auto object-contain sm:h-[420px] md:h-[950px]"
               />
             </div>
           </div>
 
           {/* RIGHT - THREE CONTAINERS */}
-          <div className="lg:col-span-2 space-y-6">
-            <div 
+          <div className="lg:col-span-2 space-y-5 sm:space-y-6">
+            <div
               ref={secondTextRef}
-              className="rounded-2xl border border-white/15 bg-white/8 px-6 py-6 shadow-[0_8px_32px_rgba(30,58,95,0.1)] transition-all duration-300 backdrop-blur-sm hover:border-[#F5C518]/30 hover:shadow-[0_16px_48px_rgba(245,197,24,0.2)] hover:bg-white/12 md:px-8 md:py-8"
+              className="rounded-2xl border border-white/15 bg-white/8 px-5 py-5 shadow-[0_8px_32px_rgba(30,58,95,0.1)] transition-all duration-300 backdrop-blur-sm hover:border-[#F5C518]/30 hover:shadow-[0_16px_48px_rgba(245,197,24,0.2)] hover:bg-white/12 sm:px-6 sm:py-6 md:px-8 md:py-8"
             >
               <p className="text-lg font-black uppercase tracking-[0.3em] text-black/50">
                 Our Mission
               </p>
-              
-              <h2 className="mt-3 text-3xl font-extrabold leading-tight text-[#1E3A5F] md:text-4xl">
+
+              <h2 className="mt-3 text-2xl font-extrabold leading-tight text-[#1E3A5F] sm:text-3xl md:text-4xl">
                 Making healthcare easier and more accessible.
               </h2>
 
               <p className="mt-4 text-sm leading-6 text-slate-700 md:text-base">
-                Connecting patients with healthcare providers through an innovative digital platform for better access, education, and care for all communities.
+                Connecting patients with healthcare providers through an
+                innovative digital platform for better access, education, and
+                care for all communities.
               </p>
             </div>
 
-            <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
-              <article className="rounded-xl bg-[#1E3A5F] px-6 py-8 text-left text-white shadow-[0_16px_28px_rgba(30,58,95,0.18)] transition-all duration-300 border-2 border-transparent hover:bg-white hover:border-[#F5C518] hover:shadow-[0_0_20px_rgba(245,197,24,0.3)] hover:text-[#1E3A5F] md:px-8">
-                <p className="text-sm font-black uppercase tracking-[0.16em] text-white/90 transition-colors duration-300">
+            <div className="grid gap-4 sm:grid-cols-2 sm:gap-6 lg:grid-cols-3">
+              <article className="rounded-xl bg-[#1E3A5F] px-5 py-6 text-left text-white shadow-[0_16px_28px_rgba(30,58,95,0.18)] transition-all duration-300 border-2 border-transparent hover:bg-white hover:border-[#F5C518] hover:shadow-[0_0_20px_rgba(245,197,24,0.3)] hover:text-[#1E3A5F] sm:px-6 sm:py-7 md:px-8">
+                <p className="text-sm font-black uppercase tracking-[0.16em] text-blue transition-colors duration-300">
                   Community Outreach
                 </p>
-                <p className="mt-4 text-[15px] leading-7 text-blue  transition-colors duration-300">                  Bringing family planning information, health counseling, and
+                <p className="mt-4 text-[15px] leading-7 text-blue transition-colors duration-300">
+                  Bringing family planning information, health counseling, and
                   support directly to underserved communities.
                 </p>
               </article>
 
-              <article className="rounded-xl bg-[#1E3A5F] px-6 py-8 text-left text-white shadow-[0_16px_28px_rgba(30,58,95,0.18)] transition-all duration-300 border-2 border-transparent hover:bg-white hover:border-[#F5C518] hover:shadow-[0_0_20px_rgba(245,197,24,0.3)] hover:text-[#1E3A5F] md:px-8">
-                <p className="text-sm font-black uppercase tracking-[0.16em] text-blue   transition-colors duration-300">
+              <article className="rounded-xl bg-[#1E3A5F] px-5 py-6 text-left text-white shadow-[0_16px_28px_rgba(30,58,95,0.18)] transition-all duration-300 border-2 border-transparent hover:bg-white hover:border-[#F5C518] hover:shadow-[0_0_20px_rgba(245,197,24,0.3)] hover:text-[#1E3A5F] sm:px-6 sm:py-7 md:px-8">
+                <p className="text-sm font-black uppercase tracking-[0.16em] text-blue transition-colors duration-300">
                   Youth Education
                 </p>
-                <p className="mt-4 text-[15px] leading-7 text-blue  transition-colors duration-300">
-                  Promoting adolescent reproductive health, comprehensive sexuality
-                  education, and informed decision-making.
+                <p className="mt-4 text-[15px] leading-7 text-blue transition-colors duration-300">
+                  Promoting adolescent reproductive health, comprehensive
+                  sexuality education, and informed decision-making.
                 </p>
               </article>
 
-              <article className="rounded-xl bg-[#1E3A5F] px-6 py-8 text-left text-white shadow-[0_16px_28px_rgba(30,58,95,0.18)] transition-all duration-300 border-2 border-transparent hover:bg-white hover:border-[#F5C518] hover:shadow-[0_0_20px_rgba(245,197,24,0.3)] hover:text-[#1E3A5F] md:px-8">
+              <article className="rounded-xl bg-[#1E3A5F] px-5 py-6 text-left text-white shadow-[0_16px_28px_rgba(30,58,95,0.18)] transition-all duration-300 border-2 border-transparent hover:bg-white hover:border-[#F5C518] hover:shadow-[0_0_20px_rgba(245,197,24,0.3)] hover:text-[#1E3A5F] sm:px-6 sm:py-7 md:px-8">
                 <p className="text-sm font-black uppercase tracking-[0.16em] text-blue transition-colors duration-300">
                   Clinic Services
                 </p>
-                <p className="mt-4 text-[15px] leading-7 text-blue   transition-colors duration-300">
-                  Supporting appointments, records access, referrals, and patient
-                  communication through a secure digital portal.
+                <p className="mt-4 text-[15px] leading-7 text-blue transition-colors duration-300">
+                  Supporting appointments, records access, referrals, and
+                  patient communication through a secure digital portal.
                 </p>
               </article>
             </div>
           </div>
         </div>
       </section>
-
     </div>
   );
 }
