@@ -34,16 +34,17 @@ function LandingPage() {
           </div>
           {/* RIGHT SIDE */}
           <div className="w-full p-4">
-            <div className="relative overflow-hidden rounded-lg transition-all duration-300 group bg-[#1E3A5F] hover:scale-[1.02] backdrop-blur-[2px] p-6 hover:shadow-lg hover:shadow-[#1E3A5F]/20">
+            <div className="relative overflow-hidden rounded-lg transition-all duration-300 group hover:scale-[1.02] p-6 hover:shadow-lg hover:shadow-[#1E3A5F]/20">
               <div
                 className="absolute inset-0 -z-10 bg-center bg-no-repeat"
                 style={{
                   backgroundImage: `url(${bgImage})`,
-                  backgroundSize: "100%",
+                  backgroundSize: "cover",
                 }}
               ></div>
 
-              <div className="absolute inset-0 -z-10 bg-black/50"></div>
+              <div className="absolute inset-0 -z-10 bg-[#1E3A5F]/60 backdrop-blur-[2px]"></div>
+
 
               <div className="absolute inset-0 z-0 rounded-lg pointer-events-none shadow-[0_0_6px_rgba(0,0,0,0.03),0_2px_6px_rgba(0,0,0,0.08),inset_3px_3px_0.5px_-3px_rgba(0,0,0,0.9),inset_-3px_-3px_0.5px_-3px_rgba(0,0,0,0.85),inset_1px_1px_1px_-0.5px_rgba(0,0,0,0.6),inset_-1px_-1px_1px_-0.5px_rgba(0,0,0,0.6),inset_0_0_6px_6px_rgba(0,0,0,0.12),inset_0_0_2px_2px_rgba(0,0,0,0.06),0_0_12px_rgba(255,255,255,0.15)]"></div>
 
