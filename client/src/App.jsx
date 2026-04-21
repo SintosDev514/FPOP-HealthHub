@@ -1,5 +1,6 @@
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 
+import PublicRoute from "./components/publicRoutes/PublicRoute";
 import NavBar from "./components/navBar";
 import Footer from "./components/footer";
 import LoginForm from "./components/LoginForm";
@@ -38,14 +39,17 @@ function App() {
     <Router>
       <Routes>
         {/* PUBLIC ROUTES  */}
-        <Route
+       <Route
           path="/"
           element={
-            <PublicLayout>
-              <LandingPage />
-            </PublicLayout>
+            <PublicRoute>
+              <PublicLayout>
+                <LandingPage />
+              </PublicLayout>
+            </PublicRoute>
           }
         />
+
         <Route
           path="/contact"
           element={
@@ -83,18 +87,22 @@ function App() {
         <Route
           path="/login"
           element={
+            <PublicRoute>
             <PublicLayout>
               <LoginForm />
             </PublicLayout>
+            </PublicRoute>
           }
         />
 
         <Route
           path="/signup"
           element={
+            <PublicRoute>
             <PublicLayout>
               <SignupForm />
             </PublicLayout>
+            </PublicRoute>
           }
         />
 
