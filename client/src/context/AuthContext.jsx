@@ -7,21 +7,21 @@ export const AuthProvider = ({ children }) => {
   const [loading, setLoading] = useState(true);
 
   const checkAuth = async () => {
-    try {
-      const res = await fetch("http://localhost:5000/api/auth/me", {
-        credentials: "include",
-      });
+  try {
+    const res = await fetch("http://localhost:5000/api/auth/me", {
+      credentials: "include",
+    });
 
-      if (!res.ok) throw new Error();
+    if (!res.ok) throw new Error();
 
-      const data = await res.json();
-      setUser(data);
-    } catch {
-      setUser(null);
-    } finally {
-      setLoading(false);
-    }
-  };
+    const data = await res.json();
+    setUser(data.user || data);
+  } catch {
+    setUser(null);
+  } finally {
+    setLoading(false);
+  }
+};
 
   useEffect(() => {
     checkAuth();
