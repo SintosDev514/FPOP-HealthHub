@@ -79,8 +79,6 @@ function ContactPage() {
     return () => clearTimeout(timeout);
   }, []);
 
-
-
   return (
     <div className="min-h-screen bg-[#F9FAFB] px-4 py-10 sm:px-6 lg:px-8">
       <div className="mx-auto max-w-7xl">
@@ -123,8 +121,12 @@ function ContactPage() {
 
               <div className="mt-8 space-y-5">
                 <div className="flex items-start gap-4">
-                  <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-full bg-white/10 text-lg">
-                    ✉️
+                  <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-full">
+                    <img
+                      src="GmailLogo.png"
+                      alt="Email"
+                      className="h-10 w-10 object-contain"
+                    />
                   </div>
                   <div>
                     <p className="text-sm font-semibold text-white">Email</p>
@@ -133,8 +135,12 @@ function ContactPage() {
                 </div>
 
                 <div className="flex items-start gap-4">
-                  <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-full bg-white/10 text-lg">
-                    📞
+                  <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-full ">
+                    <img
+                      src="PhoneLogo.png"
+                      alt="Phone"
+                      className="h-10 w-10 object-contain"
+                    />
                   </div>
                   <div>
                     <p className="text-sm font-semibold text-white">Phone</p>
@@ -143,8 +149,12 @@ function ContactPage() {
                 </div>
 
                 <div className="flex items-start gap-4">
-                  <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-full bg-white/10 text-lg">
-                    🕒
+                  <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-full">
+                    <img
+                      src="ClockLogo.png"
+                      alt="Office Hours"
+                      className="h-10 w-10 object-contain"
+                    />
                   </div>
                   <div>
                     <p className="text-sm font-semibold text-white">Office Hours</p>
@@ -179,28 +189,6 @@ function ContactPage() {
                     className="h-12 w-full rounded-xl border border-white/10 bg-white/10 px-4 text-sm text-white placeholder:text-white/45 outline-none transition duration-300 focus:border-[#F5C518] focus:bg-white/15"
                   />
                 </div>
-
-                <div>
-                  <label className="mb-2 block text-sm font-medium text-white/90">
-                    Phone Number
-                  </label>
-                  <input
-                    type="text"
-                    placeholder="Phone Number"
-                    className="h-12 w-full rounded-xl border border-white/10 bg-white/10 px-4 text-sm text-white placeholder:text-white/45 outline-none transition duration-300 focus:border-[#F5C518] focus:bg-white/15"
-                  />
-                </div>
-
-                <div>
-                  <label className="mb-2 block text-sm font-medium text-white/90">
-                    Inquiry Type
-                  </label>
-                  <input
-                    type="text"
-                    placeholder="Inquiry Type"
-                    className="h-12 w-full rounded-xl border border-white/10 bg-white/10 px-4 text-sm text-white placeholder:text-white/45 outline-none transition duration-300 focus:border-[#F5C518] focus:bg-white/15"
-                  />
-                </div>
               </div>
 
               <div className="mt-4">
@@ -226,14 +214,12 @@ function ContactPage() {
                 type="submit"
                 className="mt-6 inline-flex h-12 w-full items-center justify-center gap-2 rounded-xl bg-[#F9FAFB] px-6 font-semibold text-[#1E3A5F] transition-all duration-300 hover:bg-[#F5C518] hover:text-[#1F2937] sm:w-auto"
               >
-                Send Message 
+                Send Message
                 <span className="text-lg"></span>
               </button>
             </form>
           </div>
         </div>
-
-       
       </div>
     </div>
   );
