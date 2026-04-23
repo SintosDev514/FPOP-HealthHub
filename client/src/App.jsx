@@ -20,9 +20,13 @@ import DashboardView from "./pages/patient/patientPages/DashboardView";
 import MyAppointmentsView from "./pages/patient/patientPages/AppointmentsView";
 import MyProfileView from "./pages/patient/patientPages/ProfileView";
 
+import Cursor from "./animation.jsx";
+import "./App.css";
+
 function PublicLayout({ children }) {
   return (
     <>
+      <Cursor />
       <NavBar />
       {children}
       <Footer />
@@ -39,7 +43,7 @@ function App() {
     <Router>
       <Routes>
         {/* PUBLIC ROUTES  */}
-       <Route
+        <Route
           path="/"
           element={
             <PublicRoute>
@@ -88,9 +92,9 @@ function App() {
           path="/login"
           element={
             <PublicRoute>
-            <PublicLayout>
-              <LoginForm />
-            </PublicLayout>
+              <PublicLayout>
+                <LoginForm />
+              </PublicLayout>
             </PublicRoute>
           }
         />
@@ -99,9 +103,9 @@ function App() {
           path="/signup"
           element={
             <PublicRoute>
-            <PublicLayout>
-              <SignupForm />
-            </PublicLayout>
+              <PublicLayout>
+                <SignupForm />
+              </PublicLayout>
             </PublicRoute>
           }
         />

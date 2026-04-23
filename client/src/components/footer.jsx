@@ -169,7 +169,7 @@ const Footer = () => {
       <div className="border-t border-white/10">
         <div className="mx-auto max-w-7xl px-4 py-4 sm:px-6 lg:px-8">
           <p className="text-center text-xs text-white/50">
-            © {new Date().getFullYear()}Family Planning Organization of the
+            © {new Date().getFullYear()} Family Planning Organization of the
             Philippines. All Rights Reserved.
           </p>
         </div>
