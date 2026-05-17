@@ -20,13 +20,13 @@ import DashboardView from "./pages/patient/patientPages/DashboardView";
 import MyAppointmentsView from "./pages/patient/patientPages/AppointmentsView";
 import MyProfileView from "./pages/patient/patientPages/ProfileView";
 
-import Cursor from "./animation.jsx";
+
 import "./App.css";
 
 function PublicLayout({ children }) {
   return (
     <>
-      <Cursor />
+   
       <NavBar />
       {children}
       <Footer />

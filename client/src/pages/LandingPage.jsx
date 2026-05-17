@@ -1,22 +1,43 @@
+import React, { useState, useEffect } from "react";
 import bgImage from "../assets/staff.png";
 
 import { useNavigate } from "react-router-dom";
 
 function LandingPage() {
   const navigate = useNavigate();
+  const [cursorPos, setCursorPos] = useState({ x: 0, y: 0 });
+
+  useEffect(() => {
+    const handleMouseMove = (e) => {
+      setCursorPos({ x: e.clientX, y: e.clientY });
+    };
+    window.addEventListener('mousemove', handleMouseMove);
+    return () => window.removeEventListener('mousemove', handleMouseMove);
+  }, []);
 
   return (
     <>
-      <section className="min-h-screen  flex items-center justify-center px-4 py-10">
-        <div className="w-full max-w-6xl grid lg:grid-cols-2 gap-10 items-center">
+      <section
+        className="relative min-h-screen flex items-center justify-center px-4 py-10 bg-[#0B1120] overflow-hidden"
+        onMouseMove={(e) => setCursorPos({ x: e.clientX, y: e.clientY })}
+      >
+        {/* Glowing cursor tracker */}
+        <div
+          className="pointer-events-none absolute inset-0 z-0 transition-opacity duration-300"
+          style={{
+            background: `radial-gradient(600px circle at ${cursorPos.x}px ${cursorPos.y}px, rgba(29, 78, 216, 0.15), transparent 80%)`
+          }}
+        />
+        
+        <div className="w-full max-w-6xl grid lg:grid-cols-2 gap-10 items-center relative z-10">
           {/* LEFT SIDE */}
 
           <div>
-            <h1 className="text-4xl md:text-6xl font-bold text-slate-900 leading-tight">
+            <h1 className="text-4xl md:text-6xl font-bold text-white leading-tight">
               Better healthcare starts with a simpler patient portal.
             </h1>
 
-            <p className="mt-5 text-lg text-slate-600 max-w-xl leading-8">
+            <p className="mt-5 text-lg text-gray-200 max-w-xl leading-8">
               Manage appointments, access your records, and stay connected with
               your clinic in one secure place.
             </p>
@@ -74,7 +95,7 @@ function LandingPage() {
               </div>
 
               {/* Hover shine */}
-              <div className="absolute inset-0 z-20 rounded-lg bg-gradient-to-r from-transparent via-white/10 to-transparent opacity-0 transition-opacity duration-200 group-hover:opacity-100 pointer-events-none"></div>
+              <div className="absolute inset-0 z-20 rounded-lg bg-gradient-to-r from-transparent via-white/40 to-transparent opacity-0 transition-opacity duration-300 group-hover:opacity-100 pointer-events-none"></div>
             </div>
           </div>
 
