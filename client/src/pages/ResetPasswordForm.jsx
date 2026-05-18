@@ -141,22 +141,26 @@ export default function ResetPasswordForm({ onComplete }) {
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-slate-50 px-4">
-      <div className="w-full max-w-md bg-white rounded-3xl shadow-xl border border-slate-200 p-8">
+    <div className="min-h-screen py-16 px-4 flex items-center justify-center relative overflow-hidden bg-[#F9FAFB]">
+      {/* Soft floating background gradient blobs */}
+      <div className="absolute top-1/4 left-1/4 w-[400px] h-[400px] bg-blue-100/40 rounded-full blur-3xl opacity-80 animate-pulse pointer-events-none -z-10" />
+      <div className="absolute bottom-1/4 right-1/4 w-[400px] h-[400px] bg-[#F5C518]/10 rounded-full blur-3xl opacity-60 animate-pulse pointer-events-none -z-10 [animation-delay:2s]" />
+
+      <div className="w-full max-w-lg bg-white/85 backdrop-blur-md border border-white/40 shadow-[0_24px_50px_rgba(30,58,95,0.06)] rounded-[2.5rem] p-8 md:p-10 z-10">
         <div className="text-center mb-8">
           <img
             src={logo}
             alt="Logo"
-            className="w-16 h-16 mx-auto mb-4 rounded-xl shadow-sm"
+            className="w-16 h-16 mx-auto mb-4 rounded-full object-cover shadow-md border-2 border-white"
           />
-          <h2 className="text-2xl font-bold text-gray-900">Reset Password</h2>
-          <p className="text-sm text-gray-500 mt-1 break-all">{email}</p>
+          <h2 className="text-3xl md:text-4xl font-bold text-[#1E3A5F] tracking-tight">Reset Password</h2>
+          <p className="mt-2.5 text-slate-500 text-base break-all font-semibold">{email}</p>
         </div>
 
         <form onSubmit={handleSubmit} className="space-y-6">
           {/* OTP */}
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-3 text-center">
+            <label className="block text-[#1E3A5F] font-bold text-sm tracking-wide uppercase mb-3 text-center">
               Enter OTP
             </label>
 
@@ -168,20 +172,20 @@ export default function ResetPasswordForm({ onComplete }) {
                   maxLength={1}
                   value={digit}
                   onChange={(e) => handleOtpChange(i, e.target.value)}
-                  className="w-12 h-12 text-center text-lg font-semibold rounded-xl border border-slate-300 focus:ring-2 focus:ring-blue-500 outline-none transition"
+                  className="w-12 h-14 text-center text-xl font-bold rounded-2xl border border-slate-200 bg-white/60 focus:border-[#F5C518] focus:ring-4 focus:ring-[#F5C518]/10 outline-none transition-all duration-300 text-[#1E3A5F]"
                 />
               ))}
             </div>
 
-            <div className="text-center mt-3">
+            <div className="text-center mt-4">
               <button
                 type="button"
                 onClick={handleResendOTP}
                 disabled={resendCooldown > 0}
-                className={`text-sm ${
+                className={`text-sm font-bold transition-colors duration-300 ${
                   resendCooldown > 0
-                    ? "text-gray-400 cursor-not-allowed"
-                    : "text-blue-600 hover:text-blue-700"
+                    ? "text-slate-400 cursor-not-allowed"
+                    : "text-[#1E3A5F] hover:text-[#F5C518]"
                 }`}
               >
                 {resendCooldown > 0
@@ -198,12 +202,12 @@ export default function ResetPasswordForm({ onComplete }) {
               placeholder="New Password"
               value={newPassword}
               onChange={(e) => setNewPassword(e.target.value)}
-              className="w-full h-12 px-4 pr-12 rounded-xl border border-slate-300 focus:ring-2 focus:ring-blue-500 outline-none"
+              className="w-full h-14 rounded-2xl border border-slate-200 bg-white/60 px-5 pr-12 text-slate-700 outline-none focus:border-[#F5C518] focus:ring-4 focus:ring-[#F5C518]/10 transition-all duration-300"
             />
             <button
               type="button"
               onClick={() => setShowNewPassword(!showNewPassword)}
-              className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-500"
+              className="absolute right-4 top-1/2 -translate-y-1/2 text-slate-400 hover:text-[#1E3A5F] transition-colors focus:outline-none"
             >
               {showNewPassword ? <EyeOffIcon /> : <EyeIcon />}
             </button>
@@ -216,12 +220,12 @@ export default function ResetPasswordForm({ onComplete }) {
               placeholder="Confirm Password"
               value={confirmPassword}
               onChange={(e) => setConfirmPassword(e.target.value)}
-              className="w-full h-12 px-4 pr-12 rounded-xl border border-slate-300 focus:ring-2 focus:ring-blue-500 outline-none"
+              className="w-full h-14 rounded-2xl border border-slate-200 bg-white/60 px-5 pr-12 text-slate-700 outline-none focus:border-[#F5C518] focus:ring-4 focus:ring-[#F5C518]/10 transition-all duration-300"
             />
             <button
               type="button"
               onClick={() => setShowConfirmPassword(!showConfirmPassword)}
-              className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-500"
+              className="absolute right-4 top-1/2 -translate-y-1/2 text-slate-400 hover:text-[#1E3A5F] transition-colors focus:outline-none"
             >
               {showConfirmPassword ? <EyeOffIcon /> : <EyeIcon />}
             </button>
@@ -229,7 +233,7 @@ export default function ResetPasswordForm({ onComplete }) {
 
           {/* ERROR */}
           {error && (
-            <div className="text-red-500 text-sm text-center bg-red-50 py-2 rounded-lg">
+            <div className="p-4 rounded-xl bg-red-50 border border-red-100 text-red-600 text-sm font-medium text-center">
               {error}
             </div>
           )}
@@ -238,7 +242,7 @@ export default function ResetPasswordForm({ onComplete }) {
           <button
             type="submit"
             disabled={isLoading}
-            className="w-full h-12 bg-blue-600 text-white rounded-xl font-semibold hover:bg-blue-700 transition flex items-center justify-center"
+            className="w-full h-14 rounded-full bg-[#1E3A5F] text-white font-bold text-lg border-2 border-transparent hover:bg-white hover:border-[#F5C518] hover:text-[#1E3A5F] shadow-[0_8px_20px_rgba(30,58,95,0.15)] transition-all duration-300 transform hover:-translate-y-0.5 disabled:opacity-50 flex items-center justify-center gap-2 cursor-pointer"
           >
             {isLoading ? <SpinnerIcon /> : "Reset Password"}
           </button>

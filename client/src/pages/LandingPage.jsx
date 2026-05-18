@@ -5,27 +5,54 @@ import { useNavigate } from "react-router-dom";
 
 function LandingPage() {
   const navigate = useNavigate();
-  const [cursorPos, setCursorPos] = useState({ x: 0, y: 0 });
+  const [mouseCoords, setMouseCoords] = useState({ x: 0, y: 0 });
+  const [mouseOffset, setMouseOffset] = useState({ x: 0, y: 0 });
 
   useEffect(() => {
     const handleMouseMove = (e) => {
-      setCursorPos({ x: e.clientX, y: e.clientY });
+      setMouseCoords({ x: e.clientX, y: e.clientY });
+      
+      const x = (e.clientX - window.innerWidth / 2) / (window.innerWidth / 2);
+      const y = (e.clientY - window.innerHeight / 2) / (window.innerHeight / 2);
+      setMouseOffset({ x, y });
     };
-    window.addEventListener('mousemove', handleMouseMove);
-    return () => window.removeEventListener('mousemove', handleMouseMove);
+    window.addEventListener("mousemove", handleMouseMove);
+    return () => window.removeEventListener("mousemove", handleMouseMove);
   }, []);
 
   return (
     <>
       <section
-        className="relative min-h-screen flex items-center justify-center px-4 py-10 bg-[#0B1120] overflow-hidden"
-        onMouseMove={(e) => setCursorPos({ x: e.clientX, y: e.clientY })}
+        className="relative min-h-screen flex items-center justify-center px-4 py-10 bg-white overflow-hidden"
       >
-        {/* Glowing cursor tracker */}
+        {/* Cursor-reactive multi-layered parallax background blobs */}
+        <div 
+          className="absolute top-1/4 left-1/4 w-[500px] h-[500px] bg-blue-100/40 rounded-full blur-3xl opacity-70 pointer-events-none -z-10"
+          style={{
+            transform: `translate(${mouseOffset.x * -45}px, ${mouseOffset.y * -45}px)`,
+            transition: "transform 0.5s cubic-bezier(0.1, 0.8, 0.2, 1)"
+          }}
+        />
+        <div 
+          className="absolute bottom-1/4 right-1/4 w-[600px] h-[600px] bg-[#F5C518]/10 rounded-full blur-3xl opacity-55 pointer-events-none -z-10"
+          style={{
+            transform: `translate(${mouseOffset.x * 35}px, ${mouseOffset.y * 35}px)`,
+            transition: "transform 0.7s cubic-bezier(0.1, 0.8, 0.2, 1)"
+          }}
+        />
+        <div 
+          className="absolute top-1/3 right-1/3 w-[350px] h-[350px] bg-sky-100/30 rounded-full blur-3xl opacity-40 pointer-events-none -z-10"
+          style={{
+            transform: `translate(${mouseOffset.x * -25}px, ${mouseOffset.y * 25}px)`,
+            transition: "transform 0.9s cubic-bezier(0.1, 0.8, 0.2, 1)"
+          }}
+        />
+
+        {/* Glowing cursor tracker (light halo) */}
         <div
           className="pointer-events-none absolute inset-0 z-0 transition-opacity duration-300"
           style={{
-            background: `radial-gradient(600px circle at ${cursorPos.x}px ${cursorPos.y}px, rgba(29, 78, 216, 0.15), transparent 80%)`
+            background: `radial-gradient(600px circle at ${mouseCoords.x}px ${mouseCoords.y}px, rgba(30, 58, 95, 0.05), rgba(245, 197, 24, 0.03) 40%, transparent 85%)`
           }}
         />
         
@@ -33,11 +60,11 @@ function LandingPage() {
           {/* LEFT SIDE */}
 
           <div>
-            <h1 className="text-4xl md:text-6xl font-bold text-white leading-tight">
+            <h1 className="text-4xl md:text-6xl font-bold text-[#1E3A5F] leading-tight">
               Better healthcare starts with a simpler patient portal.
             </h1>
 
-            <p className="mt-5 text-lg text-gray-200 max-w-xl leading-8">
+            <p className="mt-5 text-lg text-slate-600 max-w-xl leading-8">
               Manage appointments, access your records, and stay connected with
               your clinic in one secure place.
             </p>
@@ -45,9 +72,11 @@ function LandingPage() {
             <div className="mt-8">
               <button
                 onClick={() => navigate("/services")}
-                className="h-14 rounded-sm px-8 border bg-[#1E3A5F] text-white font-semibold 
-               hover:bg-white hover:border-[#F5C518] hover:text-[#1E3A5F]  
-               transition duration-300 hover:scale-105"
+                className="h-14 rounded-full px-10 border border-[#1E3A5F] bg-[#1E3A5F] text-white font-bold 
+                shadow-[0_4px_14px_rgba(30,58,95,0.2)]
+                hover:bg-white hover:border-[#F5C518] hover:text-[#1E3A5F] hover:shadow-[0_4px_14px_rgba(245,197,24,0.3)]
+                transform hover:-translate-y-0.5
+                transition-all duration-300 hover:scale-[1.02]"
               >
                 Offered Services
               </button>
@@ -55,7 +84,9 @@ function LandingPage() {
           </div>
           {/* RIGHT SIDE */}
           <div className="w-full p-4">
-            <div className="relative overflow-hidden rounded-lg transition-all duration-300 group hover:scale-[1.02] p-6 hover:shadow-lg hover:shadow-[#1E3A5F]/20">
+            <div 
+              className="relative overflow-hidden rounded-lg transition-all duration-300 group hover:scale-[1.02] p-6 hover:shadow-lg hover:shadow-[#1E3A5F]/20"
+            >
               <div
                 className="absolute inset-0 -z-10 bg-center bg-no-repeat"
                 style={{

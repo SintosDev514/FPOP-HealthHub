@@ -185,7 +185,7 @@ function LocationPage() {
     <div ref={heroTextRef} className="text-white text-center lg:text-left px-18">
       <h1
         ref={titleRef}
-        className="text-3xl font-extrabold tracking-tight sm:text-4xl md:text-5xl"
+        className="text-3xl font-bold tracking-tight sm:text-4xl md:text-5xl"
       >
         Our Location
       </h1>
@@ -200,7 +200,7 @@ function LocationPage() {
       <div className="mt-5">
         <p
           ref={clinicRef}
-          className="text-2xl font-extrabold sm:text-3xl"
+          className="text-2xl font-bold sm:text-3xl"
         >
           FPOP Calbayog Clinic
         </p>

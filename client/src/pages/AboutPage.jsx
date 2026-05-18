@@ -195,7 +195,7 @@ function AboutPage() {
               ref={heroTextRef}
               className="text-center text-white md:text-left"
             >
-              <h1 className="text-3xl font-extrabold sm:text-4xl md:text-5xl">
+              <h1 className="text-3xl font-bold sm:text-4xl md:text-5xl">
                 About Us
               </h1>
 
@@ -291,11 +291,11 @@ function AboutPage() {
               ref={secondTextRef}
               className="rounded-2xl border border-white/15 bg-white/8 px-5 py-5 shadow-[0_8px_32px_rgba(30,58,95,0.1)] transition-all duration-300 backdrop-blur-sm hover:border-[#F5C518]/30 hover:shadow-[0_16px_48px_rgba(245,197,24,0.2)] hover:bg-white/12 sm:px-6 sm:py-6 md:px-8 md:py-8"
             >
-              <p className="text-lg font-black uppercase tracking-[0.3em] text-black/50">
+              <p className="text-lg font-bold uppercase tracking-[0.3em] text-black/50">
                 Our Mission
               </p>
 
-              <h2 className="mt-3 text-2xl font-extrabold leading-tight text-[#1E3A5F] sm:text-3xl md:text-4xl">
+              <h2 className="mt-3 text-2xl font-bold leading-tight text-[#1E3A5F] sm:text-3xl md:text-4xl">
                 Making healthcare easier and more accessible.
               </h2>
 
@@ -308,7 +308,7 @@ function AboutPage() {
 
             <div className="grid gap-4 sm:grid-cols-2 sm:gap-6 lg:grid-cols-3">
               <article className="rounded-xl bg-[#1E3A5F] px-5 py-6 text-left text-white shadow-[0_16px_28px_rgba(30,58,95,0.18)] transition-all duration-300 border-2 border-transparent hover:bg-white hover:border-[#F5C518] hover:shadow-[0_0_20px_rgba(245,197,24,0.3)] hover:text-[#1E3A5F] sm:px-6 sm:py-7 md:px-8">
-                <p className="text-sm font-black uppercase tracking-[0.16em] text-blue-100 transition-colors duration-300">
+                <p className="text-sm font-bold uppercase tracking-[0.16em] text-blue-100 transition-colors duration-300">
                   Community Outreach
                 </p>
                 <p className="mt-4 text-[15px] leading-7 text-blue-100 transition-colors duration-300">
@@ -318,7 +318,7 @@ function AboutPage() {
               </article>
 
               <article className="rounded-xl bg-[#1E3A5F] px-5 py-6 text-left text-white shadow-[0_16px_28px_rgba(30,58,95,0.18)] transition-all duration-300 border-2 border-transparent hover:bg-white hover:border-[#F5C518] hover:shadow-[0_0_20px_rgba(245,197,24,0.3)] hover:text-[#1E3A5F] sm:px-6 sm:py-7 md:px-8">
-                <p className="text-sm font-black uppercase tracking-[0.16em] text-blue-100 transition-colors duration-300">
+                <p className="text-sm font-bold uppercase tracking-[0.16em] text-blue-100 transition-colors duration-300">
                   Youth Education
                 </p>
                 <p className="mt-4 text-[15px] leading-7 text-blue-100 transition-colors duration-300">
@@ -328,7 +328,7 @@ function AboutPage() {
               </article>
 
               <article className="rounded-xl bg-[#1E3A5F] px-5 py-6 text-left text-white shadow-[0_16px_28px_rgba(30,58,95,0.18)] transition-all duration-300 border-2 border-transparent hover:bg-white hover:border-[#F5C518] hover:shadow-[0_0_20px_rgba(245,197,24,0.3)] hover:text-[#1E3A5F] sm:px-6 sm:py-7 md:px-8">
-                <p className="text-sm font-black uppercase tracking-[0.16em] text-blue-100 transition-colors duration-300">
+                <p className="text-sm font-bold uppercase tracking-[0.16em] text-blue-100 transition-colors duration-300">
                   Clinic Services
                 </p>
                 <p className="mt-4 text-[15px] leading-7 text-blue-100 transition-colors duration-300">

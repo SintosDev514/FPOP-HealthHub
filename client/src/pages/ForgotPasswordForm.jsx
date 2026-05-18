@@ -57,27 +57,31 @@ export default function ForgotPasswordForm() {
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center px-4 bg-slate-50">
-      <div className="w-full max-w-lg bg-white  rounded-3xl border border-slate-200 shadow-md p-6 md:p-8">
-        <div className="text-center flex flex-col items-center   mb-8">
+    <div className="min-h-screen py-16 px-4 flex items-center justify-center relative overflow-hidden bg-[#F9FAFB]">
+      {/* Soft floating background gradient blobs */}
+      <div className="absolute top-1/4 left-1/4 w-[400px] h-[400px] bg-blue-100/40 rounded-full blur-3xl opacity-80 animate-pulse pointer-events-none -z-10" />
+      <div className="absolute bottom-1/4 right-1/4 w-[400px] h-[400px] bg-[#F5C518]/10 rounded-full blur-3xl opacity-60 animate-pulse pointer-events-none -z-10 [animation-delay:2s]" />
+
+      <div className="w-full max-w-lg bg-white/85 backdrop-blur-md border border-white/40 shadow-[0_24px_50px_rgba(30,58,95,0.06)] rounded-[2.5rem] p-8 md:p-10 z-10">
+        <div className="text-center flex flex-col items-center mb-8">
           <img
             src={logo}
             alt="FPOP Clinic Portal Logo"
-            className="w-16 h-16 rounded-4xl object-cover mb-5 shadow-sm"
+            className="w-16 h-16 rounded-full object-cover mb-4 shadow-md border-2 border-white"
           />
 
-          <h2 className="text-3xl font-bold text-gray-900 mb-2">
+          <h2 className="text-3xl md:text-4xl font-bold text-[#1E3A5F] tracking-tight">
             Forgot Password?
           </h2>
 
-          <p className="text-gray-600 text-sm">
+          <p className="mt-2.5 text-slate-500 text-base">
             Enter your email address and we'll send you an OTP
           </p>
         </div>
 
         <form onSubmit={handleSubmit} className="space-y-6">
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">
+            <label className="block text-[#1E3A5F] font-bold text-sm tracking-wide uppercase mb-2">
               Email Address
             </label>
 
@@ -89,13 +93,13 @@ export default function ForgotPasswordForm() {
                 if (error) setError("");
               }}
               className={`w-full h-14 rounded-2xl border ${
-                error ? "border-red-300" : "border-slate-200"
-              } bg-slate-50 px-4 outline-none focus:ring-2 focus:ring-blue-500`}
+                error ? "border-red-300 focus:ring-red-500/10" : "border-slate-200 focus:border-[#F5C518] focus:ring-[#F5C518]/10"
+              } bg-white/60 px-5 text-slate-700 outline-none focus:ring-4 transition-all duration-300`}
               placeholder="your.email@example.com"
             />
 
             {error && (
-              <div className="mb-4 p-3 rounded-xl bg-red-100 text-red-700 text-sm mt-1">
+              <div className="mt-3 p-4 rounded-xl bg-red-50 border border-red-100 text-red-600 text-sm font-medium">
                 {error}
               </div>
             )}
@@ -104,17 +108,27 @@ export default function ForgotPasswordForm() {
           <button
             type="submit"
             disabled={isLoading}
-            className="w-full h-14 rounded-2xl bg-blue-600 text-white font-semibold text-xl hover:bg-blue-700 transition disabled:opacity-50 flex items-center justify-center gap-2"
+            className="w-full h-14 rounded-full bg-[#1E3A5F] text-white font-bold text-lg border-2 border-transparent hover:bg-white hover:border-[#F5C518] hover:text-[#1E3A5F] shadow-[0_8px_20px_rgba(30,58,95,0.15)] transition-all duration-300 transform hover:-translate-y-0.5 disabled:opacity-50 flex items-center justify-center gap-2 cursor-pointer"
           >
             {isLoading ? (
               <>
-                <div className="animate-spin h-5 w-5 border-b-2 border-white rounded-full"></div>
+                <div className="animate-spin h-5 w-5 border-2 border-white border-t-transparent rounded-full"></div>
                 Sending OTP...
               </>
             ) : (
               "Send OTP →"
             )}
           </button>
+
+          <p className="text-center text-slate-500 text-sm font-medium pt-2">
+            <button
+              type="button"
+              onClick={() => navigate("/login")}
+              className="text-[#1E3A5F] hover:text-[#F5C518] font-bold transition-colors duration-300 flex items-center justify-center gap-1.5 mx-auto"
+            >
+              <span>←</span> Back to Sign In
+            </button>
+          </p>
         </form>
       </div>
     </div>

@@ -84,198 +84,198 @@ function SignupForm() {
 
   return (
     <>
-      <div className="min-h-screen flex items-center justify-center py-6 px-4">
-        <div className="w-full max-w-lg bg-white rounded-3xl border border-slate-200 shadow-md p-10 md:p-8">
-          <div className="w-full max-w-xl p-6 md:p-8">
-            <div className="flex flex-col items-center text-center mb-8">
-              <img
-                src={logo}
-                alt="FPOP Clinic Portal Logo"
-                className="w-14 h-14 rounded-4xl object-cover mb-4 shadow-sm"
-              />
+      <div className="min-h-screen py-16 px-4 flex items-center justify-center relative overflow-hidden bg-[#F9FAFB]">
+        {/* Soft floating background gradient blobs */}
+        <div className="absolute top-1/4 left-1/4 w-[400px] h-[400px] bg-blue-100/40 rounded-full blur-3xl opacity-80 animate-pulse pointer-events-none -z-10" />
+        <div className="absolute bottom-1/4 right-1/4 w-[400px] h-[400px] bg-[#F5C518]/10 rounded-full blur-3xl opacity-60 animate-pulse pointer-events-none -z-10 [animation-delay:2s]" />
 
-              <h2 className="text-2xl font-bold text-slate-900">
-                Create Account
-              </h2>
-              <p className="mt-2 text-slate-500">
-                Join FPOP Clinic for better healthcare
-              </p>
+        <div className="w-full max-w-lg bg-white/85 backdrop-blur-md border border-white/40 shadow-[0_24px_50px_rgba(30,58,95,0.06)] rounded-[2.5rem] p-8 md:p-10 z-10">
+          <div className="flex flex-col items-center text-center mb-8">
+            <img
+              src={logo}
+              alt="FPOP Clinic Portal Logo"
+              className="w-16 h-16 rounded-full object-cover mb-4 shadow-md border-2 border-white"
+            />
+
+            <h2 className="text-3xl md:text-4xl font-bold text-[#1E3A5F] tracking-tight">
+              Create Account
+            </h2>
+            <p className="mt-2.5 text-slate-500 text-base">
+              Join FPOP Clinic for better healthcare
+            </p>
+          </div>
+
+          <form className="space-y-5" onSubmit={handleSignup}>
+            <div>
+              <label className="block text-[#1E3A5F] font-bold text-sm tracking-wide uppercase mb-2">
+                I am a
+              </label>
+              <button
+                type="button"
+                className="w-full rounded-2xl border-2 border-[#1E3A5F] text-[#1E3A5F] font-bold py-3.5 bg-blue-50/50 shadow-sm cursor-default"
+              >
+                Patient
+              </button>
             </div>
 
-            <form className="space-y-5" onSubmit={handleSignup}>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div>
-                <label className="block text-slate-800 font-semibold mb-2">
-                  I am a
-                </label>
-                <button
-                  type="button"
-                  className="w-full rounded-xl border-2 border-blue-600 text-blue-600 font-semibold py-3 bg-blue-50"
-                >
-                  Patient
-                </button>
-              </div>
-
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                <div>
-                  <label className="block text-slate-800 font-medium mb-2">
-                    First Name
-                  </label>
-                  <input
-                    type="text"
-                    placeholder="John"
-                    value={firstName}
-                    onChange={(e) => setFirstName(e.target.value)}
-                    className="w-full h-12 rounded-xl border border-slate-200 px-4 outline-none focus:ring-2 focus:ring-blue-500"
-                  />
-                </div>
-
-                <div>
-                  <label className="block text-slate-800 font-medium mb-2">
-                    Last Name
-                  </label>
-                  <input
-                    type="text"
-                    placeholder="Doe"
-                    value={lastName}
-                    onChange={(e) => setLastName(e.target.value)}
-                    className="w-full h-12 rounded-xl border border-slate-200 px-4 outline-none focus:ring-2 focus:ring-blue-500"
-                  />
-                </div>
-              </div>
-
-              <div>
-                <label className="block text-slate-800 font-medium mb-2">
-                  Email Address
+                <label className="block text-[#1E3A5F] font-bold text-sm tracking-wide uppercase mb-2">
+                  First Name
                 </label>
                 <input
-                  type="email"
-                  placeholder="FPOPClinicPortal@gmail.com"
-                  value={email}
-                  onChange={(e) => setEmail(e.target.value)}
-                  className="w-full h-12 rounded-xl border border-slate-200 px-4 outline-none focus:ring-2 focus:ring-blue-500 bg-slate-50"
+                  type="text"
+                  placeholder="John"
+                  value={firstName}
+                  onChange={(e) => setFirstName(e.target.value)}
+                  className="w-full h-12 rounded-xl border border-slate-200 bg-white/60 px-4 outline-none focus:border-[#F5C518] focus:ring-4 focus:ring-[#F5C518]/10 transition-all duration-300 text-slate-700"
                 />
               </div>
 
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                <div>
-                  <label className="block text-slate-800 font-medium mb-2">
-                    Password
-                  </label>
-                  <div className="relative">
-                    <input
-                      type={showPassword ? "text" : "password"}
-                      placeholder="••••••••"
-                      value={password}
-                      onChange={(e) => setPassword(e.target.value)}
-                      className="w-full h-12 rounded-xl border border-slate-200 px-4 pr-10 outline-none focus:ring-2 focus:ring-blue-500 bg-slate-50"
-                    />
-                    <button
-                      type="button"
-                      onClick={() => setShowPassword(!showPassword)}
-                      className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-500 hover:text-gray-700"
-                    >
-                      {showPassword ? <EyeOffIcon /> : <EyeIcon />}
-                    </button>
-                  </div>
-                </div>
-
-                <div>
-                  <label className="block text-slate-800 font-medium mb-2">
-                    Confirm Password
-                  </label>
-                  <div className="relative">
-                    <input
-                      type={showConfirmPassword ? "text" : "password"}
-                      placeholder="••••••••"
-                      value={confirmPassword}
-                      onChange={(e) => setConfirmPassword(e.target.value)}
-                      className="w-full h-12 rounded-xl border border-slate-200 px-4 pr-10 outline-none focus:ring-2 focus:ring-blue-500"
-                    />
-                    <button
-                      type="button"
-                      onClick={() =>
-                        setShowConfirmPassword(!showConfirmPassword)
-                      }
-                      className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-500 hover:text-gray-700"
-                    >
-                      {showConfirmPassword ? <EyeOffIcon /> : <EyeIcon />}
-                    </button>
-                  </div>
-                </div>
-              </div>
-
-              <label className="flex items-start gap-2 text-sm text-slate-600">
+              <div>
+                <label className="block text-[#1E3A5F] font-bold text-sm tracking-wide uppercase mb-2">
+                  Last Name
+                </label>
                 <input
-                  type="checkbox"
-                  className="mt-1"
-                  checked={agreed}
-                  onChange={(e) => setAgreed(e.target.checked)}
+                  type="text"
+                  placeholder="Doe"
+                  value={lastName}
+                  onChange={(e) => setLastName(e.target.value)}
+                  className="w-full h-12 rounded-xl border border-slate-200 bg-white/60 px-4 outline-none focus:border-[#F5C518] focus:ring-4 focus:ring-[#F5C518]/10 transition-all duration-300 text-slate-700"
                 />
-                <span>
-                  I agree to the{" "}
-                  <button
-                    type="button"
-                    onClick={() => openModal("terms")}
-                    className="text-blue-600 underline"
-                  >
-                    Terms of Service
-                  </button>{" "}
-                  and{" "}
-                  <button
-                    type="button"
-                    onClick={() => openModal("privacy")}
-                    className="text-blue-600 underline"
-                  >
-                    Privacy Policy
-                  </button>
-                </span>
+              </div>
+            </div>
+
+            <div>
+              <label className="block text-[#1E3A5F] font-bold text-sm tracking-wide uppercase mb-2">
+                Email Address
               </label>
+              <input
+                type="email"
+                placeholder="FPOPClinicPortal@gmail.com"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+                className="w-full h-12 rounded-xl border border-slate-200 bg-white/60 px-4 outline-none focus:border-[#F5C518] focus:ring-4 focus:ring-[#F5C518]/10 transition-all duration-300 text-slate-700"
+              />
+            </div>
 
-              {error && (
-                <div className="mb-4 p-3 rounded-xl bg-red-100 text-red-700 text-sm">
-                  {error}
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div>
+                <label className="block text-[#1E3A5F] font-bold text-sm tracking-wide uppercase mb-2">
+                  Password
+                </label>
+                <div className="relative">
+                  <input
+                    type={showPassword ? "text" : "password"}
+                    placeholder="••••••••"
+                    value={password}
+                    onChange={(e) => setPassword(e.target.value)}
+                    className="w-full h-12 rounded-xl border border-slate-200 bg-white/60 px-4 pr-10 outline-none focus:border-[#F5C518] focus:ring-4 focus:ring-[#F5C518]/10 transition-all duration-300 text-slate-700"
+                  />
+                  <button
+                    type="button"
+                    onClick={() => setShowPassword(!showPassword)}
+                    className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 hover:text-[#1E3A5F] transition-colors focus:outline-none"
+                  >
+                    {showPassword ? <EyeOffIcon /> : <EyeIcon />}
+                  </button>
                 </div>
-              )}
+              </div>
 
-              {message && (
-                <div className="mb-4 p-3 rounded-xl bg-green-100 text-green-700 text-sm">
-                  {message}
+              <div>
+                <label className="block text-[#1E3A5F] font-bold text-sm tracking-wide uppercase mb-2">
+                  Confirm Password
+                </label>
+                <div className="relative">
+                  <input
+                    type={showConfirmPassword ? "text" : "password"}
+                    placeholder="••••••••"
+                    value={confirmPassword}
+                    onChange={(e) => setConfirmPassword(e.target.value)}
+                    className="w-full h-12 rounded-xl border border-slate-200 bg-white/60 px-4 pr-10 outline-none focus:border-[#F5C518] focus:ring-4 focus:ring-[#F5C518]/10 transition-all duration-300 text-slate-700"
+                  />
+                  <button
+                    type="button"
+                    onClick={() =>
+                      setShowConfirmPassword(!showConfirmPassword)
+                    }
+                    className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 hover:text-[#1E3A5F] transition-colors focus:outline-none"
+                  >
+                    {showConfirmPassword ? <EyeOffIcon /> : <EyeIcon />}
+                  </button>
                 </div>
-              )}
+              </div>
+            </div>
 
-              <button
-                type="submit"
-                disabled={!agreed}
-                className={`w-full h-12 rounded-xl text-white font-semibold transition ${
-                  agreed
-                    ? "bg-blue-600 hover:bg-blue-700"
-                    : "bg-slate-400 cursor-not-allowed"
-                }`}
-              >
-                Create Account
-              </button>
-
-              <p className="text-center text-slate-600 text-sm">
-                Already have an account?{" "}
+            <label className="flex items-start gap-2.5 text-sm text-slate-600 cursor-pointer select-none">
+              <input
+                type="checkbox"
+                className="mt-1 h-4 w-4 rounded border-slate-300 text-[#1E3A5F] focus:ring-[#1E3A5F]/20 cursor-pointer"
+                checked={agreed}
+                onChange={(e) => setAgreed(e.target.checked)}
+              />
+              <span className="leading-tight text-slate-500 font-medium">
+                I agree to the{" "}
                 <button
                   type="button"
-                  onClick={() => navigate("/login")}
-                  className="text-blue-600 font-semibold"
+                  onClick={() => openModal("terms")}
+                  className="text-[#1E3A5F] hover:text-[#F5C518] font-bold transition-colors duration-300 underline underline-offset-2"
                 >
-                  Sign In
+                  Terms of Service
+                </button>{" "}
+                and{" "}
+                <button
+                  type="button"
+                  onClick={() => openModal("privacy")}
+                  className="text-[#1E3A5F] hover:text-[#F5C518] font-bold transition-colors duration-300 underline underline-offset-2"
+                >
+                  Privacy Policy
                 </button>
-              </p>
-            </form>
-          </div>
+              </span>
+            </label>
+
+            {error && (
+              <div className="mb-4 p-4 rounded-xl bg-red-50 border border-red-100 text-red-600 text-sm font-medium">
+                {error}
+              </div>
+            )}
+
+            {message && (
+              <div className="mb-4 p-4 rounded-xl bg-green-50 border border-green-100 text-green-600 text-sm font-medium">
+                {message}
+              </div>
+            )}
+
+            <button
+              type="submit"
+              disabled={!agreed}
+              className={`w-full h-14 rounded-full font-bold text-lg border-2 border-transparent transition-all duration-300 transform hover:-translate-y-0.5 shadow-[0_8px_20px_rgba(30,58,95,0.15)] ${
+                agreed
+                  ? "bg-[#1E3A5F] text-white hover:bg-white hover:border-[#F5C518] hover:text-[#1E3A5F] cursor-pointer"
+                  : "bg-slate-300 text-slate-500 cursor-not-allowed shadow-none transform-none"
+              }`}
+            >
+              Create Account
+            </button>
+
+            <p className="text-center text-slate-500 text-sm font-medium pt-2">
+              Already have an account?{" "}
+              <button
+                type="button"
+                onClick={() => navigate("/login")}
+                className="text-[#1E3A5F] hover:text-[#F5C518] font-bold transition-colors duration-300 underline underline-offset-4"
+              >
+                Sign In
+              </button>
+            </p>
+          </form>
         </div>
       </div>
 
       {isModalOpen && (
-        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 px-4">
-          <div className="bg-white w-full max-w-2xl rounded-2xl shadow-xl p-6 relative">
-        
-
-            <h2 className="text-xl font-bold text-slate-900 mb-1">
+        <div className="fixed inset-0 bg-[#1E3A5F]/40 backdrop-blur-sm flex items-center justify-center z-50 px-4">
+          <div className="bg-white w-full max-w-2xl rounded-[2.5rem] shadow-2xl border border-white/40 p-8 relative flex flex-col max-h-[85vh]">
+            <h2 className="text-2xl font-bold text-[#1E3A5F] mb-1">
               {modalType === "terms" ? "Terms of Service" : "Privacy Policy"}
             </h2>
 
@@ -283,11 +283,11 @@ function SignupForm() {
               Please read the following information carefully before continuing.
             </p>
 
-            <div className="text-sm text-slate-600 space-y-4 max-h-80 overflow-y-auto pr-2 leading-relaxed border rounded-xl p-4 bg-slate-50">
+            <div className="text-sm text-slate-600 space-y-4 overflow-y-auto pr-2 leading-relaxed border rounded-2xl p-5 bg-slate-50 flex-1">
               {modalType === "terms" ? (
                 <>
                   <div>
-                    <h3 className="font-semibold text-slate-800 mb-1">
+                    <h3 className="font-bold text-[#1E3A5F] mb-1">
                       1. Acceptance of Terms
                     </h3>
                     <p>
@@ -299,7 +299,7 @@ function SignupForm() {
                   </div>
 
                   <div>
-                    <h3 className="font-semibold text-slate-800 mb-1">
+                    <h3 className="font-bold text-[#1E3A5F] mb-1">
                       2. Use of the Portal
                     </h3>
                     <p>
@@ -312,7 +312,7 @@ function SignupForm() {
                   </div>
 
                   <div>
-                    <h3 className="font-semibold text-slate-800 mb-1">
+                    <h3 className="font-bold text-[#1E3A5F] mb-1">
                       3. Account Responsibility
                     </h3>
                     <p>
@@ -325,7 +325,7 @@ function SignupForm() {
                   </div>
 
                   <div>
-                    <h3 className="font-semibold text-slate-800 mb-1">
+                    <h3 className="font-bold text-[#1E3A5F] mb-1">
                       4. Prohibited Activities
                     </h3>
                     <p>
@@ -337,7 +337,7 @@ function SignupForm() {
                   </div>
 
                   <div>
-                    <h3 className="font-semibold text-slate-800 mb-1">
+                    <h3 className="font-bold text-[#1E3A5F] mb-1">
                       5. Appointments and Services
                     </h3>
                     <p>
@@ -350,7 +350,7 @@ function SignupForm() {
                   </div>
 
                   <div>
-                    <h3 className="font-semibold text-slate-800 mb-1">
+                    <h3 className="font-bold text-[#1E3A5F] mb-1">
                       6. Limitation of Liability
                     </h3>
                     <p>
@@ -363,7 +363,7 @@ function SignupForm() {
                   </div>
 
                   <div>
-                    <h3 className="font-semibold text-slate-800 mb-1">
+                    <h3 className="font-bold text-[#1E3A5F] mb-1">
                       7. Termination of Access
                     </h3>
                     <p>
@@ -375,7 +375,7 @@ function SignupForm() {
                   </div>
 
                   <div>
-                    <h3 className="font-semibold text-slate-800 mb-1">
+                    <h3 className="font-bold text-[#1E3A5F] mb-1">
                       8. Changes to Terms
                     </h3>
                     <p>
@@ -388,7 +388,7 @@ function SignupForm() {
               ) : (
                 <>
                   <div>
-                    <h3 className="font-semibold text-slate-800 mb-1">
+                    <h3 className="font-bold text-[#1E3A5F] mb-1">
                       1. Information We Collect
                     </h3>
                     <p>
@@ -401,7 +401,7 @@ function SignupForm() {
                   </div>
 
                   <div>
-                    <h3 className="font-semibold text-slate-800 mb-1">
+                    <h3 className="font-bold text-[#1E3A5F] mb-1">
                       2. Purpose of Collection
                     </h3>
                     <p>
@@ -413,7 +413,7 @@ function SignupForm() {
                   </div>
 
                   <div>
-                    <h3 className="font-semibold text-slate-800 mb-1">
+                    <h3 className="font-bold text-[#1E3A5F] mb-1">
                       3. Use of Personal Data
                     </h3>
                     <p>
@@ -426,7 +426,7 @@ function SignupForm() {
                   </div>
 
                   <div>
-                    <h3 className="font-semibold text-slate-800 mb-1">
+                    <h3 className="font-bold text-[#1E3A5F] mb-1">
                       4. Data Protection
                     </h3>
                     <p>
@@ -438,7 +438,7 @@ function SignupForm() {
                   </div>
 
                   <div>
-                    <h3 className="font-semibold text-slate-800 mb-1">
+                    <h3 className="font-bold text-[#1E3A5F] mb-1">
                       5. Data Sharing
                     </h3>
                     <p>
@@ -450,7 +450,7 @@ function SignupForm() {
                   </div>
 
                   <div>
-                    <h3 className="font-semibold text-slate-800 mb-1">
+                    <h3 className="font-bold text-[#1E3A5F] mb-1">
                       6. Data Retention
                     </h3>
                     <p>
@@ -462,7 +462,7 @@ function SignupForm() {
                   </div>
 
                   <div>
-                    <h3 className="font-semibold text-slate-800 mb-1">
+                    <h3 className="font-bold text-[#1E3A5F] mb-1">
                       7. User Rights
                     </h3>
                     <p>
@@ -474,7 +474,7 @@ function SignupForm() {
                   </div>
 
                   <div>
-                    <h3 className="font-semibold text-slate-800 mb-1">
+                    <h3 className="font-bold text-[#1E3A5F] mb-1">
                       8. Updates to this Policy
                     </h3>
                     <p>
@@ -491,7 +491,7 @@ function SignupForm() {
             <div className="mt-6 flex justify-end">
               <button
                 onClick={closeModal}
-                className="px-4 py-2 rounded-xl bg-blue-600 text-white hover:bg-blue-700"
+                className="px-6 py-3 rounded-full bg-[#1E3A5F] text-white font-bold hover:bg-white hover:border-[#F5C518] border-2 border-transparent hover:text-[#1E3A5F] transition-all duration-300 shadow-md"
               >
                 Close
               </button>
