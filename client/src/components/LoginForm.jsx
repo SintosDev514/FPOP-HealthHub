@@ -1,8 +1,9 @@
-import { useState } from "react";
+import { useRef, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import logo from "../assets/logo.png";
 import { EyeIcon, EyeOffIcon } from "../components/icon/EyeIcons";
 import { useAuth } from "../context/AuthContext";
+import ReCaptcha from "./ReCaptcha";
 
 function LoginForm() {
   const [showPassword, setShowPassword] = useState(false);
@@ -15,6 +16,9 @@ function LoginForm() {
   const [error, setError] = useState("");
 
   const [rememberMe, setRememberMe] = useState("");
+  const [recaptchaToken, setRecaptchaToken] = useState("");
+  const recaptchaRef = useRef(null);
+  const canSubmit = email && password && recaptchaToken;
 
   const handleLogin = async (e) => {
     e.preventDefault();
@@ -30,6 +34,7 @@ function LoginForm() {
           email,
           password,
           rememberMe,
+          recaptchaToken,
         }),
       });
 
@@ -41,10 +46,12 @@ function LoginForm() {
         navigate("/home");
       } else {
         setError(data.message);
+        recaptchaRef.current?.reset();
       }
     } catch (err) {
       console.error(err);
       setError("Something went wrong. Please try again ");
+      recaptchaRef.current?.reset();
     }
   };
 
@@ -80,6 +87,7 @@ function LoginForm() {
               value={email}
               onChange={(e) => setEmail(e.target.value)}
               placeholder="FPOPHealthHub@gmail.com"
+              required
               className="w-full h-14 rounded-2xl border border-slate-200 bg-white/60 px-5 text-slate-700 outline-none focus:border-[#F5C518] focus:ring-4 focus:ring-[#F5C518]/10 transition-all duration-300"
             />
           </div>
@@ -94,6 +102,7 @@ function LoginForm() {
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
                 placeholder="••••••••"
+                required
                 className="w-full h-14 rounded-2xl border border-slate-200 bg-white/60 px-5 pr-12 text-slate-700 outline-none focus:border-[#F5C518] focus:ring-4 focus:ring-[#F5C518]/10 transition-all duration-300"
               />
               <button
@@ -138,9 +147,12 @@ function LoginForm() {
             </div>
           )}
 
+          <ReCaptcha ref={recaptchaRef} onChange={setRecaptchaToken} />
+
           <button
             type="submit"
-            className="w-full h-14 rounded-full bg-[#1E3A5F] text-white font-bold text-lg border-2 border-transparent hover:bg-white hover:border-[#F5C518] hover:text-[#1E3A5F] shadow-[0_8px_20px_rgba(30,58,95,0.15)] transition-all duration-300 transform hover:-translate-y-0.5"
+            disabled={!canSubmit}
+            className="w-full h-14 rounded-full bg-[#1E3A5F] text-white font-bold text-lg border-2 border-transparent hover:bg-white hover:border-[#F5C518] hover:text-[#1E3A5F] shadow-[0_8px_20px_rgba(30,58,95,0.15)] transition-all duration-300 transform hover:-translate-y-0.5 disabled:opacity-50 disabled:hover:bg-[#1E3A5F] disabled:hover:border-transparent disabled:hover:text-white disabled:hover:translate-y-0 disabled:cursor-not-allowed"
           >
             Sign In
           </button>

@@ -1,8 +1,9 @@
-import { useState } from "react";
+import { useRef, useState } from "react";
 import logo from "../assets/logo.png";
 import { EyeIcon, EyeOffIcon } from "../components/icon/EyeIcons";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
+import ReCaptcha from "./ReCaptcha";
 
 function SignupForm() {
   const [showPassword, setShowPassword] = useState(false);
@@ -21,6 +22,16 @@ function SignupForm() {
   const [modalType, setModalType] = useState("");
 
   const [agreed, setAgreed] = useState(false);
+  const [recaptchaToken, setRecaptchaToken] = useState("");
+  const recaptchaRef = useRef(null);
+  const canSubmit =
+    firstName &&
+    lastName &&
+    email &&
+    password &&
+    confirmPassword &&
+    agreed &&
+    recaptchaToken;
 
   const { checkAuth } = useAuth();
   const navigate = useNavigate();
@@ -62,6 +73,7 @@ function SignupForm() {
           lastName,
           email,
           password,
+          recaptchaToken,
         }),
       });
 
@@ -75,10 +87,12 @@ function SignupForm() {
       } else {
         setError(data.message);
         setMessage("");
+        recaptchaRef.current?.reset();
       }
     } catch {
       setError("Signup failed. Please try again.");
       setMessage("");
+      recaptchaRef.current?.reset();
     }
   };
 
@@ -128,6 +142,7 @@ function SignupForm() {
                   placeholder="John"
                   value={firstName}
                   onChange={(e) => setFirstName(e.target.value)}
+                  required
                   className="w-full h-12 rounded-xl border border-slate-200 bg-white/60 px-4 outline-none focus:border-[#F5C518] focus:ring-4 focus:ring-[#F5C518]/10 transition-all duration-300 text-slate-700"
                 />
               </div>
@@ -141,6 +156,7 @@ function SignupForm() {
                   placeholder="Doe"
                   value={lastName}
                   onChange={(e) => setLastName(e.target.value)}
+                  required
                   className="w-full h-12 rounded-xl border border-slate-200 bg-white/60 px-4 outline-none focus:border-[#F5C518] focus:ring-4 focus:ring-[#F5C518]/10 transition-all duration-300 text-slate-700"
                 />
               </div>
@@ -155,6 +171,7 @@ function SignupForm() {
                 placeholder="FPOPClinicPortal@gmail.com"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
+                required
                 className="w-full h-12 rounded-xl border border-slate-200 bg-white/60 px-4 outline-none focus:border-[#F5C518] focus:ring-4 focus:ring-[#F5C518]/10 transition-all duration-300 text-slate-700"
               />
             </div>
@@ -170,6 +187,7 @@ function SignupForm() {
                     placeholder="••••••••"
                     value={password}
                     onChange={(e) => setPassword(e.target.value)}
+                    required
                     className="w-full h-12 rounded-xl border border-slate-200 bg-white/60 px-4 pr-10 outline-none focus:border-[#F5C518] focus:ring-4 focus:ring-[#F5C518]/10 transition-all duration-300 text-slate-700"
                   />
                   <button
@@ -192,6 +210,7 @@ function SignupForm() {
                     placeholder="••••••••"
                     value={confirmPassword}
                     onChange={(e) => setConfirmPassword(e.target.value)}
+                    required
                     className="w-full h-12 rounded-xl border border-slate-200 bg-white/60 px-4 pr-10 outline-none focus:border-[#F5C518] focus:ring-4 focus:ring-[#F5C518]/10 transition-all duration-300 text-slate-700"
                   />
                   <button
@@ -246,11 +265,13 @@ function SignupForm() {
               </div>
             )}
 
+            <ReCaptcha ref={recaptchaRef} onChange={setRecaptchaToken} />
+
             <button
               type="submit"
-              disabled={!agreed}
+              disabled={!canSubmit}
               className={`w-full h-14 rounded-full font-bold text-lg border-2 border-transparent transition-all duration-300 transform hover:-translate-y-0.5 shadow-[0_8px_20px_rgba(30,58,95,0.15)] ${
-                agreed
+                canSubmit
                   ? "bg-[#1E3A5F] text-white hover:bg-white hover:border-[#F5C518] hover:text-[#1E3A5F] cursor-pointer"
                   : "bg-slate-300 text-slate-500 cursor-not-allowed shadow-none transform-none"
               }`}

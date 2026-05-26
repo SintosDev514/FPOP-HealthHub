@@ -1,6 +1,7 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { useNavigate } from "react-router-dom";
 import logo from "../assets/logo.png";
+import ReCaptcha from "../components/ReCaptcha";
 
 /* ICONS */
 const EyeIcon = () => (
@@ -40,6 +41,14 @@ export default function ResetPasswordForm({ onComplete }) {
   const [showNewPassword, setShowNewPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const [resendCooldown, setResendCooldown] = useState(0);
+  const [recaptchaToken, setRecaptchaToken] = useState("");
+  const recaptchaRef = useRef(null);
+  const canSubmit =
+    otp.join("").length === 6 &&
+    newPassword &&
+    confirmPassword &&
+    recaptchaToken &&
+    !isLoading;
 
   const navigate = useNavigate();
   const email = localStorage.getItem("resetEmail");
@@ -121,6 +130,7 @@ export default function ResetPasswordForm({ onComplete }) {
           newPassword,
           OTP: otpValue,
           email,
+          recaptchaToken,
         }),
       });
 
@@ -132,9 +142,11 @@ export default function ResetPasswordForm({ onComplete }) {
         navigate("/login");
       } else {
         setError(data.message || "Reset failed");
+        recaptchaRef.current?.reset();
       }
     } catch {
       setError("Network error");
+      recaptchaRef.current?.reset();
     } finally {
       setIsLoading(false);
     }
@@ -202,6 +214,7 @@ export default function ResetPasswordForm({ onComplete }) {
               placeholder="New Password"
               value={newPassword}
               onChange={(e) => setNewPassword(e.target.value)}
+              required
               className="w-full h-14 rounded-2xl border border-slate-200 bg-white/60 px-5 pr-12 text-slate-700 outline-none focus:border-[#F5C518] focus:ring-4 focus:ring-[#F5C518]/10 transition-all duration-300"
             />
             <button
@@ -220,6 +233,7 @@ export default function ResetPasswordForm({ onComplete }) {
               placeholder="Confirm Password"
               value={confirmPassword}
               onChange={(e) => setConfirmPassword(e.target.value)}
+              required
               className="w-full h-14 rounded-2xl border border-slate-200 bg-white/60 px-5 pr-12 text-slate-700 outline-none focus:border-[#F5C518] focus:ring-4 focus:ring-[#F5C518]/10 transition-all duration-300"
             />
             <button
@@ -238,11 +252,13 @@ export default function ResetPasswordForm({ onComplete }) {
             </div>
           )}
 
+          <ReCaptcha ref={recaptchaRef} onChange={setRecaptchaToken} />
+
           {/* BUTTON */}
           <button
             type="submit"
-            disabled={isLoading}
-            className="w-full h-14 rounded-full bg-[#1E3A5F] text-white font-bold text-lg border-2 border-transparent hover:bg-white hover:border-[#F5C518] hover:text-[#1E3A5F] shadow-[0_8px_20px_rgba(30,58,95,0.15)] transition-all duration-300 transform hover:-translate-y-0.5 disabled:opacity-50 flex items-center justify-center gap-2 cursor-pointer"
+            disabled={!canSubmit}
+            className="w-full h-14 rounded-full bg-[#1E3A5F] text-white font-bold text-lg border-2 border-transparent hover:bg-white hover:border-[#F5C518] hover:text-[#1E3A5F] shadow-[0_8px_20px_rgba(30,58,95,0.15)] transition-all duration-300 transform hover:-translate-y-0.5 disabled:opacity-50 disabled:hover:bg-[#1E3A5F] disabled:hover:border-transparent disabled:hover:text-white disabled:hover:translate-y-0 disabled:cursor-not-allowed flex items-center justify-center gap-2 cursor-pointer"
           >
             {isLoading ? <SpinnerIcon /> : "Reset Password"}
           </button>
