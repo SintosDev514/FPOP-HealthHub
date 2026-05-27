@@ -1,6 +1,5 @@
 import { useState } from "react";
 
-/* ─── FPOP Brand Tokens ─────────────────────────────────────── */
 const NAVY   = "#1E3A5F";
 const GREEN  = "#22c55e";
 const RED    = "#ef4444";
@@ -39,9 +38,8 @@ export default function Notifications({ isMobile }) {
 
   return (
     <main style={{ flex: 1, padding: isMobile ? "20px 16px" : "28px 32px", overflowY: "auto", background: "#f1f4f8" }}>
-      
-      {/* Title */}
-      <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "26px", flexWrap: "wrap", gap: "12px" }}>
+
+<div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "26px", flexWrap: "wrap", gap: "12px" }}>
         <div>
           <h1 style={{ margin: 0, fontSize: isMobile ? "22px" : "26px", fontWeight: 800, color: NAVY, letterSpacing: "-0.5px" }}>System Notifications</h1>
           <p style={{ margin: "5px 0 0", fontSize: "13px", color: "#8a96a3", fontWeight: 500 }}>
@@ -58,8 +56,7 @@ export default function Notifications({ isMobile }) {
         </button>
       </div>
 
-      {/* Filter Options */}
-      <div style={{ display: "flex", gap: "10px", marginBottom: "20px", flexWrap: "wrap" }}>
+<div style={{ display: "flex", gap: "10px", marginBottom: "20px", flexWrap: "wrap" }}>
         {["All", "Unread", "System", "Appointment", "Alert"].map(tab => (
           <button 
             key={tab} 
@@ -81,8 +78,7 @@ export default function Notifications({ isMobile }) {
         ))}
       </div>
 
-      {/* List */}
-      <div style={{ display: "flex", flexDirection: "column", gap: "12px" }}>
+<div style={{ display: "flex", flexDirection: "column", gap: "12px" }}>
         {filteredNotifs.length > 0 ? (
           filteredNotifs.map(n => (
             <div key={n.id} style={{ 

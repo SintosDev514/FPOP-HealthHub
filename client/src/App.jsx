@@ -19,7 +19,7 @@ import AppointmentBooking from "./pages/patient/patientPages/AppointmentBooking"
 import DashboardView from "./pages/patient/patientPages/DashboardView";
 import MyAppointmentsView from "./pages/patient/patientPages/AppointmentsView";
 import MyProfileView from "./pages/patient/patientPages/ProfileView";
-
+import AdminDashboard from "./pages/admin/adminPages/AdminDashboard";
 
 import "./App.css";
 
@@ -183,6 +183,13 @@ function App() {
             </ProtectedRoute>
           }
         />
+
+        <Route
+          path="/admin/*"
+          element={<AdminDashboard />}
+        />
+
+
       </Routes>
     </Router>
   );

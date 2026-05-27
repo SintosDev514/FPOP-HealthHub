@@ -1,6 +1,6 @@
 import { useState } from "react";
+import { IcoUp, IcoDown } from "../../../components/icon/AdminIcons";
 
-/* ─── FPOP Brand Tokens ─────────────────────────────────────── */
 const NAVY      = "#1E3A5F";
 const NAVY_DARK = "#152c4a";
 const NAVY_MID  = "#1a3254";
@@ -11,7 +11,6 @@ const RED       = "#ef4444";
 const PURPLE    = "#7c3aed";
 const ORANGE    = "#ea580c";
 
-/* ─── Chart Data ────────────────────────────────────────────── */
 const growthData = [
   { month: "Jan", users: 3200,  appts: 1100 },
   { month: "Feb", users: 3800,  appts: 980  },
@@ -45,25 +44,11 @@ const recentActivity = [
   { id: 5, user: "Liza Garcia",    action: "Completed her consultation",          time: "2 hrs ago",   type: "done"        },
 ];
 
-/* ─── SVG Icons ─────────────────────────────────────────────── */
-const IcoUp = () => (
-  <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
-    <polyline points="23 6 13.5 15.5 8.5 10.5 1 18"/><polyline points="17 6 23 6 23 12"/>
-  </svg>
-);
-
-const IcoDown = () => (
-  <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
-    <polyline points="23 18 13.5 8.5 8.5 13.5 1 6"/><polyline points="17 18 23 18 23 12"/>
-  </svg>
-);
-
 const StatIcoUsers = () => <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke={NAVY} strokeWidth="1.8"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>;
 const StatIcoCal   = () => <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke={GREEN} strokeWidth="1.8"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>;
 const StatIcoClock = () => <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke={ORANGE} strokeWidth="1.8"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>;
 const StatIcoTrend = () => <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke={PURPLE} strokeWidth="1.8"><polyline points="23 6 13.5 15.5 8.5 10.5 1 18"/><polyline points="17 6 23 6 23 12"/></svg>;
 
-/* ─── Pure SVG Line Chart ───────────────────────────────────── */
 function LineChartSVG() {
   const [tooltip, setTooltip] = useState(null);
   const W = 500, H = 200, PAD = { top: 10, right: 14, bottom: 30, left: 44 };
@@ -76,7 +61,6 @@ function LineChartSVG() {
 
   const usersPath = growthData.map((d, i) => `${i === 0 ? "M" : "L"}${xOf(i)},${yOf(d.users)}`).join(" ");
   const apptsPath = growthData.map((d, i) => `${i === 0 ? "M" : "L"}${xOf(i)},${yOf(d.appts)}`).join(" ");
-
   const yTicks = [0, 3000, 6000, 9000, 12000];
 
   return (
@@ -127,7 +111,6 @@ function LineChartSVG() {
   );
 }
 
-/* ─── Pure SVG Bar Chart ────────────────────────────────────── */
 function BarChartSVG() {
   const [tooltip, setTooltip] = useState(null);
   const W = 500, H = 200, PAD = { top: 10, right: 14, bottom: 30, left: 32 };
@@ -137,10 +120,8 @@ function BarChartSVG() {
   const groupW = innerW / weeklyData.length;
   const barW = (groupW * 0.7) / 3;
   const yTicks = [0, 20, 40, 60];
-
   const yOf = (v) => PAD.top + innerH - (v / maxVal) * innerH;
   const barH = (v) => (v / maxVal) * innerH;
-
   const colors = [NAVY, GOLD, RED];
   const keys = ["confirmed", "pending", "cancelled"];
 
@@ -195,7 +176,6 @@ function BarChartSVG() {
   );
 }
 
-/* ─── Stat Card ─────────────────────────────────────────────── */
 function StatCard({ title, value, change, up, Icon, iconBg }) {
   const [hov, setHov] = useState(false);
   return (
@@ -232,12 +212,10 @@ const ActivityDot = ({ type }) => (
   <span style={{ width: "8px", height: "8px", borderRadius: "50%", background: DOT_COLORS[type] || DOT_COLORS.appointment, display: "inline-block", flexShrink: 0, marginTop: "5px" }} />
 );
 
-/* ─── Main Export ───────────────────────────────────────────── */
 export default function DashboardOverview({ isMobile }) {
   return (
     <main style={{ flex: 1, padding: isMobile ? "20px 16px" : "28px 32px", overflowY: "auto", background: "#f1f4f8" }}>
 
-      {/* Heading */}
       <div style={{ marginBottom: "26px" }}>
         <h1 style={{ margin: 0, fontSize: isMobile ? "22px" : "26px", fontWeight: 800, color: NAVY, letterSpacing: "-0.5px" }}>Dashboard Overview</h1>
         <p style={{ margin: "5px 0 0", fontSize: "13px", color: "#8a96a3", fontWeight: 500 }}>
@@ -245,7 +223,6 @@ export default function DashboardOverview({ isMobile }) {
         </p>
       </div>
 
-      {/* Stat Cards */}
       <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-5 mb-6">
         <StatCard title="Total Users"         value="12,584" change="+12.5%" up Icon={StatIcoUsers} iconBg={`${NAVY}1a`} />
         <StatCard title="Active Appointments" value="348"    change="+8.2%"  up Icon={StatIcoCal}   iconBg="#dcfce7"    />
@@ -253,7 +230,6 @@ export default function DashboardOverview({ isMobile }) {
         <StatCard title="Analytics Summary"   value="94.5%"  change="+2.1%"  up Icon={StatIcoTrend} iconBg="#f3e8ff"    />
       </div>
 
-      {/* Charts Row */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-5 mb-6">
         <div style={{ background: "#fff", borderRadius: "16px", padding: "22px 24px", boxShadow: "0 2px 14px rgba(30,58,95,0.07)", border: "1px solid rgba(30,58,95,0.07)" }}>
           <h2 style={{ margin: "0 0 16px", fontSize: "15px", fontWeight: 700, color: NAVY }}>User Growth &amp; Appointments</h2>
@@ -265,10 +241,7 @@ export default function DashboardOverview({ isMobile }) {
         </div>
       </div>
 
-      {/* Bottom Row */}
       <div className="grid grid-cols-1 xl:grid-cols-[1fr_360px] gap-5">
-
-        {/* Recent Activity */}
         <div style={{ background: "#fff", borderRadius: "16px", padding: "22px 24px", boxShadow: "0 2px 14px rgba(30,58,95,0.07)", border: "1px solid rgba(30,58,95,0.07)" }}>
           <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "16px" }}>
             <h2 style={{ margin: 0, fontSize: "15px", fontWeight: 700, color: NAVY }}>Recent Activity</h2>
@@ -287,10 +260,7 @@ export default function DashboardOverview({ isMobile }) {
           ))}
         </div>
 
-        {/* Right Column */}
         <div style={{ display: "flex", flexDirection: "column", gap: "16px" }}>
-
-          {/* Today's Summary */}
           <div style={{ background: `linear-gradient(135deg, ${NAVY_DARK} 0%, ${NAVY_LITE} 100%)`, borderRadius: "16px", padding: "22px 24px", boxShadow: "0 6px 24px rgba(30,58,95,0.3)" }}>
             <h3 style={{ margin: "0 0 14px", fontSize: "14px", fontWeight: 700, color: GOLD }}>Today&rsquo;s Summary</h3>
             {[
@@ -306,7 +276,6 @@ export default function DashboardOverview({ isMobile }) {
             ))}
           </div>
 
-          {/* System Health */}
           <div style={{ background: "#fff", borderRadius: "16px", padding: "22px 24px", boxShadow: "0 2px 14px rgba(30,58,95,0.07)", border: "1px solid rgba(30,58,95,0.07)" }}>
             <h3 style={{ margin: "0 0 16px", fontSize: "14px", fontWeight: 700, color: NAVY }}>System Health</h3>
             {[

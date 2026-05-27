@@ -1,6 +1,5 @@
 import { useState } from "react";
 
-/* ─── FPOP Brand Tokens ─────────────────────────────────────── */
 const NAVY   = "#1E3A5F";
 const GREEN  = "#22c55e";
 const RED    = "#ef4444";
@@ -47,17 +46,15 @@ export default function Appointments({ isMobile }) {
 
   return (
     <main style={{ flex: 1, padding: isMobile ? "20px 16px" : "28px 32px", overflowY: "auto", background: "#f1f4f8" }}>
-      
-      {/* Title */}
-      <div style={{ marginBottom: "26px" }}>
+
+<div style={{ marginBottom: "26px" }}>
         <h1 style={{ margin: 0, fontSize: isMobile ? "22px" : "26px", fontWeight: 800, color: NAVY, letterSpacing: "-0.5px" }}>Appointments</h1>
         <p style={{ margin: "5px 0 0", fontSize: "13px", color: "#8a96a3", fontWeight: 500 }}>
           Schedule, monitor and manage patient consultation bookings
         </p>
       </div>
 
-      {/* Mini Stats Cards */}
-      <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
+<div className="grid grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
         {[
           { label: "Total Bookings", val: total, color: NAVY, bg: "rgba(30,58,95,0.06)" },
           { label: "Confirmed", val: confirmed, color: GREEN, bg: "rgba(34,197,94,0.08)" },
@@ -74,8 +71,7 @@ export default function Appointments({ isMobile }) {
         ))}
       </div>
 
-      {/* Filters block */}
-      <div style={{ 
+<div style={{ 
         background: "#fff", 
         borderRadius: "16px 16px 0 0", 
         padding: "20px 24px", 
@@ -86,7 +82,7 @@ export default function Appointments({ isMobile }) {
         alignItems: "center",
         flexWrap: "wrap"
       }}>
-        {/* Search */}
+        
         <div style={{ position: "relative", flex: 1, minWidth: "240px" }}>
           <span style={{ position: "absolute", left: "13px", top: "50%", transform: "translateY(-50%)", color: "#9aa5b4", pointerEvents: "none" }}><IcoSearch /></span>
           <input 
@@ -98,8 +94,7 @@ export default function Appointments({ isMobile }) {
           />
         </div>
 
-        {/* Filters */}
-        <div style={{ display: "flex", gap: "12px", flexWrap: "wrap" }}>
+<div style={{ display: "flex", gap: "12px", flexWrap: "wrap" }}>
           <select 
             value={deptFilter} 
             onChange={e => setDeptFilter(e.target.value)}
@@ -124,8 +119,7 @@ export default function Appointments({ isMobile }) {
         </div>
       </div>
 
-      {/* Table block */}
-      <div style={{ 
+<div style={{ 
         background: "#fff", 
         borderRadius: "0 0 16px 16px", 
         boxShadow: "0 2px 14px rgba(30,58,95,0.07)", 

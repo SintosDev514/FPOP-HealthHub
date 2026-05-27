@@ -1,6 +1,5 @@
 import { useState } from "react";
 
-/* ─── FPOP Brand Tokens ─────────────────────────────────────── */
 const NAVY   = "#1E3A5F";
 const GREEN  = "#22c55e";
 const GOLD   = "#F5C518";
@@ -32,9 +31,8 @@ export default function Settings({ isMobile }) {
 
   return (
     <main style={{ flex: 1, padding: isMobile ? "20px 16px" : "28px 32px", overflowY: "auto", background: "#f1f4f8" }}>
-      
-      {/* Title */}
-      <div style={{ marginBottom: "26px" }}>
+
+<div style={{ marginBottom: "26px" }}>
         <h1 style={{ margin: 0, fontSize: isMobile ? "22px" : "26px", fontWeight: 800, color: NAVY, letterSpacing: "-0.5px" }}>System Settings</h1>
         <p style={{ margin: "5px 0 0", fontSize: "13px", color: "#8a96a3", fontWeight: 500 }}>
           Configure clinic profile, security preferences, and integration settings
@@ -42,9 +40,8 @@ export default function Settings({ isMobile }) {
       </div>
 
       <div style={{ display: "grid", gridTemplateColumns: "1fr", lg: "2fr 1fr", gap: "24px" }} className="grid grid-cols-1 lg:grid-cols-[2fr_1fr]">
-        
-        {/* Left Side: General Profile Form */}
-        <div style={{ background: "#fff", borderRadius: "16px", padding: "24px", border: "1px solid rgba(30,58,95,0.07)", boxShadow: "0 2px 14px rgba(30,58,95,0.07)" }}>
+
+<div style={{ background: "#fff", borderRadius: "16px", padding: "24px", border: "1px solid rgba(30,58,95,0.07)", boxShadow: "0 2px 14px rgba(30,58,95,0.07)" }}>
           <h3 style={{ margin: "0 0 20px", fontSize: "15px", fontWeight: 700, color: NAVY }}>Clinic Information Profile</h3>
           
           <form onSubmit={handleSave}>
@@ -107,11 +104,9 @@ export default function Settings({ isMobile }) {
           </form>
         </div>
 
-        {/* Right Side: Preference Toggles */}
-        <div style={{ display: "flex", flexDirection: "column", gap: "20px" }}>
-          
-          {/* Notifications */}
-          <div style={{ background: "#fff", borderRadius: "16px", padding: "24px", border: "1px solid rgba(30,58,95,0.07)", boxShadow: "0 2px 14px rgba(30,58,95,0.07)" }}>
+<div style={{ display: "flex", flexDirection: "column", gap: "20px" }}>
+
+<div style={{ background: "#fff", borderRadius: "16px", padding: "24px", border: "1px solid rgba(30,58,95,0.07)", boxShadow: "0 2px 14px rgba(30,58,95,0.07)" }}>
             <h3 style={{ margin: "0 0 16px", fontSize: "14px", fontWeight: 700, color: NAVY }}>System Preferences</h3>
             
             <div style={{ display: "flex", flexDirection: "column", gap: "14px" }}>
@@ -155,8 +150,7 @@ export default function Settings({ isMobile }) {
             </div>
           </div>
 
-          {/* Database Info */}
-          <div style={{ background: "#fff", borderRadius: "16px", padding: "24px", border: "1px solid rgba(30,58,95,0.07)", boxShadow: "0 2px 14px rgba(30,58,95,0.07)", display: "flex", flexDirection: "column", gap: "8px" }}>
+<div style={{ background: "#fff", borderRadius: "16px", padding: "24px", border: "1px solid rgba(30,58,95,0.07)", boxShadow: "0 2px 14px rgba(30,58,95,0.07)", display: "flex", flexDirection: "column", gap: "8px" }}>
             <span style={{ fontSize: "11px", fontWeight: 700, color: "#8a96a3", textTransform: "uppercase", letterSpacing: "0.5px" }}>Database Status</span>
             <span style={{ fontSize: "14px", fontWeight: 700, color: NAVY }}>FPOP_HealthHub_Prod</span>
             <div style={{ display: "flex", justifyContent: "space-between", fontSize: "12px", color: "#4a5568", borderTop: "1px solid rgba(30,58,95,0.08)", paddingTop: "8px", marginTop: "4px" }}>

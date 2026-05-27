@@ -1,6 +1,5 @@
 import { useState } from "react";
 
-/* ─── FPOP Brand Tokens ─────────────────────────────────────── */
 const NAVY      = "#1E3A5F";
 const GOLD      = "#F5C518";
 const GREEN     = "#22c55e";
@@ -20,9 +19,8 @@ export default function Analytics({ isMobile }) {
 
   return (
     <main style={{ flex: 1, padding: isMobile ? "20px 16px" : "28px 32px", overflowY: "auto", background: "#f1f4f8" }}>
-      
-      {/* Title */}
-      <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "26px", flexWrap: "wrap", gap: "12px" }}>
+
+<div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "26px", flexWrap: "wrap", gap: "12px" }}>
         <div>
           <h1 style={{ margin: 0, fontSize: isMobile ? "22px" : "26px", fontWeight: 800, color: NAVY, letterSpacing: "-0.5px" }}>Analytics &amp; Insights</h1>
           <p style={{ margin: "5px 0 0", fontSize: "13px", color: "#8a96a3", fontWeight: 500 }}>
@@ -40,8 +38,7 @@ export default function Analytics({ isMobile }) {
         </select>
       </div>
 
-      {/* Grid statistics */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5 mb-6">
+<div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5 mb-6">
         {[
           { title: "Monthly Revenue", val: "₱148,500", desc: "+14.2% vs last month", color: GREEN },
           { title: "Satisfaction Score", val: "4.9 / 5.0", desc: "Based on 320 reviews", color: GOLD },
@@ -56,11 +53,9 @@ export default function Analytics({ isMobile }) {
         ))}
       </div>
 
-      {/* Analytics breakdown grids */}
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-5">
-        
-        {/* Department Share */}
-        <div style={{ background: "#fff", borderRadius: "16px", padding: "24px", border: "1px solid rgba(30,58,95,0.07)", boxShadow: "0 2px 14px rgba(30,58,95,0.07)" }}>
+<div className="grid grid-cols-1 lg:grid-cols-2 gap-5">
+
+<div style={{ background: "#fff", borderRadius: "16px", padding: "24px", border: "1px solid rgba(30,58,95,0.07)", boxShadow: "0 2px 14px rgba(30,58,95,0.07)" }}>
           <h3 style={{ margin: "0 0 20px", fontSize: "15px", fontWeight: 700, color: NAVY }}>Consultations by Department</h3>
           <div style={{ display: "flex", flexDirection: "column", gap: "18px" }}>
             {deptData.map((dept, i) => (
@@ -77,8 +72,7 @@ export default function Analytics({ isMobile }) {
           </div>
         </div>
 
-        {/* Operational Highlights */}
-        <div style={{ background: "#fff", borderRadius: "16px", padding: "24px", border: "1px solid rgba(30,58,95,0.07)", boxShadow: "0 2px 14px rgba(30,58,95,0.07)" }}>
+<div style={{ background: "#fff", borderRadius: "16px", padding: "24px", border: "1px solid rgba(30,58,95,0.07)", boxShadow: "0 2px 14px rgba(30,58,95,0.07)" }}>
           <h3 style={{ margin: "0 0 20px", fontSize: "15px", fontWeight: 700, color: NAVY }}>Operational Performance Summary</h3>
           <div style={{ borderLeft: `3px solid ${GOLD}`, paddingLeft: "16px", marginBottom: "20px" }}>
             <p style={{ margin: 0, fontSize: "14px", fontWeight: 700, color: NAVY }}>Capacity Utilization: High (89.4%)</p>

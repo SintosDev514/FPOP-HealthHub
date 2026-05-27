@@ -1,6 +1,5 @@
 import { useState } from "react";
 
-/* ─── FPOP Brand Tokens ─────────────────────────────────────── */
 const NAVY      = "#1E3A5F";
 const GOLD      = "#F5C518";
 const GREEN     = "#22c55e";
@@ -42,17 +41,15 @@ export default function Reports({ isMobile }) {
 
   return (
     <main style={{ flex: 1, padding: isMobile ? "20px 16px" : "28px 32px", overflowY: "auto", background: "#f1f4f8" }}>
-      
-      {/* Title */}
-      <div style={{ marginBottom: "26px" }}>
+
+<div style={{ marginBottom: "26px" }}>
         <h1 style={{ margin: 0, fontSize: isMobile ? "22px" : "26px", fontWeight: 800, color: NAVY, letterSpacing: "-0.5px" }}>System Reports</h1>
         <p style={{ margin: "5px 0 0", fontSize: "13px", color: "#8a96a3", fontWeight: 500 }}>
           Generate and export clinical activity, billing and operational summaries
         </p>
       </div>
 
-      {/* Grid List */}
-      <div style={{ display: "flex", flexDirection: "column", gap: "16px" }}>
+<div style={{ display: "flex", flexDirection: "column", gap: "16px" }}>
         {reportTemplates.map(report => (
           <div key={report.id} style={{ background: "#fff", borderRadius: "16px", padding: "20px 24px", border: "1px solid rgba(30,58,95,0.07)", boxShadow: "0 2px 12px rgba(30,58,95,0.04)", display: "flex", justifyContent: "space-between", alignItems: "center", flexWrap: "wrap", gap: "16px" }}>
             <div style={{ flex: 1, minWidth: "260px" }}>
