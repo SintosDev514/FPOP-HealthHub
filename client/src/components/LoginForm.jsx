@@ -43,7 +43,7 @@ function LoginForm() {
       if (res.ok) {
         setMessage(data.message);
         await checkAuth();
-        navigate("/home");
+        navigate("/staff");
       } else {
         setError(data.message);
         recaptchaRef.current?.reset();

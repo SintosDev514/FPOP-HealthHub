@@ -10,7 +10,16 @@ import LandingPage from "./pages/LandingPage";
 import ContactPage from "./pages/ContactPage";
 import AboutUs from "./pages/AboutPage";
 import Location from "./pages/LocationPage";
+
+//darren
 import Home from "./pages/patient/home";
+
+//jasper
+//import Staff from "./pages/staff/staffDashboard";
+
+//jayjay
+import Staff from "./pages/admin/adminPages/AdminDashboard";
+
 import ForgotPass from "./pages/ForgotPasswordForm";
 import ResetPass from "./pages/ResetPasswordForm";
 
@@ -26,7 +35,6 @@ import "./App.css";
 function PublicLayout({ children }) {
   return (
     <>
-   
       <NavBar />
       {children}
       <Footer />
@@ -129,6 +137,19 @@ function App() {
         />
 
         {/* PROTECTED ROUTE */}
+
+        {/*Test staff*/}
+        <Route
+          path="/staff"
+          element={
+            <ProtectedRoute>
+              <PrivateLayout>
+                <Staff />
+              </PrivateLayout>
+            </ProtectedRoute>
+          }
+        />
+
         <Route
           path="/home"
           element={
@@ -184,12 +205,7 @@ function App() {
           }
         />
 
-        <Route
-          path="/admin/*"
-          element={<AdminDashboard />}
-        />
-
-
+        <Route path="/admin/*" element={<AdminDashboard />} />
       </Routes>
     </Router>
   );
