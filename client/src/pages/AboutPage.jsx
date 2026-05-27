@@ -306,37 +306,40 @@ function AboutPage() {
               </p>
             </div>
 
-            <div className="grid gap-4 sm:grid-cols-2 sm:gap-6 lg:grid-cols-3">
-              <article className="rounded-xl bg-[#1E3A5F] px-5 py-6 text-left text-white shadow-[0_16px_28px_rgba(30,58,95,0.18)] transition-all duration-300 border-2 border-transparent hover:bg-white hover:border-[#F5C518] hover:shadow-[0_0_20px_rgba(245,197,24,0.3)] hover:text-[#1E3A5F] sm:px-6 sm:py-7 md:px-8">
-                <p className="text-sm font-bold uppercase tracking-[0.16em] text-blue-100 transition-colors duration-300">
-                  Community Outreach
-                </p>
-                <p className="mt-4 text-[15px] leading-7 text-blue-100 transition-colors duration-300">
-                  Bringing family planning information, health counseling, and
-                  support directly to underserved communities.
-                </p>
-              </article>
+           <div className="grid gap-4 sm:grid-cols-2 sm:gap-6 lg:grid-cols-3">
+  <article className="group rounded-xl bg-[#1E3A5F] px-5 py-6 text-left text-white shadow-[0_16px_28px_rgba(30,58,95,0.18)] transition-all duration-300 border-2 border-transparent hover:bg-white hover:border-[#F5C518] hover:shadow-[0_0_20px_rgba(245,197,24,0.3)] sm:px-6 sm:py-7 md:px-8">
+    <p className="text-sm font-bold uppercase tracking-[0.16em] text-blue-100 transition-colors duration-300 group-hover:text-[#1E3A5F]">
+      Community Outreach
+    </p>
 
-              <article className="rounded-xl bg-[#1E3A5F] px-5 py-6 text-left text-white shadow-[0_16px_28px_rgba(30,58,95,0.18)] transition-all duration-300 border-2 border-transparent hover:bg-white hover:border-[#F5C518] hover:shadow-[0_0_20px_rgba(245,197,24,0.3)] hover:text-[#1E3A5F] sm:px-6 sm:py-7 md:px-8">
-                <p className="text-sm font-bold uppercase tracking-[0.16em] text-blue-100 transition-colors duration-300">
-                  Youth Education
-                </p>
-                <p className="mt-4 text-[15px] leading-7 text-blue-100 transition-colors duration-300">
-                  Promoting adolescent reproductive health, comprehensive
-                  sexuality education, and informed decision-making.
-                </p>
-              </article>
+    <p className="mt-4 text-[15px] leading-7 text-blue-100 transition-colors duration-300 group-hover:text-slate-700">
+      Bringing family planning information, health counseling, and
+      support directly to underserved communities.
+    </p>
+  </article>
 
-              <article className="rounded-xl bg-[#1E3A5F] px-5 py-6 text-left text-white shadow-[0_16px_28px_rgba(30,58,95,0.18)] transition-all duration-300 border-2 border-transparent hover:bg-white hover:border-[#F5C518] hover:shadow-[0_0_20px_rgba(245,197,24,0.3)] hover:text-[#1E3A5F] sm:px-6 sm:py-7 md:px-8">
-                <p className="text-sm font-bold uppercase tracking-[0.16em] text-blue-100 transition-colors duration-300">
-                  Clinic Services
-                </p>
-                <p className="mt-4 text-[15px] leading-7 text-blue-100 transition-colors duration-300">
-                  Supporting appointments, records access, referrals, and
-                  patient communication through a secure digital portal.
-                </p>
-              </article>
-            </div>
+  <article className="group rounded-xl bg-[#1E3A5F] px-5 py-6 text-left text-white shadow-[0_16px_28px_rgba(30,58,95,0.18)] transition-all duration-300 border-2 border-transparent hover:bg-white hover:border-[#F5C518] hover:shadow-[0_0_20px_rgba(245,197,24,0.3)] sm:px-6 sm:py-7 md:px-8">
+    <p className="text-sm font-bold uppercase tracking-[0.16em] text-blue-100 transition-colors duration-300 group-hover:text-[#1E3A5F]">
+      Youth Education
+    </p>
+
+    <p className="mt-4 text-[15px] leading-7 text-blue-100 transition-colors duration-300 group-hover:text-slate-700">
+      Promoting adolescent reproductive health, comprehensive
+      sexuality education, and informed decision-making.
+    </p>
+  </article>
+
+  <article className="group rounded-xl bg-[#1E3A5F] px-5 py-6 text-left text-white shadow-[0_16px_28px_rgba(30,58,95,0.18)] transition-all duration-300 border-2 border-transparent hover:bg-white hover:border-[#F5C518] hover:shadow-[0_0_20px_rgba(245,197,24,0.3)] sm:px-6 sm:py-7 md:px-8">
+    <p className="text-sm font-bold uppercase tracking-[0.16em] text-blue-100 transition-colors duration-300 group-hover:text-[#1E3A5F]">
+      Clinic Services
+    </p>
+
+    <p className="mt-4 text-[15px] leading-7 text-blue-100 transition-colors duration-300 group-hover:text-slate-700">
+      Supporting appointments, records access, referrals, and
+      patient communication through a secure digital portal.
+    </p>
+  </article>
+</div>
           </div>
         </div>
       </section>
