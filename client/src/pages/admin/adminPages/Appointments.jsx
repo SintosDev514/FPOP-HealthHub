@@ -54,7 +54,12 @@ export default function Appointments({ isMobile }) {
         </p>
       </div>
 
-<div className="grid grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
+      <div style={{
+        display: "grid",
+        gridTemplateColumns: isMobile ? "repeat(2, 1fr)" : "repeat(4, 1fr)",
+        gap: "12px",
+        marginBottom: "24px"
+      }}>
         {[
           { label: "Total Bookings", val: total, color: NAVY, bg: "rgba(30,58,95,0.06)" },
           { label: "Confirmed", val: confirmed, color: GREEN, bg: "rgba(34,197,94,0.08)" },
@@ -119,94 +124,106 @@ export default function Appointments({ isMobile }) {
         </div>
       </div>
 
-<div style={{ 
-        background: "#fff", 
-        borderRadius: "0 0 16px 16px", 
-        boxShadow: "0 2px 14px rgba(30,58,95,0.07)", 
-        border: "1px solid rgba(30,58,95,0.07)",
-        overflowX: "auto"
-      }}>
-        <table style={{ width: "100%", borderCollapse: "collapse", textAlign: "left", fontSize: "13px" }}>
-          <thead>
-            <tr style={{ background: "#f8fafc", borderBottom: "1px solid rgba(30,58,95,0.07)" }}>
-              <th style={{ padding: "16px 24px", color: "#4a5568", fontWeight: 600 }}>Patient</th>
-              <th style={{ padding: "16px 24px", color: "#4a5568", fontWeight: 600 }}>Contact</th>
-              <th style={{ padding: "16px 24px", color: "#4a5568", fontWeight: 600 }}>Physician</th>
-              <th style={{ padding: "16px 24px", color: "#4a5568", fontWeight: 600 }}>Department</th>
-              <th style={{ padding: "16px 24px", color: "#4a5568", fontWeight: 600 }}>Schedule</th>
-              <th style={{ padding: "16px 24px", color: "#4a5568", fontWeight: 600 }}>Status</th>
-              <th style={{ padding: "16px 24px", color: "#4a5568", fontWeight: 600, textAlign: "right" }}>Actions</th>
-            </tr>
-          </thead>
-          <tbody>
-            {filteredAppointments.length > 0 ? (
-              filteredAppointments.map(appt => (
-                <tr key={appt.id} style={{ borderBottom: "1px solid rgba(30,58,95,0.04)", transition: "background 0.2s" }} onMouseEnter={e => e.currentTarget.style.background = "#f8fafc"} onMouseLeave={e => e.currentTarget.style.background = "transparent"}>
-                  <td style={{ padding: "16px 24px" }}>
-                    <span style={{ fontWeight: 600, color: NAVY }}>{appt.patient}</span>
-                  </td>
-                  <td style={{ padding: "16px 24px", color: "#4a5568" }}>{appt.phone}</td>
-                  <td style={{ padding: "16px 24px", color: "#2d3748", fontWeight: 500 }}>{appt.doctor}</td>
-                  <td style={{ padding: "16px 24px" }}>
-                    <span style={{ 
-                      padding: "4px 10px", 
-                      borderRadius: "20px", 
-                      fontSize: "11px", 
-                      fontWeight: 600,
-                      background: "rgba(30,58,95,0.06)",
-                      color: NAVY
-                    }}>
-                      {appt.department}
-                    </span>
-                  </td>
-                  <td style={{ padding: "16px 24px", color: "#718096" }}>{appt.datetime}</td>
-                  <td style={{ padding: "16px 24px" }}>
-                    <span style={{ 
-                      padding: "4px 10px", 
-                      borderRadius: "20px", 
-                      fontSize: "11px", 
-                      fontWeight: 600,
-                      background: appt.status === "Confirmed" ? "rgba(34,197,94,0.1)" : appt.status === "Pending" ? "rgba(234,88,12,0.1)" : "rgba(239,68,68,0.1)",
-                      color: appt.status === "Confirmed" ? GREEN : appt.status === "Pending" ? ORANGE : RED
-                    }}>
-                      {appt.status}
-                    </span>
-                  </td>
-                  <td style={{ padding: "16px 24px", textAlign: "right" }}>
-                    <div style={{ display: "flex", gap: "8px", justifyContent: "flex-end" }}>
-                      {appt.status === "Pending" && (
-                        <button 
-                          onClick={() => handleStatusChange(appt.id, "Confirmed")}
-                          style={{ border: "none", background: GREEN, color: "#fff", borderRadius: "6px", padding: "4px 10px", fontSize: "11px", fontWeight: 600, cursor: "pointer" }}
-                        >
-                          Approve
-                        </button>
-                      )}
-                      {appt.status !== "Cancelled" && (
-                        <button 
-                          onClick={() => handleStatusChange(appt.id, "Cancelled")}
-                          style={{ border: "1px solid rgba(239,68,68,0.4)", background: "transparent", color: RED, borderRadius: "6px", padding: "4px 10px", fontSize: "11px", fontWeight: 600, cursor: "pointer" }}
-                          onMouseEnter={e => { e.currentTarget.style.background = "rgba(239,68,68,0.06)"; }}
-                          onMouseLeave={e => { e.currentTarget.style.background = "transparent"; }}
-                        >
-                          Cancel
-                        </button>
-                      )}
-                      {appt.status === "Cancelled" && (
-                        <span style={{ fontSize: "11px", color: "#a0aec0", fontStyle: "italic" }}>No Actions</span>
-                      )}
-                    </div>
-                  </td>
-                </tr>
-              ))
-            ) : (
-              <tr>
-                <td colSpan="7" style={{ padding: "30px", textCenter: "center", color: "#8a96a3", textAlign: "center" }}>No appointments found.</td>
+      {isMobile ? (
+        /* ── Mobile: card list ── */
+        <div style={{ display: "flex", flexDirection: "column", gap: "10px" }}>
+          {filteredAppointments.length > 0 ? filteredAppointments.map(appt => (
+            <div key={appt.id} style={{ background: "#fff", borderRadius: "14px", padding: "16px", boxShadow: "0 2px 10px rgba(30,58,95,0.07)", border: "1px solid rgba(30,58,95,0.07)" }}>
+              <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", marginBottom: "10px" }}>
+                <div>
+                  <div style={{ fontWeight: 700, color: NAVY, fontSize: "14px" }}>{appt.patient}</div>
+                  <div style={{ fontSize: "12px", color: "#718096", marginTop: "2px" }}>{appt.phone}</div>
+                </div>
+                <span style={{ padding: "4px 10px", borderRadius: "20px", fontSize: "10px", fontWeight: 600, background: appt.status === "Confirmed" ? "rgba(34,197,94,0.1)" : appt.status === "Pending" ? "rgba(234,88,12,0.1)" : "rgba(239,68,68,0.1)", color: appt.status === "Confirmed" ? GREEN : appt.status === "Pending" ? ORANGE : RED, flexShrink: 0 }}>
+                  {appt.status}
+                </span>
+              </div>
+              <div style={{ fontSize: "12px", color: "#4a5568", marginBottom: "4px" }}>
+                <b style={{ color: NAVY }}>Doctor:</b> {appt.doctor}
+              </div>
+              <div style={{ fontSize: "12px", color: "#4a5568", marginBottom: "4px" }}>
+                <b style={{ color: NAVY }}>Dept:</b> <span style={{ padding: "2px 8px", borderRadius: "12px", background: "rgba(30,58,95,0.06)", color: NAVY, fontSize: "11px" }}>{appt.department}</span>
+              </div>
+              <div style={{ fontSize: "12px", color: "#718096", marginBottom: "10px" }}>
+                <b style={{ color: NAVY }}>Schedule:</b> {appt.datetime}
+              </div>
+              <div style={{ display: "flex", gap: "8px", paddingTop: "10px", borderTop: "1px solid rgba(30,58,95,0.06)" }}>
+                {appt.status === "Pending" && (
+                  <button onClick={() => handleStatusChange(appt.id, "Confirmed")} style={{ border: "none", background: GREEN, color: "#fff", borderRadius: "6px", padding: "5px 12px", fontSize: "11px", fontWeight: 600, cursor: "pointer" }}>Approve</button>
+                )}
+                {appt.status !== "Cancelled" && (
+                  <button onClick={() => handleStatusChange(appt.id, "Cancelled")} style={{ border: "1px solid rgba(239,68,68,0.4)", background: "transparent", color: RED, borderRadius: "6px", padding: "5px 12px", fontSize: "11px", fontWeight: 600, cursor: "pointer" }}>Cancel</button>
+                )}
+                {appt.status === "Cancelled" && (
+                  <span style={{ fontSize: "11px", color: "#a0aec0", fontStyle: "italic" }}>No Actions</span>
+                )}
+              </div>
+            </div>
+          )) : (
+            <div style={{ textAlign: "center", padding: "30px", color: "#8a96a3", background: "#fff", borderRadius: "14px" }}>No appointments found.</div>
+          )}
+        </div>
+      ) : (
+        /* ── Desktop: table ── */
+        <div style={{ 
+          background: "#fff", 
+          borderRadius: "0 0 16px 16px", 
+          boxShadow: "0 2px 14px rgba(30,58,95,0.07)", 
+          border: "1px solid rgba(30,58,95,0.07)",
+          overflowX: "auto"
+        }}>
+          <table style={{ width: "100%", borderCollapse: "collapse", textAlign: "left", fontSize: "13px" }}>
+            <thead>
+              <tr style={{ background: "#f8fafc", borderBottom: "1px solid rgba(30,58,95,0.07)" }}>
+                <th style={{ padding: "16px 24px", color: "#4a5568", fontWeight: 600 }}>Patient</th>
+                <th style={{ padding: "16px 24px", color: "#4a5568", fontWeight: 600 }}>Contact</th>
+                <th style={{ padding: "16px 24px", color: "#4a5568", fontWeight: 600 }}>Physician</th>
+                <th style={{ padding: "16px 24px", color: "#4a5568", fontWeight: 600 }}>Department</th>
+                <th style={{ padding: "16px 24px", color: "#4a5568", fontWeight: 600 }}>Schedule</th>
+                <th style={{ padding: "16px 24px", color: "#4a5568", fontWeight: 600 }}>Status</th>
+                <th style={{ padding: "16px 24px", color: "#4a5568", fontWeight: 600, textAlign: "right" }}>Actions</th>
               </tr>
-            )}
-          </tbody>
-        </table>
-      </div>
+            </thead>
+            <tbody>
+              {filteredAppointments.length > 0 ? (
+                filteredAppointments.map(appt => (
+                  <tr key={appt.id} style={{ borderBottom: "1px solid rgba(30,58,95,0.04)", transition: "background 0.2s" }} onMouseEnter={e => e.currentTarget.style.background = "#f8fafc"} onMouseLeave={e => e.currentTarget.style.background = "transparent"}>
+                    <td style={{ padding: "16px 24px" }}>
+                      <span style={{ fontWeight: 600, color: NAVY }}>{appt.patient}</span>
+                    </td>
+                    <td style={{ padding: "16px 24px", color: "#4a5568" }}>{appt.phone}</td>
+                    <td style={{ padding: "16px 24px", color: "#2d3748", fontWeight: 500 }}>{appt.doctor}</td>
+                    <td style={{ padding: "16px 24px" }}>
+                      <span style={{ padding: "4px 10px", borderRadius: "20px", fontSize: "11px", fontWeight: 600, background: "rgba(30,58,95,0.06)", color: NAVY }}>{appt.department}</span>
+                    </td>
+                    <td style={{ padding: "16px 24px", color: "#718096" }}>{appt.datetime}</td>
+                    <td style={{ padding: "16px 24px" }}>
+                      <span style={{ padding: "4px 10px", borderRadius: "20px", fontSize: "11px", fontWeight: 600, background: appt.status === "Confirmed" ? "rgba(34,197,94,0.1)" : appt.status === "Pending" ? "rgba(234,88,12,0.1)" : "rgba(239,68,68,0.1)", color: appt.status === "Confirmed" ? GREEN : appt.status === "Pending" ? ORANGE : RED }}>{appt.status}</span>
+                    </td>
+                    <td style={{ padding: "16px 24px", textAlign: "right" }}>
+                      <div style={{ display: "flex", gap: "8px", justifyContent: "flex-end" }}>
+                        {appt.status === "Pending" && (
+                          <button onClick={() => handleStatusChange(appt.id, "Confirmed")} style={{ border: "none", background: GREEN, color: "#fff", borderRadius: "6px", padding: "4px 10px", fontSize: "11px", fontWeight: 600, cursor: "pointer" }}>Approve</button>
+                        )}
+                        {appt.status !== "Cancelled" && (
+                          <button onClick={() => handleStatusChange(appt.id, "Cancelled")} style={{ border: "1px solid rgba(239,68,68,0.4)", background: "transparent", color: RED, borderRadius: "6px", padding: "4px 10px", fontSize: "11px", fontWeight: 600, cursor: "pointer" }}>Cancel</button>
+                        )}
+                        {appt.status === "Cancelled" && (
+                          <span style={{ fontSize: "11px", color: "#a0aec0", fontStyle: "italic" }}>No Actions</span>
+                        )}
+                      </div>
+                    </td>
+                  </tr>
+                ))
+              ) : (
+                <tr>
+                  <td colSpan="7" style={{ padding: "30px", color: "#8a96a3", textAlign: "center" }}>No appointments found.</td>
+                </tr>
+              )}
+            </tbody>
+          </table>
+        </div>
+      )}
     </main>
   );
 }

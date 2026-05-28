@@ -223,14 +223,24 @@ export default function DashboardOverview({ isMobile }) {
         </p>
       </div>
 
-      <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-5 mb-6">
+      <div style={{
+        display: "grid",
+        gridTemplateColumns: isMobile ? "1fr" : "repeat(2, 1fr)",
+        gap: "16px",
+        marginBottom: "24px"
+      }}>
         <StatCard title="Total Users"         value="12,584" change="+12.5%" up Icon={StatIcoUsers} iconBg={`${NAVY}1a`} />
         <StatCard title="Active Appointments" value="348"    change="+8.2%"  up Icon={StatIcoCal}   iconBg="#dcfce7"    />
         <StatCard title="Pending Requests"    value="56"     change="-4.3%"  up={false} Icon={StatIcoClock} iconBg="#ffedd5" />
         <StatCard title="Analytics Summary"   value="94.5%"  change="+2.1%"  up Icon={StatIcoTrend} iconBg="#f3e8ff"    />
       </div>
 
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-5 mb-6">
+      <div style={{
+        display: "grid",
+        gridTemplateColumns: isMobile ? "1fr" : "repeat(2, 1fr)",
+        gap: "16px",
+        marginBottom: "24px"
+      }}>
         <div style={{ background: "#fff", borderRadius: "16px", padding: "22px 24px", boxShadow: "0 2px 14px rgba(30,58,95,0.07)", border: "1px solid rgba(30,58,95,0.07)" }}>
           <h2 style={{ margin: "0 0 16px", fontSize: "15px", fontWeight: 700, color: NAVY }}>User Growth &amp; Appointments</h2>
           <LineChartSVG />
@@ -241,7 +251,11 @@ export default function DashboardOverview({ isMobile }) {
         </div>
       </div>
 
-      <div className="grid grid-cols-1 xl:grid-cols-[1fr_360px] gap-5">
+      <div style={{
+        display: "grid",
+        gridTemplateColumns: isMobile ? "1fr" : "1fr 360px",
+        gap: "16px"
+      }}>
         <div style={{ background: "#fff", borderRadius: "16px", padding: "22px 24px", boxShadow: "0 2px 14px rgba(30,58,95,0.07)", border: "1px solid rgba(30,58,95,0.07)" }}>
           <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "16px" }}>
             <h2 style={{ margin: 0, fontSize: "15px", fontWeight: 700, color: NAVY }}>Recent Activity</h2>
