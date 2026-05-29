@@ -15,10 +15,10 @@ import Location from "./pages/LocationPage";
 import Home from "./pages/patient/home";
 
 //jasper
-//import Staff from "./pages/staff/staffDashboard";
+import Staff from "./pages/staff/staffDashboard";
 
 //jayjay
-import Staff from "./pages/admin/adminPages/AdminDashboard";
+//import Staff from "./pages/admin/adminPages/AdminDashboard";
 
 import ForgotPass from "./pages/ForgotPasswordForm";
 import ResetPass from "./pages/ResetPasswordForm";
