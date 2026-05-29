@@ -59,18 +59,31 @@ const StatRow = ({ label, value, tone = "neutral" }) => {
   );
 };
 
+const getProfileAppointmentStats = (profileData = {}) => {
+  const stats = profileData.appointmentStats || {};
+  return {
+    total: stats.total ?? profileData.totalAppointments ?? 0,
+    upcoming: stats.upcoming ?? profileData.upcomingAppointments ?? 0,
+    completed: stats.completed ?? profileData.completedAppointments ?? 0,
+    pending: stats.pending ?? profileData.pendingAppointments ?? 0,
+  };
+};
+
+const getInitialProfileData = (profile) => ({
+  name: "",
+  email: "",
+  phone: "",
+  location: "",
+  dateOfBirth: "1990-05-15",
+  ...profile,
+});
+
 const ProfileView = ({ profile, onSaveProfile }) => {
-  const createProfileData = () => ({
-    name: "",
-    email: "",
-    phone: "",
-    location: "",
-    dateOfBirth: "1990-05-15",
-    ...profile,
-  });
-  const [formData, setFormData] = useState(createProfileData);
+  const [formData, setFormData] = useState(() => getInitialProfileData(profile));
   const [isEditing, setIsEditing] = useState(false);
   const [supportOpen, setSupportOpen] = useState(false);
+  const visibleProfile = isEditing ? formData : getInitialProfileData(profile);
+  const appointmentStats = getProfileAppointmentStats(visibleProfile);
 
   const handleSubmit = (event) => {
     event.preventDefault();
@@ -86,13 +99,13 @@ const ProfileView = ({ profile, onSaveProfile }) => {
     if (!isEditing) return;
     const url = prompt(
       "Enter image URL for your profile picture:",
-      formData.avatar || "https://i.pravatar.cc/150?u=sarah"
+      visibleProfile.avatar || "https://i.pravatar.cc/150?u=sarah"
     );
     if (url) setFormData((current) => ({ ...current, avatar: url }));
   };
 
   const handleCancel = () => {
-    setFormData(createProfileData());
+    setFormData(getInitialProfileData(profile));
     setIsEditing(false);
   };
 
@@ -117,8 +130,8 @@ const ProfileView = ({ profile, onSaveProfile }) => {
                 }`}
                 aria-label="Change profile picture"
               >
-                {formData.avatar ? (
-                  <img src={formData.avatar} alt="Profile" className="h-full w-full object-cover" />
+                {visibleProfile.avatar ? (
+                  <img src={visibleProfile.avatar} alt="Profile" className="h-full w-full object-cover" />
                 ) : (
                   <Icon type="user" className="h-16 w-16" />
                 )}
@@ -128,8 +141,8 @@ const ProfileView = ({ profile, onSaveProfile }) => {
                   </span>
                 )}
               </button>
-              <h2 className="mt-12 text-2xl font-bold text-[#061022]">{formData.name || "Sarah Johnson"}</h2>
-              <p className="mt-8 text-sm text-[#18304d]">{formData.email || "sarah.j@email.com"}</p>
+              <h2 className="mt-12 text-2xl font-bold text-[#061022]">{visibleProfile.name || "Sarah Johnson"}</h2>
+              <p className="mt-8 text-sm text-[#18304d]">{visibleProfile.email || "sarah.j@email.com"}</p>
               <div className="my-10 h-px bg-slate-200" />
               <p className="text-sm text-[#18304d]">
                 Member since <strong className="font-bold text-[#061022]">Jan 2026</strong>
@@ -139,10 +152,10 @@ const ProfileView = ({ profile, onSaveProfile }) => {
             <section className="rounded-[12px] border border-slate-200 bg-white p-6 shadow-[0_3px_10px_rgba(15,23,42,0.1)]">
               <h2 className="text-lg font-bold text-[#061022]">Appointment Statistics</h2>
               <div className="mt-12 space-y-4">
-                <StatRow label="Total" value="14" />
-                <StatRow label="Upcoming" value="2" tone="blue" />
-                <StatRow label="Completed" value="11" tone="green" />
-                <StatRow label="Pending" value="1" tone="orange" />
+                <StatRow label="Total" value={appointmentStats.total} />
+                <StatRow label="Upcoming" value={appointmentStats.upcoming} tone="blue" />
+                <StatRow label="Completed" value={appointmentStats.completed} tone="green" />
+                <StatRow label="Pending" value={appointmentStats.pending} tone="orange" />
               </div>
             </section>
 
@@ -187,7 +200,10 @@ const ProfileView = ({ profile, onSaveProfile }) => {
               ) : (
                 <button
                   type="button"
-                  onClick={() => setIsEditing(true)}
+                  onClick={() => {
+                    setFormData(getInitialProfileData(profile));
+                    setIsEditing(true);
+                  }}
                   className="flex items-center justify-center gap-3 rounded-[8px] border border-slate-200 px-5 py-3 text-sm font-bold text-[#061022] transition hover:bg-slate-50"
                 >
                   <Icon type="edit" className="h-4 w-4" />
@@ -201,7 +217,7 @@ const ProfileView = ({ profile, onSaveProfile }) => {
                 disabled={!isEditing}
                 label="Full Name"
                 icon="user"
-                value={formData.name}
+                value={visibleProfile.name}
                 placeholder="Sarah Johnson"
                 onChange={(value) => updateField("name", value)}
               />
@@ -210,7 +226,7 @@ const ProfileView = ({ profile, onSaveProfile }) => {
                 label="Email Address"
                 icon="mail"
                 type="email"
-                value={formData.email}
+                value={visibleProfile.email}
                 placeholder="sarah.j@email.com"
                 onChange={(value) => updateField("email", value)}
               />
@@ -219,7 +235,7 @@ const ProfileView = ({ profile, onSaveProfile }) => {
                 label="Phone Number"
                 icon="phone"
                 type="tel"
-                value={formData.phone}
+                value={visibleProfile.phone}
                 placeholder="+1 (555) 123-4567"
                 onChange={(value) => updateField("phone", value)}
               />
@@ -227,7 +243,7 @@ const ProfileView = ({ profile, onSaveProfile }) => {
                 disabled={!isEditing}
                 label="Address"
                 icon="location"
-                value={formData.location}
+                value={visibleProfile.location}
                 placeholder="123 Healthcare Ave, Medical City, MC 12345"
                 onChange={(value) => updateField("location", value)}
               />
@@ -236,7 +252,7 @@ const ProfileView = ({ profile, onSaveProfile }) => {
                 label="Date of Birth"
                 icon="calendar"
                 type="date"
-                value={formData.dateOfBirth}
+                value={visibleProfile.dateOfBirth}
                 onChange={(value) => updateField("dateOfBirth", value)}
               />
             </div>

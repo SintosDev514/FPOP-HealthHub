@@ -30,6 +30,23 @@ const formatAppointmentDate = (date) => {
   });
 };
 
+const getAppointmentStatus = (appointment) => appointment.status || "upcoming";
+
+const getAppointmentStats = (appointmentList = []) =>
+  appointmentList.reduce(
+    (stats, appointment) => {
+      const status = getAppointmentStatus(appointment);
+      return {
+        ...stats,
+        total: stats.total + 1,
+        upcoming: stats.upcoming + (status === "upcoming" ? 1 : 0),
+        completed: stats.completed + (status === "completed" ? 1 : 0),
+        pending: stats.pending + (status === "pending" ? 1 : 0),
+      };
+    },
+    { total: 0, upcoming: 0, completed: 0, pending: 0 }
+  );
+
 const StatCard = ({ icon, label, value, tone = "blue" }) => {
   const tones = {
     blue: "bg-[#edf4ff] text-[#244783]",
@@ -129,7 +146,7 @@ const DashboardView = ({
   profile,
 }) => {
   const firstName = profile?.name?.split(" ")[0] || "User";
-  const appointmentTotal = appointments.length;
+  const appointmentStats = getAppointmentStats(appointments);
   const [appointmentFilter, setAppointmentFilter] = useState("confirmed");
   const [expandedNotification, setExpandedNotification] = useState(null);
   const [readNotifications, setReadNotifications] = useState([]);
@@ -157,7 +174,7 @@ const DashboardView = ({
     ],
   ];
   const filteredAppointments = appointments.filter((appointment) => {
-    const status = appointment.status || "upcoming";
+    const status = getAppointmentStatus(appointment);
     if (appointmentFilter === "pending") return status === "pending";
     return status !== "pending";
   });
@@ -193,10 +210,10 @@ const DashboardView = ({
         </section>
 
         <section className="grid grid-cols-1 gap-5 md:grid-cols-2 xl:grid-cols-4">
-          <StatCard icon="calendar" label="Upcoming" value={appointmentTotal || 2} />
-          <StatCard icon="check" label="Completed" value={11} tone="green" />
-          <StatCard icon="clock" label="Pending" value={1} tone="orange" />
-          <StatCard icon="bell" label="Reminders" value={3} tone="orange" />
+          <StatCard icon="calendar" label="Upcoming" value={appointmentStats.upcoming} />
+          <StatCard icon="check" label="Completed" value={appointmentStats.completed} tone="green" />
+          <StatCard icon="clock" label="Pending" value={appointmentStats.pending} tone="orange" />
+          <StatCard icon="bell" label="Reminders" value={notifications.length} tone="orange" />
         </section>
 
         <section className="grid grid-cols-1 gap-6 lg:grid-cols-3">
@@ -299,7 +316,7 @@ const DashboardView = ({
               </div>
               <div className="flex justify-between gap-4">
                 <span className="text-[#18304d]">Total Appointments</span>
-                <strong className="text-[#061022]">{Math.max(appointmentTotal, 14)}</strong>
+                <strong className="text-[#061022]">{appointmentStats.total}</strong>
               </div>
             </div>
             <button

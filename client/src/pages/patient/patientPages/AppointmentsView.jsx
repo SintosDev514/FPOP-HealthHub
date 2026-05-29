@@ -33,6 +33,23 @@ const formatDate = (date) => {
   });
 };
 
+const getAppointmentStatus = (appointment) => appointment.status || "upcoming";
+
+const getAppointmentStats = (appointmentList = []) =>
+  appointmentList.reduce(
+    (stats, appointment) => {
+      const status = getAppointmentStatus(appointment);
+      return {
+        ...stats,
+        total: stats.total + 1,
+        upcoming: stats.upcoming + (status === "upcoming" ? 1 : 0),
+        completed: stats.completed + (status === "completed" ? 1 : 0),
+        pending: stats.pending + (status === "pending" ? 1 : 0),
+      };
+    },
+    { total: 0, upcoming: 0, completed: 0, pending: 0 }
+  );
+
 const StatCard = ({ icon, label, value, tone = "neutral" }) => {
   const tones = {
     neutral: {
@@ -138,7 +155,7 @@ const demoAppointments = [
 
 const normalizeAppointment = (appointment) => ({
   ...appointment,
-  status: appointment.status || "upcoming",
+  status: getAppointmentStatus(appointment),
   location: appointment.location || "Main Clinic",
 });
 
@@ -204,14 +221,11 @@ const MyAppointmentsView = ({ appointments = [], onNavigateToBook }) => {
   const [selectedAppointment, setSelectedAppointment] = useState(null);
   const realAppointments = appointments.map(normalizeAppointment);
   const visibleAppointments = [...realAppointments, ...demoAppointments];
+  const appointmentStats = getAppointmentStats(visibleAppointments);
   const filteredAppointments = visibleAppointments.filter((appointment) => {
     if (statusFilter === "all") return true;
-    return appointment.status === statusFilter;
+    return getAppointmentStatus(appointment) === statusFilter;
   });
-  const totalCount = Math.max(visibleAppointments.length, 14);
-  const upcomingCount = realAppointments.filter((appointment) => appointment.status === "upcoming").length || 2;
-  const completedCount = demoAppointments.filter((appointment) => appointment.status === "completed").length + 7;
-  const pendingCount = demoAppointments.filter((appointment) => appointment.status === "pending").length;
 
   return (
     <main className="flex-1 bg-[#f7f8fa] px-4 py-12 sm:px-6 lg:px-8">
@@ -232,10 +246,10 @@ const MyAppointmentsView = ({ appointments = [], onNavigateToBook }) => {
         </section>
 
         <section className="grid grid-cols-1 gap-6 md:grid-cols-2 xl:grid-cols-4">
-          <StatCard icon="chart" label="Total Appointments" value={totalCount} />
-          <StatCard icon="calendar" label="Upcoming" value={upcomingCount} tone="blue" />
-          <StatCard icon="check" label="Completed" value={completedCount} tone="green" />
-          <StatCard icon="alert" label="Pending" value={pendingCount} tone="orange" />
+          <StatCard icon="chart" label="Total Appointments" value={appointmentStats.total} />
+          <StatCard icon="calendar" label="Upcoming" value={appointmentStats.upcoming} tone="blue" />
+          <StatCard icon="check" label="Completed" value={appointmentStats.completed} tone="green" />
+          <StatCard icon="alert" label="Pending" value={appointmentStats.pending} tone="orange" />
         </section>
 
         <section className="flex flex-col gap-4 rounded-[12px] bg-white p-6 shadow-[0_2px_8px_rgba(15,23,42,0.1)] sm:flex-row sm:items-center sm:justify-between">
@@ -256,7 +270,7 @@ const MyAppointmentsView = ({ appointments = [], onNavigateToBook }) => {
           </div>
           <div className="flex items-center gap-3 rounded-[12px] border border-slate-200 bg-slate-50 px-5 py-3 text-sm font-semibold text-[#18304d]">
             <span className="h-2.5 w-2.5 rounded-full bg-[#546c9a]" />
-            {totalCount} appointments
+            {appointmentStats.total} appointments
           </div>
         </section>
 
