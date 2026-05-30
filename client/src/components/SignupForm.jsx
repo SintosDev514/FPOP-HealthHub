@@ -102,102 +102,91 @@ function SignupForm() {
 
   return (
     <>
-      <div className="min-h-screen py-16 px-4 flex items-center justify-center relative overflow-hidden bg-[#F9FAFB]">
+      <div className="min-h-[calc(100vh-76px)] py-3 px-4 flex items-start justify-center relative overflow-hidden bg-[#F9FAFB]">
         {/* Soft floating background gradient blobs */}
         <div className="absolute top-1/4 left-1/4 w-[400px] h-[400px] bg-blue-100/40 rounded-full blur-3xl opacity-80 animate-pulse pointer-events-none -z-10" />
         <div className="absolute bottom-1/4 right-1/4 w-[400px] h-[400px] bg-[#F5C518]/10 rounded-full blur-3xl opacity-60 animate-pulse pointer-events-none -z-10 [animation-delay:2s]" />
 
-        <div className="w-full max-w-lg bg-white/85 backdrop-blur-md border border-white/40 shadow-[0_24px_50px_rgba(30,58,95,0.06)] rounded-[2.5rem] p-8 md:p-10 z-10">
-          <div className="flex flex-col items-center text-center mb-8">
+        <div className="w-full max-w-md bg-white/85 backdrop-blur-md border border-white/40 shadow-[0_20px_42px_rgba(30,58,95,0.06)] rounded-[1.5rem] p-4 md:p-5 z-10">
+          <div className="flex flex-col items-center text-center mb-3">
             <img
               src={logo}
               alt="FPOP Clinic Portal Logo"
-              className="w-16 h-16 rounded-full object-cover mb-4 shadow-md border-2 border-white"
+              className="w-22 h-22"
             />
 
-            <h2 className="text-3xl md:text-4xl font-bold text-[#1E3A5F] tracking-tight">
+            <h2 className="text-xl md:text-2xl font-bold text-[#1E3A5F] tracking-tight">
               Create Account
             </h2>
-            <p className="mt-2.5 text-slate-500 text-base">
+            <p className="mt-0.5 text-slate-500 text-xs">
               Join FPOP Clinic for better healthcare
             </p>
           </div>
 
-          <form className="space-y-5" onSubmit={handleSignup}>
-            <div>
-              <label className="block text-[#1E3A5F] font-bold text-sm tracking-wide uppercase mb-2">
-                I am a
-              </label>
-              <button
-                type="button"
-                className="w-full rounded-2xl border-2 border-[#1E3A5F] text-[#1E3A5F] font-bold py-3.5 bg-blue-50/50 shadow-sm cursor-default"
-              >
-                Patient
-              </button>
-            </div>
+          <form className="space-y-2.5" onSubmit={handleSignup}>
 
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-2.5">
               <div>
-                <label className="block text-[#1E3A5F] font-bold text-sm tracking-wide uppercase mb-2">
+                <label className="block text-[#1E3A5F] font-bold text-xs tracking-wide uppercase mb-1.5">
                   First Name
                 </label>
                 <input
                   type="text"
-                  placeholder="John"
+                  placeholder=""
                   value={firstName}
                   onChange={(e) => setFirstName(e.target.value)}
                   required
-                  className="w-full h-12 rounded-xl border border-slate-200 bg-white/60 px-4 outline-none focus:border-[#F5C518] focus:ring-4 focus:ring-[#F5C518]/10 transition-all duration-300 text-slate-700"
+                  className="w-full h-9 rounded-lg border border-slate-200 bg-white/60 px-3 outline-none focus:border-[#F5C518] focus:ring-4 focus:ring-[#F5C518]/10 transition-all duration-300 text-sm text-slate-700"
                 />
               </div>
 
               <div>
-                <label className="block text-[#1E3A5F] font-bold text-sm tracking-wide uppercase mb-2">
+                <label className="block text-[#1E3A5F] font-bold text-xs tracking-wide uppercase mb-1.5">
                   Last Name
                 </label>
                 <input
                   type="text"
-                  placeholder="Doe"
+                  placeholder=""
                   value={lastName}
                   onChange={(e) => setLastName(e.target.value)}
                   required
-                  className="w-full h-12 rounded-xl border border-slate-200 bg-white/60 px-4 outline-none focus:border-[#F5C518] focus:ring-4 focus:ring-[#F5C518]/10 transition-all duration-300 text-slate-700"
+                  className="w-full h-9 rounded-lg border border-slate-200 bg-white/60 px-3 outline-none focus:border-[#F5C518] focus:ring-4 focus:ring-[#F5C518]/10 transition-all duration-300 text-sm text-slate-700"
                 />
               </div>
             </div>
 
             <div>
-              <label className="block text-[#1E3A5F] font-bold text-sm tracking-wide uppercase mb-2">
+              <label className="block text-[#1E3A5F] font-bold text-xs tracking-wide uppercase mb-1.5">
                 Email Address
               </label>
               <input
                 type="email"
-                placeholder="FPOPClinicPortal@gmail.com"
+                placeholder=""
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
                 required
-                className="w-full h-12 rounded-xl border border-slate-200 bg-white/60 px-4 outline-none focus:border-[#F5C518] focus:ring-4 focus:ring-[#F5C518]/10 transition-all duration-300 text-slate-700"
+                className="w-full h-9 rounded-lg border border-slate-200 bg-white/60 px-3 outline-none focus:border-[#F5C518] focus:ring-4 focus:ring-[#F5C518]/10 transition-all duration-300 text-sm text-slate-700"
               />
             </div>
 
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-2.5">
               <div>
-                <label className="block text-[#1E3A5F] font-bold text-sm tracking-wide uppercase mb-2">
+                <label className="block text-[#1E3A5F] font-bold text-xs tracking-wide uppercase mb-1.5">
                   Password
                 </label>
                 <div className="relative">
                   <input
                     type={showPassword ? "text" : "password"}
-                    placeholder="••••••••"
+                    placeholder=""
                     value={password}
                     onChange={(e) => setPassword(e.target.value)}
                     required
-                    className="w-full h-12 rounded-xl border border-slate-200 bg-white/60 px-4 pr-10 outline-none focus:border-[#F5C518] focus:ring-4 focus:ring-[#F5C518]/10 transition-all duration-300 text-slate-700"
+                    className="w-full h-9 rounded-lg border border-slate-200 bg-white/60 px-3 pr-9 outline-none focus:border-[#F5C518] focus:ring-4 focus:ring-[#F5C518]/10 transition-all duration-300 text-sm text-slate-700"
                   />
                   <button
                     type="button"
                     onClick={() => setShowPassword(!showPassword)}
-                    className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 hover:text-[#1E3A5F] transition-colors focus:outline-none"
+                    className="absolute right-2.5 top-1/2 -translate-y-1/2 text-slate-400 hover:text-[#1E3A5F] transition-colors focus:outline-none"
                   >
                     {showPassword ? <EyeOffIcon /> : <EyeIcon />}
                   </button>
@@ -205,22 +194,22 @@ function SignupForm() {
               </div>
 
               <div>
-                <label className="block text-[#1E3A5F] font-bold text-sm tracking-wide uppercase mb-2">
+                <label className="block text-[#1E3A5F] font-bold text-xs tracking-wide uppercase mb-1.5">
                   Confirm Password
                 </label>
                 <div className="relative">
                   <input
                     type={showConfirmPassword ? "text" : "password"}
-                    placeholder="••••••••"
+                    placeholder=""
                     value={confirmPassword}
                     onChange={(e) => setConfirmPassword(e.target.value)}
                     required
-                    className="w-full h-12 rounded-xl border border-slate-200 bg-white/60 px-4 pr-10 outline-none focus:border-[#F5C518] focus:ring-4 focus:ring-[#F5C518]/10 transition-all duration-300 text-slate-700"
+                    className="w-full h-9 rounded-lg border border-slate-200 bg-white/60 px-3 pr-9 outline-none focus:border-[#F5C518] focus:ring-4 focus:ring-[#F5C518]/10 transition-all duration-300 text-sm text-slate-700"
                   />
                   <button
                     type="button"
                     onClick={() => setShowConfirmPassword(!showConfirmPassword)}
-                    className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 hover:text-[#1E3A5F] transition-colors focus:outline-none"
+                    className="absolute right-2.5 top-1/2 -translate-y-1/2 text-slate-400 hover:text-[#1E3A5F] transition-colors focus:outline-none"
                   >
                     {showConfirmPassword ? <EyeOffIcon /> : <EyeIcon />}
                   </button>
@@ -228,10 +217,10 @@ function SignupForm() {
               </div>
             </div>
 
-            <label className="flex items-start gap-2.5 text-sm text-slate-600 cursor-pointer select-none">
+            <label className="flex items-start gap-2 text-xs text-slate-600 cursor-pointer select-none">
               <input
                 type="checkbox"
-                className="mt-1 h-4 w-4 rounded border-slate-300 text-[#1E3A5F] focus:ring-[#1E3A5F]/20 cursor-pointer"
+                className="mt-0.5 h-3.5 w-3.5 rounded border-slate-300 text-[#1E3A5F] focus:ring-[#1E3A5F]/20 cursor-pointer"
                 checked={agreed}
                 onChange={(e) => setAgreed(e.target.checked)}
               />
@@ -256,13 +245,13 @@ function SignupForm() {
             </label>
 
             {error && (
-              <div className="mb-4 p-4 rounded-xl bg-red-50 border border-red-100 text-red-600 text-sm font-medium">
+              <div className="p-2.5 rounded-lg bg-red-50 border border-red-100 text-red-600 text-sm font-medium">
                 {error}
               </div>
             )}
 
             {message && (
-              <div className="mb-4 p-4 rounded-xl bg-green-50 border border-green-100 text-green-600 text-sm font-medium">
+              <div className="p-2.5 rounded-lg bg-green-50 border border-green-100 text-green-600 text-sm font-medium">
                 {message}
               </div>
             )}
@@ -272,7 +261,7 @@ function SignupForm() {
             <button
               type="submit"
               disabled={!canSubmit}
-              className={`w-full h-14 rounded-full font-bold text-lg border-2 border-transparent transition-all duration-300 transform hover:-translate-y-0.5 shadow-[0_8px_20px_rgba(30,58,95,0.15)] ${
+              className={`w-full h-10 rounded-full font-bold text-sm border-2 border-transparent transition-all duration-300 transform hover:-translate-y-0.5 shadow-[0_8px_20px_rgba(30,58,95,0.15)] ${
                 canSubmit
                   ? "bg-[#1E3A5F] text-white hover:bg-white hover:border-[#F5C518] hover:text-[#1E3A5F] cursor-pointer"
                   : "bg-slate-300 text-slate-500 cursor-not-allowed shadow-none transform-none"
@@ -281,7 +270,7 @@ function SignupForm() {
               Create Account
             </button>
 
-            <p className="text-center text-slate-500 text-sm font-medium pt-2">
+            <p className="text-center text-slate-500 text-xs font-medium">
               Already have an account?{" "}
               <button
                 type="button"
