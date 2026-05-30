@@ -165,7 +165,7 @@ function AdminShell({ activeNav }) {
             gap: "2px",
           }}
         >
-          {NAV_ITEMS.map(({ key, label, Icon, path }) => {
+          {NAV_ITEMS.map(({ key, label, path }) => {
             const active = activeNav === key;
             return (
               <button

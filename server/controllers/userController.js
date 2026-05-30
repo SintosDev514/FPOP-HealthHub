@@ -11,7 +11,7 @@ const getUserData = async (req, res) => {
 
     const user = await userModel
       .findById(req.user.id)
-      .select("name verifyOtpVerified");
+      .select("firstName lastName email isAccountVerified");
 
     if (!user) {
       return res.status(404).json({
@@ -23,8 +23,10 @@ const getUserData = async (req, res) => {
     res.status(200).json({
       success: true,
       userData: {
-        name: user.name,
-        isAccountVerified: user.verifyOtpVerified,
+        _id: user._id,
+        name: `${user.firstName} ${user.lastName}`,
+        email: user.email,
+        isAccountVerified: user.isAccountVerified,
       },
     });
   } catch (error) {

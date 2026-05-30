@@ -1,0 +1,13 @@
+account
+
+PATIENT -
+sintosroberto3@gmail.com
+Testtest123
+
+STAFF -
+Utongninonoy@gmail.com
+Testtest123
+
+ADMIN -
+bwakangshit@gmail.com
+Testtest123

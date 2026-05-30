@@ -14,8 +14,18 @@ const Icon = ({ type, className = "h-5 w-5" }) => {
   };
 
   return (
-    <svg className={className} fill="none" stroke="currentColor" viewBox="0 0 24 24">
-      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d={paths[type]} />
+    <svg
+      className={className}
+      fill="none"
+      stroke="currentColor"
+      viewBox="0 0 24 24"
+    >
+      <path
+        strokeLinecap="round"
+        strokeLinejoin="round"
+        strokeWidth={2}
+        d={paths[type]}
+      />
     </svg>
   );
 };
@@ -44,7 +54,7 @@ const getAppointmentStats = (appointmentList = []) =>
         pending: stats.pending + (status === "pending" ? 1 : 0),
       };
     },
-    { total: 0, upcoming: 0, completed: 0, pending: 0 }
+    { total: 0, upcoming: 0, completed: 0, pending: 0 },
   );
 
 const StatCard = ({ icon, label, value, tone = "blue" }) => {
@@ -57,10 +67,14 @@ const StatCard = ({ icon, label, value, tone = "blue" }) => {
   return (
     <div className="rounded-[12px] border border-slate-200 bg-white p-6 shadow-[0_1px_4px_rgba(15,23,42,0.04)]">
       <div className="flex items-start justify-between">
-        <div className={`flex h-12 w-12 items-center justify-center rounded-[12px] ${tones[tone]}`}>
+        <div
+          className={`flex h-12 w-12 items-center justify-center rounded-[12px] ${tones[tone]}`}
+        >
           <Icon type={icon} />
         </div>
-        <p className="text-3xl font-bold leading-none text-[#061022]">{value}</p>
+        <p className="text-3xl font-bold leading-none text-[#061022]">
+          {value}
+        </p>
       </div>
       <p className="mt-5 text-sm font-medium text-[#18304d]">{label}</p>
     </div>
@@ -68,10 +82,13 @@ const StatCard = ({ icon, label, value, tone = "blue" }) => {
 };
 
 const ActionCard = ({ icon, title, subtitle, onClick, accent = "navy" }) => {
-  const iconClass = accent === "orange" ? "bg-[#ffae0b] text-white" : "bg-[#244783] text-white";
+  const iconClass =
+    accent === "orange" ? "bg-[#ffae0b] text-white" : "bg-[#244783] text-white";
   const content = (
     <>
-      <span className={`flex h-[60px] w-[60px] shrink-0 items-center justify-center rounded-[14px] ${iconClass}`}>
+      <span
+        className={`flex h-[60px] w-[60px] shrink-0 items-center justify-center rounded-[14px] ${iconClass}`}
+      >
         <Icon type={icon} className="h-7 w-7" />
       </span>
       <span>
@@ -108,7 +125,9 @@ const AppointmentRow = ({ appointment }) => {
     <div className="rounded-[12px] border border-slate-200 bg-slate-50/40 px-5 py-5">
       <div className="flex items-start justify-between gap-4">
         <div>
-          <h4 className="text-base font-bold text-[#061022]">{appointment.serviceName}</h4>
+          <h4 className="text-base font-bold text-[#061022]">
+            {appointment.serviceName}
+          </h4>
           <p className="mt-4 flex items-center gap-2 text-sm text-[#18304d]">
             <Icon type="user" className="h-4 w-4" />
             {appointment.doctorName}
@@ -145,7 +164,7 @@ const DashboardView = ({
   appointments = [],
   profile,
 }) => {
-  const firstName = profile?.name?.split(" ")[0] || "User";
+  const firstName = profile?.name ? profile.name.split(" ")[0] : "";
   const appointmentStats = getAppointmentStats(appointments);
   const [appointmentFilter, setAppointmentFilter] = useState("confirmed");
   const [expandedNotification, setExpandedNotification] = useState(null);
@@ -193,7 +212,7 @@ const DashboardView = ({
           <div className="relative z-10 flex items-center justify-between gap-6">
             <div>
               <h1 className="text-3xl font-bold leading-tight sm:text-4xl">
-                Welcome Back, {firstName}!
+                Welcome Back{firstName ? `, ${firstName}` : ""}!
               </h1>
               <p className="mt-3 text-base text-white/95 sm:text-lg">
                 Here's what's happening with your healthcare today
@@ -201,7 +220,11 @@ const DashboardView = ({
             </div>
             <div className="hidden h-20 w-20 items-center justify-center rounded-[14px] border border-white/20 bg-white/10 sm:flex">
               {profile?.avatar ? (
-                <img src={profile.avatar} alt="Profile" className="h-full w-full rounded-[14px] object-cover" />
+                <img
+                  src={profile.avatar}
+                  alt="Profile"
+                  className="h-full w-full rounded-[14px] object-cover"
+                />
               ) : (
                 <Icon type="user" className="h-11 w-11" />
               )}
@@ -210,10 +233,29 @@ const DashboardView = ({
         </section>
 
         <section className="grid grid-cols-1 gap-5 md:grid-cols-2 xl:grid-cols-4">
-          <StatCard icon="calendar" label="Upcoming" value={appointmentStats.upcoming} />
-          <StatCard icon="check" label="Completed" value={appointmentStats.completed} tone="green" />
-          <StatCard icon="clock" label="Pending" value={appointmentStats.pending} tone="orange" />
-          <StatCard icon="bell" label="Reminders" value={notifications.length} tone="orange" />
+          <StatCard
+            icon="calendar"
+            label="Upcoming"
+            value={appointmentStats.upcoming}
+          />
+          <StatCard
+            icon="check"
+            label="Completed"
+            value={appointmentStats.completed}
+            tone="green"
+          />
+          <StatCard
+            icon="clock"
+            label="Pending"
+            value={appointmentStats.pending}
+            tone="orange"
+          />
+          <StatCard
+            icon="bell"
+            label="Reminders"
+            value={notifications.length}
+            tone="orange"
+          />
         </section>
 
         <section className="grid grid-cols-1 gap-6 lg:grid-cols-3">
@@ -241,8 +283,12 @@ const DashboardView = ({
         <section className="rounded-[12px] border border-slate-200 bg-white p-8 shadow-[0_3px_10px_rgba(15,23,42,0.1)]">
           <div className="mb-12 flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
             <div>
-              <h2 className="text-2xl font-bold text-[#061022]">Upcoming Appointments</h2>
-              <p className="mt-1 text-sm text-[#18304d]">Your next scheduled visits</p>
+              <h2 className="text-2xl font-bold text-[#061022]">
+                Upcoming Appointments
+              </h2>
+              <p className="mt-1 text-sm text-[#18304d]">
+                Your next scheduled visits
+              </p>
             </div>
             <div className="flex gap-3">
               <button
@@ -277,7 +323,10 @@ const DashboardView = ({
           ) : (
             <div className="space-y-4">
               {filteredAppointments.map((appointment) => (
-                <AppointmentRow key={appointment.id} appointment={appointment} />
+                <AppointmentRow
+                  key={appointment.id}
+                  appointment={appointment}
+                />
               ))}
             </div>
           )}
@@ -298,14 +347,22 @@ const DashboardView = ({
             <div className="mt-12 flex items-center gap-5">
               <div className="flex h-16 w-16 items-center justify-center rounded-[14px] bg-[#244783] text-white">
                 {profile?.avatar ? (
-                  <img src={profile.avatar} alt="Profile" className="h-full w-full rounded-[14px] object-cover" />
+                  <img
+                    src={profile.avatar}
+                    alt="Profile"
+                    className="h-full w-full rounded-[14px] object-cover"
+                  />
                 ) : (
                   <Icon type="user" className="h-9 w-9" />
                 )}
               </div>
               <div>
-                <h3 className="text-lg font-bold text-[#061022]">{profile?.name || "Sarah Johnson"}</h3>
-                <p className="mt-1 text-sm text-[#18304d]">{profile?.email || "sarah.j@email.com"}</p>
+                <h3 className="text-lg font-bold text-[#061022]">
+                  {profile?.name || "Sarah Johnson"}
+                </h3>
+                <p className="mt-1 text-sm text-[#18304d]">
+                  {profile?.email || "sarah.j@email.com"}
+                </p>
               </div>
             </div>
             <div className="my-8 h-px bg-slate-200" />
@@ -316,7 +373,9 @@ const DashboardView = ({
               </div>
               <div className="flex justify-between gap-4">
                 <span className="text-[#18304d]">Total Appointments</span>
-                <strong className="text-[#061022]">{appointmentStats.total}</strong>
+                <strong className="text-[#061022]">
+                  {appointmentStats.total}
+                </strong>
               </div>
             </div>
             <button
@@ -329,39 +388,50 @@ const DashboardView = ({
           </div>
 
           <div className="rounded-[12px] border border-slate-200 bg-white p-8 shadow-[0_3px_10px_rgba(15,23,42,0.1)]">
-            <h2 className="text-2xl font-bold text-[#061022]">Recent Notifications</h2>
+            <h2 className="text-2xl font-bold text-[#061022]">
+              Recent Notifications
+            </h2>
             <div className="mt-12 space-y-3">
               {notifications.map(([title, body, time, isNew]) => {
                 const unread = isNew && !readNotifications.includes(title);
                 const expanded = expandedNotification === title;
                 return (
-                <button
-                  type="button"
-                  key={title}
-                  onClick={() => handleNotificationClick(title, isNew)}
-                  className={`w-full rounded-[12px] border p-4 text-left transition hover:-translate-y-0.5 hover:shadow-sm ${
-                    unread ? "border-blue-200 bg-blue-50" : "border-slate-200 bg-slate-50"
-                  }`}
-                >
-                  <div className="flex items-start justify-between gap-3">
-                    <div>
-                      <h3 className="text-sm font-bold text-[#061022]">{title}</h3>
-                      <p className={`mt-4 text-sm text-[#18304d] ${expanded ? "" : "line-clamp-1"}`}>{body}</p>
-                      {expanded && (
-                        <p className="mt-3 text-xs text-[#496178]">
-                          This is a local preview only. Click again to collapse.
+                  <button
+                    type="button"
+                    key={title}
+                    onClick={() => handleNotificationClick(title, isNew)}
+                    className={`w-full rounded-[12px] border p-4 text-left transition hover:-translate-y-0.5 hover:shadow-sm ${
+                      unread
+                        ? "border-blue-200 bg-blue-50"
+                        : "border-slate-200 bg-slate-50"
+                    }`}
+                  >
+                    <div className="flex items-start justify-between gap-3">
+                      <div>
+                        <h3 className="text-sm font-bold text-[#061022]">
+                          {title}
+                        </h3>
+                        <p
+                          className={`mt-4 text-sm text-[#18304d] ${expanded ? "" : "line-clamp-1"}`}
+                        >
+                          {body}
                         </p>
+                        {expanded && (
+                          <p className="mt-3 text-xs text-[#496178]">
+                            This is a local preview only. Click again to
+                            collapse.
+                          </p>
+                        )}
+                        <p className="mt-4 text-xs text-[#496178]">{time}</p>
+                      </div>
+                      {unread && (
+                        <span className="rounded-[8px] bg-[#244783] px-3 py-1 text-xs font-bold text-white">
+                          New
+                        </span>
                       )}
-                      <p className="mt-4 text-xs text-[#496178]">{time}</p>
                     </div>
-                    {unread && (
-                      <span className="rounded-[8px] bg-[#244783] px-3 py-1 text-xs font-bold text-white">
-                        New
-                      </span>
-                    )}
-                  </div>
-                </button>
-              );
+                  </button>
+                );
               })}
             </div>
           </div>
@@ -372,10 +442,18 @@ const DashboardView = ({
           <div className="w-full max-w-md rounded-[12px] bg-white p-6 shadow-xl">
             <div className="flex items-start justify-between gap-4">
               <div>
-                <h2 className="text-xl font-bold text-[#061022]">Verify Email</h2>
-                <p className="mt-2 text-sm text-[#18304d]">Enter a mock OTP to preview verification.</p>
+                <h2 className="text-xl font-bold text-[#061022]">
+                  Verify Email
+                </h2>
+                <p className="mt-2 text-sm text-[#18304d]">
+                  Enter a mock OTP to preview verification.
+                </p>
               </div>
-              <button type="button" className="text-slate-500" onClick={() => setOtpOpen(false)}>
+              <button
+                type="button"
+                className="text-slate-500"
+                onClick={() => setOtpOpen(false)}
+              >
                 x
               </button>
             </div>

@@ -17,7 +17,7 @@ import verifyRecaptcha from "../middleware/verifyRecaptcha.js";
 const authRouter = express.Router();
 
 authRouter.post("/register", verifyRecaptcha, SignUp);
-authRouter.post("/login", verifyRecaptcha, SignIn);
+authRouter.post("/login", SignIn);
 authRouter.post("/logout", Logout);
 
 authRouter.post("/sendEmailOtp", userAuth, SendVerifyEmailOtp);
