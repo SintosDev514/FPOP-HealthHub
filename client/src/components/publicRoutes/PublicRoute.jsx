@@ -7,7 +7,15 @@ function PublicRoute({ children }) {
 
   if (loading) return <Loader />;
 
-  return user ? <Navigate to="/home" replace /> : children;
+  if (user) {
+    const role = user.role?.toLowerCase();
+
+    if (role === "admin") return <Navigate to="/admin" replace />;
+    if (role === "staff") return <Navigate to="/staff" replace />;
+    return <Navigate to="/home" replace />;
+  }
+
+  return children;
 }
 
 export default PublicRoute;

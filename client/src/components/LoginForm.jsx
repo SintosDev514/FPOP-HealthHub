@@ -43,7 +43,12 @@ function LoginForm() {
       if (res.ok) {
         setMessage(data.message);
         await checkAuth();
-        navigate("/staff");
+
+        const role = (data.user?.role || "").toLowerCase();
+
+        if (role === "admin") navigate("/admin", { replace: true });
+        else if (role === "staff") navigate("/staff", { replace: true });
+        else navigate("/home", { replace: true });
       } else {
         setError(data.message);
         recaptchaRef.current?.reset();

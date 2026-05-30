@@ -179,14 +179,21 @@ export const SignIn = async (req, res) => {
 
     res.cookie("token", token, {
       httpOnly: true,
-      secure: process.env.NODE_ENV === "production",
-      sameSite: process.env.NODE_ENV === "production" ? "none" : "strict",
+      secure: false, // IMPORTANT in localhost
+      sameSite: "lax", // IMPORTANT fix
       maxAge,
     });
 
     res.json({
       success: true,
       message: "User Login successfully",
+      role: user.role,
+      user: {
+        id: user._id,
+        email: user.email,
+        role: user.role,
+        isAccountVerified: user.isAccountVerified,
+      },
     });
   } catch (error) {
     return res.status(500).json({ success: false, message: error.message });

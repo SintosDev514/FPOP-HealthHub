@@ -83,7 +83,11 @@ function SignupForm() {
         setMessage(data.message);
         setError("");
         await checkAuth();
-        navigate("/home");
+        const role = (data.user?.role || "").toLowerCase();
+
+        if (role === "admin") navigate("/admin", { replace: true });
+        else if (role === "staff") navigate("/staff", { replace: true });
+        else navigate("/home", { replace: true });
       } else {
         setError(data.message);
         setMessage("");
@@ -215,9 +219,7 @@ function SignupForm() {
                   />
                   <button
                     type="button"
-                    onClick={() =>
-                      setShowConfirmPassword(!showConfirmPassword)
-                    }
+                    onClick={() => setShowConfirmPassword(!showConfirmPassword)}
                     className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 hover:text-[#1E3A5F] transition-colors focus:outline-none"
                   >
                     {showConfirmPassword ? <EyeOffIcon /> : <EyeIcon />}
