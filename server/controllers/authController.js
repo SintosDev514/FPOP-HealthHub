@@ -5,7 +5,7 @@ import transporter from "../config/nodeMailer.js";
 import userModel from "../models/userModel.js";
 
 export const SignUp = async (req, res) => {
-  const { firstName, lastName, email, password } = req.body;
+  const { firstName, lastName, email, password, phone, address, dateOfBirth } = req.body;
 
   if (!firstName || !lastName || !email || !password) {
     return res.status(400).json({
@@ -30,6 +30,9 @@ export const SignUp = async (req, res) => {
       lastName,
       email,
       password: hashPassword,
+      phone: phone || "",
+      address: address || "",
+      dateOfBirth: dateOfBirth || "",
     });
 
     await user.save();

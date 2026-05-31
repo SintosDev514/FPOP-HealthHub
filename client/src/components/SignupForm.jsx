@@ -12,6 +12,9 @@ function SignupForm() {
   const [firstName, setFirstName] = useState("");
   const [lastName, setLastName] = useState("");
   const [email, setEmail] = useState("");
+  const [phone, setPhone] = useState("");
+  const [address, setAddress] = useState("");
+  const [dateOfBirth, setDateOfBirth] = useState("");
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
 
@@ -72,6 +75,9 @@ function SignupForm() {
           firstName,
           lastName,
           email,
+          phone,
+          address,
+          dateOfBirth,
           password,
           recaptchaToken,
         }),
@@ -165,6 +171,45 @@ function SignupForm() {
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
                 required
+                className="w-full h-9 rounded-lg border border-slate-200 bg-white/60 px-3 outline-none focus:border-[#F5C518] focus:ring-4 focus:ring-[#F5C518]/10 transition-all duration-300 text-sm text-slate-700"
+              />
+            </div>
+
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-2.5">
+              <div>
+                <label className="block text-[#1E3A5F] font-bold text-xs tracking-wide uppercase mb-1.5">
+                  Phone Number
+                </label>
+                <input
+                  type="tel"
+                  placeholder=""
+                  value={phone}
+                  onChange={(e) => setPhone(e.target.value)}
+                  className="w-full h-9 rounded-lg border border-slate-200 bg-white/60 px-3 outline-none focus:border-[#F5C518] focus:ring-4 focus:ring-[#F5C518]/10 transition-all duration-300 text-sm text-slate-700"
+                />
+              </div>
+              <div>
+                <label className="block text-[#1E3A5F] font-bold text-xs tracking-wide uppercase mb-1.5">
+                  Date of Birth
+                </label>
+                <input
+                  type="date"
+                  value={dateOfBirth}
+                  onChange={(e) => setDateOfBirth(e.target.value)}
+                  className="w-full h-9 rounded-lg border border-slate-200 bg-white/60 px-3 outline-none focus:border-[#F5C518] focus:ring-4 focus:ring-[#F5C518]/10 transition-all duration-300 text-sm text-slate-700"
+                />
+              </div>
+            </div>
+
+            <div>
+              <label className="block text-[#1E3A5F] font-bold text-xs tracking-wide uppercase mb-1.5">
+                Address
+              </label>
+              <input
+                type="text"
+                placeholder=""
+                value={address}
+                onChange={(e) => setAddress(e.target.value)}
                 className="w-full h-9 rounded-lg border border-slate-200 bg-white/60 px-3 outline-none focus:border-[#F5C518] focus:ring-4 focus:ring-[#F5C518]/10 transition-all duration-300 text-sm text-slate-700"
               />
             </div>

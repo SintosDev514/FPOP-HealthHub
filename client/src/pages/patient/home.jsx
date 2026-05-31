@@ -26,14 +26,16 @@ const CombinedDashboard = () => {
 
       if (data.success) {
         const user = data.userData;
-
         setProfile({
           id: user._id,
           name: user.name,
           email: user.email,
           phone: user.phone || "",
           address: user.address || "",
+          avatar: user.avatar || "",
+          dateOfBirth: user.dateOfBirth || "",
           isAccountVerified: user.isAccountVerified,
+          memberSince: user.createdAt,
         });
       } else {
         console.error("Failed to load user:", data.message);
@@ -42,6 +44,47 @@ const CombinedDashboard = () => {
       console.error("Fetch error:", err);
     } finally {
       setLoading(false);
+    }
+  };
+
+  const handleSaveProfile = async (formData) => {
+    try {
+      const body = new FormData();
+      body.append("name", formData.name || "");
+      body.append("phone", formData.phone || "");
+      body.append("address", formData.address || "");
+      body.append("dateOfBirth", formData.dateOfBirth || "");
+      if (formData.avatarFile) {
+        body.append("avatar", formData.avatarFile);
+      }
+
+      const res = await fetch("http://localhost:5000/api/user/update", {
+        method: "PUT",
+        credentials: "include",
+        body,
+      });
+
+      const data = await res.json();
+
+      if (data.success) {
+        const user = data.userData;
+        setProfile({
+          id: user._id,
+          name: user.name,
+          email: user.email,
+          phone: user.phone || "",
+          address: user.address || "",
+          avatar: user.avatar || "",
+          dateOfBirth: user.dateOfBirth || "",
+          isAccountVerified: user.isAccountVerified,
+          memberSince: user.createdAt,
+        });
+        setCurrentView("dashboard");
+      } else {
+        console.error("Failed to update profile:", data.message);
+      }
+    } catch (err) {
+      console.error("Update error:", err);
     }
   };
 
@@ -106,10 +149,7 @@ const CombinedDashboard = () => {
       {currentView === "profile" && (
         <ProfileView
           profile={profile}
-          onSaveProfile={(updatedProfile) => {
-            setProfile(updatedProfile);
-            setCurrentView("dashboard");
-          }}
+          onSaveProfile={handleSaveProfile}
           onBackToDashboard={() => setCurrentView("dashboard")}
           onNavigateToBook={() => setCurrentView("booking")}
           onViewAppointments={() => setCurrentView("appointments")}

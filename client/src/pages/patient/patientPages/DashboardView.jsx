@@ -157,6 +157,22 @@ const AppointmentRow = ({ appointment }) => {
   );
 };
 
+const getAvatarSrc = (avatar) => {
+  if (!avatar) return null;
+  if (avatar.startsWith("http")) return avatar;
+  return `http://localhost:5000${avatar}`;
+};
+
+const formatMemberSince = (dateStr) => {
+  if (!dateStr) return "Jan 2026";
+  const d = new Date(dateStr);
+  const months = [
+    "Jan", "Feb", "Mar", "Apr", "May", "Jun",
+    "Jul", "Aug", "Sep", "Oct", "Nov", "Dec",
+  ];
+  return `${months[d.getMonth()]} ${d.getFullYear()}`;
+};
+
 const DashboardView = ({
   onBookAppointment,
   onViewAppointments,
@@ -218,12 +234,12 @@ const DashboardView = ({
                 Here's what's happening with your healthcare today
               </p>
             </div>
-            <div className="hidden h-20 w-20 items-center justify-center rounded-[14px] border border-white/20 bg-white/10 sm:flex">
-              {profile?.avatar ? (
+            <div className="hidden h-20 w-20 items-center justify-center overflow-hidden rounded-[14px] border border-white/20 bg-white/10 sm:flex">
+              {getAvatarSrc(profile?.avatar) ? (
                 <img
-                  src={profile.avatar}
+                  src={getAvatarSrc(profile.avatar)}
                   alt="Profile"
-                  className="h-full w-full rounded-[14px] object-cover"
+                  className="h-full w-full object-cover"
                 />
               ) : (
                 <Icon type="user" className="h-11 w-11" />
@@ -345,12 +361,12 @@ const DashboardView = ({
           <div className="rounded-[12px] border border-slate-200 bg-white p-8 shadow-[0_3px_10px_rgba(15,23,42,0.1)]">
             <h2 className="text-2xl font-bold text-[#061022]">Your Profile</h2>
             <div className="mt-12 flex items-center gap-5">
-              <div className="flex h-16 w-16 items-center justify-center rounded-[14px] bg-[#244783] text-white">
-                {profile?.avatar ? (
+              <div className="flex h-16 w-16 items-center justify-center overflow-hidden rounded-[14px] bg-[#244783] text-white">
+                {getAvatarSrc(profile?.avatar) ? (
                   <img
-                    src={profile.avatar}
+                    src={getAvatarSrc(profile.avatar)}
                     alt="Profile"
-                    className="h-full w-full rounded-[14px] object-cover"
+                    className="h-full w-full object-cover"
                   />
                 ) : (
                   <Icon type="user" className="h-9 w-9" />
@@ -369,7 +385,7 @@ const DashboardView = ({
             <div className="space-y-8 text-sm">
               <div className="flex justify-between gap-4">
                 <span className="text-[#18304d]">Member since</span>
-                <strong className="text-[#061022]">Jan 2026</strong>
+                <strong className="text-[#061022]">{formatMemberSince(profile?.memberSince)}</strong>
               </div>
               <div className="flex justify-between gap-4">
                 <span className="text-[#18304d]">Total Appointments</span>

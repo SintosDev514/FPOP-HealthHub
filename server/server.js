@@ -2,10 +2,15 @@ import express from "express";
 import cors from "cors";
 import "dotenv/config";
 import cookieParser from "cookie-parser";
+import path from "path";
+import { fileURLToPath } from "url";
 import authRouter from "./routes/authRoutes.js";
 import userRoute from "./routes/userRoute.js";
 
 import connectDB from "./config/Mongodb.js";
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
 
 const app = express();
 const port = process.env.PORT || 5000;
@@ -25,6 +30,7 @@ app.use(cookieParser());
 connectDB();
 
 /// API ENDPOINTS
+app.use("/uploads", express.static(path.join(__dirname, "uploads")));
 app.use("/api/auth", authRouter);
 app.use("/api/user", userRoute);
 

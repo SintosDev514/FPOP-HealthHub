@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useRef } from "react";
 
 const Icon = ({ type, className = "h-5 w-5" }) => {
   const paths = {
@@ -73,41 +73,62 @@ const getInitialProfileData = (profile) => ({
   name: "",
   email: "",
   phone: "",
-  location: "",
-  dateOfBirth: "1990-05-15",
+  address: "",
+  dateOfBirth: "",
   ...profile,
 });
+
+const formatMemberSince = (dateStr) => {
+  if (!dateStr) return "Jan 2026";
+  const d = new Date(dateStr);
+  const months = [
+    "Jan", "Feb", "Mar", "Apr", "May", "Jun",
+    "Jul", "Aug", "Sep", "Oct", "Nov", "Dec",
+  ];
+  return `${months[d.getMonth()]} ${d.getFullYear()}`;
+};
 
 const ProfileView = ({ profile, onSaveProfile }) => {
   const [formData, setFormData] = useState(() => getInitialProfileData(profile));
   const [isEditing, setIsEditing] = useState(false);
   const [supportOpen, setSupportOpen] = useState(false);
-  const visibleProfile = isEditing ? formData : getInitialProfileData(profile);
+  const [avatarPreview, setAvatarPreview] = useState(null);
+  const fileInputRef = useRef(null);
+  const visibleProfile = isEditing ? { ...formData, avatar: avatarPreview || formData.avatar } : getInitialProfileData(profile);
   const appointmentStats = getProfileAppointmentStats(visibleProfile);
 
   const handleSubmit = (event) => {
     event.preventDefault();
-    onSaveProfile(formData);
+    onSaveProfile({ ...formData, avatarFile: formData.avatarFile || null });
     setIsEditing(false);
+    setAvatarPreview(null);
   };
 
   const updateField = (field, value) => {
     setFormData((current) => ({ ...current, [field]: value }));
   };
 
-  const handleAvatarChange = () => {
+  const handleAvatarClick = () => {
     if (!isEditing) return;
-    const url = prompt(
-      "Enter image URL for your profile picture:",
-      visibleProfile.avatar || "https://i.pravatar.cc/150?u=sarah"
-    );
-    if (url) setFormData((current) => ({ ...current, avatar: url }));
+    fileInputRef.current?.click();
+  };
+
+  const handleFileChange = (e) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+    setFormData((current) => ({ ...current, avatarFile: file }));
+    const reader = new FileReader();
+    reader.onload = (ev) => setAvatarPreview(ev.target.result);
+    reader.readAsDataURL(file);
   };
 
   const handleCancel = () => {
     setFormData(getInitialProfileData(profile));
+    setAvatarPreview(null);
     setIsEditing(false);
   };
+
+  const avatarSrc = avatarPreview || (visibleProfile.avatar?.startsWith("http") ? visibleProfile.avatar : visibleProfile.avatar ? `http://localhost:5000${visibleProfile.avatar}` : null);
 
   return (
     <main className="flex-1 bg-[#f7f8fa] px-4 py-12 sm:px-6 lg:px-8">
@@ -124,14 +145,14 @@ const ProfileView = ({ profile, onSaveProfile }) => {
             <section className="rounded-[12px] border border-slate-200 bg-white p-8 text-center shadow-[0_3px_10px_rgba(15,23,42,0.1)]">
               <button
                 type="button"
-                onClick={handleAvatarChange}
+                onClick={handleAvatarClick}
                 className={`group relative mx-auto flex h-32 w-32 items-center justify-center overflow-hidden rounded-[24px] bg-[#244783] text-white shadow-[0_10px_22px_rgba(15,23,42,0.2)] ${
                   isEditing ? "cursor-pointer" : "cursor-default"
                 }`}
                 aria-label="Change profile picture"
               >
-                {visibleProfile.avatar ? (
-                  <img src={visibleProfile.avatar} alt="Profile" className="h-full w-full object-cover" />
+                {avatarSrc ? (
+                  <img src={avatarSrc} alt="Profile" className="h-full w-full object-cover" />
                 ) : (
                   <Icon type="user" className="h-16 w-16" />
                 )}
@@ -141,11 +162,18 @@ const ProfileView = ({ profile, onSaveProfile }) => {
                   </span>
                 )}
               </button>
+              <input
+                ref={fileInputRef}
+                type="file"
+                accept="image/*"
+                onChange={handleFileChange}
+                className="hidden"
+              />
               <h2 className="mt-12 text-2xl font-bold text-[#061022]">{visibleProfile.name || "Sarah Johnson"}</h2>
               <p className="mt-8 text-sm text-[#18304d]">{visibleProfile.email || "sarah.j@email.com"}</p>
               <div className="my-10 h-px bg-slate-200" />
               <p className="text-sm text-[#18304d]">
-                Member since <strong className="font-bold text-[#061022]">Jan 2026</strong>
+                Member since <strong className="font-bold text-[#061022]">{formatMemberSince(profile?.memberSince)}</strong>
               </p>
             </section>
 
@@ -222,7 +250,7 @@ const ProfileView = ({ profile, onSaveProfile }) => {
                 onChange={(value) => updateField("name", value)}
               />
               <ProfileField
-                disabled={!isEditing}
+                disabled={true}
                 label="Email Address"
                 icon="mail"
                 type="email"
@@ -243,9 +271,9 @@ const ProfileView = ({ profile, onSaveProfile }) => {
                 disabled={!isEditing}
                 label="Address"
                 icon="location"
-                value={visibleProfile.location}
+                value={visibleProfile.address}
                 placeholder="123 Healthcare Ave, Medical City, MC 12345"
-                onChange={(value) => updateField("location", value)}
+                onChange={(value) => updateField("address", value)}
               />
               <ProfileField
                 disabled={!isEditing}
