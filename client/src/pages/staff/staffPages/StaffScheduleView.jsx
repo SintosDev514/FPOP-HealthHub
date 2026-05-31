@@ -6,21 +6,21 @@ const shiftCards = [
     count: 12,
     detail: "Staff scheduled",
     icon: "sun",
-    className: "from-[#F5C518] to-[#F59E0B]",
+    tone: "gold",
   },
   {
     title: "Afternoon Shift",
     count: 8,
     detail: "Staff scheduled",
     icon: "sunset",
-    className: "from-[#FF6B3D] to-[#EF4444]",
+    tone: "orange",
   },
   {
     title: "Night Shift",
     count: 6,
     detail: "Staff scheduled",
     icon: "moon",
-    className: "from-[#435B9C] to-[#1E3A5F]",
+    tone: "navy",
   },
 ];
 
@@ -114,39 +114,67 @@ const Icon = ({ name, className = "h-6 w-6" }) => {
   );
 };
 
-const ShiftCard = ({ title, count, detail, icon, className }) => (
+const statTones = {
+  navy: {
+    iconBg: "bg-[#1E3A5F]/10",
+    iconText: "text-[#1E3A5F]",
+    detail: "text-[#22c55e]",
+  },
+  gold: {
+    iconBg: "bg-[#F5C518]/20",
+    iconText: "text-[#B88900]",
+    detail: "text-[#B88900]",
+  },
+  orange: {
+    iconBg: "bg-[#ffedd5]",
+    iconText: "text-[#ea580c]",
+    detail: "text-[#ea580c]",
+  },
+};
+
+const ShiftCard = ({ title, count, detail, icon, tone = "navy" }) => {
+  const colors = statTones[tone] || statTones.navy;
+
+  return (
   <article
-    className={`flex min-h-[180px] max-w-[245px] flex-col justify-between rounded-md bg-gradient-to-br p-5 text-white shadow-md ${className}`}
+    className="rounded-2xl border border-[#1E3A5F]/[0.07] bg-white px-5 py-5 shadow-[0_2px_14px_rgba(30,58,95,0.07)] transition duration-200 hover:-translate-y-0.5 hover:shadow-[0_10px_32px_rgba(30,58,95,0.14)]"
   >
-    <div className="flex items-start justify-between gap-4">
-      <div>
-        <p className="text-lg font-semibold text-white/95">{title}</p>
-        <p className="mt-5 text-6xl font-bold leading-none">{count}</p>
+    <div className="flex items-start justify-between gap-3">
+      <div className="min-w-0">
+        <p className="truncate text-[11px] font-semibold uppercase tracking-[0.06em] text-[#8a96a3]">
+          {title}
+        </p>
+        <p className="mt-2 text-3xl font-extrabold leading-none text-[#1E3A5F]">
+          {count}
+        </p>
+        <p className={`mt-3 text-xs font-bold ${colors.detail}`}>{detail}</p>
       </div>
-      <div className="mt-6 flex h-20 w-20 shrink-0 items-center justify-center rounded-full bg-white/20">
-        <Icon name={icon} className="h-9 w-9" />
+      <div
+        className={`flex h-[46px] w-[46px] shrink-0 items-center justify-center rounded-xl ${colors.iconBg} ${colors.iconText}`}
+      >
+        <Icon name={icon} className="h-[22px] w-[22px]" />
       </div>
     </div>
-    <p className="text-lg font-medium text-white/95">{detail}</p>
   </article>
-);
+  );
+};
 
 const DepartmentBadge = ({ children }) => (
-  <span className="inline-flex whitespace-nowrap rounded-full bg-[#E4F2FF] px-3 py-1 text-base font-bold text-[#0071CE]">
+  <span className="inline-flex whitespace-nowrap rounded-full bg-[#1E3A5F]/10 px-3 py-1 text-xs font-bold text-[#1E3A5F]">
     {children}
   </span>
 );
 
 const StatusBadge = ({ status }) => {
   const styles = {
-    Scheduled: "bg-[#1976D2]",
-    "In Progress": "bg-[#2E7D32]",
-    "On Leave": "bg-[#EF6C00]",
+    Scheduled: "bg-[#1E3A5F]/10 text-[#1E3A5F]",
+    "In Progress": "bg-[#dcfce7] text-[#15803d]",
+    "On Leave": "bg-[#ffedd5] text-[#ea580c]",
   };
 
   return (
     <span
-      className={`inline-flex whitespace-nowrap rounded-full px-3 py-1 text-base font-bold text-white ${styles[status]}`}
+      className={`inline-flex whitespace-nowrap rounded-full px-3 py-1 text-xs font-bold ${styles[status]}`}
     >
       {status}
     </span>
@@ -166,30 +194,30 @@ const shiftColor = {
 };
 
 const StaffScheduleView = () => (
-  <main className="flex-1 px-4 py-8 sm:px-8 lg:px-[60px]">
-    <section className="mb-8 grid grid-cols-1 gap-7 sm:grid-cols-2 xl:grid-cols-3">
+  <main className="flex-1 bg-[#f1f4f8] px-4 py-7 sm:px-8 lg:px-[32px]">
+    <section className="mb-6 grid grid-cols-1 gap-4 sm:grid-cols-2 xl:grid-cols-3">
       {shiftCards.map((card) => (
         <ShiftCard key={card.title} {...card} />
       ))}
     </section>
 
-    <section className="overflow-hidden rounded-xl bg-white shadow-sm">
+    <section className="overflow-hidden rounded-2xl border border-[#1E3A5F]/[0.07] bg-white shadow-[0_2px_14px_rgba(30,58,95,0.07)]">
       <div className="overflow-x-auto">
         <table className="w-full min-w-[1080px] border-collapse text-left">
-          <thead className="bg-gradient-to-r from-[#435B9C] to-[#1E3A5F] text-white">
+          <thead className="bg-[#1E3A5F] text-white">
             <tr>
-              <th className="w-[265px] px-5 py-6 text-base font-bold">
+              <th className="w-[265px] px-5 py-4 text-xs font-bold uppercase tracking-[0.06em]">
                 Staff Name
               </th>
-              <th className="w-[150px] px-5 py-6 text-base font-bold">
+              <th className="w-[150px] px-5 py-4 text-xs font-bold uppercase tracking-[0.06em]">
                 Department
               </th>
-              <th className="w-[160px] px-5 py-6 text-base font-bold">
+              <th className="w-[160px] px-5 py-4 text-xs font-bold uppercase tracking-[0.06em]">
                 Shift
               </th>
-              <th className="w-[190px] px-5 py-6 text-base font-bold">Time</th>
-              <th className="w-[190px] px-5 py-6 text-base font-bold">Date</th>
-              <th className="w-[150px] px-5 py-6 text-base font-bold">
+              <th className="w-[190px] px-5 py-4 text-xs font-bold uppercase tracking-[0.06em]">Time</th>
+              <th className="w-[190px] px-5 py-4 text-xs font-bold uppercase tracking-[0.06em]">Date</th>
+              <th className="w-[150px] px-5 py-4 text-xs font-bold uppercase tracking-[0.06em]">
                 Status
               </th>
             </tr>
@@ -198,23 +226,23 @@ const StaffScheduleView = () => (
             {scheduleRows.map((row) => (
               <tr
                 key={row.id}
-                className="border-b border-slate-200 transition hover:bg-[#F9FAFB]"
+                className="border-b border-[#1E3A5F]/[0.06] transition hover:bg-[#f7fafc]"
               >
-                <td className="px-5 py-5">
+                <td className="px-5 py-4">
                   <div className="flex items-center gap-4">
-                    <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-full bg-[#6F5CC2] text-xl font-medium text-white">
+                    <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-[#1E3A5F] text-sm font-bold text-[#F5C518]">
                       {row.initials}
                     </div>
-                    <span className="text-xl font-bold text-black">
+                    <span className="text-sm font-bold text-[#2d3748]">
                       {row.name}
                     </span>
                   </div>
                 </td>
-                <td className="px-5 py-5">
+                <td className="px-5 py-4">
                   <DepartmentBadge>{row.department}</DepartmentBadge>
                 </td>
-                <td className="px-5 py-5">
-                  <div className="flex items-center gap-3 text-xl text-black">
+                <td className="px-5 py-4">
+                  <div className="flex items-center gap-3 text-sm text-[#2d3748]">
                     <Icon
                       name={shiftIcon[row.shift]}
                       className={`h-6 w-6 ${shiftColor[row.shift]}`}
@@ -222,19 +250,19 @@ const StaffScheduleView = () => (
                     <span>{row.shift}</span>
                   </div>
                 </td>
-                <td className="px-5 py-5">
-                  <div className="flex items-center gap-3 text-xl text-black">
+                <td className="px-5 py-4">
+                  <div className="flex items-center gap-3 text-sm text-[#5a6475]">
                     <Icon name="clock" className="h-5 w-5 text-[#6B7280]" />
                     <span>{row.time}</span>
                   </div>
                 </td>
-                <td className="px-5 py-5">
-                  <div className="flex items-center gap-3 text-xl text-black">
+                <td className="px-5 py-4">
+                  <div className="flex items-center gap-3 text-sm text-[#5a6475]">
                     <Icon name="calendar" className="h-5 w-5 text-[#6B7280]" />
                     <span>{row.date}</span>
                   </div>
                 </td>
-                <td className="px-5 py-5">
+                <td className="px-5 py-4">
                   <StatusBadge status={row.status} />
                 </td>
               </tr>

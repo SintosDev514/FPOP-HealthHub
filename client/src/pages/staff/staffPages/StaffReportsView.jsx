@@ -5,25 +5,25 @@ const reportStats = [
     label: "Total Reports",
     value: 8,
     icon: "file",
-    className: "from-[#435B9C] to-[#1E3A5F]",
+    tone: "navy",
   },
   {
     label: "Available",
     value: 6,
     icon: "check",
-    className: "from-[#34D399] to-[#10B981]",
+    tone: "green",
   },
   {
     label: "Processing",
     value: 1,
     icon: "alert",
-    className: "from-[#FF7A85] to-[#F5C518]",
+    tone: "orange",
   },
   {
     label: "Downloads",
     value: 142,
     icon: "trend",
-    className: "from-[#3B82F6] to-[#06B6D4]",
+    tone: "gold",
   },
 ];
 
@@ -111,28 +111,41 @@ const Icon = ({ name, className = "h-6 w-6" }) => {
   );
 };
 
-const StatCard = ({ label, value, icon, className }) => (
+const statTones = {
+  navy: "bg-[#1E3A5F]/10 text-[#1E3A5F]",
+  green: "bg-[#dcfce7] text-[#22c55e]",
+  orange: "bg-[#ffedd5] text-[#ea580c]",
+  gold: "bg-[#F5C518]/20 text-[#B88900]",
+};
+
+const StatCard = ({ label, value, icon, tone = "navy" }) => (
   <article
-    className={`flex h-[150px] w-full flex-col justify-between rounded-md bg-gradient-to-br p-5 text-white shadow-md sm:w-[220px] ${className}`}
+    className="rounded-2xl border border-[#1E3A5F]/[0.07] bg-white px-5 py-5 shadow-[0_2px_14px_rgba(30,58,95,0.07)] transition duration-200 hover:-translate-y-0.5 hover:shadow-[0_10px_32px_rgba(30,58,95,0.14)]"
   >
     <div className="flex items-start justify-between gap-3">
-      <p className="text-base font-bold text-white/90">{label}</p>
-      <div className="flex h-[64px] w-[64px] shrink-0 items-center justify-center rounded-full bg-white/20">
-        <Icon name={icon} className="h-8 w-8" />
+      <div className="min-w-0">
+        <p className="truncate text-[11px] font-semibold uppercase tracking-[0.06em] text-[#8a96a3]">
+          {label}
+        </p>
+        <p className="mt-2 text-3xl font-extrabold leading-none text-[#1E3A5F]">
+          {value}
+        </p>
+      </div>
+      <div className={`flex h-[46px] w-[46px] shrink-0 items-center justify-center rounded-xl ${statTones[tone] || statTones.navy}`}>
+        <Icon name={icon} className="h-[22px] w-[22px]" />
       </div>
     </div>
-    <p className="text-6xl font-bold leading-none">{value}</p>
   </article>
 );
 
 const DepartmentBadge = ({ children }) => (
-  <span className="inline-flex whitespace-nowrap rounded-full bg-[#F3E5F5] px-3 py-1 text-sm font-bold text-[#8A00B0]">
+  <span className="inline-flex whitespace-nowrap rounded-full bg-[#1E3A5F]/10 px-3 py-1 text-xs font-bold text-[#1E3A5F]">
     {children}
   </span>
 );
 
 const TypeBadge = ({ children }) => (
-  <span className="inline-flex whitespace-nowrap rounded-full border border-slate-400 bg-white px-2 py-0.5 text-sm text-black">
+  <span className="inline-flex whitespace-nowrap rounded-full border border-[#1E3A5F]/10 bg-white px-2.5 py-1 text-xs font-semibold text-[#5a6475]">
     {children}
   </span>
 );
@@ -142,8 +155,8 @@ const StatusBadge = ({ status }) => {
 
   return (
     <span
-      className={`inline-flex whitespace-nowrap rounded-full px-3 py-1 text-sm font-bold text-white ${
-        isAvailable ? "bg-[#2E7D32]" : "bg-[#EF6C00]"
+      className={`inline-flex whitespace-nowrap rounded-full px-3 py-1 text-xs font-bold ${
+        isAvailable ? "bg-[#dcfce7] text-[#15803d]" : "bg-[#ffedd5] text-[#ea580c]"
       }`}
     >
       {status}
@@ -154,7 +167,7 @@ const StatusBadge = ({ status }) => {
 const DownloadButton = () => (
   <button
     type="button"
-    className="inline-flex items-center justify-center gap-2 whitespace-nowrap rounded bg-[#34D399] px-3 py-2 text-sm font-bold text-white shadow transition hover:bg-[#10B981]"
+    className="inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-full bg-[#1E3A5F] px-3 py-2 text-xs font-bold text-white shadow transition hover:bg-[#264a77]"
   >
     <Icon name="download" className="h-4 w-4" />
     Download
@@ -162,42 +175,42 @@ const DownloadButton = () => (
 );
 
 const StaffReportsView = () => (
-  <main className="flex-1 px-4 py-7 sm:px-8 lg:px-[60px]">
-    <section className="mb-8">
-      <h2 className="text-4xl font-bold leading-tight text-[#1E3A5F] sm:text-[44px]">
+  <main className="flex-1 bg-[#f1f4f8] px-4 py-7 sm:px-8 lg:px-[32px]">
+    <section className="mb-7">
+      <h2 className="text-[26px] font-extrabold leading-tight text-[#1E3A5F]">
         Reports
       </h2>
-      <p className="mt-2 text-lg text-[#4B5563]">
+      <p className="mt-1.5 text-sm font-medium text-[#8a96a3]">
         Access and download generated reports
       </p>
     </section>
 
-    <section className="mb-7 grid grid-cols-1 gap-6 sm:grid-cols-2 xl:grid-cols-4">
+    <section className="mb-6 grid grid-cols-1 gap-4 sm:grid-cols-2 xl:grid-cols-4">
       {reportStats.map((stat) => (
         <StatCard key={stat.label} {...stat} />
       ))}
     </section>
 
-    <section className="hidden overflow-hidden rounded-lg bg-white shadow-sm lg:block">
+    <section className="hidden overflow-hidden rounded-2xl border border-[#1E3A5F]/[0.07] bg-white shadow-[0_2px_14px_rgba(30,58,95,0.07)] lg:block">
       <div className="w-full overflow-hidden">
         <table className="w-full table-fixed border-collapse text-left">
-          <thead className="bg-gradient-to-r from-[#435B9C] to-[#1E3A5F] text-white">
+          <thead className="bg-[#1E3A5F] text-white">
             <tr>
-              <th className="w-[25%] px-4 py-6 text-lg font-bold">
+              <th className="w-[25%] px-4 py-4 text-xs font-bold uppercase tracking-[0.06em]">
                 Report Title
               </th>
-              <th className="w-[15%] px-4 py-6 text-lg font-bold">
+              <th className="w-[15%] px-4 py-4 text-xs font-bold uppercase tracking-[0.06em]">
                 Department
               </th>
-              <th className="w-[11%] px-4 py-6 text-lg font-bold">Type</th>
-              <th className="w-[14%] px-4 py-6 text-lg font-bold">
+              <th className="w-[11%] px-4 py-4 text-xs font-bold uppercase tracking-[0.06em]">Type</th>
+              <th className="w-[14%] px-4 py-4 text-xs font-bold uppercase tracking-[0.06em]">
                 Generated By
               </th>
-              <th className="w-[12%] px-4 py-6 text-lg font-bold">Date</th>
-              <th className="w-[10%] px-4 py-6 text-lg font-bold">
+              <th className="w-[12%] px-4 py-4 text-xs font-bold uppercase tracking-[0.06em]">Date</th>
+              <th className="w-[10%] px-4 py-4 text-xs font-bold uppercase tracking-[0.06em]">
                 Status
               </th>
-              <th className="w-[13%] px-4 py-6 text-lg font-bold">
+              <th className="w-[13%] px-4 py-4 text-xs font-bold uppercase tracking-[0.06em]">
                 Action
               </th>
             </tr>
@@ -206,34 +219,34 @@ const StaffReportsView = () => (
             {reports.map((report) => (
               <tr
                 key={report.title}
-                className="border-b border-slate-200 transition hover:bg-[#F9FAFB]"
+                className="border-b border-[#1E3A5F]/[0.06] transition hover:bg-[#f7fafc]"
               >
-                <td className="px-4 py-5">
+                <td className="px-4 py-4">
                   <div className="flex items-center gap-3">
-                    <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-[#22C6ED] text-white">
+                    <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-[#1E3A5F]/10 text-[#1E3A5F]">
                       <Icon name="file" className="h-5 w-5" />
                     </div>
-                    <span className="min-w-0 text-lg font-bold text-black">
+                    <span className="min-w-0 text-sm font-bold text-[#2d3748]">
                       {report.title}
                     </span>
                   </div>
                 </td>
-                <td className="px-4 py-5">
+                <td className="px-4 py-4">
                   <DepartmentBadge>{report.department}</DepartmentBadge>
                 </td>
-                <td className="px-4 py-5">
+                <td className="px-4 py-4">
                   <TypeBadge>{report.type}</TypeBadge>
                 </td>
-                <td className="px-4 py-5 text-base text-black">
+                <td className="px-4 py-4 text-sm text-[#5a6475]">
                   {report.generatedBy}
                 </td>
-                <td className="px-4 py-5 text-base text-black">
+                <td className="px-4 py-4 text-sm text-[#5a6475]">
                   {report.date}
                 </td>
-                <td className="px-4 py-5">
+                <td className="px-4 py-4">
                   <StatusBadge status={report.status} />
                 </td>
-                <td className="px-4 py-5">
+                <td className="px-4 py-4">
                   {report.status === "Available" && <DownloadButton />}
                 </td>
               </tr>
@@ -247,14 +260,14 @@ const StaffReportsView = () => (
       {reports.map((report) => (
         <article
           key={report.title}
-          className="rounded-lg border border-slate-200 bg-white p-5 shadow-sm"
+          className="rounded-2xl border border-[#1E3A5F]/[0.07] bg-white p-5 shadow-[0_2px_14px_rgba(30,58,95,0.07)]"
         >
           <div className="mb-4 flex items-start gap-3">
-            <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-full bg-[#22C6ED] text-white">
+            <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-[#1E3A5F]/10 text-[#1E3A5F]">
               <Icon name="file" className="h-5 w-5" />
             </div>
             <div className="min-w-0">
-              <h3 className="text-lg font-bold text-black">{report.title}</h3>
+              <h3 className="text-base font-bold text-[#1E3A5F]">{report.title}</h3>
               <p className="mt-1 text-sm text-[#6B7280]">
                 Generated by {report.generatedBy}
               </p>

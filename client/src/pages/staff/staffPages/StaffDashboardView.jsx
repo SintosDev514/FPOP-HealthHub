@@ -29,23 +29,55 @@ const Icon = ({ name, className = "h-7 w-7" }) => {
   );
 };
 
-const StatCard = ({ title, value, detail, icon, className }) => (
+const statTones = {
+  navy: {
+    iconBg: "bg-[#1E3A5F]/10",
+    iconText: "text-[#1E3A5F]",
+    detail: "text-[#22c55e]",
+  },
+  gold: {
+    iconBg: "bg-[#F5C518]/20",
+    iconText: "text-[#B88900]",
+    detail: "text-[#B88900]",
+  },
+  green: {
+    iconBg: "bg-[#dcfce7]",
+    iconText: "text-[#22c55e]",
+    detail: "text-[#22c55e]",
+  },
+  orange: {
+    iconBg: "bg-[#ffedd5]",
+    iconText: "text-[#ea580c]",
+    detail: "text-[#ea580c]",
+  },
+};
+
+const StatCard = ({ title, value, detail, icon, tone = "navy" }) => {
+  const colors = statTones[tone] || statTones.navy;
+
+  return (
   <article
-    className={`relative min-h-[195px] overflow-hidden rounded-md p-5 text-white shadow-md transition hover:-translate-y-0.5 ${className}`}
+    className="rounded-2xl border border-[#1E3A5F]/[0.07] bg-white px-5 py-5 shadow-[0_2px_14px_rgba(30,58,95,0.07)] transition duration-200 hover:-translate-y-0.5 hover:shadow-[0_10px_32px_rgba(30,58,95,0.14)]"
   >
-    <div className="flex items-start justify-between gap-4">
-      <div>
-        <p className="text-base font-semibold text-white/90">{title}</p>
-        <p className="mt-4 text-6xl font-bold leading-none">{value}</p>
+    <div className="flex items-start justify-between gap-3">
+      <div className="min-w-0">
+        <p className="truncate text-[11px] font-semibold uppercase tracking-[0.06em] text-[#8a96a3]">
+          {title}
+        </p>
+        <p className="mt-2 text-3xl font-extrabold leading-none text-[#1E3A5F]">
+          {value}
+        </p>
+        <p className={`mt-3 text-xs font-bold ${colors.detail}`}>{detail}</p>
       </div>
-      <div className="flex h-[70px] w-[70px] items-center justify-center rounded-2xl bg-white/20">
-        <Icon name={icon} />
+      <div
+        className={`flex h-[46px] w-[46px] shrink-0 items-center justify-center rounded-xl ${colors.iconBg} ${colors.iconText}`}
+      >
+        <Icon name={icon} className="h-[22px] w-[22px]" />
       </div>
     </div>
-    <p className="mt-4 text-sm font-medium text-white/90">{detail}</p>
-    <span className="absolute -bottom-1 -right-1 h-3 w-3 rounded-full border-2 border-white/20" />
   </article>
-);
+  );
+};
 
 const ActivityItem = ({ icon, title, meta, tone }) => {
   const tones = {
@@ -97,13 +129,13 @@ const StaffDashboardView = ({ stats = {} }) => {
   };
 
   return (
-    <main className="flex-1 px-4 py-8 sm:px-8 lg:px-[60px]">
-      <section className="mb-10 flex flex-col gap-4 lg:flex-row lg:items-center lg:justify-between">
+    <main className="flex-1 bg-[#f1f4f8] px-4 py-7 sm:px-8 lg:px-[32px]">
+      <section className="mb-7 flex flex-col gap-4 lg:flex-row lg:items-center lg:justify-between">
         <div>
-          <h2 className="text-4xl font-bold leading-tight text-[#1E3A5F] sm:text-[44px]">
+          <h2 className="text-[26px] font-extrabold leading-tight text-[#1E3A5F]">
             Dashboard Overview
           </h2>
-          <p className="mt-3 text-xl text-[#4B5563]">
+          <p className="mt-1.5 text-sm font-medium text-[#8a96a3]">
             Welcome back! Here's what's happening today.
           </p>
         </div>
@@ -112,34 +144,34 @@ const StaffDashboardView = ({ stats = {} }) => {
         </div>
       </section>
 
-      <section className="mb-2 grid grid-cols-1 gap-7 sm:grid-cols-2 xl:grid-cols-4">
+      <section className="mb-6 grid grid-cols-1 gap-4 sm:grid-cols-2 xl:grid-cols-4">
         <StatCard
           title="Total Staff"
           value={dashboardStats.totalStaff}
           detail="+12 this month"
           icon="users"
-          className="bg-gradient-to-br from-[#435B9C] to-[#1E3A5F]"
+          tone="navy"
         />
         <StatCard
           title="Active Today"
           value={dashboardStats.activeToday}
           detail="75% attendance"
           icon="trend"
-          className="bg-gradient-to-br from-[#F5C518] to-[#D9A900]"
+          tone="green"
         />
         <StatCard
           title="Appointments"
           value={dashboardStats.appointments}
           detail="8 pending"
           icon="calendar"
-          className="bg-gradient-to-br from-[#3B82F6] to-[#06B6D4]"
+          tone="gold"
         />
         <StatCard
           title="Reports Pending"
           value={dashboardStats.pendingReports}
           detail="3 urgent"
           icon="file"
-          className="bg-gradient-to-br from-[#34D399] to-[#10B981]"
+          tone="orange"
         />
       </section>
 
