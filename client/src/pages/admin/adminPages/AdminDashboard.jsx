@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { Routes, Route, Navigate, useNavigate } from "react-router-dom";
+import { Routes, Route, Navigate, useNavigate, Link } from "react-router-dom";
 
 import DashboardOverview from "./DashboardOverview";
 import UserManagement from "./UserManagement";
@@ -9,7 +9,6 @@ import Reports from "./Reports";
 import Notifications from "./Notifications";
 import Settings from "./Settings";
 
-//logoutine
 import { useAuth } from "../../../context/AuthContext";
 
 import {
@@ -22,100 +21,163 @@ import {
   IcoGear,
   IcoLogout,
   IcoSearch,
-  IcoChevron,
-  IcoBack,
-  IcoHamburger,
 } from "../../../components/icon/AdminIcons";
 
-const NAVY = "#1E3A5F";
+/* ── Brand palette ──────────────────────────────── */
+const GOLD      = "#FFDF00"; // Yellow accent for active links
+const NAVY      = "#1E3A5F";
 const NAVY_DARK = "#152c4a";
-const NAVY_MID = "#1a3254";
+const NAVY_MID  = "#1a3254";
 const NAVY_LITE = "#264a77";
-const GOLD = "#F5C518";
-const GREEN = "#22c55e";
-const RED = "#ef4444";
+const RED       = "#DC2626";
+const RED_DARK  = "#b91c1c";
+const RED_SOFT  = "#fee2e2";
+
+const SIDEBAR_COLLAPSED = "68px";
+const SIDEBAR_EXPANDED  = "260px";
 
 const NAV_ITEMS = [
-  { key: "dashboard", label: "Dashboard", Icon: IcoDash, path: "/admin" },
-  {
-    key: "users",
-    label: "User Management",
-    Icon: IcoUsers,
-    path: "/admin/users",
-  },
-  {
-    key: "appointments",
-    label: "Appointments",
-    Icon: IcoCal,
-    path: "/admin/appointments",
-  },
-  {
-    key: "analytics",
-    label: "Analytics",
-    Icon: IcoChart,
-    path: "/admin/analytics",
-  },
-  { key: "reports", label: "Reports", Icon: IcoReport, path: "/admin/reports" },
+  { key: "dashboard",    label: "Dashboard",        Icon: IcoDash,   path: "/admin"              },
+  { key: "users",        label: "User Management",  Icon: IcoUsers,  path: "/admin/users"         },
+  { key: "appointments", label: "Appointments",      Icon: IcoCal,    path: "/admin/appointments"  },
+  { key: "analytics",   label: "Analytics",         Icon: IcoChart,  path: "/admin/analytics"     },
+  { key: "reports",     label: "Reports",            Icon: IcoReport, path: "/admin/reports"       },
 ];
 
-function AdminShell({ activeNav }) {
-  const [collapsed, setCollapsed] = useState(false);
-  const [isHovered, setIsHovered] = useState(false);
-  const [isMobile, setIsMobile] = useState(false);
-  const [search, setSearch] = useState("");
-  const navigate = useNavigate();
+/* ── Sidebar nav button ─────────────────────────── */
+function NavBtn({ item, active, isIconOnly }) {
+  const [hov, setHov] = useState(false);
 
-  useEffect(() => {
-    const handleResize = () => {
-      setIsMobile(window.innerWidth < 768);
-    };
-    handleResize();
-    window.addEventListener("resize", handleResize);
-    return () => window.removeEventListener("resize", handleResize);
-  }, []);
+  const bg = active
+    ? "rgba(255,223,0,0.13)"
+    : hov
+    ? "rgba(255,255,255,0.07)"
+    : "transparent";
 
-  const isExpanded = !isMobile && isHovered;
-  const sw = isMobile ? "0px" : (collapsed ? (isHovered ? "260px" : "68px") : "260px");
-  const isIconOnly = !isMobile && collapsed && !isHovered;
-
-  const { logout } = useAuth();
+  const color = active ? GOLD : hov ? "#fff" : "rgba(255,255,255,0.60)";
+  const borderLeft = active ? `3px solid ${GOLD}` : "3px solid transparent";
 
   return (
-    <div
+    <Link
+      to={item.path}
+      title={isIconOnly ? item.label : undefined}
+      onMouseEnter={() => setHov(true)}
+      onMouseLeave={() => setHov(false)}
       style={{
         display: "flex",
-        minHeight: "100vh",
-        fontFamily: "'Poppins',sans-serif",
+        alignItems: "center",
+        gap: "12px",
+        padding: isIconOnly ? "13px 0" : "11px 18px",
+        justifyContent: isIconOnly ? "center" : "flex-start",
+        background: bg,
+        border: "none",
+        borderLeft,
+        color,
+        fontFamily: "'Inter', 'Poppins', sans-serif",
+        fontSize: "13px",
+        fontWeight: active ? 700 : 500,
+        cursor: "pointer",
+        width: "100%",
+        textAlign: "left",
+        transition: "all 0.18s ease",
+        whiteSpace: "nowrap",
+        overflow: "hidden",
+        textDecoration: "none",
       }}
     >
-      {/* ── Sidebar ── */}
+      <span style={{ flexShrink: 0, lineHeight: 0 }}>
+        <item.Icon />
+      </span>
+      {!isIconOnly && <span style={{ opacity: 1, transition: "opacity 0.2s" }}>{item.label}</span>}
+    </Link>
+  );
+}
+
+/* ── Header icon button ─────────────────────────── */
+function HeaderIconBtn({ id, title, onClick, isActive, children }) {
+  const [hov, setHov] = useState(false);
+  return (
+    <button
+      id={id}
+      title={title}
+      onClick={onClick}
+      onMouseEnter={() => setHov(true)}
+      onMouseLeave={() => setHov(false)}
+      style={{
+        width: "40px",
+        height: "40px",
+        borderRadius: "10px",
+        border: isActive
+          ? `1.5px solid ${NAVY}`
+          : hov
+          ? `1.5px solid rgba(30,58,95,0.3)`
+          : "1.5px solid rgba(30,58,95,0.1)",
+        background: isActive ? NAVY : hov ? "rgba(30,58,95,0.06)" : "#f8fafc",
+        display: "flex",
+        alignItems: "center",
+        justifyContent: "center",
+        cursor: "pointer",
+        color: isActive ? "#fff" : hov ? NAVY : "#64748b",
+        transition: "all 0.2s ease",
+        flexShrink: 0,
+      }}
+    >
+      {children}
+    </button>
+  );
+}
+
+/* ── Main shell ─────────────────────────────────── */
+function AdminShell({ activeNav }) {
+  const [isHovered, setIsHovered] = useState(false);
+  const [isMobile,  setIsMobile]  = useState(false);
+  const [search,    setSearch]    = useState("");
+  const navigate = useNavigate();
+  const { logout } = useAuth();
+
+  useEffect(() => {
+    const onResize = () => setIsMobile(window.innerWidth < 768);
+    onResize();
+    window.addEventListener("resize", onResize);
+    return () => window.removeEventListener("resize", onResize);
+  }, []);
+
+  /* Sidebar is ALWAYS collapsed by default; expands only while hovered */
+  const isExpanded = !isMobile && isHovered;
+  const sidebarW   = isMobile ? "0px" : isExpanded ? SIDEBAR_EXPANDED : SIDEBAR_COLLAPSED;
+  const isIconOnly = !isMobile && !isExpanded;
+
+  return (
+    <div style={{ display: "flex", minHeight: "100vh", fontFamily: "'Inter', 'Poppins', sans-serif" }}>
+
+      {/* ════════════════ SIDEBAR ════════════════ */}
       <aside
         onMouseEnter={() => setIsHovered(true)}
         onMouseLeave={() => setIsHovered(false)}
         style={{
-          width: sw,
+          width: sidebarW,
           minHeight: "100vh",
-          background: `linear-gradient(180deg, ${NAVY_DARK} 0%, ${NAVY_MID} 60%, ${NAVY_LITE} 100%)`,
+          background: `linear-gradient(180deg, ${NAVY_DARK} 0%, ${NAVY_MID} 55%, ${NAVY_LITE} 100%)`,
           display: "flex",
           flexDirection: "column",
           position: "fixed",
           top: 0,
           left: 0,
           bottom: 0,
-          transition: "width 0.3s cubic-bezier(.4,0,.2,1)",
+          transition: "width 0.3s cubic-bezier(0.4, 0, 0.2, 1)",
           zIndex: 100,
           overflow: "hidden",
-          boxShadow: "4px 0 28px rgba(0,0,0,0.18)",
+          boxShadow: "4px 0 32px rgba(21,44,74,0.22)",
         }}
       >
-        {/* Logo / Brand */}
+        {/* ── Brand logo ── */}
         <div
           style={{
             padding: isIconOnly ? "20px 0" : "20px 18px",
             display: "flex",
             alignItems: "center",
             gap: "10px",
-            borderBottom: `1px solid rgba(245,197,24,0.14)`,
+            borderBottom: "1px solid rgba(255,255,255,0.08)",
             minHeight: "72px",
             justifyContent: isIconOnly ? "center" : "flex-start",
             overflow: "hidden",
@@ -124,226 +186,100 @@ function AdminShell({ activeNav }) {
           <img
             src="/FPOPLOGO1.png"
             alt="FPOP Logo"
-            style={{
-              width: "38px",
-              height: "38px",
-              objectFit: "contain",
-              flexShrink: 0,
-            }}
+            style={{ width: "36px", height: "36px", objectFit: "contain", flexShrink: 0 }}
           />
           {!isIconOnly && (
             <div style={{ overflow: "hidden", whiteSpace: "nowrap" }}>
-              <div
-                style={{
-                  fontWeight: 800,
-                  fontSize: "14px",
-                  color: "#fff",
-                  lineHeight: 1.2,
-                }}
-              >
+              <div style={{ fontWeight: 800, fontSize: "14px", color: "#fff", lineHeight: 1.2 }}>
                 FPOP Admin
               </div>
-              <div
-                style={{
-                  fontSize: "10px",
-                  color: GOLD,
-                  opacity: 0.8,
-                  textTransform: "uppercase",
-                  letterSpacing: "0.6px",
-                }}
-              >
+                <div style={{ fontSize: "10px", color: GOLD, textTransform: "uppercase", letterSpacing: "0.8px", opacity: 0.9 }}>
                 HealthHub
               </div>
             </div>
           )}
         </div>
 
-        {/* Nav items */}
-        <nav
-          style={{
-            flex: 1,
-            padding: "14px 0",
-            display: "flex",
-            flexDirection: "column",
-            gap: "2px",
-          }}
-        >
-          {NAV_ITEMS.map(({ key, label, Icon, path }) => {
-            const active = activeNav === key;
-            return (
-              <button
-                key={key}
-                onClick={() => navigate(path)}
-                title={isIconOnly ? label : undefined}
-                style={{
-                  display: "flex",
-                  alignItems: "center",
-                  gap: "12px",
-                  padding: isIconOnly ? "13px 0" : "11px 18px",
-                  justifyContent: isIconOnly ? "center" : "flex-start",
-                  background: active ? "rgba(245,197,24,0.13)" : "transparent",
-                  border: "none",
-                  borderLeft: active
-                    ? `3px solid ${GOLD}`
-                    : "3px solid transparent",
-                  color: active ? GOLD : "rgba(255,255,255,0.6)",
-                  fontFamily: "'Poppins',sans-serif",
-                  fontSize: "13px",
-                  fontWeight: active ? 700 : 500,
-                  cursor: "pointer",
-                  width: "100%",
-                  textAlign: "left",
-                  transition: "all 0.18s",
-                  whiteSpace: "nowrap",
-                  overflow: "hidden",
-                }}
-                onMouseEnter={(e) => {
-                  if (!active) {
-                    e.currentTarget.style.background = "rgba(255,255,255,0.06)";
-                    e.currentTarget.style.color = "#fff";
-                  }
-                }}
-                onMouseLeave={(e) => {
-                  if (!active) {
-                    e.currentTarget.style.background = "transparent";
-                    e.currentTarget.style.color = "rgba(255,255,255,0.6)";
-                  }
-                }}
-              >
-                <span style={{ flexShrink: 0 }}>
-                  <Icon />
-                </span>
-                {!isIconOnly && <span>{label}</span>}
-              </button>
-            );
-          })}
+        {/* ── Section label ── */}
+        {!isIconOnly && (
+          <div style={{ padding: "16px 18px 6px", fontSize: "10px", fontWeight: 700, color: "rgba(255,255,255,0.3)", textTransform: "uppercase", letterSpacing: "1.2px", whiteSpace: "nowrap" }}>
+            Main Menu
+          </div>
+        )}
+
+        {/* ── Navigation links ── */}
+        <nav style={{ flex: 1, padding: "8px 0", display: "flex", flexDirection: "column", gap: "2px" }}>
+          {NAV_ITEMS.map((item) => (
+            <NavBtn
+              key={item.key}
+              item={item}
+              active={activeNav === item.key}
+              isIconOnly={isIconOnly}
+            />
+          ))}
         </nav>
 
-        {/* Bottom actions */}
-        <div
-          style={{
-            borderTop: "1px solid rgba(245,197,24,0.1)",
-            padding: "12px 0",
-            display: "flex",
-            flexDirection: "column",
-            gap: "2px",
-          }}
-        >
-          <button
-            onClick={logout}
-            title={isIconOnly ? "Logout" : undefined}
-            style={{
-              display: "flex",
-              alignItems: "center",
-              gap: "12px",
-              padding: isIconOnly ? "13px 0" : "11px 18px",
-              justifyContent: isIconOnly ? "center" : "flex-start",
-              background: "transparent",
-              border: "none",
-              borderLeft: "3px solid transparent",
-              color: "rgba(255,255,255,0.45)",
-              fontFamily: "'Poppins',sans-serif",
-              fontSize: "13px",
-              fontWeight: 500,
-              cursor: "pointer",
-              width: "100%",
-              transition: "all 0.18s",
-              whiteSpace: "nowrap",
-              overflow: "hidden",
-            }}
-            onMouseEnter={(e) => {
-              e.currentTarget.style.color = "#f87171";
-              e.currentTarget.style.background = "rgba(239,68,68,0.1)";
-            }}
-            onMouseLeave={(e) => {
-              e.currentTarget.style.color = "rgba(255,255,255,0.45)";
-              e.currentTarget.style.background = "transparent";
-            }}
-          >
-            <IcoLogout />
-            {!isIconOnly && <span>Logout</span>}
-          </button>
+        {/* ── Divider ── */}
+        <div style={{ margin: "0 12px", height: "1px", background: "rgba(255,255,255,0.07)" }} />
+
+        {/* ── Bottom: Logout ── */}
+        <div style={{ padding: "10px 0 16px", display: "flex", flexDirection: "column", gap: "2px" }}>
+          <LogoutBtn isIconOnly={isIconOnly} logout={logout} />
         </div>
 
-        {/* Desktop collapse toggle button */}
-        {!isMobile && (
-          <button
-            onClick={() => setCollapsed(!collapsed)}
-            style={{
-              position: "absolute",
-              top: "22px",
-              right: "-13px",
-              width: "26px",
-              height: "26px",
-              borderRadius: "50%",
-              background: NAVY_DARK,
-              border: `1px solid rgba(245,197,24,0.2)`,
-              display: "flex",
-              alignItems: "center",
-              justifyContent: "center",
-              cursor: "pointer",
-              color: "#fff",
-              boxShadow: "0 2px 8px rgba(0,0,0,0.2)",
-              transition: "all 0.2s",
-            }}
-            onMouseEnter={(e) => {
-              e.currentTarget.style.transform = "scale(1.1)";
-              e.currentTarget.style.background = NAVY;
-            }}
-            onMouseLeave={(e) => {
-              e.currentTarget.style.transform = "scale(1)";
-              e.currentTarget.style.background = NAVY_DARK;
-            }}
-          >
-            <IcoChevron flipped={collapsed} />
-          </button>
+        {/* ── Sidebar footer watermark ── */}
+        {!isIconOnly && (
+          <div style={{ padding: "10px 18px 16px", fontSize: "10px", color: "rgba(255,255,255,0.18)", whiteSpace: "nowrap", fontStyle: "italic" }}>
+            © 2025 FPOP HealthHub System
+          </div>
         )}
       </aside>
 
-      {/* ── Main content ── */}
+      {/* ════════════════ MAIN CONTENT ════════════════ */}
       <div
         style={{
-          marginLeft: sw,
+          marginLeft: sidebarW,
           flex: 1,
           display: "flex",
           flexDirection: "column",
-          transition: "margin-left 0.3s cubic-bezier(.4,0,.2,1)",
+          transition: "margin-left 0.3s cubic-bezier(0.4, 0, 0.2, 1)",
           minHeight: "100vh",
+          background: "#f1f5f9",
         }}
       >
+        {/* ════ HEADER ════ */}
         <header
           style={{
             height: "68px",
-            background: "#fff",
+            background: "#ffffff",
             borderBottom: "1px solid rgba(30,58,95,0.08)",
             display: "flex",
             alignItems: "center",
             padding: isMobile ? "0 16px" : "0 28px",
-            gap: "10px",
+            gap: "12px",
             position: "sticky",
             top: 0,
             zIndex: 50,
-            boxShadow: "0 2px 12px rgba(30,58,95,0.06)",
+            boxShadow: "0 2px 16px rgba(30,58,95,0.07)",
           }}
         >
-          {/* Spacer pushes everything to the right */}
-          <div style={{ flex: 1 }} />
-
-          {/* Search bar */}
+          {/* ── Search bar — LEFT ── */}
           <div
             style={{
               position: "relative",
-              width: isMobile ? "160px" : "300px",
+              width: isMobile ? "180px" : "380px",
+              flexShrink: 0,
             }}
           >
             <span
               style={{
                 position: "absolute",
-                left: "13px",
+                left: "14px",
                 top: "50%",
                 transform: "translateY(-50%)",
-                color: "#9aa5b4",
+                color: "#94a3b8",
                 pointerEvents: "none",
+                lineHeight: 0,
               }}
             >
               <IcoSearch />
@@ -351,202 +287,186 @@ function AdminShell({ activeNav }) {
             <input
               id="admin-search"
               type="text"
-              placeholder={isMobile ? "Search..." : "Search..."}
+              placeholder="Search anything..."
               value={search}
               onChange={(e) => setSearch(e.target.value)}
               style={{
                 width: "100%",
-                padding: "9px 16px 9px 38px",
-                borderRadius: "24px",
-                border: "1.5px solid rgba(30,58,95,0.12)",
-                fontSize: "13px",
-                color: "#333",
+                padding: "10px 16px 10px 40px",
+                borderRadius: "10px",
+                border: "1.5px solid rgba(30,58,95,0.10)",
+                fontSize: "13.5px",
+                color: "#1e293b",
                 outline: "none",
-                background: "#f7fafc",
-                fontFamily: "'Poppins',sans-serif",
+                background: "#f8fafc",
+                fontFamily: "'Inter', 'Poppins', sans-serif",
                 boxSizing: "border-box",
                 transition: "border-color 0.2s, box-shadow 0.2s",
               }}
               onFocus={(e) => {
-                e.target.style.borderColor = GOLD;
-                e.target.style.boxShadow = `0 0 0 3px rgba(245,197,24,0.14)`;
+                e.target.style.borderColor = NAVY;
+                e.target.style.boxShadow = `0 0 0 3px rgba(30,58,95,0.10)`;
+                e.target.style.background = "#fff";
               }}
               onBlur={(e) => {
-                e.target.style.borderColor = "rgba(30,58,95,0.12)";
+                e.target.style.borderColor = "rgba(30,58,95,0.10)";
                 e.target.style.boxShadow = "none";
+                e.target.style.background = "#f8fafc";
               }}
             />
           </div>
 
-          {/* Spacer pushes user profile and actions to the right */}
+          {/* ── Spacer ── */}
           <div style={{ flex: 1 }} />
 
-          {/* Notification bell — navigates to /admin/notifications */}
+          {/* ── RIGHT SIDE: notification + settings + profile ── */}
+
+          {/* Notification bell */}
           <div style={{ position: "relative" }}>
-            <button
+            <HeaderIconBtn
               id="notifications-btn"
               title="Notifications"
               onClick={() => navigate("/admin/notifications")}
-              style={{
-                width: "38px",
-                height: "38px",
-                borderRadius: "50%",
-                border: "1.5px solid rgba(30,58,95,0.12)",
-                background: activeNav === "notifications" ? NAVY : "#f7fafc",
-                display: "flex",
-                alignItems: "center",
-                justifyContent: "center",
-                cursor: "pointer",
-                color: activeNav === "notifications" ? "#fff" : "#5a6475",
-                transition: "all 0.2s",
-              }}
-              onMouseEnter={(e) => {
-                e.currentTarget.style.background = NAVY;
-                e.currentTarget.style.color = "#fff";
-              }}
-              onMouseLeave={(e) => {
-                e.currentTarget.style.background =
-                  activeNav === "notifications" ? NAVY : "#f7fafc";
-                e.currentTarget.style.color =
-                  activeNav === "notifications" ? "#fff" : "#5a6475";
-              }}
+              isActive={activeNav === "notifications"}
             >
               <IcoBell />
-            </button>
+            </HeaderIconBtn>
             <span
               style={{
                 position: "absolute",
-                top: "-2px",
-                right: "-2px",
-                width: "17px",
-                height: "17px",
+                top: "-4px",
+                right: "-4px",
+                width: "18px",
+                height: "18px",
                 borderRadius: "50%",
                 background: RED,
                 color: "#fff",
                 fontSize: "10px",
-                fontWeight: 700,
+                fontWeight: 800,
                 display: "flex",
                 alignItems: "center",
                 justifyContent: "center",
                 border: "2px solid #fff",
+                boxShadow: "0 2px 6px rgba(220,38,38,0.4)",
               }}
             >
               2
             </span>
           </div>
 
-          {/* Settings gear — navigates to /admin/settings */}
-          <button
+          {/* Settings */}
+          <HeaderIconBtn
             id="settings-btn"
             title="Settings"
             onClick={() => navigate("/admin/settings")}
-            style={{
-              width: "38px",
-              height: "38px",
-              borderRadius: "50%",
-              border: "1.5px solid rgba(30,58,95,0.12)",
-              background: activeNav === "settings" ? NAVY : "#f7fafc",
-              display: "flex",
-              alignItems: "center",
-              justifyContent: "center",
-              cursor: "pointer",
-              color: activeNav === "settings" ? "#fff" : "#5a6475",
-              transition: "all 0.2s",
-              flexShrink: 0,
-            }}
-            onMouseEnter={(e) => {
-              e.currentTarget.style.background = NAVY;
-              e.currentTarget.style.color = "#fff";
-            }}
-            onMouseLeave={(e) => {
-              e.currentTarget.style.background =
-                activeNav === "settings" ? NAVY : "#f7fafc";
-              e.currentTarget.style.color =
-                activeNav === "settings" ? "#fff" : "#5a6475";
-            }}
+            isActive={activeNav === "settings"}
           >
             <IcoGear />
-          </button>
+          </HeaderIconBtn>
+
+          {/* Profile divider */}
+          <div style={{ width: "1px", height: "32px", background: "rgba(30,58,95,0.10)", flexShrink: 0 }} />
 
           {/* Admin avatar */}
           <div
             style={{
               display: "flex",
               alignItems: "center",
-              gap: "8px",
-              paddingLeft: "10px",
-              borderLeft: "1px solid rgba(30,58,95,0.1)",
+              gap: "10px",
               cursor: "pointer",
             }}
           >
             <div
               style={{
-                width: "36px",
-                height: "36px",
-                borderRadius: "50%",
-                background: `linear-gradient(135deg, ${NAVY}, ${NAVY_LITE})`,
+                width: "38px",
+                height: "38px",
+                borderRadius: "10px",
+                background: `linear-gradient(135deg, ${NAVY_DARK}, ${NAVY_LITE})`,
                 display: "flex",
                 alignItems: "center",
                 justifyContent: "center",
-                color: GOLD,
+                color: "#fff",
                 fontWeight: 800,
                 fontSize: "15px",
-                border: `2px solid ${GOLD}33`,
                 flexShrink: 0,
+                boxShadow: "0 2px 8px rgba(30,58,95,0.25)",
               }}
             >
               A
             </div>
             {!isMobile && (
               <div>
-                <div
-                  style={{
-                    fontSize: "12px",
-                    fontWeight: 700,
-                    color: NAVY,
-                    lineHeight: 1.2,
-                    whiteSpace: "nowrap",
-                  }}
-                >
+                <div style={{ fontSize: "13px", fontWeight: 700, color: NAVY, lineHeight: 1.2, whiteSpace: "nowrap" }}>
                   Admin User
                 </div>
-                <div style={{ fontSize: "10px", color: "#9aa5b4" }}>
-                  Administrator
-                </div>
+                <div style={{ fontSize: "11px", color: "#94a3b8", fontWeight: 500 }}>Administrator</div>
               </div>
             )}
           </div>
         </header>
 
-        {activeNav === "dashboard" && <DashboardOverview isMobile={isMobile} />}
-        {activeNav === "users" && <UserManagement isMobile={isMobile} />}
-        {activeNav === "appointments" && <Appointments isMobile={isMobile} />}
-        {activeNav === "analytics" && <Analytics isMobile={isMobile} />}
-        {activeNav === "reports" && <Reports isMobile={isMobile} />}
-        {activeNav === "notifications" && <Notifications isMobile={isMobile} />}
-        {activeNav === "settings" && <Settings isMobile={isMobile} />}
+        {/* ════ PAGE CONTENT ════ */}
+        {activeNav === "dashboard"    && <DashboardOverview isMobile={isMobile} />}
+        {activeNav === "users"        && <UserManagement   isMobile={isMobile} />}
+        {activeNav === "appointments" && <Appointments      isMobile={isMobile} />}
+        {activeNav === "analytics"   && <Analytics         isMobile={isMobile} />}
+        {activeNav === "reports"     && <Reports            isMobile={isMobile} />}
+        {activeNav === "notifications" && <Notifications   isMobile={isMobile} />}
+        {activeNav === "settings"    && <Settings           isMobile={isMobile} />}
       </div>
     </div>
   );
 }
 
+/* ── Logout button (separated for hover state) ── */
+function LogoutBtn({ isIconOnly, logout }) {
+  const [hov, setHov] = useState(false);
+  return (
+    <button
+      title={isIconOnly ? "Logout" : undefined}
+      onClick={logout}
+      onMouseEnter={() => setHov(true)}
+      onMouseLeave={() => setHov(false)}
+      style={{
+        display: "flex",
+        alignItems: "center",
+        gap: "12px",
+        padding: isIconOnly ? "13px 0" : "11px 18px",
+        justifyContent: isIconOnly ? "center" : "flex-start",
+        background: hov ? "rgba(220,38,38,0.12)" : "transparent",
+        border: "none",
+        borderLeft: hov ? `3px solid ${RED}` : "3px solid transparent",
+        color: hov ? "#f87171" : "rgba(255,255,255,0.40)",
+        fontFamily: "'Inter', 'Poppins', sans-serif",
+        fontSize: "13px",
+        fontWeight: 500,
+        cursor: "pointer",
+        width: "100%",
+        transition: "all 0.18s ease",
+        whiteSpace: "nowrap",
+        overflow: "hidden",
+      }}
+    >
+      <span style={{ flexShrink: 0, lineHeight: 0 }}>
+        <IcoLogout />
+      </span>
+      {!isIconOnly && <span>Logout</span>}
+    </button>
+  );
+}
+
+/* ── Router ─────────────────────────────────────── */
 export default function AdminDashboard() {
   return (
     <Routes>
-      <Route path="/" element={<AdminShell activeNav="dashboard" />} />
-      <Route path="/users" element={<AdminShell activeNav="users" />} />
-      <Route
-        path="/appointments"
-        element={<AdminShell activeNav="appointments" />}
-      />
-      <Route path="/analytics" element={<AdminShell activeNav="analytics" />} />
-      <Route path="/reports" element={<AdminShell activeNav="reports" />} />
-      <Route
-        path="/notifications"
-        element={<AdminShell activeNav="notifications" />}
-      />
-      <Route path="/settings" element={<AdminShell activeNav="settings" />} />
-      <Route path="*" element={<Navigate to="" replace />} />
+      <Route path="/"              element={<AdminShell activeNav="dashboard"    />} />
+      <Route path="/users"         element={<AdminShell activeNav="users"        />} />
+      <Route path="/appointments"  element={<AdminShell activeNav="appointments" />} />
+      <Route path="/analytics"     element={<AdminShell activeNav="analytics"    />} />
+      <Route path="/reports"       element={<AdminShell activeNav="reports"      />} />
+      <Route path="/notifications" element={<AdminShell activeNav="notifications"/>} />
+      <Route path="/settings"      element={<AdminShell activeNav="settings"     />} />
+      <Route path="*"              element={<Navigate to="" replace />} />
     </Routes>
   );
 }
