@@ -60,6 +60,7 @@ const NAV_ITEMS = [
 
 function AdminShell({ activeNav }) {
   const [collapsed, setCollapsed] = useState(false);
+  const [isHovered, setIsHovered] = useState(false);
   const [isMobile, setIsMobile] = useState(false);
   const [search, setSearch] = useState("");
   const navigate = useNavigate();
@@ -73,9 +74,9 @@ function AdminShell({ activeNav }) {
     return () => window.removeEventListener("resize", handleResize);
   }, []);
 
-  // On mobile: sidebar is always icon-only (72px). On desktop: respect collapsed toggle.
-  const isIconOnly = isMobile || collapsed;
-  const sw = isIconOnly ? 72 : 240;
+  const isExpanded = !isMobile && isHovered;
+  const sw = isMobile ? "0px" : (collapsed ? (isHovered ? "260px" : "68px") : "260px");
+  const isIconOnly = !isMobile && collapsed && !isHovered;
 
   const { logout } = useAuth();
 
@@ -89,6 +90,8 @@ function AdminShell({ activeNav }) {
     >
       {/* ── Sidebar ── */}
       <aside
+        onMouseEnter={() => setIsHovered(true)}
+        onMouseLeave={() => setIsHovered(false)}
         style={{
           width: sw,
           minHeight: "100vh",
@@ -374,6 +377,9 @@ function AdminShell({ activeNav }) {
               }}
             />
           </div>
+
+          {/* Spacer pushes user profile and actions to the right */}
+          <div style={{ flex: 1 }} />
 
           {/* Notification bell — navigates to /admin/notifications */}
           <div style={{ position: "relative" }}>
