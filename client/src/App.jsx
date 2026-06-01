@@ -140,7 +140,7 @@ function App() {
         {/*Admin*/}
 
         <Route
-          path="/admin"
+          path="/admin/*"
           element={
             <ProtectedRoute role="admin">
               <PrivateLayout>
