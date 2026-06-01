@@ -13,6 +13,10 @@ const navItems = [
   { id: "reports", label: "Reports", icon: "file" },
 ];
 
+const NAVY_DARK = "#152c4a";
+const NAVY_MID = "#1a3254";
+const NAVY_LITE = "#264a77";
+
 const StaffIcon = ({ name, className = "h-5 w-5" }) => {
   const paths = {
     home: "M3 11.5 12 4l9 7.5M5.5 10.5V20h5v-5h3v5h5v-9.5",
@@ -119,27 +123,7 @@ const StaffDashboard = () => {
               </div>
             </button>
 
-            <div className="hidden items-center md:flex">
-              <button
-                type="button"
-                onClick={logout}
-                className="inline-flex h-10 items-center gap-2 rounded-full border border-[#F5C518] bg-[#F5C518] px-6 text-sm font-bold text-[#1E3A5F] shadow-[0_4px_14px_rgba(245,197,24,0.2)] transition-all duration-300 hover:-translate-y-0.5 hover:bg-white hover:text-[#1E3A5F]"
-              >
-                <svg
-                  className="h-5 w-5"
-                  fill="none"
-                  stroke="currentColor"
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  strokeWidth="2"
-                  viewBox="0 0 24 24"
-                  aria-hidden="true"
-                >
-                  <path d="M15 17l5-5-5-5M20 12H9M12 19H6a2 2 0 0 1-2-2V7a2 2 0 0 1 2-2h6" />
-                </svg>
-                Logout
-              </button>
-            </div>
+            <div className="hidden items-center md:flex" />
 
             <button
               type="button"
@@ -200,9 +184,14 @@ const StaffDashboard = () => {
       </header>
 
       <div className="flex">
-        <aside className="hidden w-[300px] shrink-0 border-r border-slate-200 bg-white md:block">
-          <div className="h-[30px] border-b border-slate-200 bg-white" />
-          <nav className="py-4">
+        <aside
+          className="hidden min-h-[calc(100vh-76px)] w-[300px] shrink-0 flex-col overflow-hidden shadow-[4px_0_28px_rgba(0,0,0,0.14)] md:flex"
+          style={{
+            background: `linear-gradient(180deg, ${NAVY_DARK} 0%, ${NAVY_MID} 60%, ${NAVY_LITE} 100%)`,
+          }}
+        >
+          <div className="h-[30px] border-b border-[#F5C518]/10" />
+          <nav className="flex-1 py-4">
             {navItems.map((item) => {
               const isActive = currentView === item.id;
               return (
@@ -210,20 +199,39 @@ const StaffDashboard = () => {
                   key={item.id}
                   type="button"
                   onClick={() => handleSideNav(item.id)}
-                  className={`flex h-[60px] w-full items-center gap-6 px-6 text-left text-lg transition ${
+                  className={`flex h-[52px] w-full items-center gap-4 border-l-[3px] px-6 text-left text-sm transition ${
                     isActive
-                      ? "bg-[#1E3A5F] font-semibold text-white"
-                      : "text-[#1E3A5F] hover:bg-slate-50"
+                      ? "border-[#F5C518] bg-[#F5C518]/[0.13] font-bold text-[#F5C518]"
+                      : "border-transparent text-white/60 hover:bg-white/[0.06] hover:text-white"
                   }`}
                 >
                   <StaffIcon name={item.icon} />
-                  <span className={isActive ? "text-white" : "text-black"}>
-                    {item.label}
-                  </span>
+                  <span>{item.label}</span>
                 </button>
               );
             })}
           </nav>
+          <div className="border-t border-[#F5C518]/10 py-3">
+            <button
+              type="button"
+              onClick={logout}
+              className="flex h-[52px] w-full items-center gap-4 border-l-[3px] border-transparent px-6 text-left text-sm font-medium text-white/50 transition hover:bg-red-500/10 hover:text-red-300"
+            >
+              <svg
+                className="h-5 w-5"
+                fill="none"
+                stroke="currentColor"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeWidth="2"
+                viewBox="0 0 24 24"
+                aria-hidden="true"
+              >
+                <path d="M15 17l5-5-5-5M20 12H9M12 19H6a2 2 0 0 1-2-2V7a2 2 0 0 1 2-2h6" />
+              </svg>
+              Logout
+            </button>
+          </div>
         </aside>
 
         <div className="flex min-w-0 flex-1 flex-col">

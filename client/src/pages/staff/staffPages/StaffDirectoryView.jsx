@@ -101,7 +101,7 @@ const formatDate = (value) => {
 };
 
 const DepartmentBadge = ({ children }) => (
-  <span className="inline-flex rounded-full bg-[#E4F2FF] px-3 py-1 text-sm font-bold text-[#0071CE]">
+  <span className="inline-flex rounded-full bg-[#1E3A5F]/10 px-3 py-1 text-xs font-bold text-[#1E3A5F]">
     {children}
   </span>
 );
@@ -111,8 +111,8 @@ const StatusBadge = ({ status }) => {
 
   return (
     <span
-      className={`inline-flex whitespace-nowrap rounded-full px-7 py-1 text-sm font-bold text-white ${
-        isActive ? "bg-[#2E7D32]" : "bg-[#EF6C00]"
+      className={`inline-flex whitespace-nowrap rounded-full px-3 py-1 text-xs font-bold ${
+        isActive ? "bg-[#dcfce7] text-[#15803d]" : "bg-[#ffedd5] text-[#ea580c]"
       }`}
     >
       {status}
@@ -121,38 +121,38 @@ const StatusBadge = ({ status }) => {
 };
 
 const StaffDirectoryView = () => (
-  <main className="flex-1 px-4 py-8 sm:px-8 lg:px-[60px]">
-    <section className="mb-11">
-      <h2 className="text-4xl font-bold leading-tight text-[#1E3A5F] sm:text-[44px]">
+  <main className="flex-1 bg-[#f1f4f8] px-4 py-7 sm:px-8 lg:px-[32px]">
+    <section className="mb-7">
+      <h2 className="text-[26px] font-extrabold leading-tight text-[#1E3A5F]">
         Staff Directory
       </h2>
-      <p className="mt-3 text-xl text-[#4B5563]">
+      <p className="mt-1.5 text-sm font-medium text-[#8a96a3]">
         Total Staff Members: {staffMembers.length}
       </p>
     </section>
 
-    <section className="overflow-hidden rounded-xl bg-white shadow-sm">
+    <section className="overflow-hidden rounded-2xl border border-[#1E3A5F]/[0.07] bg-white shadow-[0_2px_14px_rgba(30,58,95,0.07)]">
       <div className="overflow-x-auto">
         <table className="w-full min-w-[950px] border-collapse text-left">
-          <thead className="bg-gradient-to-r from-[#435B9C] to-[#1E3A5F] text-white">
+          <thead className="bg-[#1E3A5F] text-white">
             <tr>
-              <th className="w-[70px] px-5 py-6 text-base font-bold">ID</th>
-              <th className="w-[150px] px-5 py-6 text-base font-bold">Name</th>
-              <th className="w-[210px] px-5 py-6 text-base font-bold">
+              <th className="w-[70px] px-5 py-4 text-xs font-bold uppercase tracking-[0.06em]">ID</th>
+              <th className="w-[150px] px-5 py-4 text-xs font-bold uppercase tracking-[0.06em]">Name</th>
+              <th className="w-[210px] px-5 py-4 text-xs font-bold uppercase tracking-[0.06em]">
                 Position
               </th>
-              <th className="w-[210px] px-5 py-6 text-base font-bold">
+              <th className="w-[210px] px-5 py-4 text-xs font-bold uppercase tracking-[0.06em]">
                 Department
               </th>
-              <th className="w-[300px] px-5 py-6 text-base font-bold">
+              <th className="w-[300px] px-5 py-4 text-xs font-bold uppercase tracking-[0.06em]">
                 Email
               </th>
-              <th className="w-[130px] px-5 py-6 text-base font-bold">
+              <th className="w-[130px] px-5 py-4 text-xs font-bold uppercase tracking-[0.06em]">
                 Join
                 <br />
                 Date
               </th>
-              <th className="w-[120px] px-5 py-6 text-base font-bold">
+              <th className="w-[120px] px-5 py-4 text-xs font-bold uppercase tracking-[0.06em]">
                 Status
               </th>
             </tr>
@@ -161,12 +161,12 @@ const StaffDirectoryView = () => (
             {staffMembers.map((member) => (
               <tr
                 key={member.id}
-                className="border-b border-slate-200 transition hover:bg-[#F9FAFB]"
+                className="border-b border-[#1E3A5F]/[0.06] transition hover:bg-[#f7fafc]"
               >
-                <td className="px-5 py-6 text-base font-bold text-black">
+                <td className="px-5 py-4 text-sm font-bold text-[#1E3A5F]">
                   {member.id}
                 </td>
-                <td className="px-5 py-6 text-lg font-medium text-black">
+                <td className="px-5 py-4 text-sm font-semibold text-[#2d3748]">
                   {splitWords(member.name).map((word) => (
                     <React.Fragment key={word}>
                       {word}
@@ -174,7 +174,7 @@ const StaffDirectoryView = () => (
                     </React.Fragment>
                   ))}
                 </td>
-                <td className="px-5 py-6 text-lg text-black">
+                <td className="px-5 py-4 text-sm text-[#2d3748]">
                   {splitWords(member.position).map((word) => (
                     <React.Fragment key={word}>
                       {word}
@@ -182,18 +182,18 @@ const StaffDirectoryView = () => (
                     </React.Fragment>
                   ))}
                 </td>
-                <td className="px-5 py-6">
+                <td className="px-5 py-4">
                   <DepartmentBadge>{member.department}</DepartmentBadge>
                 </td>
-                <td className="px-5 py-6 text-base text-black">
+                <td className="px-5 py-4 text-sm text-[#5a6475]">
                   {member.email}
                 </td>
-                <td className="px-5 py-6 text-lg text-black">
+                <td className="px-5 py-4 text-sm text-[#5a6475]">
                   {formatDate(member.joinDate).slice(0, 5)}
                   <br />
                   {formatDate(member.joinDate).slice(5)}
                 </td>
-                <td className="px-5 py-6">
+                <td className="px-5 py-4">
                   <StatusBadge status={member.status} />
                 </td>
               </tr>
