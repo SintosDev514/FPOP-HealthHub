@@ -1,203 +1,500 @@
-import React from "react";
+import React, { useState } from "react";
 
-
-const DashboardView = ({ onBookAppointment, onViewAppointments, onViewProfile, appointments = [], profile }) => {
-  const subtleShadow = {
-    boxShadow: '0 1px 3px 0 rgba(0, 0, 0, 0.05), 0 1px 2px 0 rgba(0, 0, 0, 0.03)'
+const Icon = ({ type, className = "h-5 w-5" }) => {
+  const paths = {
+    calendar:
+      "M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z",
+    check: "M5 13l4 4L19 7",
+    clock: "M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z",
+    bell: "M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9",
+    user: "M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z",
+    document:
+      "M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z",
+    mail: "M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z",
   };
 
+  return (
+    <svg
+      className={className}
+      fill="none"
+      stroke="currentColor"
+      viewBox="0 0 24 24"
+    >
+      <path
+        strokeLinecap="round"
+        strokeLinejoin="round"
+        strokeWidth={2}
+        d={paths[type]}
+      />
+    </svg>
+  );
+};
+
+const formatAppointmentDate = (date) => {
+  if (!date) return "";
+  const value = date instanceof Date ? date : new Date(date);
+  return value.toLocaleDateString("en-US", {
+    month: "short",
+    day: "numeric",
+    year: "numeric",
+  });
+};
+
+const getAppointmentStatus = (appointment) => appointment.status || "upcoming";
+
+const getAppointmentStats = (appointmentList = []) =>
+  appointmentList.reduce(
+    (stats, appointment) => {
+      const status = getAppointmentStatus(appointment);
+      return {
+        ...stats,
+        total: stats.total + 1,
+        upcoming: stats.upcoming + (status === "upcoming" ? 1 : 0),
+        completed: stats.completed + (status === "completed" ? 1 : 0),
+        pending: stats.pending + (status === "pending" ? 1 : 0),
+      };
+    },
+    { total: 0, upcoming: 0, completed: 0, pending: 0 },
+  );
+
+const StatCard = ({ icon, label, value, tone = "blue" }) => {
+  const tones = {
+    blue: "bg-[#edf4ff] text-[#244783]",
+    green: "bg-[#eafbf1] text-[#00a65a]",
+    orange: "bg-[#fff7e6] text-[#f07a00]",
+  };
 
   return (
-    <main className="w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 flex-1">
-      <div className="rounded-xl p-6 mb-8 flex justify-between items-center" style={{ ...subtleShadow, backgroundColor: '#1E3A5F' }}>
+    <div className="rounded-[12px] border border-slate-200 bg-white p-6 shadow-[0_1px_4px_rgba(15,23,42,0.04)]">
+      <div className="flex items-start justify-between">
+        <div
+          className={`flex h-12 w-12 items-center justify-center rounded-[12px] ${tones[tone]}`}
+        >
+          <Icon type={icon} />
+        </div>
+        <p className="text-3xl font-bold leading-none text-[#061022]">
+          {value}
+        </p>
+      </div>
+      <p className="mt-5 text-sm font-medium text-[#18304d]">{label}</p>
+    </div>
+  );
+};
+
+const ActionCard = ({ icon, title, subtitle, onClick, accent = "navy" }) => {
+  const iconClass =
+    accent === "orange" ? "bg-[#ffae0b] text-white" : "bg-[#244783] text-white";
+  const content = (
+    <>
+      <span
+        className={`flex h-[60px] w-[60px] shrink-0 items-center justify-center rounded-[14px] ${iconClass}`}
+      >
+        <Icon type={icon} className="h-7 w-7" />
+      </span>
+      <span>
+        <span className="block text-lg font-bold text-[#061022]">{title}</span>
+        <span className="mt-1 block text-sm text-[#18304d]">{subtitle}</span>
+      </span>
+    </>
+  );
+
+  if (onClick) {
+    return (
+      <button
+        type="button"
+        onClick={onClick}
+        className="flex min-h-[112px] items-center gap-4 rounded-[12px] bg-white px-7 text-left shadow-[0_1px_4px_rgba(15,23,42,0.04)] transition hover:-translate-y-0.5 hover:shadow-md"
+      >
+        {content}
+      </button>
+    );
+  }
+
+  return (
+    <div className="flex min-h-[112px] items-center gap-4 rounded-[12px] bg-white px-7 shadow-[0_1px_4px_rgba(15,23,42,0.04)]">
+      {content}
+    </div>
+  );
+};
+
+const AppointmentRow = ({ appointment }) => {
+  const status = appointment.status || "upcoming";
+  const isPending = status === "pending";
+
+  return (
+    <div className="rounded-[12px] border border-slate-200 bg-slate-50/40 px-5 py-5">
+      <div className="flex items-start justify-between gap-4">
         <div>
-          <h2 className="text-2xl font-bold text-white">Welcome Back, {profile?.name.split(' ')[0] || 'User'}!</h2>
-          <p className="text-sm mt-1 text-white/80">Here's what's happening with your healthcare today</p>
+          <h4 className="text-base font-bold text-[#061022]">
+            {appointment.serviceName}
+          </h4>
+          <p className="mt-4 flex items-center gap-2 text-sm text-[#18304d]">
+            <Icon type="user" className="h-4 w-4" />
+            {appointment.doctorName}
+          </p>
+          <div className="mt-3 flex flex-wrap items-center gap-x-7 gap-y-2 text-sm text-[#18304d]">
+            <span className="flex items-center gap-2">
+              <Icon type="calendar" className="h-4 w-4" />
+              {formatAppointmentDate(appointment.date)}
+            </span>
+            <span className="flex items-center gap-2">
+              <Icon type="clock" className="h-4 w-4" />
+              {appointment.time}
+            </span>
+          </div>
         </div>
-        <div className="w-12 h-12 rounded-full bg-white/20 flex items-center justify-center text-white">
-          <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
-          </svg>
-        </div>
-      </div>
-
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
-        <button
-          type="button"
-          onClick={onBookAppointment}
-          className="bg-white rounded-xl p-6 text-left transition-transform hover:-translate-y-0.5"
-          style={subtleShadow}
+        <span
+          className={`rounded-[8px] border px-3 py-1 text-xs font-semibold ${
+            isPending
+              ? "border-amber-300 bg-amber-100 text-[#b45309]"
+              : "border-blue-200 bg-blue-100 text-blue-700"
+          }`}
         >
-          <div className="flex items-center justify-between mb-4">
+          {status}
+        </span>
+      </div>
+    </div>
+  );
+};
+
+const getAvatarSrc = (avatar) => {
+  if (!avatar) return null;
+  if (avatar.startsWith("http")) return avatar;
+  return `http://localhost:5000${avatar}`;
+};
+
+const formatMemberSince = (dateStr) => {
+  if (!dateStr) return "Jan 2026";
+  const d = new Date(dateStr);
+  const months = [
+    "Jan", "Feb", "Mar", "Apr", "May", "Jun",
+    "Jul", "Aug", "Sep", "Oct", "Nov", "Dec",
+  ];
+  return `${months[d.getMonth()]} ${d.getFullYear()}`;
+};
+
+const DashboardView = ({
+  onBookAppointment,
+  onViewAppointments,
+  onViewProfile,
+  appointments = [],
+  profile,
+}) => {
+  const firstName = profile?.name ? profile.name.split(" ")[0] : "";
+  const appointmentStats = getAppointmentStats(appointments);
+  const [appointmentFilter, setAppointmentFilter] = useState("confirmed");
+  const [expandedNotification, setExpandedNotification] = useState(null);
+  const [readNotifications, setReadNotifications] = useState([]);
+  const [otpOpen, setOtpOpen] = useState(false);
+  const [otpValue, setOtpValue] = useState("");
+  const [otpVerified, setOtpVerified] = useState(false);
+  const notifications = [
+    [
+      "Appointment Reminder",
+      "Your appointment with Dr. Sarah Johnson is tomorrow at 10:00 AM",
+      "2 hours ago",
+      true,
+    ],
+    [
+      "Lab Results Available",
+      "Your recent lab test results are now available to view",
+      "5 hours ago",
+      true,
+    ],
+    [
+      "Prescription Ready",
+      "Your prescription is ready for pickup at the pharmacy",
+      "1 day ago",
+      false,
+    ],
+  ];
+  const filteredAppointments = appointments.filter((appointment) => {
+    const status = getAppointmentStatus(appointment);
+    if (appointmentFilter === "pending") return status === "pending";
+    return status !== "pending";
+  });
+  const handleNotificationClick = (title, isNew) => {
+    setExpandedNotification((current) => (current === title ? null : title));
+    if (isNew && !readNotifications.includes(title)) {
+      setReadNotifications((current) => [...current, title]);
+    }
+  };
+
+  return (
+    <main className="flex-1 bg-[#f7f8fa] px-4 py-10 sm:px-6 lg:px-8">
+      <div className="mx-auto max-w-[1234px] space-y-10">
+        <section className="relative overflow-hidden rounded-[12px] bg-[#244783] px-10 py-12 text-white shadow-[0_4px_12px_rgba(15,23,42,0.22)]">
+          <div className="absolute -right-14 -top-32 h-80 w-80 rounded-full bg-white/8" />
+          <div className="relative z-10 flex items-center justify-between gap-6">
             <div>
-              <h3 className="text-lg font-semibold" style={{ color: '#1F2937' }}>Book Appointment</h3>
-              <p className="text-sm" style={{ color: '#6B7280' }}>Schedule a visit</p>
+              <h1 className="text-3xl font-bold leading-tight sm:text-4xl">
+                Welcome Back{firstName ? `, ${firstName}` : ""}!
+              </h1>
+              <p className="mt-3 text-base text-white/95 sm:text-lg">
+                Here's what's happening with your healthcare today
+              </p>
             </div>
-            <div className="w-10 h-10 rounded-lg flex items-center justify-center" style={{ backgroundColor: '#1E3A5F' }}>
-              <svg className="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
-              </svg>
-            </div>
-          </div>
-          <div className="text-3xl font-bold" style={{ color: '#1E3A5F' }}>12</div>
-        </button>
-        <button onClick={onViewAppointments} className="bg-white rounded-xl p-6 text-left transition-transform hover:-translate-y-0.5" style={subtleShadow}>
-          <div className="flex items-center justify-between mb-4">
-            <div>
-              <h3 className="text-lg font-semibold" style={{ color: '#1F2937' }}>My Appointments</h3>
-              <p className="text-sm" style={{ color: '#6B7280' }}>View history</p>
-            </div>
-            <div className="w-10 h-10 rounded-lg flex items-center justify-center" style={{ backgroundColor: '#1E3A5F' }}>
-              <svg className="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
-              </svg>
-            </div>
-          </div>
-          <div className="text-base font-semibold" style={{ color: '#F5C518' }}>View All</div>
-        </button>
-        <div className="bg-white rounded-xl p-6" style={subtleShadow}>
-          <div className="flex items-center justify-between mb-4">
-            <div>
-              <h3 className="text-lg font-semibold" style={{ color: '#1F2937' }}>Verify Email</h3>
-              <p className="text-sm" style={{ color: '#6B7280' }}>Send OTP</p>
-            </div>
-            <div className="w-10 h-10 rounded-lg flex items-center justify-center" style={{ backgroundColor: '#F5C518' }}>
-              <svg className="w-5 h-5" style={{ color: '#1F2937' }} fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
-              </svg>
-            </div>
-          </div>
-          <button className="text-sm font-medium mt-2" style={{ color: '#1E3A5F' }}>Send OTP →</button>
-        </div>
-      </div>
-
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
-        <div className="bg-white rounded-xl p-5 flex items-center gap-4" style={subtleShadow}>
-          <div className="w-10 h-10 rounded-full flex items-center justify-center" style={{ backgroundColor: '#EFF6FF' }}>
-            <svg className="w-5 h-5" style={{ color: '#1E3A5F' }} fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
-            </svg>
-          </div>
-          <div><p className="text-sm" style={{ color: '#6B7280' }}>Upcoming</p><p className="text-3xl font-bold" style={{ color: '#1F2937' }}>2</p></div>
-        </div>
-        <div className="bg-white rounded-xl p-5 flex items-center gap-4" style={subtleShadow}>
-          <div className="w-10 h-10 rounded-full flex items-center justify-center" style={{ backgroundColor: '#F0FDF4' }}>
-            <svg className="w-5 h-5 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
-            </svg>
-          </div>
-          <div><p className="text-sm" style={{ color: '#6B7280' }}>Completed</p><p className="text-3xl font-bold" style={{ color: '#1F2937' }}>12</p></div>
-        </div>
-        <div className="bg-white rounded-xl p-5 flex items-center gap-4" style={subtleShadow}>
-          <div className="w-10 h-10 rounded-full flex items-center justify-center" style={{ backgroundColor: '#FEF3C7' }}>
-            <svg className="w-5 h-5" style={{ color: '#F5C518' }} fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
-            </svg>
-          </div>
-          <div><p className="text-sm" style={{ color: '#6B7280' }}>Pending</p><p className="text-3xl font-bold" style={{ color: '#F5C518' }}>1</p></div>
-        </div>
-        <div className="bg-white rounded-xl p-5 flex items-center gap-4" style={subtleShadow}>
-          <div className="w-10 h-10 rounded-full flex items-center justify-center" style={{ backgroundColor: '#FEF3C7' }}>
-            <svg className="w-5 h-5" style={{ color: '#F5C518' }} fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9" />
-            </svg>
-          </div>
-          <div><p className="text-sm" style={{ color: '#6B7280' }}>Reminders</p><p className="text-3xl font-bold" style={{ color: '#1F2937' }}>3</p></div>
-        </div>
-      </div>
-
-      <div className="mb-8">
-        <h3 className="text-lg font-semibold mb-4" style={{ color: '#1F2937' }}>Upcoming Appointments</h3>
-        {(!appointments || appointments.length === 0) ? (
-          <div className="bg-white rounded-xl p-8 text-center" style={subtleShadow}>
-            <p className="text-slate-500">No upcoming appointments. Schedule one today!</p>
-          </div>
-        ) : (
-          <div className="bg-white rounded-xl overflow-hidden" style={subtleShadow}>
-            {appointments.map((appt, idx) => (
-              <div key={appt.id} className={`p-4 ${idx < appointments.length - 1 ? 'border-b border-slate-200' : ''}`}>
-                <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-3">
-                  <div>
-                    <p className="font-semibold" style={{ color: '#1F2937' }}>{appt.serviceName}</p>
-                    <p className="text-sm" style={{ color: '#6B7280' }}>{appt.doctorName}</p>
-                    <div className="flex items-center space-x-4 mt-1">
-                      <span className="text-xs flex items-center" style={{ color: '#6B7280' }}><svg className="w-3 h-3 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" /></svg>{appt.date.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })}</span>
-                      <span className="text-xs flex items-center" style={{ color: '#6B7280' }}><svg className="w-3 h-3 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>{appt.time}</span>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            ))}
-          </div>
-        )}
-      </div>
-
-      <div className="flex flex-wrap gap-4 mb-8">
-        <button
-          type="button"
-          onClick={onBookAppointment}
-          className="px-6 py-2 rounded-lg text-sm font-medium"
-          style={{ backgroundColor: '#1E3A5F', color: 'white' }}
-        >
-          Book New
-        </button>
-        <button className="px-6 py-2 rounded-lg text-sm font-medium border" style={{ borderColor: '#1E3A5F', color: '#1E3A5F' }}>Confirmed</button>
-        <button className="px-6 py-2 rounded-lg text-sm font-medium border" style={{ borderColor: '#F5C518', color: '#F5C518' }}>Pending</button>
-      </div>
-
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8">
-        <div className="bg-white rounded-xl p-6" style={subtleShadow}>
-          <h3 className="text-lg font-semibold mb-4" style={{ color: '#1F2937' }}>Your Profile</h3>
-          <div className="flex items-start gap-4">
-            <div className="w-16 h-16 rounded-full bg-blue-100 flex items-center justify-center text-2xl overflow-hidden shadow-sm border border-slate-200" style={{ color: '#1E3A5F' }}>
-              {profile?.avatar ? (
-                <img src={profile.avatar} alt="Profile" className="w-full h-full object-cover" />
+            <div className="hidden h-20 w-20 items-center justify-center overflow-hidden rounded-[14px] border border-white/20 bg-white/10 sm:flex">
+              {getAvatarSrc(profile?.avatar) ? (
+                <img
+                  src={getAvatarSrc(profile.avatar)}
+                  alt="Profile"
+                  className="h-full w-full object-cover"
+                />
               ) : (
-                <svg className="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
-                </svg>
+                <Icon type="user" className="h-11 w-11" />
               )}
             </div>
-            <div className="flex-1">
-              <p className="font-bold text-lg" style={{ color: '#1F2937' }}>{profile?.name}</p>
-              <p className="text-sm" style={{ color: '#6B7280' }}>Patient ID: {profile?.patientId}</p>
-              <div className="mt-3 space-y-2">
-                <div className="flex items-center gap-2 text-sm" style={{ color: '#1F2937' }}>
-                  <svg className="w-4 h-4" style={{ color: '#6B7280' }} fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" /></svg>
-                  {profile?.email}
-                </div>
-                <div className="flex items-center gap-2 text-sm" style={{ color: '#1F2937' }}>
-                  <svg className="w-4 h-4" style={{ color: '#6B7280' }} fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z" /></svg>
-                  {profile?.phone}
-                </div>
-                <div className="flex items-center gap-2 text-sm" style={{ color: '#1F2937' }}>
-                  <svg className="w-4 h-4" style={{ color: '#6B7280' }} fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" /><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" /></svg>
-                  {profile?.location}
-                </div>
-              </div>
-              <button onClick={onViewProfile} className="mt-4 px-4 py-2 rounded-lg text-sm font-medium border hover:bg-slate-50 transition" style={{ borderColor: '#1E3A5F', color: '#1E3A5F' }}>Edit Profile</button>
-            </div>
           </div>
-        </div>
+        </section>
 
-        <div className="bg-white rounded-xl p-6" style={subtleShadow}>
-          <h3 className="text-lg font-semibold mb-4" style={{ color: '#1F2937' }}>Recent Notifications</h3>
-          <div className="space-y-3">
-            <div className="flex items-start gap-3 p-3 rounded-lg hover:bg-gray-50 transition-colors">
-              <div className="w-8 h-8 rounded-full bg-blue-100 flex items-center justify-center" style={{ color: '#1E3A5F' }}><svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" /></svg></div>
-              <div className="flex-1"><p className="text-sm font-medium" style={{ color: '#1F2937' }}>Appointment Confirmed</p><p className="text-xs" style={{ color: '#6B7280' }}>Your checkup with Dr. Reyes is confirmed for Apr 15.</p><p className="text-xs mt-1" style={{ color: '#9CA3AF' }}>2 hours ago</p></div>
+        <section className="grid grid-cols-1 gap-5 md:grid-cols-2 xl:grid-cols-4">
+          <StatCard
+            icon="calendar"
+            label="Upcoming"
+            value={appointmentStats.upcoming}
+          />
+          <StatCard
+            icon="check"
+            label="Completed"
+            value={appointmentStats.completed}
+            tone="green"
+          />
+          <StatCard
+            icon="clock"
+            label="Pending"
+            value={appointmentStats.pending}
+            tone="orange"
+          />
+          <StatCard
+            icon="bell"
+            label="Reminders"
+            value={notifications.length}
+            tone="orange"
+          />
+        </section>
+
+        <section className="grid grid-cols-1 gap-6 lg:grid-cols-3">
+          <ActionCard
+            icon="calendar"
+            title="Book Appointment"
+            subtitle="Schedule a new visit"
+            onClick={onBookAppointment}
+          />
+          <ActionCard
+            icon="document"
+            title="My Appointments"
+            subtitle="View your history"
+            onClick={onViewAppointments}
+          />
+          <ActionCard
+            icon="mail"
+            title="Verify Email"
+            subtitle={otpVerified ? "Email verified" : "Send OTP verification"}
+            accent="orange"
+            onClick={() => setOtpOpen(true)}
+          />
+        </section>
+
+        <section className="rounded-[12px] border border-slate-200 bg-white p-8 shadow-[0_3px_10px_rgba(15,23,42,0.1)]">
+          <div className="mb-12 flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
+            <div>
+              <h2 className="text-2xl font-bold text-[#061022]">
+                Upcoming Appointments
+              </h2>
+              <p className="mt-1 text-sm text-[#18304d]">
+                Your next scheduled visits
+              </p>
             </div>
-            <div className="flex items-start gap-3 p-3 rounded-lg hover:bg-gray-50 transition-colors">
-              <div className="w-8 h-8 rounded-full bg-yellow-100 flex items-center justify-center" style={{ color: '#F5C518' }}><svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" /></svg></div>
-              <div className="flex-1"><p className="text-sm font-medium" style={{ color: '#1F2937' }}>Lab Results Ready</p><p className="text-xs" style={{ color: '#6B7280' }}>Your blood test results are now available.</p><p className="text-xs mt-1" style={{ color: '#9CA3AF' }}>Yesterday</p></div>
-            </div>
-            <div className="flex items-start gap-3 p-3 rounded-lg hover:bg-gray-50 transition-colors">
-              <div className="w-8 h-8 rounded-full bg-green-100 flex items-center justify-center text-green-600"><svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" /></svg></div>
-              <div className="flex-1"><p className="text-sm font-medium" style={{ color: '#1F2937' }}>Prescription Ready</p><p className="text-xs" style={{ color: '#6B7280' }}>Your medication is ready for pickup.</p><p className="text-xs mt-1" style={{ color: '#9CA3AF' }}>2 days ago</p></div>
+            <div className="flex gap-3">
+              <button
+                type="button"
+                onClick={() => setAppointmentFilter("confirmed")}
+                className={`rounded-[8px] border px-5 py-2 text-sm font-semibold ${
+                  appointmentFilter === "confirmed"
+                    ? "border-[#244783] bg-[#244783] text-white"
+                    : "border-slate-200 text-[#061022]"
+                }`}
+              >
+                Confirmed
+              </button>
+              <button
+                type="button"
+                onClick={() => setAppointmentFilter("pending")}
+                className={`rounded-[8px] border px-5 py-2 text-sm font-semibold ${
+                  appointmentFilter === "pending"
+                    ? "border-[#ffae0b] bg-[#fff7e6] text-[#f07a00]"
+                    : "border-[#ffae0b] text-[#f07a00]"
+                }`}
+              >
+                Pending
+              </button>
             </div>
           </div>
-        </div>
+
+          {filteredAppointments.length === 0 ? (
+            <div className="rounded-[12px] border border-dashed border-slate-300 bg-slate-50 p-8 text-center text-[#18304d]">
+              No {appointmentFilter} appointments to show.
+            </div>
+          ) : (
+            <div className="space-y-4">
+              {filteredAppointments.map((appointment) => (
+                <AppointmentRow
+                  key={appointment.id}
+                  appointment={appointment}
+                />
+              ))}
+            </div>
+          )}
+
+          <button
+            type="button"
+            onClick={onBookAppointment}
+            className="mt-12 flex w-full items-center justify-center gap-3 rounded-[7px] bg-[#244783] px-6 py-4 text-sm font-bold text-white shadow-sm transition hover:bg-[#1c396f]"
+          >
+            <Icon type="calendar" className="h-5 w-5" />
+            Book New Appointment
+          </button>
+        </section>
+
+        <section className="grid grid-cols-1 gap-6 lg:grid-cols-2">
+          <div className="rounded-[12px] border border-slate-200 bg-white p-8 shadow-[0_3px_10px_rgba(15,23,42,0.1)]">
+            <h2 className="text-2xl font-bold text-[#061022]">Your Profile</h2>
+            <div className="mt-12 flex items-center gap-5">
+              <div className="flex h-16 w-16 items-center justify-center overflow-hidden rounded-[14px] bg-[#244783] text-white">
+                {getAvatarSrc(profile?.avatar) ? (
+                  <img
+                    src={getAvatarSrc(profile.avatar)}
+                    alt="Profile"
+                    className="h-full w-full object-cover"
+                  />
+                ) : (
+                  <Icon type="user" className="h-9 w-9" />
+                )}
+              </div>
+              <div>
+                <h3 className="text-lg font-bold text-[#061022]">
+                  {profile?.name || "Sarah Johnson"}
+                </h3>
+                <p className="mt-1 text-sm text-[#18304d]">
+                  {profile?.email || "sarah.j@email.com"}
+                </p>
+              </div>
+            </div>
+            <div className="my-8 h-px bg-slate-200" />
+            <div className="space-y-8 text-sm">
+              <div className="flex justify-between gap-4">
+                <span className="text-[#18304d]">Member since</span>
+                <strong className="text-[#061022]">{formatMemberSince(profile?.memberSince)}</strong>
+              </div>
+              <div className="flex justify-between gap-4">
+                <span className="text-[#18304d]">Total Appointments</span>
+                <strong className="text-[#061022]">
+                  {appointmentStats.total}
+                </strong>
+              </div>
+            </div>
+            <button
+              type="button"
+              onClick={onViewProfile}
+              className="mt-12 w-full rounded-[8px] border border-slate-200 px-5 py-3 text-sm font-bold text-[#061022] transition hover:bg-slate-50"
+            >
+              View Full Profile
+            </button>
+          </div>
+
+          <div className="rounded-[12px] border border-slate-200 bg-white p-8 shadow-[0_3px_10px_rgba(15,23,42,0.1)]">
+            <h2 className="text-2xl font-bold text-[#061022]">
+              Recent Notifications
+            </h2>
+            <div className="mt-12 space-y-3">
+              {notifications.map(([title, body, time, isNew]) => {
+                const unread = isNew && !readNotifications.includes(title);
+                const expanded = expandedNotification === title;
+                return (
+                  <button
+                    type="button"
+                    key={title}
+                    onClick={() => handleNotificationClick(title, isNew)}
+                    className={`w-full rounded-[12px] border p-4 text-left transition hover:-translate-y-0.5 hover:shadow-sm ${
+                      unread
+                        ? "border-blue-200 bg-blue-50"
+                        : "border-slate-200 bg-slate-50"
+                    }`}
+                  >
+                    <div className="flex items-start justify-between gap-3">
+                      <div>
+                        <h3 className="text-sm font-bold text-[#061022]">
+                          {title}
+                        </h3>
+                        <p
+                          className={`mt-4 text-sm text-[#18304d] ${expanded ? "" : "line-clamp-1"}`}
+                        >
+                          {body}
+                        </p>
+                        {expanded && (
+                          <p className="mt-3 text-xs text-[#496178]">
+                            This is a local preview only. Click again to
+                            collapse.
+                          </p>
+                        )}
+                        <p className="mt-4 text-xs text-[#496178]">{time}</p>
+                      </div>
+                      {unread && (
+                        <span className="rounded-[8px] bg-[#244783] px-3 py-1 text-xs font-bold text-white">
+                          New
+                        </span>
+                      )}
+                    </div>
+                  </button>
+                );
+              })}
+            </div>
+          </div>
+        </section>
       </div>
+      {otpOpen && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-slate-900/40 px-4">
+          <div className="w-full max-w-md rounded-[12px] bg-white p-6 shadow-xl">
+            <div className="flex items-start justify-between gap-4">
+              <div>
+                <h2 className="text-xl font-bold text-[#061022]">
+                  Verify Email
+                </h2>
+                <p className="mt-2 text-sm text-[#18304d]">
+                  Enter a mock OTP to preview verification.
+                </p>
+              </div>
+              <button
+                type="button"
+                className="text-slate-500"
+                onClick={() => setOtpOpen(false)}
+              >
+                x
+              </button>
+            </div>
+            <input
+              value={otpValue}
+              onChange={(event) => setOtpValue(event.target.value)}
+              maxLength={6}
+              placeholder="Enter OTP"
+              className="mt-6 h-12 w-full rounded-[8px] border border-slate-200 px-4 text-sm outline-none focus:ring-2 focus:ring-[#244783]/30"
+            />
+            {otpVerified && (
+              <p className="mt-3 rounded-[8px] bg-green-50 px-3 py-2 text-sm font-semibold text-green-700">
+                Email verified locally.
+              </p>
+            )}
+            <button
+              type="button"
+              onClick={() => setOtpVerified(otpValue.trim().length > 0)}
+              className="mt-5 w-full rounded-[8px] bg-[#244783] px-4 py-3 text-sm font-bold text-white"
+            >
+              Verify OTP
+            </button>
+          </div>
+        </div>
+      )}
     </main>
   );
 };

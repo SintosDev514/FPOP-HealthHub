@@ -5,23 +5,31 @@ const AuthContext = createContext();
 export const AuthProvider = ({ children }) => {
   const [user, setUser] = useState(null);
   const [loading, setLoading] = useState(true);
+  const [initialized, setInitialized] = useState(false);
+
+  const normalizeUser = (data) => data?.user || data || null;
 
   const checkAuth = async () => {
-  try {
-    const res = await fetch("http://localhost:5000/api/auth/me", {
-      credentials: "include",
-    });
+    try {
+      const res = await fetch("http://localhost:5000/api/auth/me", {
+        credentials: "include",
+      });
 
-    if (!res.ok) throw new Error();
+      if (!res.ok) {
+        setUser(null);
+        return;
+      }
 
-    const data = await res.json();
-    setUser(data.user || data);
-  } catch {
-    setUser(null);
-  } finally {
-    setLoading(false);
-  }
-};
+      const data = await res.json();
+      setUser(normalizeUser(data));
+    } catch (err) {
+      console.error(err);
+      setUser(null);
+    } finally {
+      setLoading(false);
+      setInitialized(true);
+    }
+  };
 
   useEffect(() => {
     checkAuth();
@@ -29,31 +37,34 @@ export const AuthProvider = ({ children }) => {
 
   const logout = async () => {
     try {
-      const res = await fetch("http://localhost:5000/api/auth/logout", {
+      await fetch("http://localhost:5000/api/auth/logout", {
         method: "POST",
         credentials: "include",
       });
-
-      if (!res.ok) {
-        throw new Error("Logout failed");
-      }
-
-      setUser(null);
-      window.location.href = "/login";
-    } catch (error) {
-      console.error("Logout error:", error);
+    } catch (err) {
+      console.error(err);
+    } finally {
       setUser(null);
       window.location.href = "/login";
     }
   };
 
   return (
-    <AuthContext.Provider value={{ user, loading, logout, setUser, checkAuth }}>
+    <AuthContext.Provider
+      value={{
+        user,
+        setUser,
+        loading,
+        initialized,
+        checkAuth,
+        logout,
+      }}
+    >
       {children}
     </AuthContext.Provider>
   );
 };
 
-/* eslint-disable-next-line react-refresh/only-export-components */
 export const useAuth = () => useContext(AuthContext);
 
+export default AuthContext;

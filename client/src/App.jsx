@@ -15,10 +15,10 @@ import Location from "./pages/LocationPage";
 import Home from "./pages/patient/home";
 
 //jasper
-//import Staff from "./pages/staff/staffDashboard";
+import Staff from "./pages/staff/staffDashboard";
 
 //jayjay
-import Staff from "./pages/admin/adminPages/AdminDashboard";
+import Admin from "./pages/admin/adminPages/AdminDashboard";
 
 import ForgotPass from "./pages/ForgotPasswordForm";
 import ResetPass from "./pages/ResetPasswordForm";
@@ -137,23 +137,35 @@ function App() {
         />
 
         {/* PROTECTED ROUTE */}
+        {/*Admin*/}
 
-        {/*Test staff*/}
+        <Route
+          path="/admin"
+          element={
+            <ProtectedRoute role="admin">
+              <PrivateLayout>
+                <Admin />
+              </PrivateLayout>
+            </ProtectedRoute>
+          }
+        />
+
+        {/* staff*/}
         <Route
           path="/staff"
           element={
-            <ProtectedRoute>
+            <ProtectedRoute role="staff">
               <PrivateLayout>
                 <Staff />
               </PrivateLayout>
             </ProtectedRoute>
           }
         />
-
+        {/*patient*/}
         <Route
           path="/home"
           element={
-            <ProtectedRoute>
+            <ProtectedRoute role="patient">
               <PrivateLayout>
                 <Home />
               </PrivateLayout>
@@ -204,8 +216,6 @@ function App() {
             </ProtectedRoute>
           }
         />
-
-        <Route path="/admin/*" element={<AdminDashboard />} />
       </Routes>
     </Router>
   );

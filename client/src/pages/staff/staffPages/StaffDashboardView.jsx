@@ -1,183 +1,224 @@
 import React from "react";
 
-const StaffDashboardView = ({ onViewSchedule, onViewProfile, profile, stats = {} }) => {
-  const subtleShadow = {
-    boxShadow: '0 1px 3px 0 rgba(0, 0, 0, 0.05), 0 1px 2px 0 rgba(0, 0, 0, 0.03)'
-  };
-
-  const defaultStats = {
-    todayShifts: 8,
-    attendanceRate: 96,
-    completedTasks: 42,
-    pendingTasks: 5,
-    ...stats
+const Icon = ({ name, className = "h-7 w-7" }) => {
+  const paths = {
+    users:
+      "M16 11a4 4 0 1 0-8 0m8 0a4 4 0 1 1-8 0m8 0c2.2.5 4 2 4 4v1M8 11c-2.2.5-4 2-4 4v1",
+    trend: "m4 16 6-6 4 4 6-8M15 6h5v5",
+    calendar:
+      "M7 3v4M17 3v4M4.5 9h15M6 5h12a2 2 0 0 1 2 2v11a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V7a2 2 0 0 1 2-2Z",
+    file: "M7 3h7l5 5v13H7a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2Zm7 0v5h5M9 13h6M9 17h6",
+    pulse: "M4 12h3l2-7 4 14 2-7h5",
+    check: "m8 12 3 3 6-7M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z",
+    ribbon: "M8 4h8v16l-4-2.5L8 20V4Z",
   };
 
   return (
-    <main className="w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 flex-1">
-      <div className="rounded-xl p-6 mb-8 flex justify-between items-center" style={{ ...subtleShadow, backgroundColor: '#1E3A5F' }}>
+    <svg
+      className={className}
+      fill="none"
+      stroke="currentColor"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      strokeWidth="2"
+      viewBox="0 0 24 24"
+      aria-hidden="true"
+    >
+      <path d={paths[name]} />
+    </svg>
+  );
+};
+
+const statTones = {
+  navy: {
+    iconBg: "bg-[#1E3A5F]/10",
+    iconText: "text-[#1E3A5F]",
+    detail: "text-[#22c55e]",
+  },
+  gold: {
+    iconBg: "bg-[#F5C518]/20",
+    iconText: "text-[#B88900]",
+    detail: "text-[#B88900]",
+  },
+  green: {
+    iconBg: "bg-[#dcfce7]",
+    iconText: "text-[#22c55e]",
+    detail: "text-[#22c55e]",
+  },
+  orange: {
+    iconBg: "bg-[#ffedd5]",
+    iconText: "text-[#ea580c]",
+    detail: "text-[#ea580c]",
+  },
+};
+
+const StatCard = ({ title, value, detail, icon, tone = "navy" }) => {
+  const colors = statTones[tone] || statTones.navy;
+
+  return (
+  <article
+    className="rounded-2xl border border-[#1E3A5F]/[0.07] bg-white px-5 py-5 shadow-[0_2px_14px_rgba(30,58,95,0.07)] transition duration-200 hover:-translate-y-0.5 hover:shadow-[0_10px_32px_rgba(30,58,95,0.14)]"
+  >
+    <div className="flex items-start justify-between gap-3">
+      <div className="min-w-0">
+        <p className="truncate text-[11px] font-semibold uppercase tracking-[0.06em] text-[#8a96a3]">
+          {title}
+        </p>
+        <p className="mt-2 text-3xl font-extrabold leading-none text-[#1E3A5F]">
+          {value}
+        </p>
+        <p className={`mt-3 text-xs font-bold ${colors.detail}`}>{detail}</p>
+      </div>
+      <div
+        className={`flex h-[46px] w-[46px] shrink-0 items-center justify-center rounded-xl ${colors.iconBg} ${colors.iconText}`}
+      >
+        <Icon name={icon} className="h-[22px] w-[22px]" />
+      </div>
+    </div>
+  </article>
+  );
+};
+
+const ActivityItem = ({ icon, title, meta, tone }) => {
+  const tones = {
+    green: "bg-green-100 text-green-500",
+    blue: "bg-blue-100 text-sky-500",
+    yellow: "bg-[#FFF6CE] text-[#C59A00]",
+  };
+
+  return (
+    <div className="flex items-center gap-5 rounded-lg border border-slate-200 bg-white px-5 py-5">
+      <div
+        className={`flex h-[52px] w-[52px] shrink-0 items-center justify-center rounded-full ${tones[tone]}`}
+      >
+        <Icon name={icon} className="h-6 w-6" />
+      </div>
+      <div className="min-w-0">
+        <h4 className="truncate text-xl font-bold text-black">{title}</h4>
+        <p className="mt-1 text-base text-[#4B5563]">{meta}</p>
+      </div>
+    </div>
+  );
+};
+
+const QuickStat = ({ icon, label, value, progress }) => (
+  <div>
+    <div className="mb-3 flex items-center justify-between gap-6">
+      <div className="flex min-w-0 items-center gap-3">
+        <Icon name={icon} className="h-6 w-6 shrink-0" />
+        <span className="truncate text-lg font-semibold">{label}</span>
+      </div>
+      <span className="text-3xl font-bold">{value}</span>
+    </div>
+    <div className="h-[7px] rounded-full bg-white/25">
+      <div
+        className="h-full rounded-full bg-white"
+        style={{ width: `${progress}%` }}
+      />
+    </div>
+  </div>
+);
+
+const StaffDashboardView = ({ stats = {} }) => {
+  const dashboardStats = {
+    totalStaff: 248,
+    activeToday: 186,
+    appointments: 42,
+    pendingReports: 8,
+    ...stats,
+  };
+
+  return (
+    <main className="flex-1 bg-[#f1f4f8] px-4 py-7 sm:px-8 lg:px-[32px]">
+      <section className="mb-7 flex flex-col gap-4 lg:flex-row lg:items-center lg:justify-between">
         <div>
-          <h2 className="text-2xl font-bold text-white">Welcome Back, {profile?.name.split(' ')[0] || 'Staff'}!</h2>
-          <p className="text-sm mt-1 text-white/80">Here's your work summary for today</p>
+          <h2 className="text-[26px] font-extrabold leading-tight text-[#1E3A5F]">
+            Dashboard Overview
+          </h2>
+          <p className="mt-1.5 text-sm font-medium text-[#8a96a3]">
+            Welcome back! Here's what's happening today.
+          </p>
         </div>
-        <div className="w-12 h-12 rounded-full bg-white/20 flex items-center justify-center text-white">
-          <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
-          </svg>
+        <div className="inline-flex w-fit items-center gap-2 rounded-full bg-slate-100 px-4 py-2 text-sm text-black">
+        
         </div>
-      </div>
+      </section>
 
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
-        <button
-          type="button"
-          onClick={onViewSchedule}
-          className="bg-white rounded-xl p-6 text-left transition-transform hover:-translate-y-0.5"
-          style={subtleShadow}
-        >
-          <div className="flex items-center justify-between mb-4">
-            <div>
-              <h3 className="text-lg font-semibold" style={{ color: '#1F2937' }}>My Schedule</h3>
-              <p className="text-sm" style={{ color: '#6B7280' }}>View shifts</p>
-            </div>
-            <div className="w-10 h-10 rounded-lg flex items-center justify-center" style={{ backgroundColor: '#1E3A5F' }}>
-              <svg className="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
-              </svg>
-            </div>
-          </div>
-          <div className="text-3xl font-bold" style={{ color: '#1E3A5F' }}>{defaultStats.todayShifts}</div>
-          <p className="text-xs text-slate-500 mt-1">shifts this week</p>
-        </button>
+      <section className="mb-6 grid grid-cols-1 gap-4 sm:grid-cols-2 xl:grid-cols-4">
+        <StatCard
+          title="Total Staff"
+          value={dashboardStats.totalStaff}
+          detail="+12 this month"
+          icon="users"
+          tone="navy"
+        />
+        <StatCard
+          title="Active Today"
+          value={dashboardStats.activeToday}
+          detail="75% attendance"
+          icon="trend"
+          tone="green"
+        />
+        <StatCard
+          title="Appointments"
+          value={dashboardStats.appointments}
+          detail="8 pending"
+          icon="calendar"
+          tone="gold"
+        />
+        <StatCard
+          title="Reports Pending"
+          value={dashboardStats.pendingReports}
+          detail="3 urgent"
+          icon="file"
+          tone="orange"
+        />
+      </section>
 
-        <button onClick={onViewProfile} className="bg-white rounded-xl p-6 text-left transition-transform hover:-translate-y-0.5" style={subtleShadow}>
-          <div className="flex items-center justify-between mb-4">
-            <div>
-              <h3 className="text-lg font-semibold" style={{ color: '#1F2937' }}>Tasks</h3>
-              <p className="text-sm" style={{ color: '#6B7280' }}>Assigned to you</p>
-            </div>
-            <div className="w-10 h-10 rounded-lg flex items-center justify-center" style={{ backgroundColor: '#1E3A5F' }}>
-              <svg className="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
-              </svg>
-            </div>
+      <section className="grid grid-cols-1 gap-8 xl:grid-cols-[minmax(0,1.1fr)_minmax(320px,0.8fr)]">
+        <article className="rounded-xl bg-white p-7 shadow-sm">
+          <div className="mb-8 flex items-center gap-4">
+            <Icon name="pulse" className="h-8 w-8 text-[#3B5FDB]" />
+            <h3 className="text-3xl font-bold text-black">Recent Activity</h3>
           </div>
-          <div className="text-3xl font-bold" style={{ color: '#F5C518' }}>{defaultStats.completedTasks}</div>
-          <p className="text-xs text-slate-500 mt-1">completed</p>
-        </button>
 
-        <div className="bg-white rounded-xl p-6" style={subtleShadow}>
-          <div className="flex items-center justify-between mb-4">
-            <div>
-              <h3 className="text-lg font-semibold" style={{ color: '#1F2937' }}>Attendance</h3>
-              <p className="text-sm" style={{ color: '#6B7280' }}>This month</p>
+          <div className="space-y-5">
+            <ActivityItem
+              icon="check"
+              title="New staff member registered"
+              meta="Patricia Garcia - 2 hours ago"
+              tone="green"
+            />
+            <ActivityItem
+              icon="file"
+              title="Report submitted"
+              meta="Dr. Michael Chen - 4 hours ago"
+              tone="blue"
+            />
+            <ActivityItem
+              icon="calendar"
+              title="Schedule updated"
+              meta="Nursing Team - 6 hours ago"
+              tone="yellow"
+            />
+          </div>
+        </article>
+
+        <aside className="space-y-8">
+          <article className="rounded-xl bg-gradient-to-br from-[#435B9C] to-[#1E3A5F] p-8 text-white shadow-sm">
+            <div className="mb-10 flex items-center gap-4">
+              <Icon name="ribbon" className="h-8 w-8" />
+              <h3 className="text-3xl font-bold">Quick Stats</h3>
             </div>
-            <div className="w-10 h-10 rounded-lg flex items-center justify-center" style={{ backgroundColor: '#F5C518' }}>
-              <svg className="w-5 h-5" style={{ color: '#1F2937' }} fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />
-              </svg>
+            <div className="space-y-9">
+              <QuickStat icon="users" label="Staff on Leave" value="12" progress={5} />
+              <QuickStat icon="ribbon" label="Departments" value="8" progress={100} />
+              <QuickStat icon="trend" label="New This Month" value="5" progress={25} />
             </div>
-          </div>
-          <div className="text-3xl font-bold" style={{ color: '#1E3A5F' }}>{defaultStats.attendanceRate}%</div>
-          <p className="text-xs text-slate-500 mt-1">attendance rate</p>
-        </div>
-      </div>
+          </article>
 
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
-        <div className="bg-white rounded-xl p-5 flex items-center gap-4" style={subtleShadow}>
-          <div className="w-10 h-10 rounded-full flex items-center justify-center" style={{ backgroundColor: '#EFF6FF' }}>
-            <svg className="w-5 h-5" style={{ color: '#1E3A5F' }} fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
-            </svg>
-          </div>
-          <div>
-            <p className="text-sm" style={{ color: '#6B7280' }}>Today</p>
-            <p className="text-3xl font-bold" style={{ color: '#1F2937' }}>8h</p>
-          </div>
-        </div>
-
-        <div className="bg-white rounded-xl p-5 flex items-center gap-4" style={subtleShadow}>
-          <div className="w-10 h-10 rounded-full flex items-center justify-center" style={{ backgroundColor: '#F0FDF4' }}>
-            <svg className="w-5 h-5 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
-            </svg>
-          </div>
-          <div>
-            <p className="text-sm" style={{ color: '#6B7280' }}>On Time</p>
-            <p className="text-3xl font-bold" style={{ color: '#1F2937' }}>96%</p>
-          </div>
-        </div>
-
-        <div className="bg-white rounded-xl p-5 flex items-center gap-4" style={subtleShadow}>
-          <div className="w-10 h-10 rounded-full flex items-center justify-center" style={{ backgroundColor: '#FEF3C7' }}>
-            <svg className="w-5 h-5" style={{ color: '#F5C518' }} fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
-            </svg>
-          </div>
-          <div>
-            <p className="text-sm" style={{ color: '#6B7280' }}>Pending</p>
-            <p className="text-3xl font-bold" style={{ color: '#F5C518' }}>{defaultStats.pendingTasks}</p>
-          </div>
-        </div>
-
-        <div className="bg-white rounded-xl p-5 flex items-center gap-4" style={subtleShadow}>
-          <div className="w-10 h-10 rounded-full flex items-center justify-center" style={{ backgroundColor: '#FEE2E2' }}>
-            <svg className="w-5 h-5 text-red-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4m0 4v.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
-            </svg>
-          </div>
-          <div>
-            <p className="text-sm" style={{ color: '#6B7280' }}>Department</p>
-            <p className="text-2xl font-bold" style={{ color: '#1F2937' }}>{profile?.department || 'N/A'}</p>
-          </div>
-        </div>
-      </div>
-
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-        <div className="bg-white rounded-xl p-6" style={subtleShadow}>
-          <h3 className="text-lg font-semibold mb-4" style={{ color: '#1F2937' }}>Quick Actions</h3>
-          <div className="space-y-3">
-            <button onClick={onViewSchedule} className="w-full text-left px-4 py-3 rounded-lg hover:bg-slate-50 transition flex items-center gap-3 border border-slate-200">
-              <svg className="w-5 h-5" style={{ color: '#1E3A5F' }} fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
-              </svg>
-              <span className="font-medium" style={{ color: '#1F2937' }}>Check Schedule</span>
-            </button>
-            <button onClick={onViewProfile} className="w-full text-left px-4 py-3 rounded-lg hover:bg-slate-50 transition flex items-center gap-3 border border-slate-200">
-              <svg className="w-5 h-5" style={{ color: '#1E3A5F' }} fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
-              </svg>
-              <span className="font-medium" style={{ color: '#1F2937' }}>Edit Profile</span>
-            </button>
-          </div>
-        </div>
-
-        <div className="bg-white rounded-xl p-6" style={subtleShadow}>
-          <h3 className="text-lg font-semibold mb-4" style={{ color: '#1F2937' }}>Recent Activity</h3>
-          <div className="space-y-4">
-            <div className="flex gap-3 pb-3 border-b border-slate-200">
-              <div className="w-2 h-2 mt-2 rounded-full" style={{ backgroundColor: '#F5C518' }}></div>
-              <div>
-                <p className="text-sm font-medium" style={{ color: '#1F2937' }}>Shift completed</p>
-                <p className="text-xs" style={{ color: '#6B7280' }}>Morning shift - 2 hours ago</p>
-              </div>
-            </div>
-            <div className="flex gap-3 pb-3 border-b border-slate-200">
-              <div className="w-2 h-2 mt-2 rounded-full" style={{ backgroundColor: '#10B981' }}></div>
-              <div>
-                <p className="text-sm font-medium" style={{ color: '#1F2937' }}>Task assigned</p>
-                <p className="text-xs" style={{ color: '#6B7280' }}>New patient intake - 1 day ago</p>
-              </div>
-            </div>
-            <div className="flex gap-3">
-              <div className="w-2 h-2 mt-2 rounded-full" style={{ backgroundColor: '#1E3A5F' }}></div>
-              <div>
-                <p className="text-sm font-medium" style={{ color: '#1F2937' }}>Schedule updated</p>
-                <p className="text-xs" style={{ color: '#6B7280' }}>Next week's schedule - 2 days ago</p>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
+        </aside>
+      </section>
     </main>
   );
 };

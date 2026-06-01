@@ -7,10 +7,14 @@ const userSchema = new mongoose.Schema({
   password: { type: String, required: true },
   verifyOtp: { type: String, default: "" },
   verifyOtpExpAt: { type: Number, default: 0 },
-  role: { type: String, required: true, default: "Patient" },
+  role: { type: String, required: true, default: "patient" },
   isAccountVerified: { type: Boolean, default: false },
   resetOtp: { type: String, default: "" },
   resetOtpExpireAt: { type: Number, default: 0 },
+  phone: { type: String, default: "" },
+  address: { type: String, default: "" },
+  avatar: { type: String, default: "" },
+  dateOfBirth: { type: String, default: "" },
 });
 
 const userModel = mongoose.model.user || mongoose.model("user", userSchema);
