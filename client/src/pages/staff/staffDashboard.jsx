@@ -25,6 +25,8 @@ const StaffIcon = ({ name, className = "h-5 w-5" }) => {
     calendar:
       "M7 3v4M17 3v4M4.5 9h15M6 5h12a2 2 0 0 1 2 2v11a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V7a2 2 0 0 1 2-2Z",
     file: "M7 3h7l5 5v13H7a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2Zm7 0v5h5M9 13h6M9 17h6",
+    logout:
+      "M15 17l5-5-5-5M20 12H9M12 19H6a2 2 0 0 1-2-2V7a2 2 0 0 1 2-2h6",
   };
 
   return (
@@ -172,9 +174,10 @@ const StaffDashboard = () => {
                       logout();
                       setMenuOpen(false);
                     }}
-                    className="h-11 w-full rounded-full border border-[#F5C518] bg-[#F5C518] text-sm font-bold text-[#1E3A5F] shadow-[0_4px_14px_rgba(245,197,24,0.2)] transition-all duration-300 hover:bg-white hover:text-[#1E3A5F]"
+                    className="flex h-12 w-full items-center justify-center gap-2 rounded-xl border border-[#F5C518]/30 bg-[#F5C518]/95 px-4 text-sm font-bold text-[#152c4a] shadow-[0_8px_20px_rgba(245,197,24,0.18)] transition-all duration-300 hover:-translate-y-0.5 hover:bg-white focus:outline-none focus:ring-2 focus:ring-[#F5C518]/50"
                   >
-                    Logout
+                    <StaffIcon name="logout" className="h-4 w-4" />
+                    Sign out
                   </button>
                 </div>
               </nav>
@@ -185,7 +188,7 @@ const StaffDashboard = () => {
 
       <div className="flex">
         <aside
-          className="hidden min-h-[calc(100vh-76px)] w-[300px] shrink-0 flex-col overflow-hidden shadow-[4px_0_28px_rgba(0,0,0,0.14)] md:flex"
+          className="sticky top-[76px] hidden h-[calc(100vh-76px)] w-[300px] shrink-0 flex-col overflow-hidden shadow-[4px_0_28px_rgba(0,0,0,0.14)] md:flex"
           style={{
             background: `linear-gradient(180deg, ${NAVY_DARK} 0%, ${NAVY_MID} 60%, ${NAVY_LITE} 100%)`,
           }}
@@ -211,25 +214,21 @@ const StaffDashboard = () => {
               );
             })}
           </nav>
-          <div className="border-t border-[#F5C518]/10 py-3">
+          <div className="border-t border-[#F5C518]/10 p-4">
             <button
               type="button"
               onClick={logout}
-              className="flex h-[52px] w-full items-center gap-4 border-l-[3px] border-transparent px-6 text-left text-sm font-medium text-white/50 transition hover:bg-red-500/10 hover:text-red-300"
+              className="group flex w-full items-center gap-3 rounded-xl border border-[#F5C518]/15 bg-white/[0.06] px-4 py-3 text-left text-sm font-semibold text-white/75 shadow-[inset_0_1px_0_rgba(255,255,255,0.06)] transition-all duration-200 hover:border-[#F5C518]/35 hover:bg-[#F5C518]/10 hover:text-[#F5C518] focus:outline-none focus:ring-2 focus:ring-[#F5C518]/35"
             >
-              <svg
-                className="h-5 w-5"
-                fill="none"
-                stroke="currentColor"
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                strokeWidth="2"
-                viewBox="0 0 24 24"
-                aria-hidden="true"
-              >
-                <path d="M15 17l5-5-5-5M20 12H9M12 19H6a2 2 0 0 1-2-2V7a2 2 0 0 1 2-2h6" />
-              </svg>
-              Logout
+              <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg bg-[#F5C518]/10 text-[#F5C518] transition-colors duration-200 group-hover:bg-[#F5C518]/20">
+                <StaffIcon name="logout" className="h-4 w-4" />
+              </span>
+              <span className="flex min-w-0 flex-col">
+                <span className="leading-5">Sign out</span>
+                <span className="text-xs font-medium text-white/45 transition-colors duration-200 group-hover:text-[#F5C518]/70">
+                  End staff session
+                </span>
+              </span>
             </button>
           </div>
         </aside>
