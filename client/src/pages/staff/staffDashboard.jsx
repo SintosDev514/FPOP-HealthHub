@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "../../context/AuthContext";
 import StaffDashboardView from "./staffPages/StaffDashboardView";
@@ -48,31 +48,62 @@ const StaffIcon = ({ name, className = "h-5 w-5" }) => {
 const StaffDashboard = () => {
   const [currentView, setCurrentView] = useState("dashboard");
   const [menuOpen, setMenuOpen] = useState(false);
+  const [profile, setProfile] = useState(null);
+  const [appointments, setAppointments] = useState([]);
+  const [loading, setLoading] = useState(true);
   const navigate = useNavigate();
   const { logout } = useAuth();
-  const [profile] = useState({
-    name: "Dr. John Smith",
-    staffId: "S12345",
-    email: "john.smith@hospital.com",
-    phone: "+1 (555) 987-6543",
-    department: "Cardiology",
-    position: "Senior Doctor",
-    avatar: "https://i.pravatar.cc/150?u=john",
-    licenseId: "MD-12345",
-    specialization: "Cardiothoracic Surgery",
-    bio: "Experienced cardiologist with 15+ years in patient care and surgical interventions.",
-  });
 
-  const [stats] = useState({
-    totalStaff: 248,
-    activeToday: 186,
-    appointments: 42,
-    pendingReports: 8,
-    todayShifts: 8,
-    attendanceRate: 96,
-    completedTasks: 42,
-    pendingTasks: 5,
-  });
+  useEffect(() => {
+    fetchProfile();
+    fetchAppointments();
+  }, []);
+
+  const fetchProfile = async () => {
+    try {
+      const res = await fetch("http://localhost:5000/api/user/data", {
+        credentials: "include",
+      });
+      const data = await res.json();
+      if (data.success) {
+        setProfile(data.userData);
+      }
+    } catch (err) {
+      console.error("Failed to load profile:", err);
+    }
+  };
+
+  const fetchAppointments = async () => {
+    try {
+      console.log("Fetching staff appointments...");
+      const res = await fetch("http://localhost:5000/api/appointments/staff", {
+        credentials: "include",
+      });
+      console.log("Response status:", res.status);
+      const data = await res.json();
+      console.log("Response data:", data);
+      if (data.success) {
+        console.log("Setting appointments:", data.appointments?.length);
+        setAppointments(data.appointments);
+      } else {
+        console.error("API error:", data.message);
+      }
+    } catch (err) {
+      console.error("Failed to load appointments:", err);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const todayStr = new Date().toISOString().split("T")[0];
+  const todayAppointments = appointments.filter((a) => a.date === todayStr);
+  const pendingAppointments = appointments.filter((a) => a.status === "pending");
+  const stats = {
+    totalStaff: profile ? 1 : 0,
+    activeToday: todayAppointments.length > 0 ? 1 : 0,
+    appointments: appointments.length,
+    pendingReports: pendingAppointments.length,
+  };
 
   const handleSideNav = (id) => {
     if (
@@ -256,8 +287,8 @@ const StaffDashboard = () => {
             <StaffDashboardView
               profile={profile}
               stats={stats}
+              appointments={appointments}
               onViewSchedule={() => setCurrentView("schedule")}
-              onViewProfile={() => setCurrentView("directory")}
             />
           )}
 
@@ -267,7 +298,7 @@ const StaffDashboard = () => {
 
           {currentView === "schedule" && (
             <StaffScheduleView
-              profile={profile}
+              appointments={appointments}
               onBackToDashboard={() => setCurrentView("dashboard")}
             />
           )}

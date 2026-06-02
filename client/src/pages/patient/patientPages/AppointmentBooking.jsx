@@ -1,11 +1,9 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 
 const Icon = ({ type, className = "h-5 w-5" }) => {
   const paths = {
-    calendar:
-      "M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z",
-    clipboard:
-      "M9 5h6m-6 4h6m-6 4h6m-8 8h10a2 2 0 002-2V7a2 2 0 00-2-2h-2.5a2.5 2.5 0 00-5 0H7a2 2 0 00-2 2v12a2 2 0 002 2z",
+    calendar: "M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z",
+    clipboard: "M9 5h6m-6 4h6m-6 4h6m-8 8h10a2 2 0 002-2V7a2 2 0 00-2-2h-2.5a2.5 2.5 0 00-5 0H7a2 2 0 00-2 2v12a2 2 0 002 2z",
     check: "M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z",
     chevron: "M19 9l-7 7-7-7",
     clock: "M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z",
@@ -26,51 +24,99 @@ const toInputDate = (date) => {
   return `${year}-${month}-${day}`;
 };
 
+const services = [
+  { id: "counseling-consultation", name: "Counseling / Consultation" },
+  { id: "oral-contraceptives", name: "Oral Contraceptives" },
+  { id: "combined-oral-contraceptive", name: "Combined Oral Contraceptive (COC)" },
+  { id: "lady-pill-trust-althea", name: "Lady Pill / Trust / Althea" },
+  { id: "progestin-only-pill", name: "Progestin-Only Pill (POP)" },
+  { id: "injectable", name: "Injectable (1 Month / 3 Months)" },
+  { id: "iud", name: "IUD (Insertion / Removal)" },
+  { id: "implant", name: "Implant (PSI)" },
+  { id: "condom", name: "Condom" },
+  { id: "awareness-counseling", name: "Awareness & Counseling" },
+  { id: "community-based-screening", name: "Community-Based Screening (HIV Testing)" },
+  { id: "asrh", name: "Adolescent Sexual Reproductive Health (ASRH)" },
+];
+
 const AppointmentBooking = ({ onSaveAppointment }) => {
-  const services = [
-    { id: "counseling-consultation", name: "Counseling / Consultation" },
-    { id: "oral-contraceptives", name: "Oral Contraceptives" },
-    { id: "combined-oral-contraceptive", name: "Combined Oral Contraceptive (COC)" },
-    { id: "lady-pill-trust-althea", name: "Lady Pill / Trust / Althea" },
-    { id: "progestin-only-pill", name: "Progestin-Only Pill (POP)" },
-    { id: "injectable", name: "Injectable (1 Month / 3 Months)" },
-    { id: "iud", name: "IUD (Insertion / Removal)" },
-    { id: "implant", name: "Implant (PSI)" },
-    { id: "condom", name: "Condom" },
-    { id: "awareness-counseling", name: "Awareness & Counseling" },
-    { id: "community-based-screening", name: "Community-Based Screening (HIV Testing)" },
-    { id: "asrh", name: "Adolescent Sexual Reproductive Health (ASRH)" },
-  ];
-
-  const providers = [
-    { id: "sarah-johnson", name: "Dr. Sarah Johnson" },
-    { id: "michael-chen", name: "Dr. Michael Chen" },
-    { id: "emily-rodriguez", name: "Dr. Emily Rodriguez" },
-  ];
-
+  const [staffList, setStaffList] = useState([]);
+  const [loadingStaff, setLoadingStaff] = useState(true);
   const [selectedService, setSelectedService] = useState(null);
   const [selectedProvider, setSelectedProvider] = useState(null);
   const [selectedDate, setSelectedDate] = useState(null);
   const [selectedTime, setSelectedTime] = useState(null);
+  const [availableSlots, setAvailableSlots] = useState([]);
+  const [loadingSlots, setLoadingSlots] = useState(false);
+  const [submitting, setSubmitting] = useState(false);
+  const [error, setError] = useState("");
 
-  const serviceOptions = services;
-  const timeSlots = [
-    "09:00 AM",
-    "09:30 AM",
-    "10:00 AM",
-    "10:30 AM",
-    "11:00 AM",
-    "11:30 AM",
-    "01:00 PM",
-    "01:30 PM",
-    "02:00 PM",
-    "02:30 PM",
-  ];
-  const activeTimeSlots = timeSlots;
-  const selectedServiceDetails = serviceOptions.find((service) => service.id === selectedService);
-  const selectedProviderDetails = providers.find((provider) => provider.id === selectedProvider);
+  useEffect(() => {
+    fetchStaff();
+  }, []);
+
+  const fetchStaff = async () => {
+    setLoadingStaff(true);
+    try {
+      const res = await fetch("http://localhost:5000/api/staff", {
+        credentials: "include",
+      });
+      const data = await res.json();
+      if (data.success) {
+        setStaffList(data.staff);
+      }
+    } catch {
+      setError("Failed to load staff");
+    } finally {
+      setLoadingStaff(false);
+    }
+  };
+
+  useEffect(() => {
+    if (!selectedProvider || !selectedDate) {
+      setAvailableSlots([]);
+      return;
+    }
+    const fetchSlots = async () => {
+      setLoadingSlots(true);
+      setError("");
+      try {
+        const dateStr = toInputDate(selectedDate);
+        const res = await fetch(
+          `http://localhost:5000/api/appointments/slots?staffId=${selectedProvider}&date=${dateStr}`,
+          { credentials: "include" }
+        );
+        const data = await res.json();
+        if (data.success) {
+          setAvailableSlots(data.slots);
+        } else {
+          setError(data.message);
+        }
+      } catch {
+        setError("Failed to load available times");
+      } finally {
+        setLoadingSlots(false);
+      }
+    };
+    fetchSlots();
+  }, [selectedProvider, selectedDate]);
+
+  const isStaffAvailableOnDate = (staff, date) => {
+    if (!date) return true;
+    const dayOfWeek = date.getDay();
+    const daySchedule = staff.schedule ? staff.schedule[dayOfWeek] : null;
+    return daySchedule && daySchedule.active;
+  };
+
+  const availableStaff = selectedDate
+    ? staffList.filter((s) => isStaffAvailableOnDate(s, selectedDate))
+    : staffList;
+
+  const selectedStaff = staffList.find((s) => s._id === selectedProvider);
+
+  const selectedServiceDetails = services.find((s) => s.id === selectedService);
   const hasAnyDetail = selectedService || selectedProvider || selectedDate || selectedTime;
-  const canConfirm = selectedService && selectedProvider && selectedDate && selectedTime;
+  const canConfirm = selectedService && selectedProvider && selectedDate && selectedTime && !submitting;
 
   const formatDate = (date) => {
     if (!date) return "Not selected";
@@ -78,33 +124,47 @@ const AppointmentBooking = ({ onSaveAppointment }) => {
   };
 
   const handleServiceChange = (event) => {
-    const serviceId = event.target.value || null;
-    setSelectedService(serviceId);
+    setSelectedService(event.target.value || null);
     setSelectedTime(null);
   };
 
   const handleDateChange = (event) => {
     const value = event.target.value;
     setSelectedDate(value ? new Date(`${value}T00:00:00`) : null);
+    setSelectedTime(null);
   };
 
-  const handleConfirm = () => {
+  const handleConfirm = async () => {
     if (!selectedService) return alert("Please select a service");
     if (!selectedProvider) return alert("Please select a healthcare provider");
     if (!selectedDate) return alert("Please select a date");
     if (!selectedTime) return alert("Please select a time");
 
-    if (onSaveAppointment) {
-      onSaveAppointment({
-        id: Date.now(),
-        serviceId: selectedService,
-        serviceName: services.find(s => s.id === selectedService)?.name,
-        doctorName: selectedProviderDetails?.name,
-        date: selectedDate,
-        time: selectedTime,
+    setSubmitting(true);
+    setError("");
+    try {
+      const res = await fetch("http://localhost:5000/api/appointments", {
+        method: "POST",
+        credentials: "include",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          staffId: selectedProvider,
+          serviceId: selectedService,
+          serviceName: selectedServiceDetails?.name,
+          date: toInputDate(selectedDate),
+          time: selectedTime,
+        }),
       });
-    } else {
-      alert("Booking confirmed! (Demo)");
+      const data = await res.json();
+      if (data.success) {
+        onSaveAppointment?.(data.appointment);
+      } else {
+        setError(data.message || "Failed to book appointment");
+      }
+    } catch {
+      setError("Network error. Please try again.");
+    } finally {
+      setSubmitting(false);
     }
   };
 
@@ -113,6 +173,8 @@ const AppointmentBooking = ({ onSaveAppointment }) => {
     setSelectedProvider(null);
     setSelectedDate(null);
     setSelectedTime(null);
+    setAvailableSlots([]);
+    setError("");
   };
 
   return (
@@ -146,16 +208,13 @@ const AppointmentBooking = ({ onSaveAppointment }) => {
                     className="h-12 w-full appearance-none rounded-[8px] border-0 bg-slate-100 px-4 pr-11 text-sm font-medium text-[#4b5563] outline-none focus:ring-2 focus:ring-[#244783]/30"
                   >
                     <option value="">Select the service you need</option>
-                    {serviceOptions.map((service) => (
+                    {services.map((service) => (
                       <option key={service.id} value={service.id}>
                         {service.name}
                       </option>
                     ))}
                   </select>
-                  <Icon
-                    type="chevron"
-                    className="pointer-events-none absolute right-4 top-1/2 h-4 w-4 -translate-y-1/2 text-slate-400"
-                  />
+                  <Icon type="chevron" className="pointer-events-none absolute right-4 top-1/2 h-4 w-4 -translate-y-1/2 text-slate-400" />
                 </div>
               </div>
 
@@ -166,21 +225,31 @@ const AppointmentBooking = ({ onSaveAppointment }) => {
                 <div className="relative">
                   <select
                     value={selectedProvider || ""}
-                    onChange={(event) => setSelectedProvider(event.target.value || null)}
+                    onChange={(event) => {
+                      setSelectedProvider(event.target.value || null);
+                      setSelectedTime(null);
+                    }}
                     className="h-12 w-full appearance-none rounded-[8px] border-0 bg-slate-100 px-4 pr-11 text-sm font-medium text-[#4b5563] outline-none focus:ring-2 focus:ring-[#244783]/30"
                   >
-                    <option value="">Choose your preferred provider</option>
-                    {providers.map((provider) => (
-                      <option key={provider.id} value={provider.id}>
-                        {provider.name}
+                    <option value="">
+                      {loadingStaff ? "Loading staff..." : selectedDate ? "Choose available provider" : "First select a date"}
+                    </option>
+                    {!selectedDate && (
+                      <option value="" disabled>
+                        Select a date first to see available providers
+                      </option>
+                    )}
+                    {availableStaff.map((staff) => (
+                      <option key={staff._id} value={staff._id}>
+                        {staff.name}{staff.specialty ? ` - ${staff.specialty}` : ""}
                       </option>
                     ))}
                   </select>
-                  <Icon
-                    type="chevron"
-                    className="pointer-events-none absolute right-4 top-1/2 h-4 w-4 -translate-y-1/2 text-slate-400"
-                  />
+                  <Icon type="chevron" className="pointer-events-none absolute right-4 top-1/2 h-4 w-4 -translate-y-1/2 text-slate-400" />
                 </div>
+                {selectedDate && availableStaff.length === 0 && !loadingStaff && (
+                  <p className="mt-2 text-sm text-red-600">No providers available on this date</p>
+                )}
               </div>
 
               <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
@@ -189,10 +258,7 @@ const AppointmentBooking = ({ onSaveAppointment }) => {
                     Appointment Date <span className="text-red-500">*</span>
                   </label>
                   <div className="relative">
-                    <Icon
-                      type="calendar"
-                      className="pointer-events-none absolute left-4 top-1/2 h-5 w-5 -translate-y-1/2 text-slate-500"
-                    />
+                    <Icon type="calendar" className="pointer-events-none absolute left-4 top-1/2 h-5 w-5 -translate-y-1/2 text-slate-500" />
                     <input
                       type="date"
                       value={toInputDate(selectedDate)}
@@ -210,25 +276,35 @@ const AppointmentBooking = ({ onSaveAppointment }) => {
                     <select
                       value={selectedTime || ""}
                       onChange={(event) => setSelectedTime(event.target.value || null)}
-                      className="h-12 w-full appearance-none rounded-[8px] border-0 bg-slate-100 px-4 pr-11 text-sm font-medium text-[#4b5563] outline-none focus:ring-2 focus:ring-[#244783]/30"
+                      disabled={!selectedProvider || !selectedDate || loadingSlots}
+                      className="h-12 w-full appearance-none rounded-[8px] border-0 bg-slate-100 px-4 pr-11 text-sm font-medium text-[#4b5563] outline-none focus:ring-2 focus:ring-[#244783]/30 disabled:opacity-50"
                     >
-                      <option value="">Select preferred time</option>
-                      {activeTimeSlots.map((time) => (
+                      <option value="">
+                        {loadingSlots
+                          ? "Loading available times..."
+                          : !selectedProvider
+                            ? "Select a provider first"
+                            : availableSlots.length === 0
+                              ? "No available times"
+                              : "Select preferred time"}
+                      </option>
+                      {availableSlots.map((time) => (
                         <option key={time} value={time}>
                           {time}
                         </option>
                       ))}
                     </select>
-                    <Icon
-                      type="chevron"
-                      className="pointer-events-none absolute right-4 top-1/2 h-4 w-4 -translate-y-1/2 text-slate-400"
-                    />
+                    <Icon type="chevron" className="pointer-events-none absolute right-4 top-1/2 h-4 w-4 -translate-y-1/2 text-slate-400" />
                   </div>
                 </div>
               </div>
             </div>
 
             <div className="my-8 h-px bg-slate-200" />
+
+            {error && (
+              <p className="mb-4 rounded-[8px] bg-red-50 px-4 py-3 text-sm font-semibold text-red-700">{error}</p>
+            )}
 
             <div className="flex flex-col-reverse gap-4 sm:flex-row">
               <button
@@ -241,8 +317,12 @@ const AppointmentBooking = ({ onSaveAppointment }) => {
                     : "cursor-not-allowed bg-[#94a3bd]"
                 }`}
               >
-                <Icon type="check" className="h-5 w-5" />
-                Confirm Appointment
+                {submitting ? "Booking..." : (
+                  <>
+                    <Icon type="check" className="h-5 w-5" />
+                    Confirm Appointment
+                  </>
+                )}
               </button>
               <button
                 type="button"
@@ -283,7 +363,7 @@ const AppointmentBooking = ({ onSaveAppointment }) => {
                     <div>
                       <p className="text-slate-500">Provider</p>
                       <p className="mt-1 font-bold text-[#061022]">
-                        {selectedProviderDetails?.name || "Not selected"}
+                        {selectedStaff?.name || "Not selected"}
                       </p>
                     </div>
                     <div>
@@ -292,7 +372,7 @@ const AppointmentBooking = ({ onSaveAppointment }) => {
                     </div>
                     <div>
                       <p className="text-slate-500">Time</p>
-                      <p className="mt-1 font-bold text-[#061022]">{selectedTime}</p>
+                      <p className="mt-1 font-bold text-[#061022]">{selectedTime || "Not selected"}</p>
                     </div>
                   </div>
                 </div>

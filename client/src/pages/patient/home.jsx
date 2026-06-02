@@ -14,6 +14,7 @@ const CombinedDashboard = () => {
 
   useEffect(() => {
     fetchUser();
+    fetchAppointments();
   }, []);
 
   const fetchUser = async () => {
@@ -45,6 +46,24 @@ const CombinedDashboard = () => {
     } finally {
       setLoading(false);
     }
+  };
+
+  const fetchAppointments = async () => {
+    try {
+      const res = await fetch("http://localhost:5000/api/appointments", {
+        credentials: "include",
+      });
+      const data = await res.json();
+      if (data.success) {
+        setAppointments(data.appointments);
+      }
+    } catch (err) {
+      console.error("Failed to fetch appointments:", err);
+    }
+  };
+
+  const handleEmailVerified = async () => {
+    await fetchUser();
   };
 
   const handleSaveProfile = async (formData) => {
@@ -121,6 +140,7 @@ const CombinedDashboard = () => {
           onBookAppointment={() => setCurrentView("booking")}
           onViewAppointments={() => setCurrentView("appointments")}
           onViewProfile={() => setCurrentView("profile")}
+          onEmailVerified={handleEmailVerified}
         />
       )}
 
@@ -130,8 +150,8 @@ const CombinedDashboard = () => {
           onBookAppointment={() => setCurrentView("booking")}
           onViewAppointments={() => setCurrentView("appointments")}
           onViewProfile={() => setCurrentView("profile")}
-          onSaveAppointment={(appt) => {
-            setAppointments([...appointments, appt]);
+          onSaveAppointment={async () => {
+            await fetchAppointments();
             setCurrentView("appointments");
           }}
         />

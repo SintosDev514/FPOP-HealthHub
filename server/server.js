@@ -6,6 +6,8 @@ import path from "path";
 import { fileURLToPath } from "url";
 import authRouter from "./routes/authRoutes.js";
 import userRoute from "./routes/userRoute.js";
+import staffRouter from "./routes/staffRoutes.js";
+import appointmentRouter from "./routes/appointmentRoutes.js";
 
 import connectDB from "./config/Mongodb.js";
 
@@ -33,6 +35,8 @@ connectDB();
 app.use("/uploads", express.static(path.join(__dirname, "uploads")));
 app.use("/api/auth", authRouter);
 app.use("/api/user", userRoute);
+app.use("/api/staff", staffRouter);
+app.use("/api/appointments", appointmentRouter);
 
 app.listen(port, () => {
   console.log(`Running on Port: ${port}`);

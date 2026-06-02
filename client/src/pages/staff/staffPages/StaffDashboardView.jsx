@@ -119,13 +119,28 @@ const QuickStat = ({ icon, label, value, progress }) => (
   </div>
 );
 
-const StaffDashboardView = ({ stats = {} }) => {
-  const dashboardStats = {
-    totalStaff: 248,
-    activeToday: 186,
-    appointments: 42,
-    pendingReports: 8,
-    ...stats,
+const StaffDashboardView = ({ profile, stats = {}, appointments = [] }) => {
+  const todayStr = new Date().toISOString().split("T")[0];
+  const todayCount = appointments.filter((a) => a.date === todayStr).length;
+  const pendingCount = appointments.filter((a) => a.status === "pending").length;
+  const upcomingCount = appointments.filter(
+    (a) => a.status === "pending" || a.status === "confirmed"
+  ).length;
+  const completedCount = appointments.filter((a) => a.status === "completed").length;
+
+  const recentAppointments = [...appointments]
+    .sort((a, b) => new Date(b.createdAt || 0) - new Date(a.createdAt || 0))
+    .slice(0, 3);
+
+  const formatTimeAgo = (dateStr) => {
+    if (!dateStr) return "";
+    const diff = Date.now() - new Date(dateStr).getTime();
+    const mins = Math.floor(diff / 60000);
+    if (mins < 60) return `${mins} min ago`;
+    const hrs = Math.floor(mins / 60);
+    if (hrs < 24) return `${hrs} hour${hrs > 1 ? "s" : ""} ago`;
+    const days = Math.floor(hrs / 24);
+    return `${days} day${days > 1 ? "s" : ""} ago`;
   };
 
   return (
@@ -136,40 +151,37 @@ const StaffDashboardView = ({ stats = {} }) => {
             Dashboard Overview
           </h2>
           <p className="mt-1.5 text-sm font-medium text-[#8a96a3]">
-            Welcome back! Here's what's happening today.
+            {profile ? `Welcome back, ${profile.name}!` : "Welcome back!"}
           </p>
-        </div>
-        <div className="inline-flex w-fit items-center gap-2 rounded-full bg-slate-100 px-4 py-2 text-sm text-black">
-        
         </div>
       </section>
 
       <section className="mb-6 grid grid-cols-1 gap-4 sm:grid-cols-2 xl:grid-cols-4">
         <StatCard
-          title="Total Staff"
-          value={dashboardStats.totalStaff}
-          detail="+12 this month"
-          icon="users"
+          title="Total Appointments"
+          value={appointments.length}
+          detail={`${upcomingCount} upcoming`}
+          icon="calendar"
           tone="navy"
         />
         <StatCard
-          title="Active Today"
-          value={dashboardStats.activeToday}
-          detail="75% attendance"
+          title="Today"
+          value={todayCount}
+          detail={todayCount === 1 ? "1 appointment" : `${todayCount} appointments`}
           icon="trend"
           tone="green"
         />
         <StatCard
-          title="Appointments"
-          value={dashboardStats.appointments}
-          detail="8 pending"
-          icon="calendar"
+          title="Pending"
+          value={pendingCount}
+          detail="Awaiting confirmation"
+          icon="users"
           tone="gold"
         />
         <StatCard
-          title="Reports Pending"
-          value={dashboardStats.pendingReports}
-          detail="3 urgent"
+          title="Completed"
+          value={completedCount}
+          detail="Successfully done"
           icon="file"
           tone="orange"
         />
@@ -179,28 +191,23 @@ const StaffDashboardView = ({ stats = {} }) => {
         <article className="rounded-xl bg-white p-7 shadow-sm">
           <div className="mb-8 flex items-center gap-4">
             <Icon name="pulse" className="h-8 w-8 text-[#3B5FDB]" />
-            <h3 className="text-3xl font-bold text-black">Recent Activity</h3>
+            <h3 className="text-3xl font-bold text-black">Recent Appointments</h3>
           </div>
 
           <div className="space-y-5">
-            <ActivityItem
-              icon="check"
-              title="New staff member registered"
-              meta="Patricia Garcia - 2 hours ago"
-              tone="green"
-            />
-            <ActivityItem
-              icon="file"
-              title="Report submitted"
-              meta="Dr. Michael Chen - 4 hours ago"
-              tone="blue"
-            />
-            <ActivityItem
-              icon="calendar"
-              title="Schedule updated"
-              meta="Nursing Team - 6 hours ago"
-              tone="yellow"
-            />
+            {recentAppointments.length === 0 ? (
+              <p className="text-base text-[#8a96a3]">No appointments yet.</p>
+            ) : (
+              recentAppointments.map((appt) => (
+                <ActivityItem
+                  key={appt._id}
+                  icon={appt.status === "completed" ? "check" : "calendar"}
+                  title={appt.serviceName || "Appointment"}
+                  meta={`${appt.patientId?.firstName || ""} ${appt.patientId?.lastName || ""} - ${appt.date} ${appt.time} - ${formatTimeAgo(appt.createdAt)}`}
+                  tone={appt.status === "completed" ? "green" : appt.status === "pending" ? "yellow" : "blue"}
+                />
+              ))
+            )}
           </div>
         </article>
 
@@ -211,12 +218,11 @@ const StaffDashboardView = ({ stats = {} }) => {
               <h3 className="text-3xl font-bold">Quick Stats</h3>
             </div>
             <div className="space-y-9">
-              <QuickStat icon="users" label="Staff on Leave" value="12" progress={5} />
-              <QuickStat icon="ribbon" label="Departments" value="8" progress={100} />
-              <QuickStat icon="trend" label="New This Month" value="5" progress={25} />
+              <QuickStat icon="calendar" label="Today's Appointments" value={todayCount} progress={Math.min(todayCount * 20, 100)} />
+              <QuickStat icon="users" label="Pending" value={pendingCount} progress={Math.min(pendingCount * 25, 100)} />
+              <QuickStat icon="trend" label="Completed" value={completedCount} progress={appointments.length > 0 ? Math.round((completedCount / appointments.length) * 100) : 0} />
             </div>
           </article>
-
         </aside>
       </section>
     </main>

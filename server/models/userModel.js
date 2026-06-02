@@ -15,6 +15,8 @@ const userSchema = new mongoose.Schema({
   address: { type: String, default: "" },
   avatar: { type: String, default: "" },
   dateOfBirth: { type: String, default: "" },
+  specialty: { type: String, default: "" },
+  schedule: { type: Object, default: {} },
 });
 
 const userModel = mongoose.model.user || mongoose.model("user", userSchema);

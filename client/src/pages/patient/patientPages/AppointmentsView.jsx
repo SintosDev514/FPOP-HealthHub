@@ -153,11 +153,21 @@ const demoAppointments = [
   },
 ];
 
-const normalizeAppointment = (appointment) => ({
-  ...appointment,
-  status: getAppointmentStatus(appointment),
-  location: appointment.location || "Main Clinic",
-});
+const normalizeAppointment = (appointment) => {
+  const staffName =
+    appointment.staffId && typeof appointment.staffId === "object"
+      ? `${appointment.staffId.firstName || ""} ${appointment.staffId.lastName || ""}`.trim()
+      : appointment.doctorName || "Unknown";
+  return {
+    id: appointment._id || appointment.id,
+    serviceName: appointment.serviceName,
+    doctorName: staffName,
+    date: appointment.date ? new Date(appointment.date + "T00:00:00") : appointment.date,
+    time: appointment.time,
+    location: appointment.location || "Main Clinic",
+    status: getAppointmentStatus(appointment),
+  };
+};
 
 const AppointmentCard = ({ appointment, onSelect }) => {
   const status = appointment.status || "upcoming";

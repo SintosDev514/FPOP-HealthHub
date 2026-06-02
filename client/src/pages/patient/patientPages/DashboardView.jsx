@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 
 const Icon = ({ type, className = "h-5 w-5" }) => {
   const paths = {
@@ -159,8 +159,7 @@ const AppointmentRow = ({ appointment }) => {
 
 const getAvatarSrc = (avatar) => {
   if (!avatar) return null;
-  if (avatar.startsWith("http")) return avatar;
-  return `http://localhost:5000${avatar}`;
+  return avatar;
 };
 
 const formatMemberSince = (dateStr) => {
@@ -177,9 +176,11 @@ const DashboardView = ({
   onBookAppointment,
   onViewAppointments,
   onViewProfile,
+  onEmailVerified,
   appointments = [],
   profile,
 }) => {
+  const [imgError, setImgError] = useState(false);
   const firstName = profile?.name ? profile.name.split(" ")[0] : "";
   const appointmentStats = getAppointmentStats(appointments);
   const [appointmentFilter, setAppointmentFilter] = useState("confirmed");
@@ -187,7 +188,10 @@ const DashboardView = ({
   const [readNotifications, setReadNotifications] = useState([]);
   const [otpOpen, setOtpOpen] = useState(false);
   const [otpValue, setOtpValue] = useState("");
-  const [otpVerified, setOtpVerified] = useState(false);
+  const [otpSending, setOtpSending] = useState(false);
+  const [otpVerifying, setOtpVerifying] = useState(false);
+  const [otpError, setOtpError] = useState("");
+  const [otpSent, setOtpSent] = useState(false);
   const notifications = [
     [
       "Appointment Reminder",
@@ -213,6 +217,60 @@ const DashboardView = ({
     if (appointmentFilter === "pending") return status === "pending";
     return status !== "pending";
   });
+  useEffect(() => {
+    if (!otpOpen) return;
+    const sendOtp = async () => {
+      setOtpSending(true);
+      setOtpError("");
+      setOtpSent(false);
+      setOtpValue("");
+      try {
+        const res = await fetch("http://localhost:5000/api/auth/sendEmailOtp", {
+          method: "POST",
+          credentials: "include",
+        });
+        const data = await res.json();
+        if (data.success) {
+          setOtpSent(true);
+        } else {
+          setOtpError(data.message || "Failed to send OTP");
+        }
+      } catch {
+        setOtpError("Network error. Please try again.");
+      } finally {
+        setOtpSending(false);
+      }
+    };
+    sendOtp();
+  }, [otpOpen]);
+
+  const handleVerifyOtp = async () => {
+    if (!otpValue.trim()) return;
+    setOtpVerifying(true);
+    setOtpError("");
+    try {
+      const res = await fetch("http://localhost:5000/api/auth/VerifyEmail", {
+        method: "POST",
+        credentials: "include",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ OTP: otpValue.trim() }),
+      });
+      const data = await res.json();
+      if (data.success) {
+        setOtpSent(false);
+        setOtpValue("");
+        setOtpOpen(false);
+        onEmailVerified?.();
+      } else {
+        setOtpError(data.message || "Invalid OTP");
+      }
+    } catch {
+      setOtpError("Network error. Please try again.");
+    } finally {
+      setOtpVerifying(false);
+    }
+  };
+
   const handleNotificationClick = (title, isNew) => {
     setExpandedNotification((current) => (current === title ? null : title));
     if (isNew && !readNotifications.includes(title)) {
@@ -234,15 +292,23 @@ const DashboardView = ({
                 Here's what's happening with your healthcare today
               </p>
             </div>
-            <div className="hidden h-20 w-20 items-center justify-center overflow-hidden rounded-[14px] border border-white/20 bg-white/10 sm:flex">
-              {getAvatarSrc(profile?.avatar) ? (
+            <div className="relative hidden h-20 w-20 items-center justify-center overflow-hidden rounded-[14px] border border-white/20 bg-white/10 sm:flex">
+              {getAvatarSrc(profile?.avatar) && !imgError ? (
                 <img
                   src={getAvatarSrc(profile.avatar)}
                   alt="Profile"
                   className="h-full w-full object-cover"
+                  onError={() => setImgError(true)}
                 />
               ) : (
                 <Icon type="user" className="h-11 w-11" />
+              )}
+              {profile?.isAccountVerified && (
+                <span className="absolute -bottom-1 -right-1 flex h-6 w-6 items-center justify-center rounded-full bg-green-500 text-white shadow-md">
+                  <svg className="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M5 13l4 4L19 7" />
+                  </svg>
+                </span>
               )}
             </div>
           </div>
@@ -287,13 +353,21 @@ const DashboardView = ({
             subtitle="View your history"
             onClick={onViewAppointments}
           />
-          <ActionCard
-            icon="mail"
-            title="Verify Email"
-            subtitle={otpVerified ? "Email verified" : "Send OTP verification"}
-            accent="orange"
-            onClick={() => setOtpOpen(true)}
-          />
+          {profile?.isAccountVerified ? (
+            <ActionCard
+              icon="check"
+              title="Email Verified"
+              subtitle="Your email is verified"
+            />
+          ) : (
+            <ActionCard
+              icon="mail"
+              title="Verify Email"
+              subtitle="Send OTP verification"
+              accent="orange"
+              onClick={() => setOtpOpen(true)}
+            />
+          )}
         </section>
 
         <section className="rounded-[12px] border border-slate-200 bg-white p-8 shadow-[0_3px_10px_rgba(15,23,42,0.1)]">
@@ -361,18 +435,26 @@ const DashboardView = ({
           <div className="rounded-[12px] border border-slate-200 bg-white p-8 shadow-[0_3px_10px_rgba(15,23,42,0.1)]">
             <h2 className="text-2xl font-bold text-[#061022]">Your Profile</h2>
             <div className="mt-12 flex items-center gap-5">
-              <div className="flex h-16 w-16 items-center justify-center overflow-hidden rounded-[14px] bg-[#244783] text-white">
-                {getAvatarSrc(profile?.avatar) ? (
+              <div className="relative flex h-16 w-16 shrink-0 items-center justify-center overflow-hidden rounded-[14px] bg-[#244783] text-white">
+                {getAvatarSrc(profile?.avatar) && !imgError ? (
                   <img
                     src={getAvatarSrc(profile.avatar)}
                     alt="Profile"
                     className="h-full w-full object-cover"
+                    onError={() => setImgError(true)}
                   />
                 ) : (
                   <Icon type="user" className="h-9 w-9" />
                 )}
+                {profile?.isAccountVerified && (
+                  <span className="absolute -bottom-0.5 -right-0.5 flex h-5 w-5 items-center justify-center rounded-full bg-green-500 text-white shadow-md">
+                    <svg className="h-3 w-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M5 13l4 4L19 7" />
+                    </svg>
+                  </span>
+                )}
               </div>
-              <div>
+              <div className="min-w-0">
                 <h3 className="text-lg font-bold text-[#061022]">
                   {profile?.name || "Sarah Johnson"}
                 </h3>
@@ -462,7 +544,11 @@ const DashboardView = ({
                   Verify Email
                 </h2>
                 <p className="mt-2 text-sm text-[#18304d]">
-                  Enter a mock OTP to preview verification.
+                  {otpSending
+                    ? "Sending OTP to your email..."
+                    : otpSent
+                      ? "A 6-digit OTP has been sent to your email"
+                      : "Sending OTP..."}
                 </p>
               </div>
               <button
@@ -473,24 +559,28 @@ const DashboardView = ({
                 x
               </button>
             </div>
+
+            {otpError && (
+              <p className="mt-3 rounded-[8px] bg-red-50 px-3 py-2 text-sm font-semibold text-red-700">
+                {otpError}
+              </p>
+            )}
+
             <input
               value={otpValue}
               onChange={(event) => setOtpValue(event.target.value)}
               maxLength={6}
               placeholder="Enter OTP"
-              className="mt-6 h-12 w-full rounded-[8px] border border-slate-200 px-4 text-sm outline-none focus:ring-2 focus:ring-[#244783]/30"
+              disabled={otpSending || otpVerifying}
+              className="mt-6 h-12 w-full rounded-[8px] border border-slate-200 px-4 text-sm outline-none focus:ring-2 focus:ring-[#244783]/30 disabled:opacity-50"
             />
-            {otpVerified && (
-              <p className="mt-3 rounded-[8px] bg-green-50 px-3 py-2 text-sm font-semibold text-green-700">
-                Email verified locally.
-              </p>
-            )}
             <button
               type="button"
-              onClick={() => setOtpVerified(otpValue.trim().length > 0)}
-              className="mt-5 w-full rounded-[8px] bg-[#244783] px-4 py-3 text-sm font-bold text-white"
+              onClick={handleVerifyOtp}
+              disabled={otpSending || otpVerifying || !otpValue.trim()}
+              className="mt-5 w-full rounded-[8px] bg-[#244783] px-4 py-3 text-sm font-bold text-white transition hover:bg-[#1c396f] disabled:opacity-50"
             >
-              Verify OTP
+              {otpVerifying ? "Verifying..." : "Verify OTP"}
             </button>
           </div>
         </div>

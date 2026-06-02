@@ -128,7 +128,8 @@ const ProfileView = ({ profile, onSaveProfile }) => {
     setIsEditing(false);
   };
 
-  const avatarSrc = avatarPreview || (visibleProfile.avatar?.startsWith("http") ? visibleProfile.avatar : visibleProfile.avatar ? `http://localhost:5000${visibleProfile.avatar}` : null);
+  const [avatarError, setAvatarError] = useState(false);
+  const avatarSrc = avatarPreview || (visibleProfile.avatar || null);
 
   return (
     <main className="flex-1 bg-[#f7f8fa] px-4 py-12 sm:px-6 lg:px-8">
@@ -151,8 +152,8 @@ const ProfileView = ({ profile, onSaveProfile }) => {
                 }`}
                 aria-label="Change profile picture"
               >
-                {avatarSrc ? (
-                  <img src={avatarSrc} alt="Profile" className="h-full w-full object-cover" />
+                {avatarSrc && !avatarError ? (
+                  <img src={avatarSrc} alt="Profile" className="h-full w-full object-cover" onError={() => setAvatarError(true)} />
                 ) : (
                   <Icon type="user" className="h-16 w-16" />
                 )}
