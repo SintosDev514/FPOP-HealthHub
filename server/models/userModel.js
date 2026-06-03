@@ -17,6 +17,7 @@ const userSchema = new mongoose.Schema({
   dateOfBirth: { type: String, default: "" },
   specialty: { type: String, default: "" },
   schedule: { type: Object, default: {} },
+  isSuspended: { type: Boolean, default: false },
 });
 
 const userModel = mongoose.model.user || mongoose.model("user", userSchema);

@@ -117,6 +117,14 @@ const ActionCard = ({ icon, title, subtitle, onClick, accent = "navy" }) => {
   );
 };
 
+const getDoctorName = (appointment) => {
+  if (appointment.staffId && typeof appointment.staffId === "object") {
+    const s = appointment.staffId;
+    return `Dr. ${s.firstName || ""} ${s.lastName || ""}`.trim();
+  }
+  return appointment.doctorName || "Unknown";
+};
+
 const AppointmentRow = ({ appointment }) => {
   const status = appointment.status || "upcoming";
   const isPending = status === "pending";
@@ -130,7 +138,7 @@ const AppointmentRow = ({ appointment }) => {
           </h4>
           <p className="mt-4 flex items-center gap-2 text-sm text-[#18304d]">
             <Icon type="user" className="h-4 w-4" />
-            {appointment.doctorName}
+            {getDoctorName(appointment)}
           </p>
           <div className="mt-3 flex flex-wrap items-center gap-x-7 gap-y-2 text-sm text-[#18304d]">
             <span className="flex items-center gap-2">
@@ -184,34 +192,12 @@ const DashboardView = ({
   const firstName = profile?.name ? profile.name.split(" ")[0] : "";
   const appointmentStats = getAppointmentStats(appointments);
   const [appointmentFilter, setAppointmentFilter] = useState("confirmed");
-  const [expandedNotification, setExpandedNotification] = useState(null);
-  const [readNotifications, setReadNotifications] = useState([]);
   const [otpOpen, setOtpOpen] = useState(false);
   const [otpValue, setOtpValue] = useState("");
   const [otpSending, setOtpSending] = useState(false);
   const [otpVerifying, setOtpVerifying] = useState(false);
   const [otpError, setOtpError] = useState("");
   const [otpSent, setOtpSent] = useState(false);
-  const notifications = [
-    [
-      "Appointment Reminder",
-      "Your appointment with Dr. Sarah Johnson is tomorrow at 10:00 AM",
-      "2 hours ago",
-      true,
-    ],
-    [
-      "Lab Results Available",
-      "Your recent lab test results are now available to view",
-      "5 hours ago",
-      true,
-    ],
-    [
-      "Prescription Ready",
-      "Your prescription is ready for pickup at the pharmacy",
-      "1 day ago",
-      false,
-    ],
-  ];
   const filteredAppointments = appointments.filter((appointment) => {
     const status = getAppointmentStatus(appointment);
     if (appointmentFilter === "pending") return status === "pending";
@@ -271,13 +257,6 @@ const DashboardView = ({
     }
   };
 
-  const handleNotificationClick = (title, isNew) => {
-    setExpandedNotification((current) => (current === title ? null : title));
-    if (isNew && !readNotifications.includes(title)) {
-      setReadNotifications((current) => [...current, title]);
-    }
-  };
-
   return (
     <main className="flex-1 bg-[#f7f8fa] px-4 py-10 sm:px-6 lg:px-8">
       <div className="mx-auto max-w-[1234px] space-y-10">
@@ -334,8 +313,8 @@ const DashboardView = ({
           />
           <StatCard
             icon="bell"
-            label="Reminders"
-            value={notifications.length}
+            label="Total"
+            value={appointmentStats.total}
             tone="orange"
           />
         </section>
@@ -487,50 +466,40 @@ const DashboardView = ({
 
           <div className="rounded-[12px] border border-slate-200 bg-white p-8 shadow-[0_3px_10px_rgba(15,23,42,0.1)]">
             <h2 className="text-2xl font-bold text-[#061022]">
-              Recent Notifications
+              Account Status
             </h2>
-            <div className="mt-12 space-y-3">
-              {notifications.map(([title, body, time, isNew]) => {
-                const unread = isNew && !readNotifications.includes(title);
-                const expanded = expandedNotification === title;
-                return (
+            <div className="mt-8 space-y-5 text-sm">
+              <div className="flex items-center justify-between rounded-[12px] border border-slate-200 bg-slate-50 p-5">
+                <div className="flex items-center gap-4">
+                  <span className={`flex h-11 w-11 items-center justify-center rounded-[10px] ${profile?.isAccountVerified ? "bg-green-100 text-green-700" : "bg-amber-100 text-amber-700"}`}>
+                    <Icon type="mail" className="h-5 w-5" />
+                  </span>
+                  <div>
+                    <p className="font-bold text-[#061022]">Email Verification</p>
+                    <p className="mt-0.5 text-[#18304d]">{profile?.isAccountVerified ? "Verified" : "Not verified"}</p>
+                  </div>
+                </div>
+                {!profile?.isAccountVerified && (
                   <button
                     type="button"
-                    key={title}
-                    onClick={() => handleNotificationClick(title, isNew)}
-                    className={`w-full rounded-[12px] border p-4 text-left transition hover:-translate-y-0.5 hover:shadow-sm ${
-                      unread
-                        ? "border-blue-200 bg-blue-50"
-                        : "border-slate-200 bg-slate-50"
-                    }`}
+                    onClick={() => setOtpOpen(true)}
+                    className="rounded-[8px] bg-[#244783] px-4 py-2 text-xs font-bold text-white hover:bg-[#1c396f]"
                   >
-                    <div className="flex items-start justify-between gap-3">
-                      <div>
-                        <h3 className="text-sm font-bold text-[#061022]">
-                          {title}
-                        </h3>
-                        <p
-                          className={`mt-4 text-sm text-[#18304d] ${expanded ? "" : "line-clamp-1"}`}
-                        >
-                          {body}
-                        </p>
-                        {expanded && (
-                          <p className="mt-3 text-xs text-[#496178]">
-                            This is a local preview only. Click again to
-                            collapse.
-                          </p>
-                        )}
-                        <p className="mt-4 text-xs text-[#496178]">{time}</p>
-                      </div>
-                      {unread && (
-                        <span className="rounded-[8px] bg-[#244783] px-3 py-1 text-xs font-bold text-white">
-                          New
-                        </span>
-                      )}
-                    </div>
+                    Verify
                   </button>
-                );
-              })}
+                )}
+              </div>
+              <div className="flex items-center justify-between rounded-[12px] border border-slate-200 bg-slate-50 p-5">
+                <div className="flex items-center gap-4">
+                  <span className="flex h-11 w-11 items-center justify-center rounded-[10px] bg-blue-100 text-blue-700">
+                    <Icon type="calendar" className="h-5 w-5" />
+                  </span>
+                  <div>
+                    <p className="font-bold text-[#061022]">Total Appointments</p>
+                    <p className="mt-0.5 text-[#18304d]">{appointmentStats.total} appointment{appointmentStats.total !== 1 ? "s" : ""}</p>
+                  </div>
+                </div>
+              </div>
             </div>
           </div>
         </section>

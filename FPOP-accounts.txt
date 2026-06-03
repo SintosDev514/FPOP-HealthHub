@@ -16,3 +16,11 @@ Testtest123
 ADMIN -
 bwakangshit@gmail.com
 Testtest123
+
+
+Field	Value
+Email	staff@fpop.com
+Password	staff123
+Name	Marie Santos
+Specialty	General Consultation
+Schedule	Mon–Fri 8:00 AM – 5:00 PM (skips lunch 12–1 PM)

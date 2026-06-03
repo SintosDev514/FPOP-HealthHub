@@ -169,6 +169,7 @@ const CombinedDashboard = () => {
       {currentView === "profile" && (
         <ProfileView
           profile={profile}
+          appointments={appointments}
           onSaveProfile={handleSaveProfile}
           onBackToDashboard={() => setCurrentView("dashboard")}
           onNavigateToBook={() => setCurrentView("booking")}

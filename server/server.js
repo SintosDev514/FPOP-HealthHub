@@ -8,6 +8,8 @@ import authRouter from "./routes/authRoutes.js";
 import userRoute from "./routes/userRoute.js";
 import staffRouter from "./routes/staffRoutes.js";
 import appointmentRouter from "./routes/appointmentRoutes.js";
+import adminRouter from "./routes/adminRoutes.js";
+import notificationRouter from "./routes/notificationRoutes.js";
 
 import connectDB from "./config/Mongodb.js";
 
@@ -37,6 +39,8 @@ app.use("/api/auth", authRouter);
 app.use("/api/user", userRoute);
 app.use("/api/staff", staffRouter);
 app.use("/api/appointments", appointmentRouter);
+app.use("/api/admin", adminRouter);
+app.use("/api/admin/notifications", notificationRouter);
 
 app.listen(port, () => {
   console.log(`Running on Port: ${port}`);

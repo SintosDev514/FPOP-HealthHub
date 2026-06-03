@@ -105,58 +105,10 @@ const statusStyles = {
   },
 };
 
-const demoAppointments = [
-  {
-    id: "demo-vaccination",
-    serviceName: "Vaccination",
-    doctorName: "Dr. Michael Chen",
-    date: new Date(2026, 1, 5),
-    time: "01:00 PM",
-    location: "Main Clinic",
-    status: "completed",
-  },
-  {
-    id: "demo-mental-health",
-    serviceName: "Mental Health Screening",
-    doctorName: "Dr. Emily Rodriguez",
-    date: new Date(2026, 0, 30),
-    time: "10:30 AM",
-    location: "Main Clinic",
-    status: "completed",
-  },
-  {
-    id: "demo-contraception",
-    serviceName: "Contraception Counseling",
-    doctorName: "Dr. Sarah Johnson",
-    date: new Date(2026, 0, 25),
-    time: "03:30 PM",
-    location: "Main Clinic",
-    status: "completed",
-  },
-  {
-    id: "demo-bp",
-    serviceName: "Blood Pressure Check",
-    doctorName: "Dr. James Wilson",
-    date: new Date(2026, 0, 20),
-    time: "11:00 AM",
-    location: "Main Clinic",
-    status: "completed",
-  },
-  {
-    id: "demo-ultrasound",
-    serviceName: "Ultrasound Appointment",
-    doctorName: "Dr. Emily Rodriguez",
-    date: new Date(2026, 3, 8),
-    time: "01:30 PM",
-    location: "Main Clinic",
-    status: "pending",
-  },
-];
-
 const normalizeAppointment = (appointment) => {
   const staffName =
     appointment.staffId && typeof appointment.staffId === "object"
-      ? `${appointment.staffId.firstName || ""} ${appointment.staffId.lastName || ""}`.trim()
+      ? `Dr. ${appointment.staffId.firstName || ""} ${appointment.staffId.lastName || ""}`.trim()
       : appointment.doctorName || "Unknown";
   return {
     id: appointment._id || appointment.id,
@@ -229,10 +181,9 @@ const AppointmentCard = ({ appointment, onSelect }) => {
 const MyAppointmentsView = ({ appointments = [], onNavigateToBook }) => {
   const [statusFilter, setStatusFilter] = useState("all");
   const [selectedAppointment, setSelectedAppointment] = useState(null);
-  const realAppointments = appointments.map(normalizeAppointment);
-  const visibleAppointments = [...realAppointments, ...demoAppointments];
-  const appointmentStats = getAppointmentStats(visibleAppointments);
-  const filteredAppointments = visibleAppointments.filter((appointment) => {
+  const normalizedAppointments = appointments.map(normalizeAppointment);
+  const appointmentStats = getAppointmentStats(normalizedAppointments);
+  const filteredAppointments = normalizedAppointments.filter((appointment) => {
     if (statusFilter === "all") return true;
     return getAppointmentStatus(appointment) === statusFilter;
   });

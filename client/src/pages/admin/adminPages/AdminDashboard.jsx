@@ -3,6 +3,7 @@ import { Routes, Route, Navigate, useNavigate, Link } from "react-router-dom";
 
 import DashboardOverview from "./DashboardOverview";
 import UserManagement from "./UserManagement";
+import StaffManagement from "./StaffManagement";
 import Appointments from "./Appointments";
 import Analytics from "./Analytics";
 import Reports from "./Reports";
@@ -13,7 +14,6 @@ import { useAuth } from "../../../context/AuthContext";
 
 import {
   IcoDash,
-  IcoUsers,
   IcoCal,
   IcoChart,
   IcoReport,
@@ -21,6 +21,8 @@ import {
   IcoGear,
   IcoLogout,
   IcoSearch,
+  IcoStaff,
+  IcoClient,
 } from "../../../components/icon/AdminIcons";
 
 /* ── Brand palette ──────────────────────────────── */
@@ -37,11 +39,12 @@ const SIDEBAR_COLLAPSED = "68px";
 const SIDEBAR_EXPANDED  = "260px";
 
 const NAV_ITEMS = [
-  { key: "dashboard",    label: "Dashboard",        Icon: IcoDash,   path: "/admin"              },
-  { key: "users",        label: "User Management",  Icon: IcoUsers,  path: "/admin/users"         },
-  { key: "appointments", label: "Appointments",      Icon: IcoCal,    path: "/admin/appointments"  },
-  { key: "analytics",   label: "Analytics",         Icon: IcoChart,  path: "/admin/analytics"     },
-  { key: "reports",     label: "Reports",            Icon: IcoReport, path: "/admin/reports"       },
+  { key: "dashboard",    label: "Dashboard",         Icon: IcoDash,   path: "/admin"              },
+  { key: "users",        label: "Client Management",  Icon: IcoClient,  path: "/admin/users"         },
+  { key: "staff",        label: "Staff Management",   Icon: IcoStaff,  path: "/admin/staff"         },
+  { key: "appointments", label: "Appointments",       Icon: IcoCal,    path: "/admin/appointments"  },
+  { key: "analytics",   label: "Analytics",          Icon: IcoChart,  path: "/admin/analytics"     },
+  { key: "reports",     label: "Reports",             Icon: IcoReport, path: "/admin/reports"       },
 ];
 
 /* ── Sidebar nav button ─────────────────────────── */
@@ -408,6 +411,7 @@ function AdminShell({ activeNav }) {
         {/* ════ PAGE CONTENT ════ */}
         {activeNav === "dashboard"    && <DashboardOverview isMobile={isMobile} />}
         {activeNav === "users"        && <UserManagement   isMobile={isMobile} />}
+        {activeNav === "staff"        && <StaffManagement   isMobile={isMobile} />}
         {activeNav === "appointments" && <Appointments      isMobile={isMobile} />}
         {activeNav === "analytics"   && <Analytics         isMobile={isMobile} />}
         {activeNav === "reports"     && <Reports            isMobile={isMobile} />}
@@ -461,6 +465,7 @@ export default function AdminDashboard() {
     <Routes>
       <Route path="/"              element={<AdminShell activeNav="dashboard"    />} />
       <Route path="/users"         element={<AdminShell activeNav="users"        />} />
+      <Route path="/staff"         element={<AdminShell activeNav="staff"        />} />
       <Route path="/appointments"  element={<AdminShell activeNav="appointments" />} />
       <Route path="/analytics"     element={<AdminShell activeNav="analytics"    />} />
       <Route path="/reports"       element={<AdminShell activeNav="reports"      />} />

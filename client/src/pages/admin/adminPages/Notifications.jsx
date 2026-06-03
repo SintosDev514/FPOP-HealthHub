@@ -1,27 +1,60 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 
 const NAVY   = "#1E3A5F";
 const GREEN  = "#22c55e";
 const RED    = "#ef4444";
 const GOLD   = "#F5C518";
-const PURPLE = "#7c3aed";
 
 export default function Notifications({ isMobile }) {
   const [filter, setFilter] = useState("All");
-  const [notifications, setNotifications] = useState([
-    { id: 1, title: "System Update Scheduled", text: "Critical system security patches will be deployed at 12:00 AM. Expect up to 10 minutes of intermittent downtime.", time: "10 mins ago", category: "System", priority: "High", read: false },
-    { id: 2, title: "New Appointment Request", text: "Patient Maria Santos booked a Family Planning consultation with Dr. Maria Santos for tomorrow at 09:30 AM.", time: "2 hrs ago", category: "Appointment", priority: "Medium", read: false },
-    { id: 3, title: "Database Backup Complete", text: "Automated daily snapshot backup completed successfully. Total backup size: 1.2 GB.", time: "4 hrs ago", category: "System", priority: "Low", read: true },
-    { id: 4, title: "Critical Inventory Alert", text: "Contraceptive inventory level of 'Implanon Implants' has fallen below the safety threshold (5 units remaining).", time: "1 day ago", category: "Alert", priority: "High", read: false },
-    { id: 5, title: "User Account Suspended", text: "User account associated with emma@example.com was flagged and suspended due to multiple failed password attempts.", time: "2 days ago", category: "Security", priority: "High", read: true }
-  ]);
+  const [notifications, setNotifications] = useState([]);
+  const [loading, setLoading] = useState(true);
 
-  const markAllRead = () => {
-    setNotifications(notifications.map(n => ({ ...n, read: true })));
+  useEffect(() => {
+    fetchNotifications();
+  }, []);
+
+  const fetchNotifications = async () => {
+    try {
+      setLoading(true);
+      const res = await fetch("http://localhost:5000/api/admin/notifications", {
+        credentials: "include",
+      });
+      const data = await res.json();
+      if (data.success) {
+        setNotifications(data.notifications);
+      }
+    } catch {
+      setNotifications([]);
+    } finally {
+      setLoading(false);
+    }
   };
 
-  const markSingleRead = (id) => {
-    setNotifications(notifications.map(n => n.id === id ? { ...n, read: true } : n));
+  const markAllRead = async () => {
+    try {
+      const res = await fetch("http://localhost:5000/api/admin/notifications/read-all", {
+        method: "PUT",
+        credentials: "include",
+      });
+      const data = await res.json();
+      if (data.success) {
+        setNotifications(prev => prev.map(n => ({ ...n, read: true })));
+      }
+    } catch {}
+  };
+
+  const markSingleRead = async (id) => {
+    try {
+      const res = await fetch(`http://localhost:5000/api/admin/notifications/${id}/read`, {
+        method: "PUT",
+        credentials: "include",
+      });
+      const data = await res.json();
+      if (data.success) {
+        setNotifications(prev => prev.map(n => n._id === id ? { ...n, read: true } : n));
+      }
+    } catch {}
   };
 
   const filteredNotifs = notifications.filter(n => {
@@ -29,6 +62,17 @@ export default function Notifications({ isMobile }) {
     if (filter === "Unread") return !n.read;
     return n.category === filter;
   });
+
+  const timeAgo = (date) => {
+    const diff = Date.now() - new Date(date).getTime();
+    const mins = Math.floor(diff / 60000);
+    if (mins < 1) return "just now";
+    if (mins < 60) return `${mins} min ago`;
+    const hrs = Math.floor(mins / 60);
+    if (hrs < 24) return `${hrs} hr ago`;
+    const days = Math.floor(hrs / 24);
+    return `${days} day ago`;
+  };
 
   const getPriorityColor = (p) => {
     if (p === "High") return RED;
@@ -57,7 +101,7 @@ export default function Notifications({ isMobile }) {
       </div>
 
 <div style={{ display: "flex", gap: "10px", marginBottom: "20px", flexWrap: "wrap" }}>
-        {["All", "Unread", "System", "Appointment", "Alert"].map(tab => (
+        {["All", "Unread", "System", "User", "Appointment", "Alert"].map(tab => (
           <button 
             key={tab} 
             onClick={() => setFilter(tab)}
@@ -78,10 +122,14 @@ export default function Notifications({ isMobile }) {
         ))}
       </div>
 
-<div style={{ display: "flex", flexDirection: "column", gap: "12px" }}>
-        {filteredNotifs.length > 0 ? (
+      <div style={{ display: "flex", flexDirection: "column", gap: "12px" }}>
+        {loading ? (
+          <div style={{ background: "#fff", padding: "40px", borderRadius: "16px", textAlign: "center", color: "#8a96a3", border: "1px solid rgba(30,58,95,0.07)" }}>
+            Loading notifications...
+          </div>
+        ) : filteredNotifs.length > 0 ? (
           filteredNotifs.map(n => (
-            <div key={n.id} style={{ 
+            <div key={n._id} style={{ 
               background: "#fff", 
               borderRadius: "16px", 
               padding: "20px 24px", 
@@ -105,12 +153,12 @@ export default function Notifications({ isMobile }) {
                   )}
                 </div>
                 <p style={{ margin: 0, fontSize: "12.5px", color: "#4a5568", lineHeight: 1.4, marginBottom: "6px" }}>{n.text}</p>
-                <span style={{ fontSize: "11px", color: "#a0aec0" }}>{n.time}</span>
+                  <span style={{ fontSize: "11px", color: "#a0aec0" }}>{timeAgo(n.createdAt)}</span>
               </div>
 
               {!n.read && (
                 <button 
-                  onClick={() => markSingleRead(n.id)}
+                  onClick={() => markSingleRead(n._id)}
                   style={{ border: "none", background: "rgba(34,197,94,0.1)", color: GREEN, padding: "4px 8px", borderRadius: "4px", fontSize: "11px", fontWeight: 600, cursor: "pointer", flexShrink: 0 }}
                   onMouseEnter={e => { e.currentTarget.style.background = "rgba(34,197,94,0.18)" }}
                   onMouseLeave={e => { e.currentTarget.style.background = "rgba(34,197,94,0.1)" }}

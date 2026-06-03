@@ -59,15 +59,20 @@ const StatRow = ({ label, value, tone = "neutral" }) => {
   );
 };
 
-const getProfileAppointmentStats = (profileData = {}) => {
-  const stats = profileData.appointmentStats || {};
-  return {
-    total: stats.total ?? profileData.totalAppointments ?? 0,
-    upcoming: stats.upcoming ?? profileData.upcomingAppointments ?? 0,
-    completed: stats.completed ?? profileData.completedAppointments ?? 0,
-    pending: stats.pending ?? profileData.pendingAppointments ?? 0,
-  };
-};
+const getAppointmentStats = (appointmentList = []) =>
+  appointmentList.reduce(
+    (stats, a) => {
+      const s = a.status || "upcoming";
+      return {
+        ...stats,
+        total: stats.total + 1,
+        upcoming: stats.upcoming + (s === "upcoming" ? 1 : 0),
+        completed: stats.completed + (s === "completed" ? 1 : 0),
+        pending: stats.pending + (s === "pending" ? 1 : 0),
+      };
+    },
+    { total: 0, upcoming: 0, completed: 0, pending: 0 }
+  );
 
 const getInitialProfileData = (profile) => ({
   name: "",
@@ -79,7 +84,7 @@ const getInitialProfileData = (profile) => ({
 });
 
 const formatMemberSince = (dateStr) => {
-  if (!dateStr) return "Jan 2026";
+  if (!dateStr) return "N/A";
   const d = new Date(dateStr);
   const months = [
     "Jan", "Feb", "Mar", "Apr", "May", "Jun",
@@ -88,14 +93,14 @@ const formatMemberSince = (dateStr) => {
   return `${months[d.getMonth()]} ${d.getFullYear()}`;
 };
 
-const ProfileView = ({ profile, onSaveProfile }) => {
+const ProfileView = ({ profile, onSaveProfile, appointments = [] }) => {
   const [formData, setFormData] = useState(() => getInitialProfileData(profile));
   const [isEditing, setIsEditing] = useState(false);
   const [supportOpen, setSupportOpen] = useState(false);
   const [avatarPreview, setAvatarPreview] = useState(null);
   const fileInputRef = useRef(null);
   const visibleProfile = isEditing ? { ...formData, avatar: avatarPreview || formData.avatar } : getInitialProfileData(profile);
-  const appointmentStats = getProfileAppointmentStats(visibleProfile);
+  const appointmentStats = getAppointmentStats(appointments);
 
   const handleSubmit = (event) => {
     event.preventDefault();
@@ -170,8 +175,8 @@ const ProfileView = ({ profile, onSaveProfile }) => {
                 onChange={handleFileChange}
                 className="hidden"
               />
-              <h2 className="mt-12 text-2xl font-bold text-[#061022]">{visibleProfile.name || "Sarah Johnson"}</h2>
-              <p className="mt-8 text-sm text-[#18304d]">{visibleProfile.email || "sarah.j@email.com"}</p>
+              <h2 className="mt-12 text-2xl font-bold text-[#061022]">{visibleProfile.name || "Your Name"}</h2>
+              <p className="mt-8 text-sm text-[#18304d]">{visibleProfile.email || "your@email.com"}</p>
               <div className="my-10 h-px bg-slate-200" />
               <p className="text-sm text-[#18304d]">
                 Member since <strong className="font-bold text-[#061022]">{formatMemberSince(profile?.memberSince)}</strong>
@@ -294,7 +299,7 @@ const ProfileView = ({ profile, onSaveProfile }) => {
             <div className="flex items-start justify-between gap-4">
               <div>
                 <h2 className="text-xl font-bold text-[#061022]">Contact Support</h2>
-                <p className="mt-2 text-sm text-[#18304d]">Mock support details for this preview.</p>
+                <p className="mt-2 text-sm text-[#18304d]">Reach out to us for assistance</p>
               </div>
               <button type="button" className="text-slate-500" onClick={() => setSupportOpen(false)}>
                 x
@@ -303,7 +308,11 @@ const ProfileView = ({ profile, onSaveProfile }) => {
             <div className="mt-6 space-y-3 text-sm">
               <div className="rounded-[8px] bg-slate-50 p-4">
                 <p className="font-bold text-[#061022]">Email</p>
-                <p className="mt-1 text-[#18304d]">support@fpopclinic.local</p>
+                <p className="mt-1 text-[#18304d]">support@fpopclinic.com</p>
+              </div>
+              <div className="rounded-[8px] bg-slate-50 p-4">
+                <p className="font-bold text-[#061022]">Phone</p>
+                <p className="mt-1 text-[#18304d]">(555) 123-4567</p>
               </div>
               <div className="rounded-[8px] bg-slate-50 p-4">
                 <p className="font-bold text-[#061022]">Hours</p>

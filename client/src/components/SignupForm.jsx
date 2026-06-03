@@ -108,224 +108,267 @@ function SignupForm() {
 
   return (
     <>
-      <div className="min-h-[calc(100vh-76px)] py-3 px-4 flex items-start justify-center relative overflow-hidden bg-[#F9FAFB]">
-        {/* Soft floating background gradient blobs */}
-        <div className="absolute top-1/4 left-1/4 w-[400px] h-[400px] bg-blue-100/40 rounded-full blur-3xl opacity-80 animate-pulse pointer-events-none -z-10" />
-        <div className="absolute bottom-1/4 right-1/4 w-[400px] h-[400px] bg-[#F5C518]/10 rounded-full blur-3xl opacity-60 animate-pulse pointer-events-none -z-10 [animation-delay:2s]" />
+      <div className="min-h-[calc(100vh-76px)] flex flex-col lg:flex-row bg-[#F9FAFB]">
+        {/* Left Panel - Form */}
+        <div className="relative lg:w-1/2 min-h-[calc(100vh-76px)] overflow-y-auto flex items-start lg:items-center justify-center p-4 lg:p-12">
+          {/* Background blobs */}
+          <div className="fixed top-1/3 -left-20 w-[350px] h-[350px] bg-blue-100/40 rounded-full blur-3xl opacity-80 pointer-events-none -z-10" />
+          <div className="fixed bottom-1/3 -right-20 w-[350px] h-[350px] bg-[#F5C518]/10 rounded-full blur-3xl opacity-60 pointer-events-none -z-10" />
 
-        <div className="w-full max-w-md bg-white/85 backdrop-blur-md border border-white/40 shadow-[0_20px_42px_rgba(30,58,95,0.06)] rounded-[1.5rem] p-4 md:p-5 z-10">
-          <div className="flex flex-col items-center text-center mb-3">
-            <img
-              src={logo}
-              alt="FPOP Clinic Portal Logo"
-              className="w-22 h-22"
-            />
-
-            <h2 className="text-xl md:text-2xl font-bold text-[#1E3A5F] tracking-tight">
-              Create Account
-            </h2>
-            <p className="mt-0.5 text-slate-500 text-xs">
-              Join FPOP Clinic for better healthcare
-            </p>
-          </div>
-
-          <form className="space-y-2.5" onSubmit={handleSignup}>
-
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-2.5">
-              <div>
-                <label className="block text-[#1E3A5F] font-bold text-xs tracking-wide uppercase mb-1.5">
-                  First Name
-                </label>
-                <input
-                  type="text"
-                  placeholder=""
-                  value={firstName}
-                  onChange={(e) => setFirstName(e.target.value)}
-                  required
-                  className="w-full h-9 rounded-lg border border-slate-200 bg-white/60 px-3 outline-none focus:border-[#F5C518] focus:ring-4 focus:ring-[#F5C518]/10 transition-all duration-300 text-sm text-slate-700"
-                />
+          <div className="w-full max-w-md py-8 lg:py-0">
+            <div className="bg-white/85 backdrop-blur-md border border-white/40 shadow-[0_20px_42px_rgba(30,58,95,0.06)] rounded-[2rem] p-6 md:p-7">
+              <div className="mb-5">
+                <h2 className="text-2xl font-bold text-[#1E3A5F] tracking-tight">
+                  Create Account
+                </h2>
+                <p className="mt-1 text-slate-500 text-sm">
+                  Join FPOP Clinic for better healthcare
+                </p>
               </div>
 
-              <div>
-                <label className="block text-[#1E3A5F] font-bold text-xs tracking-wide uppercase mb-1.5">
-                  Last Name
-                </label>
-                <input
-                  type="text"
-                  placeholder=""
-                  value={lastName}
-                  onChange={(e) => setLastName(e.target.value)}
-                  required
-                  className="w-full h-9 rounded-lg border border-slate-200 bg-white/60 px-3 outline-none focus:border-[#F5C518] focus:ring-4 focus:ring-[#F5C518]/10 transition-all duration-300 text-sm text-slate-700"
-                />
-              </div>
-            </div>
+              <form className="space-y-3.5" onSubmit={handleSignup}>
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-3.5">
+                  <div>
+                    <label className="block text-[#1E3A5F] font-semibold text-xs tracking-wide uppercase mb-1.5">
+                      First Name
+                    </label>
+                    <input
+                      type="text"
+                      placeholder=""
+                      value={firstName}
+                      onChange={(e) => setFirstName(e.target.value)}
+                      required
+                      className="w-full h-10 rounded-xl border border-slate-200 bg-white/60 px-3 outline-none focus:border-[#F5C518] focus:ring-4 focus:ring-[#F5C518]/10 transition-all duration-300 text-sm text-slate-700"
+                    />
+                  </div>
 
-            <div>
-              <label className="block text-[#1E3A5F] font-bold text-xs tracking-wide uppercase mb-1.5">
-                Email Address
-              </label>
-              <input
-                type="email"
-                placeholder=""
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
-                required
-                className="w-full h-9 rounded-lg border border-slate-200 bg-white/60 px-3 outline-none focus:border-[#F5C518] focus:ring-4 focus:ring-[#F5C518]/10 transition-all duration-300 text-sm text-slate-700"
-              />
-            </div>
-
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-2.5">
-              <div>
-                <label className="block text-[#1E3A5F] font-bold text-xs tracking-wide uppercase mb-1.5">
-                  Phone Number
-                </label>
-                <input
-                  type="tel"
-                  placeholder=""
-                  value={phone}
-                  onChange={(e) => setPhone(e.target.value)}
-                  className="w-full h-9 rounded-lg border border-slate-200 bg-white/60 px-3 outline-none focus:border-[#F5C518] focus:ring-4 focus:ring-[#F5C518]/10 transition-all duration-300 text-sm text-slate-700"
-                />
-              </div>
-              <div>
-                <label className="block text-[#1E3A5F] font-bold text-xs tracking-wide uppercase mb-1.5">
-                  Date of Birth
-                </label>
-                <input
-                  type="date"
-                  value={dateOfBirth}
-                  onChange={(e) => setDateOfBirth(e.target.value)}
-                  className="w-full h-9 rounded-lg border border-slate-200 bg-white/60 px-3 outline-none focus:border-[#F5C518] focus:ring-4 focus:ring-[#F5C518]/10 transition-all duration-300 text-sm text-slate-700"
-                />
-              </div>
-            </div>
-
-            <div>
-              <label className="block text-[#1E3A5F] font-bold text-xs tracking-wide uppercase mb-1.5">
-                Address
-              </label>
-              <input
-                type="text"
-                placeholder=""
-                value={address}
-                onChange={(e) => setAddress(e.target.value)}
-                className="w-full h-9 rounded-lg border border-slate-200 bg-white/60 px-3 outline-none focus:border-[#F5C518] focus:ring-4 focus:ring-[#F5C518]/10 transition-all duration-300 text-sm text-slate-700"
-              />
-            </div>
-
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-2.5">
-              <div>
-                <label className="block text-[#1E3A5F] font-bold text-xs tracking-wide uppercase mb-1.5">
-                  Password
-                </label>
-                <div className="relative">
-                  <input
-                    type={showPassword ? "text" : "password"}
-                    placeholder=""
-                    value={password}
-                    onChange={(e) => setPassword(e.target.value)}
-                    required
-                    className="w-full h-9 rounded-lg border border-slate-200 bg-white/60 px-3 pr-9 outline-none focus:border-[#F5C518] focus:ring-4 focus:ring-[#F5C518]/10 transition-all duration-300 text-sm text-slate-700"
-                  />
-                  <button
-                    type="button"
-                    onClick={() => setShowPassword(!showPassword)}
-                    className="absolute right-2.5 top-1/2 -translate-y-1/2 text-slate-400 hover:text-[#1E3A5F] transition-colors focus:outline-none"
-                  >
-                    {showPassword ? <EyeOffIcon /> : <EyeIcon />}
-                  </button>
+                  <div>
+                    <label className="block text-[#1E3A5F] font-semibold text-xs tracking-wide uppercase mb-1.5">
+                      Last Name
+                    </label>
+                    <input
+                      type="text"
+                      placeholder=""
+                      value={lastName}
+                      onChange={(e) => setLastName(e.target.value)}
+                      required
+                      className="w-full h-10 rounded-xl border border-slate-200 bg-white/60 px-3 outline-none focus:border-[#F5C518] focus:ring-4 focus:ring-[#F5C518]/10 transition-all duration-300 text-sm text-slate-700"
+                    />
+                  </div>
                 </div>
-              </div>
 
-              <div>
-                <label className="block text-[#1E3A5F] font-bold text-xs tracking-wide uppercase mb-1.5">
-                  Confirm Password
-                </label>
-                <div className="relative">
+                <div>
+                  <label className="block text-[#1E3A5F] font-semibold text-xs tracking-wide uppercase mb-1.5">
+                    Email Address
+                  </label>
                   <input
-                    type={showConfirmPassword ? "text" : "password"}
+                    type="email"
                     placeholder=""
-                    value={confirmPassword}
-                    onChange={(e) => setConfirmPassword(e.target.value)}
+                    value={email}
+                    onChange={(e) => setEmail(e.target.value)}
                     required
-                    className="w-full h-9 rounded-lg border border-slate-200 bg-white/60 px-3 pr-9 outline-none focus:border-[#F5C518] focus:ring-4 focus:ring-[#F5C518]/10 transition-all duration-300 text-sm text-slate-700"
+                    className="w-full h-10 rounded-xl border border-slate-200 bg-white/60 px-3 outline-none focus:border-[#F5C518] focus:ring-4 focus:ring-[#F5C518]/10 transition-all duration-300 text-sm text-slate-700"
                   />
-                  <button
-                    type="button"
-                    onClick={() => setShowConfirmPassword(!showConfirmPassword)}
-                    className="absolute right-2.5 top-1/2 -translate-y-1/2 text-slate-400 hover:text-[#1E3A5F] transition-colors focus:outline-none"
-                  >
-                    {showConfirmPassword ? <EyeOffIcon /> : <EyeIcon />}
-                  </button>
                 </div>
-              </div>
-            </div>
 
-            <label className="flex items-start gap-2 text-xs text-slate-600 cursor-pointer select-none">
-              <input
-                type="checkbox"
-                className="mt-0.5 h-3.5 w-3.5 rounded border-slate-300 text-[#1E3A5F] focus:ring-[#1E3A5F]/20 cursor-pointer"
-                checked={agreed}
-                onChange={(e) => setAgreed(e.target.checked)}
-              />
-              <span className="leading-tight text-slate-500 font-medium">
-                I agree to the{" "}
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-3.5">
+                  <div>
+                    <label className="block text-[#1E3A5F] font-semibold text-xs tracking-wide uppercase mb-1.5">
+                      Phone Number
+                    </label>
+                    <input
+                      type="tel"
+                      placeholder=""
+                      value={phone}
+                      onChange={(e) => setPhone(e.target.value)}
+                      className="w-full h-10 rounded-xl border border-slate-200 bg-white/60 px-3 outline-none focus:border-[#F5C518] focus:ring-4 focus:ring-[#F5C518]/10 transition-all duration-300 text-sm text-slate-700"
+                    />
+                  </div>
+                  <div>
+                    <label className="block text-[#1E3A5F] font-semibold text-xs tracking-wide uppercase mb-1.5">
+                      Date of Birth
+                    </label>
+                    <input
+                      type="date"
+                      value={dateOfBirth}
+                      onChange={(e) => setDateOfBirth(e.target.value)}
+                      className="w-full h-10 rounded-xl border border-slate-200 bg-white/60 px-3 outline-none focus:border-[#F5C518] focus:ring-4 focus:ring-[#F5C518]/10 transition-all duration-300 text-sm text-slate-700"
+                    />
+                  </div>
+                </div>
+
+                <div>
+                  <label className="block text-[#1E3A5F] font-semibold text-xs tracking-wide uppercase mb-1.5">
+                    Address
+                  </label>
+                  <input
+                    type="text"
+                    placeholder=""
+                    value={address}
+                    onChange={(e) => setAddress(e.target.value)}
+                    className="w-full h-10 rounded-xl border border-slate-200 bg-white/60 px-3 outline-none focus:border-[#F5C518] focus:ring-4 focus:ring-[#F5C518]/10 transition-all duration-300 text-sm text-slate-700"
+                  />
+                </div>
+
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-3.5">
+                  <div>
+                    <label className="block text-[#1E3A5F] font-semibold text-xs tracking-wide uppercase mb-1.5">
+                      Password
+                    </label>
+                    <div className="relative">
+                      <input
+                        type={showPassword ? "text" : "password"}
+                        placeholder=""
+                        value={password}
+                        onChange={(e) => setPassword(e.target.value)}
+                        required
+                        className="w-full h-10 rounded-xl border border-slate-200 bg-white/60 px-3 pr-10 outline-none focus:border-[#F5C518] focus:ring-4 focus:ring-[#F5C518]/10 transition-all duration-300 text-sm text-slate-700"
+                      />
+                      <button
+                        type="button"
+                        onClick={() => setShowPassword(!showPassword)}
+                        className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 hover:text-[#1E3A5F] transition-colors focus:outline-none"
+                      >
+                        {showPassword ? <EyeOffIcon /> : <EyeIcon />}
+                      </button>
+                    </div>
+                  </div>
+
+                  <div>
+                    <label className="block text-[#1E3A5F] font-semibold text-xs tracking-wide uppercase mb-1.5">
+                      Confirm Password
+                    </label>
+                    <div className="relative">
+                      <input
+                        type={showConfirmPassword ? "text" : "password"}
+                        placeholder=""
+                        value={confirmPassword}
+                        onChange={(e) => setConfirmPassword(e.target.value)}
+                        required
+                        className="w-full h-10 rounded-xl border border-slate-200 bg-white/60 px-3 pr-10 outline-none focus:border-[#F5C518] focus:ring-4 focus:ring-[#F5C518]/10 transition-all duration-300 text-sm text-slate-700"
+                      />
+                      <button
+                        type="button"
+                        onClick={() => setShowConfirmPassword(!showConfirmPassword)}
+                        className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 hover:text-[#1E3A5F] transition-colors focus:outline-none"
+                      >
+                        {showConfirmPassword ? <EyeOffIcon /> : <EyeIcon />}
+                      </button>
+                    </div>
+                  </div>
+                </div>
+
+                <label className="flex items-start gap-2 text-xs text-slate-600 cursor-pointer select-none">
+                  <input
+                    type="checkbox"
+                    className="mt-0.5 h-4 w-4 rounded border-slate-300 text-[#1E3A5F] focus:ring-[#1E3A5F]/20 cursor-pointer"
+                    checked={agreed}
+                    onChange={(e) => setAgreed(e.target.checked)}
+                  />
+                  <span className="leading-tight text-slate-500 font-medium">
+                    I agree to the{" "}
+                    <button
+                      type="button"
+                      onClick={() => openModal("terms")}
+                      className="text-[#1E3A5F] hover:text-[#F5C518] font-bold transition-colors duration-300 underline underline-offset-2"
+                    >
+                      Terms of Service
+                    </button>{" "}
+                    and{" "}
+                    <button
+                      type="button"
+                      onClick={() => openModal("privacy")}
+                      className="text-[#1E3A5F] hover:text-[#F5C518] font-bold transition-colors duration-300 underline underline-offset-2"
+                    >
+                      Privacy Policy
+                    </button>
+                  </span>
+                </label>
+
+                {error && (
+                  <div className="p-3 rounded-xl bg-red-50 border border-red-100 text-red-600 text-sm font-medium">
+                    {error}
+                  </div>
+                )}
+
+                {message && (
+                  <div className="p-3 rounded-xl bg-green-50 border border-green-100 text-green-600 text-sm font-medium">
+                    {message}
+                  </div>
+                )}
+
+                <ReCaptcha ref={recaptchaRef} onChange={setRecaptchaToken} />
+
                 <button
-                  type="button"
-                  onClick={() => openModal("terms")}
-                  className="text-[#1E3A5F] hover:text-[#F5C518] font-bold transition-colors duration-300 underline underline-offset-2"
+                  type="submit"
+                  disabled={!canSubmit}
+                  className={`w-full h-11 rounded-xl font-bold text-sm border-2 border-transparent transition-all duration-300 transform hover:-translate-y-0.5 shadow-[0_8px_20px_rgba(30,58,95,0.15)] ${
+                    canSubmit
+                      ? "bg-[#1E3A5F] text-white hover:bg-white hover:border-[#F5C518] hover:text-[#1E3A5F] cursor-pointer"
+                      : "bg-slate-300 text-slate-500 cursor-not-allowed shadow-none transform-none"
+                  }`}
                 >
-                  Terms of Service
-                </button>{" "}
-                and{" "}
-                <button
-                  type="button"
-                  onClick={() => openModal("privacy")}
-                  className="text-[#1E3A5F] hover:text-[#F5C518] font-bold transition-colors duration-300 underline underline-offset-2"
-                >
-                  Privacy Policy
+                  Create Account
                 </button>
-              </span>
-            </label>
 
-            {error && (
-              <div className="p-2.5 rounded-lg bg-red-50 border border-red-100 text-red-600 text-sm font-medium">
-                {error}
-              </div>
-            )}
+                <p className="text-center text-slate-500 text-xs font-medium">
+                  Already have an account?{" "}
+                  <button
+                    type="button"
+                    onClick={() => navigate("/login")}
+                    className="text-[#1E3A5F] hover:text-[#F5C518] font-bold transition-colors duration-300 underline underline-offset-4"
+                  >
+                    Sign In
+                  </button>
+                </p>
+              </form>
+            </div>
+          </div>
+        </div>
 
-            {message && (
-              <div className="p-2.5 rounded-lg bg-green-50 border border-green-100 text-green-600 text-sm font-medium">
-                {message}
-              </div>
-            )}
+        {/* Right Panel - Branding */}
+        <div className="relative lg:w-1/2 min-h-[40vh] lg:min-h-[calc(100vh-76px)] bg-[#1E3A5F] overflow-hidden flex items-center justify-center p-8 lg:p-12">
+          <div className="absolute inset-0 bg-gradient-to-br from-[#1E3A5F] to-[#152a47]" />
 
-            <ReCaptcha ref={recaptchaRef} onChange={setRecaptchaToken} />
+          <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[500px] h-[500px] rounded-full border border-[#F5C518]/10 hidden lg:block" />
+          <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[350px] h-[350px] rounded-full border border-[#F5C518]/15 hidden lg:block" />
+          <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[200px] h-[200px] rounded-full border border-[#F5C518]/20 hidden lg:block" />
 
-            <button
-              type="submit"
-              disabled={!canSubmit}
-              className={`w-full h-10 rounded-full font-bold text-sm border-2 border-transparent transition-all duration-300 transform hover:-translate-y-0.5 shadow-[0_8px_20px_rgba(30,58,95,0.15)] ${
-                canSubmit
-                  ? "bg-[#1E3A5F] text-white hover:bg-white hover:border-[#F5C518] hover:text-[#1E3A5F] cursor-pointer"
-                  : "bg-slate-300 text-slate-500 cursor-not-allowed shadow-none transform-none"
-              }`}
-            >
-              Create Account
-            </button>
+          <div className="absolute -top-24 -right-24 w-80 h-80 bg-[#F5C518]/10 rounded-full blur-3xl" />
+          <div className="absolute -bottom-24 -left-24 w-80 h-80 bg-blue-500/10 rounded-full blur-3xl" />
 
-            <p className="text-center text-slate-500 text-xs font-medium">
-              Already have an account?{" "}
-              <button
-                type="button"
-                onClick={() => navigate("/login")}
-                className="text-[#1E3A5F] hover:text-[#F5C518] font-bold transition-colors duration-300 underline underline-offset-4"
-              >
-                Sign In
-              </button>
+          <div className="absolute top-1/4 right-1/4 w-2 h-2 bg-[#F5C518]/40 rounded-full hidden lg:block" />
+          <div className="absolute bottom-1/3 left-1/3 w-3 h-3 bg-[#F5C518]/30 rounded-full hidden lg:block" />
+          <div className="absolute top-2/3 right-1/3 w-1.5 h-1.5 bg-white/20 rounded-full hidden lg:block" />
+
+          <div className="relative z-10 flex flex-col items-center text-center max-w-sm">
+            <div className="w-24 h-24 lg:w-28 lg:h-28 bg-white/10 rounded-2xl flex items-center justify-center mb-5 ring-2 ring-[#F5C518]/30 backdrop-blur-sm">
+              <img src={logo} alt="FPOP Clinic" className="w-16 h-16 lg:w-20 lg:h-20" />
+            </div>
+            <h1 className="text-2xl lg:text-3xl font-bold text-white mb-2">
+              FPOP Clinic Portal
+            </h1>
+            <p className="text-[#F5C518] text-sm lg:text-base font-medium mb-8 lg:mb-10">
+              Your Health, Our Priority
             </p>
-          </form>
+
+            <div className="space-y-3.5 text-left hidden lg:block">
+              {[
+                "Secure & Confidential Access",
+                "Easy Appointment Management",
+                "24/7 Portal Availability",
+              ].map((text, i) => (
+                <div key={i} className="flex items-center gap-3">
+                  <div className="w-5 h-5 rounded-full bg-[#F5C518]/20 flex items-center justify-center flex-shrink-0">
+                    <svg className="w-3 h-3 text-[#F5C518]" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={3}>
+                      <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" />
+                    </svg>
+                  </div>
+                  <span className="text-white/80 text-sm">{text}</span>
+                </div>
+              ))}
+            </div>
+          </div>
         </div>
       </div>
 
@@ -548,7 +591,7 @@ function SignupForm() {
             <div className="mt-6 flex justify-end">
               <button
                 onClick={closeModal}
-                className="px-6 py-3 rounded-full bg-[#1E3A5F] text-white font-bold hover:bg-white hover:border-[#F5C518] border-2 border-transparent hover:text-[#1E3A5F] transition-all duration-300 shadow-md"
+                className="px-6 py-3 rounded-xl bg-[#1E3A5F] text-white font-bold hover:bg-white hover:border-[#F5C518] border-2 border-transparent hover:text-[#1E3A5F] transition-all duration-300 shadow-md"
               >
                 Close
               </button>
