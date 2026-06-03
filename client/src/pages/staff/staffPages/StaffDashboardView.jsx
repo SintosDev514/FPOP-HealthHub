@@ -119,7 +119,7 @@ const QuickStat = ({ icon, label, value, progress }) => (
   </div>
 );
 
-const StaffDashboardView = ({ profile, stats = {}, appointments = [] }) => {
+const StaffDashboardView = ({ profile, stats = {}, appointments = [], onStartAssessment }) => {
   const todayStr = new Date().toISOString().split("T")[0];
   const todayCount = appointments.filter((a) => a.date === todayStr).length;
   const pendingCount = appointments.filter((a) => a.status === "pending").length;
@@ -153,6 +153,18 @@ const StaffDashboardView = ({ profile, stats = {}, appointments = [] }) => {
           <p className="mt-1.5 text-sm font-medium text-[#8a96a3]">
             {profile ? `Welcome back, ${profile.name}!` : "Welcome back!"}
           </p>
+        </div>
+        <div className="flex items-center gap-3 shrink-0">
+          <button
+            type="button"
+            onClick={onStartAssessment}
+            className="flex items-center gap-2 rounded-xl bg-[#F5C518] px-5 py-3 text-sm font-bold text-[#1E3A5F] shadow-md shadow-[#F5C518]/20 transition-all hover:bg-[#e6b800] hover:-translate-y-0.5 active:translate-y-0 duration-200"
+          >
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" className="w-4 h-4">
+              <path strokeLinecap="round" strokeLinejoin="round" d="M12 4v16m8-8H4" />
+            </svg>
+            New Client Assessment
+          </button>
         </div>
       </section>
 
