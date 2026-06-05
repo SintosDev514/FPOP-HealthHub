@@ -241,6 +241,9 @@ const StaffInventoryView = () => {
   const [itemForm, setItemForm] = useState(createEmptyItemForm);
   const [deleteTarget, setDeleteTarget] = useState(null);
   const [tableNameForm, setTableNameForm] = useState("");
+  const [tableChapterForm, setTableChapterForm] = useState("");
+  const [tableQuarterForm, setTableQuarterForm] = useState("");
+  const [tableYearForm, setTableYearForm] = useState("");
   const [isCreateTableOpen, setIsCreateTableOpen] = useState(false);
   const [categoryNameForm, setCategoryNameForm] = useState("");
   const [isCategoryModalOpen, setIsCategoryModalOpen] = useState(false);
@@ -395,11 +398,17 @@ const StaffInventoryView = () => {
 
   const openCreateTableModal = () => {
     setTableNameForm("");
+    setTableChapterForm("");
+    setTableQuarterForm("");
+    setTableYearForm(new Date().getFullYear().toString());
     setIsCreateTableOpen(true);
   };
 
   const closeCreateTableModal = () => {
     setTableNameForm("");
+    setTableChapterForm("");
+    setTableQuarterForm("");
+    setTableYearForm("");
     setIsCreateTableOpen(false);
   };
 
@@ -412,7 +421,12 @@ const StaffInventoryView = () => {
         method: "POST",
         credentials: "include",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ name }),
+        body: JSON.stringify({
+          name,
+          chapter: tableChapterForm.trim(),
+          quarter: tableQuarterForm,
+          year: tableYearForm,
+        }),
       });
       const data = await res.json();
       if (data.success) {
@@ -754,6 +768,13 @@ const StaffInventoryView = () => {
               <h3 className="text-lg font-extrabold text-slate-950">
                 {table.name}
               </h3>
+              {(table.chapter || table.quarter || table.year) && (
+                <span className="inline-flex items-center gap-1.5 rounded-md bg-slate-100 px-2.5 py-1 text-[11px] font-semibold text-slate-600">
+                  {[table.chapter && `Ch. ${table.chapter}`, table.quarter, table.year]
+                    .filter(Boolean)
+                    .join(" | ")}
+                </span>
+              )}
               <button
                 type="button"
                 onClick={() => handleDeleteTable(table._id)}
@@ -969,6 +990,52 @@ const StaffInventoryView = () => {
                   required
                 />
               </label>
+
+              <div className="mt-4 grid grid-cols-3 gap-3">
+                <label className="block">
+                  <span className="text-xs font-bold uppercase text-slate-500">
+                    Chapter
+                  </span>
+                  <input
+                    value={tableChapterForm}
+                    onChange={(event) => setTableChapterForm(event.target.value)}
+                    className="mt-2 h-11 w-full rounded-lg border border-slate-300 px-4 text-sm font-semibold text-slate-950 outline-none focus:border-blue-500"
+                    placeholder="e.g. 1"
+                  />
+                </label>
+                <label className="block">
+                  <span className="text-xs font-bold uppercase text-slate-500">
+                    Quarter
+                  </span>
+                  <select
+                    value={tableQuarterForm}
+                    onChange={(event) => setTableQuarterForm(event.target.value)}
+                    className="mt-2 h-11 w-full rounded-lg border border-slate-300 bg-white px-4 text-sm text-slate-950 outline-none focus:border-blue-500"
+                  >
+                    <option value="">Select</option>
+                    <option value="Q1">Q1</option>
+                    <option value="Q2">Q2</option>
+                    <option value="Q3">Q3</option>
+                    <option value="Q4">Q4</option>
+                  </select>
+                </label>
+                <label className="block">
+                  <span className="text-xs font-bold uppercase text-slate-500">
+                    Year
+                  </span>
+                  <select
+                    value={tableYearForm}
+                    onChange={(event) => setTableYearForm(event.target.value)}
+                    className="mt-2 h-11 w-full rounded-lg border border-slate-300 bg-white px-4 text-sm text-slate-950 outline-none focus:border-blue-500"
+                  >
+                    <option value="">Select</option>
+                    {Array.from({ length: 10 }, (_, i) => {
+                      const y = new Date().getFullYear() - 5 + i;
+                      return <option key={y} value={y}>{y}</option>;
+                    })}
+                  </select>
+                </label>
+              </div>
 
               <div className="mt-6 flex flex-col-reverse gap-3 border-t border-slate-200 pt-5 sm:flex-row sm:justify-end">
                 <button

@@ -22,12 +22,15 @@ export const listTables = async (req, res) => {
 
 export const createTable = async (req, res) => {
   try {
-    const { name } = req.body;
+    const { name, chapter, quarter, year } = req.body;
     if (!name || !name.trim()) {
       return res.json({ success: false, message: "Table name is required" });
     }
     const table = await InventoryTable.create({
       name: name.trim(),
+      chapter: chapter || "",
+      quarter: quarter || "",
+      year: year || "",
       createdBy: req.user.id,
     });
     res.json({ success: true, table });

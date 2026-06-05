@@ -17,6 +17,9 @@ const inventoryCategorySchema = new mongoose.Schema({
 const inventoryTableSchema = new mongoose.Schema(
   {
     name: { type: String, required: true },
+    chapter: { type: String, default: "" },
+    quarter: { type: String, default: "" },
+    year: { type: String, default: "" },
     categories: [inventoryCategorySchema],
     createdBy: {
       type: mongoose.Schema.Types.ObjectId,
