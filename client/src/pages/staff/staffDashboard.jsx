@@ -53,9 +53,99 @@ const StaffIcon = ({ name, className = "h-5 w-5" }) => {
   );
 };
 
+function StaffNavBtn({ item, isActive, isIconOnly, onClick }) {
+  const [hov, setHov] = useState(false);
+  const gold = "#FFDF00";
+  const bg = isActive
+    ? "rgba(255,223,0,0.13)"
+    : hov
+    ? "rgba(255,255,255,0.07)"
+    : "transparent";
+  const color = isActive ? gold : hov ? "#fff" : "rgba(255,255,255,0.60)";
+  const borderLeft = isActive ? `3px solid ${gold}` : "3px solid transparent";
+
+  return (
+    <button
+      type="button"
+      title={isIconOnly ? item.label : undefined}
+      onClick={onClick}
+      onMouseEnter={() => setHov(true)}
+      onMouseLeave={() => setHov(false)}
+      style={{
+        display: "flex",
+        alignItems: "center",
+        gap: "12px",
+        padding: isIconOnly ? "13px 0" : "11px 18px",
+        justifyContent: isIconOnly ? "center" : "flex-start",
+        background: bg,
+        border: "none",
+        borderLeft,
+        color,
+        fontFamily: "'Inter', 'Poppins', sans-serif",
+        fontSize: "13px",
+        fontWeight: isActive ? 700 : 500,
+        cursor: "pointer",
+        width: "100%",
+        textAlign: "left",
+        transition: "all 0.18s ease",
+        whiteSpace: "nowrap",
+        overflow: "hidden",
+      }}
+    >
+      <span style={{ flexShrink: 0, lineHeight: 0 }}>
+        <StaffIcon name={item.icon} />
+      </span>
+      {!isIconOnly && (
+        <span style={{ opacity: 1, transition: "opacity 0.2s" }}>
+          {item.label}
+        </span>
+      )}
+    </button>
+  );
+}
+
+function StaffLogoutBtn({ isIconOnly, logout }) {
+  const [hov, setHov] = useState(false);
+  return (
+    <button
+      type="button"
+      title={isIconOnly ? "Sign out" : undefined}
+      onClick={logout}
+      onMouseEnter={() => setHov(true)}
+      onMouseLeave={() => setHov(false)}
+      style={{
+        display: "flex",
+        alignItems: "center",
+        gap: "12px",
+        padding: isIconOnly ? "13px 0" : "11px 18px",
+        justifyContent: isIconOnly ? "center" : "flex-start",
+        background: hov ? "rgba(220,38,38,0.12)" : "transparent",
+        border: "none",
+        borderLeft: hov ? "3px solid #DC2626" : "3px solid transparent",
+        color: hov ? "#f87171" : "rgba(255,255,255,0.40)",
+        fontFamily: "'Inter', 'Poppins', sans-serif",
+        fontSize: "13px",
+        fontWeight: 500,
+        cursor: "pointer",
+        width: "100%",
+        transition: "all 0.18s ease",
+        whiteSpace: "nowrap",
+        overflow: "hidden",
+      }}
+    >
+      <span style={{ flexShrink: 0, lineHeight: 0 }}>
+        <StaffIcon name="logout" />
+      </span>
+      {!isIconOnly && <span>Sign out</span>}
+    </button>
+  );
+}
+
 const StaffDashboard = () => {
   const [currentView, setCurrentView] = useState("dashboard");
   const [menuOpen, setMenuOpen] = useState(false);
+  const [sidebarHovered, setSidebarHovered] = useState(false);
+  const [isMobile, setIsMobile] = useState(window.innerWidth < 768);
   const [profile, setProfile] = useState(null);
   const [appointments, setAppointments] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -66,6 +156,19 @@ const StaffDashboard = () => {
     fetchProfile();
     fetchAppointments();
   }, []);
+
+  useEffect(() => {
+    const onResize = () => setIsMobile(window.innerWidth < 768);
+    onResize();
+    window.addEventListener("resize", onResize);
+    return () => window.removeEventListener("resize", onResize);
+  }, []);
+
+  const SIDEBAR_COLLAPSED = "68px";
+  const SIDEBAR_EXPANDED = "260px";
+  const isSidebarExpanded = !isMobile && sidebarHovered;
+  const sidebarW = isMobile ? "0px" : isSidebarExpanded ? SIDEBAR_EXPANDED : SIDEBAR_COLLAPSED;
+  const isIconOnly = !isSidebarExpanded;
 
   const fetchProfile = async () => {
     try {
@@ -227,54 +330,104 @@ const StaffDashboard = () => {
         </div>
       </header>
 
-      <div className="flex">
+      <div style={{ minHeight: "calc(100vh - 76px)", position: "relative", display: "flex" }}>
+        {/* ════════════════ SIDEBAR ════════════════ */}
         <aside
-          className="sticky top-[76px] hidden h-[calc(100vh-76px)] w-[300px] shrink-0 flex-col overflow-hidden shadow-[4px_0_28px_rgba(0,0,0,0.14)] md:flex"
+          onMouseEnter={() => setSidebarHovered(true)}
+          onMouseLeave={() => setSidebarHovered(false)}
+          className="hidden md:block"
           style={{
-            background: `linear-gradient(180deg, ${NAVY_DARK} 0%, ${NAVY_MID} 60%, ${NAVY_LITE} 100%)`,
+            width: sidebarW,
+            position: "fixed",
+            top: "76px",
+            left: 0,
+            bottom: 0,
+            zIndex: 40,
+            display: "flex",
+            flexDirection: "column",
+            background: `linear-gradient(180deg, ${NAVY_DARK} 0%, ${NAVY_MID} 55%, ${NAVY_LITE} 100%)`,
+            transition: "width 0.3s cubic-bezier(0.4, 0, 0.2, 1)",
+            overflow: "hidden",
+            boxShadow: "4px 0 32px rgba(21,44,74,0.22)",
           }}
         >
-          <div className="h-[30px] border-b border-[#F5C518]/10" />
-          <nav className="flex-1 py-4">
-            {navItems.map((item) => {
-              const isActive = currentView === item.id;
-              return (
-                <button
-                  key={item.id}
-                  type="button"
-                  onClick={() => handleSideNav(item.id)}
-                  className={`flex h-[52px] w-full items-center gap-4 border-l-[3px] px-6 text-left text-sm transition ${
-                    isActive
-                      ? "border-[#F5C518] bg-[#F5C518]/[0.13] font-bold text-[#F5C518]"
-                      : "border-transparent text-white/60 hover:bg-white/[0.06] hover:text-white"
-                  }`}
-                >
-                  <StaffIcon name={item.icon} />
-                  <span>{item.label}</span>
-                </button>
-              );
-            })}
-          </nav>
-          <div className="border-t border-[#F5C518]/10 p-4">
-            <button
-              type="button"
-              onClick={logout}
-              className="group flex w-full items-center gap-3 rounded-xl border border-[#F5C518]/15 bg-white/[0.06] px-4 py-3 text-left text-sm font-semibold text-white/75 shadow-[inset_0_1px_0_rgba(255,255,255,0.06)] transition-all duration-200 hover:border-[#F5C518]/35 hover:bg-[#F5C518]/10 hover:text-[#F5C518] focus:outline-none focus:ring-2 focus:ring-[#F5C518]/35"
-            >
-              <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg bg-[#F5C518]/10 text-[#F5C518] transition-colors duration-200 group-hover:bg-[#F5C518]/20">
-                <StaffIcon name="logout" className="h-4 w-4" />
-              </span>
-              <span className="flex min-w-0 flex-col">
-                <span className="leading-5">Sign out</span>
-                <span className="text-xs font-medium text-white/45 transition-colors duration-200 group-hover:text-[#F5C518]/70">
-                  End staff session
-                </span>
-              </span>
-            </button>
+          {/* ── Brand logo ── */}
+          <div
+            style={{
+              padding: isIconOnly ? "20px 0" : "20px 18px",
+              display: "flex",
+              alignItems: "center",
+              gap: "10px",
+              borderBottom: "1px solid rgba(255,255,255,0.08)",
+              minHeight: "72px",
+              justifyContent: isIconOnly ? "center" : "flex-start",
+              overflow: "hidden",
+            }}
+          >
+            <img
+              src="/FPOPLOGO1.png"
+              alt="FPOP Logo"
+              style={{ width: "36px", height: "36px", objectFit: "contain", flexShrink: 0 }}
+            />
+            {!isIconOnly && (
+              <div style={{ overflow: "hidden", whiteSpace: "nowrap" }}>
+                <div style={{ fontWeight: 800, fontSize: "14px", color: "#fff", lineHeight: 1.2 }}>
+                  FPOP Staff
+                </div>
+                <div style={{ fontSize: "10px", color: "#FFDF00", textTransform: "uppercase", letterSpacing: "0.8px", opacity: 0.9 }}>
+                  Healthcare Hub
+                </div>
+              </div>
+            )}
           </div>
+
+          {/* ── Section label ── */}
+          {!isIconOnly && (
+            <div style={{ padding: "16px 18px 6px", fontSize: "10px", fontWeight: 700, color: "rgba(255,255,255,0.3)", textTransform: "uppercase", letterSpacing: "1.2px", whiteSpace: "nowrap" }}>
+              Main Menu
+            </div>
+          )}
+
+          {/* ── Navigation links ── */}
+          <nav style={{ flex: 1, padding: "8px 0", display: "flex", flexDirection: "column", gap: "2px" }}>
+            {navItems.map((item) => (
+              <StaffNavBtn
+                key={item.id}
+                item={item}
+                isActive={currentView === item.id}
+                isIconOnly={isIconOnly}
+                onClick={() => handleSideNav(item.id)}
+              />
+            ))}
+          </nav>
+
+          {/* ── Divider ── */}
+          <div style={{ margin: "0 12px", height: "1px", background: "rgba(255,255,255,0.07)" }} />
+
+          {/* ── Bottom: Logout ── */}
+          <div style={{ padding: "10px 0 16px", display: "flex", flexDirection: "column", gap: "2px" }}>
+            <StaffLogoutBtn isIconOnly={isIconOnly} logout={logout} />
+          </div>
+
+          {/* ── Sidebar footer watermark ── */}
+          {!isIconOnly && (
+            <div style={{ padding: "10px 18px 16px", fontSize: "10px", color: "rgba(255,255,255,0.18)", whiteSpace: "nowrap", fontStyle: "italic" }}>
+              © 2025 FPOP HealthHub System
+            </div>
+          )}
         </aside>
 
-        <div className="flex min-w-0 flex-1 flex-col">
+        {/* ════════════════ MAIN CONTENT ════════════════ */}
+        <div
+          style={{
+            marginLeft: sidebarW,
+            flex: 1,
+            display: "flex",
+            flexDirection: "column",
+            transition: "margin-left 0.3s cubic-bezier(0.4, 0, 0.2, 1)",
+            minWidth: 0,
+          }}
+        >
           <nav className="flex gap-2 overflow-x-auto border-b border-slate-200 bg-white px-4 py-3 md:hidden">
             {navItems.map((item) => (
               <button
@@ -317,7 +470,6 @@ const StaffDashboard = () => {
           {currentView === "assessment" && <StaffAssessmentView />}
 
           {currentView === "inventory" && <StaffInventoryView />}
-
         </div>
       </div>
     </div>

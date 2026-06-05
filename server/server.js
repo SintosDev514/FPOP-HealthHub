@@ -10,6 +10,7 @@ import staffRouter from "./routes/staffRoutes.js";
 import appointmentRouter from "./routes/appointmentRoutes.js";
 import adminRouter from "./routes/adminRoutes.js";
 import notificationRouter from "./routes/notificationRoutes.js";
+import inventoryRouter from "./routes/inventoryRoutes.js";
 
 import connectDB from "./config/Mongodb.js";
 
@@ -41,6 +42,7 @@ app.use("/api/staff", staffRouter);
 app.use("/api/appointments", appointmentRouter);
 app.use("/api/admin", adminRouter);
 app.use("/api/admin/notifications", notificationRouter);
+app.use("/api/inventory", inventoryRouter);
 
 app.listen(port, () => {
   console.log(`Running on Port: ${port}`);
