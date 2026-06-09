@@ -957,7 +957,7 @@ const StaffInventoryView = () => {
 
       {isCreateTableOpen && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-slate-950/50 px-4 py-6">
-          <div className="w-full max-w-md rounded-lg bg-white shadow-2xl">
+          <div className="flex max-h-[92vh] w-full max-w-md flex-col overflow-hidden rounded-lg bg-white shadow-2xl">
             <div className="flex items-center justify-between border-b border-slate-200 px-6 py-4">
               <div>
                 <h3 className="text-lg font-extrabold text-slate-950">
@@ -977,67 +977,69 @@ const StaffInventoryView = () => {
               </button>
             </div>
 
-            <form onSubmit={handleCreateTable} className="px-6 py-5">
-              <label className="block">
-                <span className="text-xs font-bold uppercase text-slate-500">
-                  Table Name
-                </span>
-                <input
-                  value={tableNameForm}
-                  onChange={(event) => setTableNameForm(event.target.value)}
-                  className="mt-2 h-11 w-full rounded-lg border border-slate-300 px-4 text-sm font-semibold text-slate-950 outline-none focus:border-blue-500"
-                  placeholder="Enter table name"
-                  required
-                />
-              </label>
-
-              <div className="mt-4 grid grid-cols-3 gap-3">
+            <form onSubmit={handleCreateTable} className="flex flex-col flex-1 min-h-0 overflow-hidden">
+              <div className="flex-1 overflow-y-auto px-6 py-5">
                 <label className="block">
                   <span className="text-xs font-bold uppercase text-slate-500">
-                    Chapter
+                    Table Name
                   </span>
                   <input
-                    value={tableChapterForm}
-                    onChange={(event) => setTableChapterForm(event.target.value)}
+                    value={tableNameForm}
+                    onChange={(event) => setTableNameForm(event.target.value)}
                     className="mt-2 h-11 w-full rounded-lg border border-slate-300 px-4 text-sm font-semibold text-slate-950 outline-none focus:border-blue-500"
-                    placeholder="e.g. 1"
+                    placeholder="Enter table name"
+                    required
                   />
                 </label>
-                <label className="block">
-                  <span className="text-xs font-bold uppercase text-slate-500">
-                    Quarter
-                  </span>
-                  <select
-                    value={tableQuarterForm}
-                    onChange={(event) => setTableQuarterForm(event.target.value)}
-                    className="mt-2 h-11 w-full rounded-lg border border-slate-300 bg-white px-4 text-sm text-slate-950 outline-none focus:border-blue-500"
-                  >
-                    <option value="">Select</option>
-                    <option value="Q1">Q1</option>
-                    <option value="Q2">Q2</option>
-                    <option value="Q3">Q3</option>
-                    <option value="Q4">Q4</option>
-                  </select>
-                </label>
-                <label className="block">
-                  <span className="text-xs font-bold uppercase text-slate-500">
-                    Year
-                  </span>
-                  <select
-                    value={tableYearForm}
-                    onChange={(event) => setTableYearForm(event.target.value)}
-                    className="mt-2 h-11 w-full rounded-lg border border-slate-300 bg-white px-4 text-sm text-slate-950 outline-none focus:border-blue-500"
-                  >
-                    <option value="">Select</option>
-                    {Array.from({ length: 10 }, (_, i) => {
-                      const y = new Date().getFullYear() - 5 + i;
-                      return <option key={y} value={y}>{y}</option>;
-                    })}
-                  </select>
-                </label>
+
+                <div className="mt-4 grid grid-cols-3 gap-3">
+                  <label className="block">
+                    <span className="text-xs font-bold uppercase text-slate-500">
+                      Chapter
+                    </span>
+                    <input
+                      value={tableChapterForm}
+                      onChange={(event) => setTableChapterForm(event.target.value)}
+                      className="mt-2 h-11 w-full rounded-lg border border-slate-300 px-4 text-sm font-semibold text-slate-950 outline-none focus:border-blue-500"
+                      placeholder="e.g. 1"
+                    />
+                  </label>
+                  <label className="block">
+                    <span className="text-xs font-bold uppercase text-slate-500">
+                      Quarter
+                    </span>
+                    <select
+                      value={tableQuarterForm}
+                      onChange={(event) => setTableQuarterForm(event.target.value)}
+                      className="mt-2 h-11 w-full rounded-lg border border-slate-300 bg-white px-4 text-sm text-slate-950 outline-none focus:border-blue-500"
+                    >
+                      <option value="">Select</option>
+                      <option value="Q1">Q1</option>
+                      <option value="Q2">Q2</option>
+                      <option value="Q3">Q3</option>
+                      <option value="Q4">Q4</option>
+                    </select>
+                  </label>
+                  <label className="block">
+                    <span className="text-xs font-bold uppercase text-slate-500">
+                      Year
+                    </span>
+                    <select
+                      value={tableYearForm}
+                      onChange={(event) => setTableYearForm(event.target.value)}
+                      className="mt-2 h-11 w-full rounded-lg border border-slate-300 bg-white px-4 text-sm text-slate-950 outline-none focus:border-blue-500"
+                    >
+                      <option value="">Select</option>
+                      {Array.from({ length: 10 }, (_, i) => {
+                        const y = new Date().getFullYear() - 5 + i;
+                        return <option key={y} value={y}>{y}</option>;
+                      })}
+                    </select>
+                  </label>
+                </div>
               </div>
 
-              <div className="mt-6 flex flex-col-reverse gap-3 border-t border-slate-200 pt-5 sm:flex-row sm:justify-end">
+              <div className="mt-auto flex flex-col-reverse gap-3 border-t border-slate-200 px-6 py-4 sm:flex-row sm:justify-end bg-slate-50">
                 <button
                   type="button"
                   onClick={closeCreateTableModal}
@@ -1060,7 +1062,7 @@ const StaffInventoryView = () => {
 
       {isCategoryModalOpen && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-slate-950/50 px-4 py-6">
-          <div className="w-full max-w-md rounded-lg bg-white shadow-2xl">
+          <div className="flex max-h-[92vh] w-full max-w-md flex-col overflow-hidden rounded-lg bg-white shadow-2xl">
             <div className="flex items-center justify-between border-b border-slate-200 px-6 py-4">
               <div>
                 <h3 className="text-lg font-extrabold text-slate-950">
@@ -1080,21 +1082,23 @@ const StaffInventoryView = () => {
               </button>
             </div>
 
-            <form onSubmit={handleCreateCategory} className="px-6 py-5">
-              <label className="block">
-                <span className="text-xs font-bold uppercase text-slate-500">
-                  Category Name
-                </span>
-                <input
-                  value={categoryNameForm}
-                  onChange={(event) => setCategoryNameForm(event.target.value)}
-                  className="mt-2 h-11 w-full rounded-lg border border-slate-300 px-4 text-sm font-semibold text-slate-950 outline-none focus:border-blue-500"
-                  placeholder="Enter category name"
-                  required
-                />
-              </label>
+            <form onSubmit={handleCreateCategory} className="flex flex-col flex-1 min-h-0 overflow-hidden">
+              <div className="flex-1 overflow-y-auto px-6 py-5">
+                <label className="block">
+                  <span className="text-xs font-bold uppercase text-slate-500">
+                    Category Name
+                  </span>
+                  <input
+                    value={categoryNameForm}
+                    onChange={(event) => setCategoryNameForm(event.target.value)}
+                    className="mt-2 h-11 w-full rounded-lg border border-slate-300 px-4 text-sm font-semibold text-slate-950 outline-none focus:border-blue-500"
+                    placeholder="Enter category name"
+                    required
+                  />
+                </label>
+              </div>
 
-              <div className="mt-6 flex flex-col-reverse gap-3 border-t border-slate-200 pt-5 sm:flex-row sm:justify-end">
+              <div className="mt-auto flex flex-col-reverse gap-3 border-t border-slate-200 px-6 py-4 sm:flex-row sm:justify-end bg-slate-50">
                 <button
                   type="button"
                   onClick={closeCategoryModal}
@@ -1117,7 +1121,7 @@ const StaffInventoryView = () => {
 
       {activeCategory && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-slate-950/50 px-4 py-6">
-          <div className="max-h-[92vh] w-full max-w-5xl overflow-hidden rounded-lg bg-white shadow-2xl">
+          <div className="flex max-h-[92vh] w-full max-w-5xl flex-col overflow-hidden rounded-lg bg-white shadow-2xl">
             <div className="flex items-center justify-between border-b border-slate-200 px-6 py-4">
               <div>
                 <h3 className="text-lg font-extrabold text-slate-950">
@@ -1141,109 +1145,111 @@ const StaffInventoryView = () => {
               </button>
             </div>
 
-            <form onSubmit={handleSaveItem} className="overflow-y-auto px-6 py-5">
-              <div className="grid gap-4 md:grid-cols-[minmax(0,1fr)_180px]">
-                <label className="block">
-                  <span className="text-xs font-bold uppercase text-slate-500">
-                    Type/Brand Name
-                  </span>
-                  <input
-                    value={itemForm.name}
-                    onChange={(event) =>
-                      setItemForm((current) => ({
-                        ...current,
-                        name: event.target.value,
-                      }))
-                    }
-                    className="mt-2 h-11 w-full rounded-lg border border-slate-300 px-4 text-sm font-semibold text-slate-950 outline-none focus:border-blue-500"
-                    placeholder="Enter item or brand name"
-                    required
-                  />
-                </label>
-                <label className="block">
-                  <span className="text-xs font-bold uppercase text-slate-500">
-                    Beginning Balance
-                  </span>
-                  <input
-                    type="number"
-                    min="0"
-                    value={itemForm.beginning}
-                    onChange={(event) =>
-                      setItemForm((current) => ({
-                        ...current,
-                        beginning: toStockInputValue(event.target.value),
-                      }))
-                    }
-                    className="mt-2 h-11 w-full rounded-lg border border-slate-300 px-4 text-right text-sm font-semibold text-slate-950 outline-none focus:border-blue-500"
-                  />
-                </label>
+            <form onSubmit={handleSaveItem} className="flex flex-col flex-1 min-h-0 overflow-hidden">
+              <div className="flex-1 overflow-y-auto px-6 py-5">
+                <div className="grid gap-4 md:grid-cols-[minmax(0,1fr)_180px]">
+                  <label className="block">
+                    <span className="text-xs font-bold uppercase text-slate-500">
+                      Type/Brand Name
+                    </span>
+                    <input
+                      value={itemForm.name}
+                      onChange={(event) =>
+                        setItemForm((current) => ({
+                          ...current,
+                          name: event.target.value,
+                        }))
+                      }
+                      className="mt-2 h-11 w-full rounded-lg border border-slate-300 px-4 text-sm font-semibold text-slate-950 outline-none focus:border-blue-500"
+                      placeholder="Enter item or brand name"
+                      required
+                    />
+                  </label>
+                  <label className="block">
+                    <span className="text-xs font-bold uppercase text-slate-500">
+                      Beginning Balance
+                    </span>
+                    <input
+                      type="number"
+                      min="0"
+                      value={itemForm.beginning}
+                      onChange={(event) =>
+                        setItemForm((current) => ({
+                          ...current,
+                          beginning: toStockInputValue(event.target.value),
+                        }))
+                      }
+                      className="mt-2 h-11 w-full rounded-lg border border-slate-300 px-4 text-right text-sm font-semibold text-slate-950 outline-none focus:border-blue-500"
+                    />
+                  </label>
+                </div>
+
+                <div className="mt-6 grid gap-6 lg:grid-cols-2">
+                  <fieldset className="rounded-lg border border-emerald-200 bg-emerald-50/50 p-4">
+                    <legend className="px-2 text-sm font-extrabold text-emerald-700">
+                      Receipts
+                    </legend>
+                    <div className="mt-3 grid gap-3 sm:grid-cols-2">
+                      {receiptInputColumns.map((column) => (
+                        <label
+                          key={`modal-receipt-${column.label}`}
+                          className="block"
+                        >
+                          <span className="text-xs font-bold text-slate-600">
+                            {column.label}
+                          </span>
+                          <input
+                            type="number"
+                            min="0"
+                            value={itemForm.receipts[column.label]}
+                            onChange={(event) =>
+                              updateStockValue(
+                                "receipts",
+                                column.label,
+                                event.target.value
+                              )
+                            }
+                            className="mt-1 h-10 w-full rounded-lg border border-emerald-200 bg-white px-3 text-right text-sm font-semibold text-slate-950 outline-none focus:border-emerald-500"
+                          />
+                        </label>
+                      ))}
+                    </div>
+                  </fieldset>
+
+                  <fieldset className="rounded-lg border border-rose-200 bg-rose-50/50 p-4">
+                    <legend className="px-2 text-sm font-extrabold text-rose-700">
+                      Issuances
+                    </legend>
+                    <div className="mt-3 grid gap-3 sm:grid-cols-2">
+                      {issuanceInputColumns.map((column) => (
+                        <label
+                          key={`modal-issuance-${column.label}`}
+                          className="block"
+                        >
+                          <span className="text-xs font-bold text-slate-600">
+                            {column.label}
+                          </span>
+                          <input
+                            type="number"
+                            min="0"
+                            value={itemForm.issuances[column.label]}
+                            onChange={(event) =>
+                              updateStockValue(
+                                "issuances",
+                                column.label,
+                                event.target.value
+                              )
+                            }
+                            className="mt-1 h-10 w-full rounded-lg border border-rose-200 bg-white px-3 text-right text-sm font-semibold text-slate-950 outline-none focus:border-rose-500"
+                          />
+                        </label>
+                      ))}
+                    </div>
+                  </fieldset>
+                </div>
               </div>
 
-              <div className="mt-6 grid gap-6 lg:grid-cols-2">
-                <fieldset className="rounded-lg border border-emerald-200 bg-emerald-50/50 p-4">
-                  <legend className="px-2 text-sm font-extrabold text-emerald-700">
-                    Receipts
-                  </legend>
-                  <div className="mt-3 grid gap-3 sm:grid-cols-2">
-                    {receiptInputColumns.map((column) => (
-                      <label
-                        key={`modal-receipt-${column.label}`}
-                        className="block"
-                      >
-                        <span className="text-xs font-bold text-slate-600">
-                          {column.label}
-                        </span>
-                        <input
-                          type="number"
-                          min="0"
-                          value={itemForm.receipts[column.label]}
-                          onChange={(event) =>
-                            updateStockValue(
-                              "receipts",
-                              column.label,
-                              event.target.value
-                            )
-                          }
-                          className="mt-1 h-10 w-full rounded-lg border border-emerald-200 bg-white px-3 text-right text-sm font-semibold text-slate-950 outline-none focus:border-emerald-500"
-                        />
-                      </label>
-                    ))}
-                  </div>
-                </fieldset>
-
-                <fieldset className="rounded-lg border border-rose-200 bg-rose-50/50 p-4">
-                  <legend className="px-2 text-sm font-extrabold text-rose-700">
-                    Issuances
-                  </legend>
-                  <div className="mt-3 grid gap-3 sm:grid-cols-2">
-                    {issuanceInputColumns.map((column) => (
-                      <label
-                        key={`modal-issuance-${column.label}`}
-                        className="block"
-                      >
-                        <span className="text-xs font-bold text-slate-600">
-                          {column.label}
-                        </span>
-                        <input
-                          type="number"
-                          min="0"
-                          value={itemForm.issuances[column.label]}
-                          onChange={(event) =>
-                            updateStockValue(
-                              "issuances",
-                              column.label,
-                              event.target.value
-                            )
-                          }
-                          className="mt-1 h-10 w-full rounded-lg border border-rose-200 bg-white px-3 text-right text-sm font-semibold text-slate-950 outline-none focus:border-rose-500"
-                        />
-                      </label>
-                    ))}
-                  </div>
-                </fieldset>
-              </div>
-
-              <div className="mt-6 flex flex-col-reverse gap-3 border-t border-slate-200 pt-5 sm:flex-row sm:justify-end">
+              <div className="mt-auto flex flex-col-reverse gap-3 border-t border-slate-200 px-6 py-4 sm:flex-row sm:justify-end bg-slate-50">
                 <button
                   type="button"
                   onClick={closeAddItemModal}
@@ -1266,8 +1272,8 @@ const StaffInventoryView = () => {
 
       {deleteTarget && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-slate-950/50 px-4 py-6">
-          <div className="w-full max-w-md rounded-lg bg-white shadow-2xl">
-            <div className="border-b border-slate-200 px-6 py-4">
+          <div className="flex max-h-[92vh] w-full max-w-md flex-col overflow-hidden rounded-lg bg-white shadow-2xl">
+            <div className="flex-1 overflow-y-auto px-6 py-5">
               <h3 className="text-lg font-extrabold text-slate-950">
                 Delete Item
               </h3>
@@ -1279,7 +1285,7 @@ const StaffInventoryView = () => {
                 ? This will remove it from the current inventory list.
               </p>
             </div>
-            <div className="flex flex-col-reverse gap-3 px-6 py-5 sm:flex-row sm:justify-end">
+            <div className="mt-auto flex flex-col-reverse gap-3 border-t border-slate-200 px-6 py-4 sm:flex-row sm:justify-end bg-slate-50">
               <button
                 type="button"
                 onClick={closeDeleteConfirmation}
