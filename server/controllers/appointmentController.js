@@ -116,35 +116,43 @@ const createAppointment = async (req, res) => {
         to: patient.email,
         subject: "Appointment Confirmation – FPOP HealthHub",
         html: `
-  <div style="font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; background-color: #F4F6F8; padding: 40px 20px;">
-    <div style="max-width: 500px; margin: 0 auto; background-color: #ffffff; border-radius: 16px; overflow: hidden; box-shadow: 0 10px 30px rgba(0, 59, 111, 0.05); border: 1px solid #E6EFF7;">
-      <div style="background-color: #003B6F; padding: 28px 24px; text-align: center; color: #ffffff; border-bottom: 4px solid #F5C518;">
-        <div style="margin-bottom: 10px;">
-          <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#ffffff" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="vertical-align: middle; display: inline-block;">
-            <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>
-            <line x1="12" y1="8" x2="12" y2="16"/>
-            <line x1="8" y1="12" x2="16" y2="12"/>
-          </svg>
-          <span style="font-size: 24px; font-weight: bold; letter-spacing: 0.5px; vertical-align: middle; margin-left: 8px; color: #ffffff;">FPOP HealthHub</span>
+  <div style="font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; background-color: #F4F6F8; padding: 40px 20px;">
+    <div style="max-width: 560px; margin: 0 auto; background-color: #ffffff; border-radius: 20px; overflow: hidden; box-shadow: 0 8px 40px rgba(0, 59, 111, 0.08);">
+      <div style="background: linear-gradient(135deg, #003B6F 0%, #1A5276 100%); padding: 32px 32px 24px; text-align: center;">
+        <div style="margin-bottom: 12px; display: flex; align-items: center; justify-content: center; gap: 10px;">
+          <div style="width: 40px; height: 40px; background: rgba(255,255,255,0.15); border-radius: 12px; display: flex; align-items: center; justify-content: center;">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#F5C518" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>
+              <line x1="12" y1="8" x2="12" y2="16"/>
+              <line x1="8" y1="12" x2="16" y2="12"/>
+            </svg>
+          </div>
+          <span style="font-size: 22px; font-weight: 700; letter-spacing: -0.3px; color: #ffffff;">FPOP HealthHub</span>
         </div>
-        <p style="margin: 0; font-size: 13px; color: #D1E4F5; font-weight: 500; letter-spacing: 1px; text-transform: uppercase;">Appointment Confirmed</p>
+        <div style="display: inline-block; background: rgba(245,197,24,0.15); padding: 6px 18px; border-radius: 20px; margin-top: 4px;">
+          <p style="margin: 0; font-size: 12px; color: #F5C518; font-weight: 600; letter-spacing: 1.2px; text-transform: uppercase;">Booking Confirmed</p>
+        </div>
       </div>
-      <div style="padding: 32px 28px;">
-        <p style="font-size: 15px; color: #1A2A3A; line-height: 1.6; margin: 0 0 20px;">Hi <strong>${patient.firstName}</strong>,</p>
-        <p style="font-size: 14px; color: #4a5568; line-height: 1.6; margin: 0 0 20px;">Your appointment has been booked successfully. Here's a summary of your booking:</p>
-        <table style="width: 100%; border-collapse: collapse; margin-bottom: 24px;">
-          <tr><td style="padding: 12px 14px; border-bottom: 1px solid #E6EFF7; color: #64748b; font-size: 13px; font-weight: 500;">Service</td><td style="padding: 12px 14px; border-bottom: 1px solid #E6EFF7; color: #1A2A3A; font-size: 13px; font-weight: 600;">${serviceName}</td></tr>
-          <tr><td style="padding: 12px 14px; border-bottom: 1px solid #E6EFF7; color: #64748b; font-size: 13px; font-weight: 500;">Doctor</td><td style="padding: 12px 14px; border-bottom: 1px solid #E6EFF7; color: #1A2A3A; font-size: 13px; font-weight: 600;">${populated.staffId?.firstName || ""} ${populated.staffId?.lastName || ""}${populated.staffId?.specialty ? ` (${populated.staffId.specialty})` : ""}</td></tr>
-          <tr><td style="padding: 12px 14px; border-bottom: 1px solid #E6EFF7; color: #64748b; font-size: 13px; font-weight: 500;">Date</td><td style="padding: 12px 14px; border-bottom: 1px solid #E6EFF7; color: #1A2A3A; font-size: 13px; font-weight: 600;">${formattedDate}</td></tr>
-          <tr><td style="padding: 12px 14px; border-bottom: 1px solid #E6EFF7; color: #64748b; font-size: 13px; font-weight: 500;">Time</td><td style="padding: 12px 14px; border-bottom: 1px solid #E6EFF7; color: #1A2A3A; font-size: 13px; font-weight: 600;">${time}</td></tr>
-          <tr><td style="padding: 12px 14px; color: #64748b; font-size: 13px; font-weight: 500;">Status</td><td style="padding: 12px 14px; color: #1A2A3A; font-size: 13px; font-weight: 600;"><span style="background: #FEF3C7; color: #92400E; padding: 2px 10px; border-radius: 4px; font-size: 12px;">Pending</span></td></tr>
-        </table>
-        <div style="background: #F0F7FF; border-left: 4px solid #003B6F; padding: 14px 16px; border-radius: 8px; margin-bottom: 24px;">
-          <p style="margin: 0 0 4px; font-size: 13px; font-weight: 600; color: #003B6F;">Reminder</p>
-          <p style="margin: 0; font-size: 12.5px; color: #4a5568; line-height: 1.5;">Please arrive 10 minutes before your scheduled time. Bring a valid ID and your appointment reference.</p>
+      <div style="padding: 36px 32px 28px;">
+        <p style="font-size: 16px; color: #1A2A3A; line-height: 1.7; margin: 0 0 6px;">Hi <strong style="color: #003B6F;">${patient.firstName}</strong>,</p>
+        <p style="font-size: 14px; color: #64748b; line-height: 1.6; margin: 0 0 28px;">Your appointment request has been submitted and is awaiting confirmation. Here's a summary:</p>
+        <div style="background: #F8FAFC; border-radius: 14px; padding: 4px 0; margin-bottom: 28px; border: 1px solid #E8EEF4;">
+          <table style="width: 100%; border-collapse: collapse;">
+            <tr><td style="padding: 14px 20px; border-bottom: 1px solid #E8EEF4; color: #64748b; font-size: 13px; font-weight: 500; width: 38%;">Service</td><td style="padding: 14px 20px; border-bottom: 1px solid #E8EEF4; color: #1A2A3A; font-size: 13px; font-weight: 600;">${serviceName}</td></tr>
+            <tr><td style="padding: 14px 20px; border-bottom: 1px solid #E8EEF4; color: #64748b; font-size: 13px; font-weight: 500;">Healthcare Provider</td><td style="padding: 14px 20px; border-bottom: 1px solid #E8EEF4; color: #1A2A3A; font-size: 13px; font-weight: 600;">${populated.staffId?.firstName || ""} ${populated.staffId?.lastName || ""}${populated.staffId?.specialty ? ` <span style="color: #64748b; font-weight: 400;">(${populated.staffId.specialty})</span>` : ""}</td></tr>
+            <tr><td style="padding: 14px 20px; border-bottom: 1px solid #E8EEF4; color: #64748b; font-size: 13px; font-weight: 500;">Date</td><td style="padding: 14px 20px; border-bottom: 1px solid #E8EEF4; color: #1A2A3A; font-size: 13px; font-weight: 600;">${formattedDate}</td></tr>
+            <tr><td style="padding: 14px 20px; border-bottom: 1px solid #E8EEF4; color: #64748b; font-size: 13px; font-weight: 500;">Time</td><td style="padding: 14px 20px; border-bottom: 1px solid #E8EEF4; color: #1A2A3A; font-size: 13px; font-weight: 600;">${time}</td></tr>
+            <tr><td style="padding: 14px 20px; color: #64748b; font-size: 13px; font-weight: 500;">Status</td><td style="padding: 14px 20px; color: #1A2A3A; font-size: 13px;"><span style="display: inline-block; background: #FEF3C7; color: #92400E; padding: 3px 14px; border-radius: 6px; font-size: 12px; font-weight: 600;">Pending</span></td></tr>
+          </table>
         </div>
-        <p style="font-size: 13px; color: #4a5568; line-height: 1.6; margin: 0 0 8px;">We'd love to hear your feedback after your visit. Your input helps us serve you better.</p>
-        <p style="font-size: 13px; color: #8a96a3; text-align: center; margin: 24px 0 0; border-top: 1px solid #E6EFF7; padding-top: 20px;">Thank you for choosing FPOP HealthHub.</p>
+        <div style="background: #F0F7FF; border-left: 4px solid #003B6F; padding: 16px 20px; border-radius: 10px; margin-bottom: 28px;">
+          <p style="margin: 0 0 4px; font-size: 13px; font-weight: 700; color: #003B6F;">📌 Reminder</p>
+          <p style="margin: 0; font-size: 13px; color: #475569; line-height: 1.6;">Please arrive 10 minutes before your scheduled time. Bring a valid ID and your appointment reference.</p>
+        </div>
+        <div style="text-align: center; border-top: 1px solid #E8EEF4; padding-top: 24px;">
+          <p style="font-size: 13px; color: #94A3B8; margin: 0 0 4px; font-weight: 500;">Thank you for choosing FPOP HealthHub.</p>
+          <p style="font-size: 12px; color: #B0BEC5; margin: 0;">We look forward to serving you.</p>
+        </div>
       </div>
     </div>
   </div>`,
@@ -192,4 +200,106 @@ const getStaffAppointments = async (req, res) => {
   }
 };
 
-export { getAvailableSlots, createAppointment, getUserAppointments, getStaffAppointments };
+const updateAppointmentStatus = async (req, res) => {
+  try {
+    const { id } = req.params;
+    const { status } = req.body;
+
+    if (!["confirmed", "cancelled"].includes(status)) {
+      return res.json({ success: false, message: "Invalid status" });
+    }
+
+    const appointment = await appointmentModel
+      .findById(id)
+      .populate("patientId", "firstName lastName email")
+      .populate("staffId", "firstName lastName specialty");
+
+    if (!appointment) {
+      return res.json({ success: false, message: "Appointment not found" });
+    }
+
+    if (appointment.staffId._id.toString() !== req.user.id.toString()) {
+      return res.json({ success: false, message: "Unauthorized" });
+    }
+
+    if (appointment.status !== "pending") {
+      return res.json({ success: false, message: "Appointment is no longer pending" });
+    }
+
+    appointment.status = status;
+    await appointment.save();
+
+    const patient = appointment.patientId;
+    const staff = appointment.staffId;
+    const dateObj = new Date(appointment.date + "T00:00:00");
+    const formattedDate = dateObj.toLocaleDateString("en-US", {
+      weekday: "long",
+      year: "numeric",
+      month: "long",
+      day: "numeric",
+    });
+
+    const statusLabel = status === "confirmed" ? "Confirmed" : "Cancelled";
+    const statusColor = status === "confirmed" ? "#15803d" : "#DC2626";
+    const statusBg = status === "confirmed" ? "#dcfce7" : "#fee2e2";
+    const headingBg = status === "confirmed" ? "#003B6F" : "#991B1B";
+
+    const mailOptions = {
+      from: process.env.SENDER_EMAIL,
+      to: patient.email,
+      subject: `Appointment ${statusLabel} – FPOP HealthHub`,
+      html: `
+  <div style="font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; background-color: #F4F6F8; padding: 40px 20px;">
+    <div style="max-width: 560px; margin: 0 auto; background-color: #ffffff; border-radius: 20px; overflow: hidden; box-shadow: 0 8px 40px rgba(0, 59, 111, 0.08);">
+      <div style="background: linear-gradient(135deg, ${headingBg} 0%, ${status === "confirmed" ? "#1A5276" : "#7F1D1D"} 100%); padding: 32px 32px 24px; text-align: center;">
+        <div style="margin-bottom: 12px; display: flex; align-items: center; justify-content: center; gap: 10px;">
+          <div style="width: 40px; height: 40px; background: rgba(255,255,255,0.15); border-radius: 12px; display: flex; align-items: center; justify-content: center;">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#F5C518" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>
+              <line x1="12" y1="8" x2="12" y2="16"/>
+              <line x1="8" y1="12" x2="16" y2="12"/>
+            </svg>
+          </div>
+          <span style="font-size: 22px; font-weight: 700; letter-spacing: -0.3px; color: #ffffff;">FPOP HealthHub</span>
+        </div>
+        <div style="display: inline-block; background: ${status === "confirmed" ? "rgba(34,197,94,0.15)" : "rgba(239,68,68,0.15)"}; padding: 6px 18px; border-radius: 20px; margin-top: 4px;">
+          <p style="margin: 0; font-size: 12px; color: ${statusColor}; font-weight: 600; letter-spacing: 1.2px; text-transform: uppercase;">Appointment ${statusLabel}</p>
+        </div>
+      </div>
+      <div style="padding: 36px 32px 28px;">
+        <p style="font-size: 16px; color: #1A2A3A; line-height: 1.7; margin: 0 0 6px;">Hi <strong style="color: #003B6F;">${patient.firstName}</strong>,</p>
+        <p style="font-size: 14px; color: #64748b; line-height: 1.6; margin: 0 0 28px;">Your appointment has been <strong style="color: ${statusColor};">${statusLabel.toLowerCase()}</strong>. Here are the details:</p>
+        <div style="background: #F8FAFC; border-radius: 14px; padding: 4px 0; margin-bottom: 28px; border: 1px solid #E8EEF4;">
+          <table style="width: 100%; border-collapse: collapse;">
+            <tr><td style="padding: 14px 20px; border-bottom: 1px solid #E8EEF4; color: #64748b; font-size: 13px; font-weight: 500; width: 38%;">Service</td><td style="padding: 14px 20px; border-bottom: 1px solid #E8EEF4; color: #1A2A3A; font-size: 13px; font-weight: 600;">${appointment.serviceName}</td></tr>
+            <tr><td style="padding: 14px 20px; border-bottom: 1px solid #E8EEF4; color: #64748b; font-size: 13px; font-weight: 500;">Healthcare Provider</td><td style="padding: 14px 20px; border-bottom: 1px solid #E8EEF4; color: #1A2A3A; font-size: 13px; font-weight: 600;">${staff.firstName} ${staff.lastName}${staff.specialty ? ` <span style="color: #64748b; font-weight: 400;">(${staff.specialty})</span>` : ""}</td></tr>
+            <tr><td style="padding: 14px 20px; border-bottom: 1px solid #E8EEF4; color: #64748b; font-size: 13px; font-weight: 500;">Date</td><td style="padding: 14px 20px; border-bottom: 1px solid #E8EEF4; color: #1A2A3A; font-size: 13px; font-weight: 600;">${formattedDate}</td></tr>
+            <tr><td style="padding: 14px 20px; border-bottom: 1px solid #E8EEF4; color: #64748b; font-size: 13px; font-weight: 500;">Time</td><td style="padding: 14px 20px; border-bottom: 1px solid #E8EEF4; color: #1A2A3A; font-size: 13px; font-weight: 600;">${appointment.time}</td></tr>
+            <tr><td style="padding: 14px 20px; color: #64748b; font-size: 13px; font-weight: 500;">Status</td><td style="padding: 14px 20px; color: #1A2A3A; font-size: 13px;"><span style="display: inline-block; background: ${statusBg}; color: ${statusColor}; padding: 3px 14px; border-radius: 6px; font-size: 12px; font-weight: 600;">${statusLabel}</span></td></tr>
+          </table>
+        </div>
+        <div style="text-align: center; border-top: 1px solid #E8EEF4; padding-top: 24px;">
+          <p style="font-size: 13px; color: #94A3B8; margin: 0 0 4px; font-weight: 500;">Thank you for choosing FPOP HealthHub.</p>
+          <p style="font-size: 12px; color: #B0BEC5; margin: 0;">This is an automated message. Please do not reply.</p>
+        </div>
+      </div>
+    </div>
+  </div>`,
+    };
+
+    await transporter.sendMail(mailOptions).catch(() => {});
+
+    await notificationModel.create({
+      title: `Appointment ${statusLabel}`,
+      text: `Appointment for ${patient.firstName} ${patient.lastName} with ${staff.firstName} ${staff.lastName} on ${appointment.date} at ${appointment.time} has been ${statusLabel.toLowerCase()}.`,
+      category: "Appointment",
+      priority: status === "confirmed" ? "Medium" : "High",
+    });
+
+    res.json({ success: true, appointment });
+  } catch (error) {
+    res.json({ success: false, message: error.message });
+  }
+};
+
+export { getAvailableSlots, createAppointment, getUserAppointments, getStaffAppointments, updateAppointmentStatus };

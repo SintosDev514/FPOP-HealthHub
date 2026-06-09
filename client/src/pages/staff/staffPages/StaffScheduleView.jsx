@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 
 const Icon = ({ name, className = "h-6 w-6" }) => {
   const paths = {
@@ -88,12 +88,45 @@ const getInitials = (name) => {
     .slice(0, 3);
 };
 
-const StaffScheduleView = ({ appointments = [] }) => {
+const StaffScheduleView = ({ appointments = [], onRefresh }) => {
+  const [updating, setUpdating] = useState(null);
+  const [feedback, setFeedback] = useState(null);
   const todayStr = new Date().toISOString().split("T")[0];
   const todayApps = appointments.filter((a) => a.date === todayStr);
   const upcomingApps = appointments.filter(
     (a) => a.date >= todayStr && (a.status === "pending" || a.status === "confirmed")
   );
+
+  const showFeedback = (message, type) => {
+    setFeedback({ message, type });
+    setTimeout(() => setFeedback(null), 4000);
+  };
+
+  const handleStatusChange = async (id, status) => {
+    setUpdating(id);
+    try {
+      const res = await fetch(`http://localhost:5000/api/appointments/${id}/status`, {
+        method: "PUT",
+        credentials: "include",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ status }),
+      });
+      const data = await res.json();
+      if (data.success) {
+        const label = status === "confirmed" ? "accepted" : "declined";
+        showFeedback(`Appointment ${label} successfully`, "success");
+        if (onRefresh) {
+          setTimeout(() => onRefresh(), 500);
+        }
+      } else {
+        showFeedback(data.message || "Failed to update appointment", "error");
+      }
+    } catch (err) {
+      showFeedback("Network error. Please try again.", "error");
+    } finally {
+      setUpdating(null);
+    }
+  };
 
   const statusStyle = (status) => {
     const styles = {
@@ -107,6 +140,17 @@ const StaffScheduleView = ({ appointments = [] }) => {
 
   return (
     <main className="flex-1 bg-[#f1f4f8] px-4 py-7 sm:px-8 lg:px-[32px]">
+      {feedback && (
+        <div
+          className={`mb-4 rounded-xl px-5 py-3 text-sm font-bold shadow-lg transition-all ${
+            feedback.type === "success"
+              ? "bg-[#dcfce7] text-[#15803d] border border-[#15803d]/20"
+              : "bg-[#fee2e2] text-[#DC2626] border border-[#DC2626]/20"
+          }`}
+        >
+          {feedback.message}
+        </div>
+      )}
       <section className="mb-6 grid grid-cols-1 gap-4 sm:grid-cols-2 xl:grid-cols-3">
         <ShiftCard
           title="Today's Appointments"
@@ -147,12 +191,15 @@ const StaffScheduleView = ({ appointments = [] }) => {
                 <th className="w-[150px] px-5 py-4 text-xs font-bold uppercase tracking-[0.06em]">
                   Status
                 </th>
+                <th className="w-[180px] px-5 py-4 text-xs font-bold uppercase tracking-[0.06em]">
+                  Actions
+                </th>
               </tr>
             </thead>
             <tbody>
               {appointments.length === 0 ? (
                 <tr>
-                  <td colSpan={5} className="px-5 py-8 text-center text-sm text-[#8a96a3]">
+                  <td colSpan={6} className="px-5 py-8 text-center text-sm text-[#8a96a3]">
                     No appointments yet
                   </td>
                 </tr>
@@ -193,6 +240,28 @@ const StaffScheduleView = ({ appointments = [] }) => {
                         <span className={`inline-flex whitespace-nowrap rounded-full px-3 py-1 text-xs font-bold ${statusStyle(appt.status)}`}>
                           {appt.status}
                         </span>
+                      </td>
+                      <td className="px-5 py-4">
+                        {appt.status === "pending" ? (
+                          <div className="flex items-center gap-2">
+                            <button
+                              onClick={() => handleStatusChange(appt._id, "confirmed")}
+                              disabled={updating === appt._id}
+                              className="inline-flex items-center gap-1 rounded-lg bg-[#15803d] px-3 py-1.5 text-xs font-bold text-white transition hover:bg-[#166534] disabled:opacity-50"
+                            >
+                              {updating === appt._id ? "..." : "Accept"}
+                            </button>
+                            <button
+                              onClick={() => handleStatusChange(appt._id, "cancelled")}
+                              disabled={updating === appt._id}
+                              className="inline-flex items-center gap-1 rounded-lg bg-[#DC2626] px-3 py-1.5 text-xs font-bold text-white transition hover:bg-[#B91C1C] disabled:opacity-50"
+                            >
+                              {updating === appt._id ? "..." : "Decline"}
+                            </button>
+                          </div>
+                        ) : (
+                          <span className="text-xs text-[#8a96a3]">—</span>
+                        )}
                       </td>
                     </tr>
                   ))
