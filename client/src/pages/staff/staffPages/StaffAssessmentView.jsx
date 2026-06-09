@@ -144,31 +144,153 @@ const YesNoCard = ({ label, name, value, onChange, disabled }) => {
   );
 };
 
+const CheckboxOptionGroup = ({ label, name, options, value, onChange, disabled, columns = "sm:grid-cols-2" }) => (
+  <div className="rounded-lg border border-slate-200 bg-slate-50 px-4 py-3">
+    <p className="mb-3 text-xs font-semibold text-[#1E3A5F]">{label}</p>
+    <div className={`grid grid-cols-1 ${columns} gap-2`}>
+      {options.map(option => (
+        <label
+          key={option.value}
+          className={`flex min-h-[42px] items-center gap-2 rounded-lg border border-slate-200 bg-white px-3 py-2 text-sm font-medium text-slate-700 transition-colors ${
+            disabled ? "cursor-default opacity-100" : "cursor-pointer hover:border-[#F5C518]"
+          }`}
+        >
+          <input
+            type="checkbox"
+            name={disabled ? `${name}-review` : name}
+            checked={value === option.value}
+            onChange={() => onChange(value === option.value ? "" : option.value)}
+            disabled={disabled}
+            className="h-4 w-4 rounded border-slate-300 accent-[#1E3A5F] disabled:opacity-100"
+          />
+          <span>{option.label}</span>
+        </label>
+      ))}
+    </div>
+  </div>
+);
+
+const CheckboxField = ({ label, name, checked, onChange, disabled }) => (
+  <label
+    className={`flex min-h-[42px] items-center gap-2 rounded-lg border border-slate-200 bg-white px-3 py-2 text-sm font-medium text-slate-700 transition-colors ${
+      disabled ? "cursor-default opacity-100" : "cursor-pointer hover:border-[#F5C518]"
+    }`}
+  >
+    <input
+      type="checkbox"
+      name={disabled ? `${name}-review` : name}
+      checked={Boolean(checked)}
+      onChange={e => onChange(e.target.checked)}
+      disabled={disabled}
+      className="h-4 w-4 rounded border-slate-300 accent-[#1E3A5F] disabled:opacity-100"
+    />
+    <span>{label}</span>
+  </label>
+);
+
+const VAWReferralOption = ({ label, name, checked, onChange, disabled, children }) => {
+  const optionClass = `flex min-h-[42px] items-center gap-2 rounded-lg border border-slate-200 bg-white px-3 py-2 text-sm font-medium text-slate-700 transition-colors ${
+    disabled ? "cursor-default opacity-100" : "cursor-pointer hover:border-[#F5C518]"
+  }`;
+  const checkbox = (
+    <input
+      type="checkbox"
+      name={disabled ? `${name}-review` : name}
+      aria-label={label || name}
+      checked={Boolean(checked)}
+      onChange={e => onChange(e.target.checked)}
+      disabled={disabled}
+      className="h-4 w-4 shrink-0 rounded border-slate-300 accent-[#1E3A5F] disabled:opacity-100"
+    />
+  );
+
+  if (children) {
+    return (
+      <div className={optionClass}>
+        {checkbox}
+        {children}
+      </div>
+    );
+  }
+
+  return (
+    <label className={optionClass}>
+      {checkbox}
+      <span>{label}</span>
+    </label>
+  );
+};
+
+const ClientInfoSection = ({ title, children }) => (
+  <section className="rounded-xl border border-slate-200 bg-white p-5 shadow-sm">
+    <h3 className="text-sm font-bold text-[#1E3A5F] mb-4">{title}</h3>
+    {children}
+  </section>
+);
+
 /* ─── Step 1: Client Information ────────────────────────────────────── */
 const ClientInfoStep = ({ data, onChange, disabled, hideHeader }) => (
   <div>
     {!hideHeader && <SectionHeader title="Client Information" subtitle="Please enter the client's personal and contact details" />}
-    <div className="grid gap-4">
-      <div className="grid grid-cols-3 gap-4">
+    <div className="grid gap-6">
+      <ClientInfoSection title="Client Details">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
         <TextField label="Client ID" value={data.clientId} onChange={e => onChange("clientId", e.target.value)} disabled={disabled} />
         <TextField label="PhilHealth No." value={data.philhealth} onChange={e => onChange("philhealth", e.target.value)} disabled={disabled} />
-        <TextField label="Nr." value={data.nr} onChange={e => onChange("nr", e.target.value)} disabled={disabled} />
-      </div>
-      <div className="grid grid-cols-3 gap-4">
-        <TextField label="Pr." value={data.pr} onChange={e => onChange("pr", e.target.value)} disabled={disabled} />
-        <TextField label="First Name" value={data.firstName} onChange={e => onChange("firstName", e.target.value)} disabled={disabled} />
-        <TextField label="Middle Name" value={data.middleName} onChange={e => onChange("middleName", e.target.value)} disabled={disabled} />
-      </div>
-      <div className="grid grid-cols-4 gap-4">
+          <YesNoCard label="NHTS?" name="nhts" value={data.nhts} onChange={v => onChange("nhts", v)} disabled={disabled} />
+          <YesNoCard label="4Ps?" name="fourPs" value={data.fourPs} onChange={v => onChange("fourPs", v)} disabled={disabled} />
+        </div>
+      </ClientInfoSection>
+
+      <ClientInfoSection title="Name of Client">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
         <TextField label="Last Name" value={data.lastName} onChange={e => onChange("lastName", e.target.value)} disabled={disabled} />
+          <TextField label="Given Name / First Name" value={data.firstName} onChange={e => onChange("firstName", e.target.value)} disabled={disabled} />
+          <TextField label="Middle Initial / Middle Name" value={data.middleName} onChange={e => onChange("middleName", e.target.value)} disabled={disabled} />
+        </div>
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mt-4">
         <TextField label="Date of Birth" type="date" value={data.dob} onChange={e => onChange("dob", e.target.value)} disabled={disabled} />
         <TextField label="Age" type="number" value={data.age} onChange={e => onChange("age", e.target.value)} disabled={disabled} />
-        <TextField label="Contact Number" value={data.contact} onChange={e => onChange("contact", e.target.value)} disabled={disabled} />
-      </div>
-      <div className="grid grid-cols-2 gap-4">
-        <TextField label="Complete Address" value={data.address} onChange={e => onChange("address", e.target.value)} rows={3} disabled={disabled} />
+          <TextField label="Educational Attainment" value={data.educationalAttainment} onChange={e => onChange("educationalAttainment", e.target.value)} disabled={disabled} />
+          <TextField label="Occupation" value={data.occupation} onChange={e => onChange("occupation", e.target.value)} disabled={disabled} />
+        </div>
+      </ClientInfoSection>
+
+      <ClientInfoSection title="Address">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-4">
+          <TextField label="House/Unit No." value={data.houseUnitNo} onChange={e => onChange("houseUnitNo", e.target.value)} disabled={disabled} />
+          <TextField label="Street" value={data.street} onChange={e => onChange("street", e.target.value)} disabled={disabled} />
+          <TextField label="Barangay" value={data.barangay} onChange={e => onChange("barangay", e.target.value)} disabled={disabled} />
+          <TextField label="Municipality/City" value={data.municipalityCity} onChange={e => onChange("municipalityCity", e.target.value)} disabled={disabled} />
+          <TextField label="Province" value={data.province} onChange={e => onChange("province", e.target.value)} disabled={disabled} />
+        </div>
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mt-4">
+          <TextField label="Contact Number" value={data.contact} onChange={e => onChange("contact", e.target.value)} disabled={disabled} />
         <TextField label="Civil Status" value={data.civilStatus} onChange={e => onChange("civilStatus", e.target.value)} disabled={disabled} />
-      </div>
+          <TextField label="Religion" value={data.religion} onChange={e => onChange("religion", e.target.value)} disabled={disabled} />
+        </div>
+      </ClientInfoSection>
+
+      <ClientInfoSection title="Spouse Information">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+          <TextField label="Last Name" value={data.spouseLastName} onChange={e => onChange("spouseLastName", e.target.value)} disabled={disabled} />
+          <TextField label="Given Name / First Name" value={data.spouseFirstName} onChange={e => onChange("spouseFirstName", e.target.value)} disabled={disabled} />
+          <TextField label="Middle Initial / Middle Name" value={data.spouseMiddleName} onChange={e => onChange("spouseMiddleName", e.target.value)} disabled={disabled} />
+        </div>
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mt-4">
+          <TextField label="Date of Birth" type="date" value={data.spouseDob} onChange={e => onChange("spouseDob", e.target.value)} disabled={disabled} />
+          <TextField label="Age" type="number" value={data.spouseAge} onChange={e => onChange("spouseAge", e.target.value)} disabled={disabled} />
+          <TextField label="Occupation" value={data.spouseOccupation} onChange={e => onChange("spouseOccupation", e.target.value)} disabled={disabled} />
+        </div>
+      </ClientInfoSection>
+
+      <ClientInfoSection title="Family Information">
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+          <TextField label="Number of Living Children" type="number" value={data.livingChildren} onChange={e => onChange("livingChildren", e.target.value)} disabled={disabled} />
+          <YesNoCard label="Plan to Have More Children?" name="planMoreChildren" value={data.planMoreChildren} onChange={v => onChange("planMoreChildren", v)} disabled={disabled} />
+          <TextField label="Average Monthly Income" type="number" value={data.averageMonthlyIncome} onChange={e => onChange("averageMonthlyIncome", e.target.value)} disabled={disabled} />
+        </div>
+      </ClientInfoSection>
     </div>
   </div>
 );
@@ -176,17 +298,38 @@ const ClientInfoStep = ({ data, onChange, disabled, hideHeader }) => (
 /* ─── Step 2: Client Type ───────────────────────────────────────────── */
 const CLIENT_TYPES = ["New Acceptor", "Current User", "Changing Method", "Changing Clinic", "Dropout/Restart"];
 const FP_REASONS = ["Spacing", "Limiting", "Others (specify)"];
+const FP_METHODS = [
+  "COC",
+  "IUD",
+  "BOM/CMM",
+  "LAM",
+  "POP",
+  "Interval",
+  "BBT",
+  "STM",
+  "Injectable",
+  "Post-Partum",
+  "Implant",
+  "Condom",
+  "SDM",
+  "Others (specify)",
+];
+const FP_ADDITIONAL_NOTES = [
+  { key: "medicalCondition", label: "Medical condition" },
+  { key: "sideEffects", label: "Side-effects" },
+];
 
 const ClientTypeStep = ({ data, onChange, disabled, hideHeader }) => {
   const typeName = disabled ? "clientType-review" : "clientType";
   const fpName = disabled ? "fpReason-review" : "fpReason";
+  const methodName = disabled ? "fpMethod-review" : "fpMethod";
   return (
     <div>
-      {!hideHeader && <SectionHeader title="Client Type" subtitle="Select the appropriate client classification" />}
-      <div className="grid grid-cols-3 gap-8">
-        {/* Client Type column */}
-        <div>
-          <p className="text-sm font-bold text-[#1E3A5F] mb-4">Client Type</p>
+      {!hideHeader && <SectionHeader title="Client Type" subtitle="Record the client's FP classification, reason, method, and notes" />}
+      <div className="grid gap-5">
+        <section className="rounded-xl border border-slate-200 bg-white p-5 shadow-sm">
+          <p className="text-xs font-bold uppercase tracking-widest text-[#F5C518] mb-2">Step 1</p>
+          <p className="text-sm font-bold text-[#1E3A5F] mb-4">Select Client Type</p>
           <div className="flex flex-col gap-3">
             {CLIENT_TYPES.map(t => (
               <label key={t} className={`flex items-center gap-3 ${disabled ? "cursor-default opacity-100" : "cursor-pointer"}`}>
@@ -198,31 +341,72 @@ const ClientTypeStep = ({ data, onChange, disabled, hideHeader }) => {
               </label>
             ))}
           </div>
-        </div>
+        </section>
 
-        {/* Reason for FP column */}
-        <div>
-          <p className="text-sm font-bold text-[#F5C518] mb-4">Reason for Family Planning</p>
-          <div className="flex flex-col gap-3">
-            {FP_REASONS.map(r => (
-              <label key={r} className={`flex items-center gap-3 ${disabled ? "cursor-default opacity-100" : "cursor-pointer"}`}>
-                <input type="radio" name={fpName} value={r} checked={data.fpReason === r}
-                  onChange={() => onChange("fpReason", r)}
-                  disabled={disabled}
-                  className="accent-[#1E3A5F] w-4 h-4 shrink-0" />
-                <span className="text-sm text-slate-700">{r}</span>
-              </label>
-            ))}
+        <section className="rounded-xl border border-slate-200 bg-white p-5 shadow-sm">
+          <p className="text-xs font-bold uppercase tracking-widest text-[#F5C518] mb-2">Step 2</p>
+          <p className="text-sm font-bold text-[#1E3A5F] mb-4">Reason for Family Planning <span className="font-medium text-slate-400">(if applicable)</span></p>
+          <div className="grid grid-cols-1 lg:grid-cols-[1fr_1.2fr] gap-4">
+            <div className="flex flex-col gap-3">
+              {FP_REASONS.map(r => (
+                <label key={r} className={`flex items-center gap-3 ${disabled ? "cursor-default opacity-100" : "cursor-pointer"}`}>
+                  <input type="radio" name={fpName} value={r} checked={data.fpReason === r}
+                    onChange={() => onChange("fpReason", r)}
+                    disabled={disabled}
+                    className="accent-[#1E3A5F] w-4 h-4 shrink-0" />
+                  <span className="text-sm text-slate-700">{r}</span>
+                </label>
+              ))}
+            </div>
+            <TextField label="Others, please specify" value={data.fpOther}
+              onChange={e => onChange("fpOther", e.target.value)}
+              disabled={disabled}
+              className={`w-full transition-opacity ${data.fpReason === "Others (specify)" ? "opacity-100" : "opacity-40 pointer-events-none"}`} />
           </div>
-        </div>
+        </section>
 
-        {/* If others specify */}
-        <div className="flex items-start pt-8">
-          <TextField label="If Others, please specify" value={data.fpOther}
-            onChange={e => onChange("fpOther", e.target.value)} rows={3}
-            disabled={disabled}
-            className={`w-full transition-opacity ${data.fpReason === "Others (specify)" ? "opacity-100" : "opacity-40 pointer-events-none"}`} />
-        </div>
+        <section className="rounded-xl border border-slate-200 bg-white p-5 shadow-sm">
+          <p className="text-xs font-bold uppercase tracking-widest text-[#F5C518] mb-2">Step 3</p>
+          <p className="text-sm font-bold text-[#1E3A5F] mb-4">Specify Method Currently Used / Changing To <span className="font-medium text-slate-400">(optional)</span></p>
+          <div className="grid grid-cols-1 lg:grid-cols-[1.6fr_1fr] gap-4">
+            <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-3">
+              {FP_METHODS.map(method => (
+                <label key={method} className={`flex items-center gap-3 ${disabled ? "cursor-default opacity-100" : "cursor-pointer"}`}>
+                  <input type="radio" name={methodName} value={method} checked={data.method === method}
+                    onChange={() => onChange("method", method)}
+                    disabled={disabled}
+                    className="accent-[#1E3A5F] w-4 h-4 shrink-0" />
+                  <span className="text-sm text-slate-700">{method}</span>
+                </label>
+              ))}
+            </div>
+            <TextField label="Others, please specify" value={data.methodOther}
+              onChange={e => onChange("methodOther", e.target.value)}
+              disabled={disabled}
+              className={`w-full transition-opacity ${data.method === "Others (specify)" ? "opacity-100" : "opacity-40 pointer-events-none"}`} />
+          </div>
+        </section>
+
+        <section className="rounded-xl border border-slate-200 bg-white p-5 shadow-sm">
+          <p className="text-xs font-bold uppercase tracking-widest text-[#F5C518] mb-2">Step 4</p>
+          <p className="text-sm font-bold text-[#1E3A5F] mb-4">Additional Notes <span className="font-medium text-slate-400">(if needed)</span></p>
+          <div className="grid grid-cols-1 lg:grid-cols-[1fr_1.6fr] gap-4">
+            <div className="flex flex-col gap-3">
+              {FP_ADDITIONAL_NOTES.map(({ key, label }) => (
+                <label key={key} className={`flex items-center gap-3 ${disabled ? "cursor-default opacity-100" : "cursor-pointer"}`}>
+                  <input type="checkbox" checked={Boolean(data[key])}
+                    onChange={e => onChange(key, e.target.checked)}
+                    disabled={disabled}
+                    className="accent-[#1E3A5F] w-4 h-4 shrink-0" />
+                  <span className="text-sm text-slate-700">{label}</span>
+                </label>
+              ))}
+            </div>
+            <TextField label="Notes or details" value={data.additionalNotes}
+              onChange={e => onChange("additionalNotes", e.target.value)} rows={3}
+              disabled={disabled} />
+          </div>
+        </section>
       </div>
     </div>
   );
@@ -230,49 +414,48 @@ const ClientTypeStep = ({ data, onChange, disabled, hideHeader }) => {
 
 /* ─── Step 3: Medical History ───────────────────────────────────────── */
 const MEDICAL_CONDITIONS = [
-  { key: "severeHeadaches", label: "Severe headaches/Migraines" },
-  { key: "strokeHistory", label: "History of stroke/Heart attack" },
-  { key: "hypertension", label: "Hypertension" },
-  { key: "diabetes", label: "Diabetes" },
-  { key: "epilepsy", label: "Epilepsy" },
-  { key: "asthma", label: "Asthma" },
-  { key: "tuberculosis", label: "Tuberculosis" },
-  { key: "hepatitis", label: "Hepatitis/Liver disease" },
-  { key: "kidney", label: "Kidney disease" },
-  { key: "thyroid", label: "Thyroid problems" },
-  { key: "bloodClotting", label: "Blood clotting disorders" },
-  { key: "cancer", label: "Cancer" },
-  { key: "allergies", label: "Allergies to medications" },
+  { key: "severeHeadaches", label: "Severe headaches / migraine" },
+  { key: "strokeHeartHypertension", label: "History of stroke / heart attack / hypertension" },
+  { key: "frequentBruisingBleeding", label: "Non-traumatic hematoma / frequent bruising or gum bleeding" },
+  { key: "breastCancerMass", label: "Current or history of breast cancer / breast mass" },
+  { key: "severeChestPain", label: "Severe chest pain" },
+  { key: "coughMoreThan14Days", label: "Cough for more than 14 days" },
+  { key: "jaundice", label: "Jaundice" },
+  { key: "unexplainedVaginalBleeding", label: "Unexplained vaginal bleeding" },
+  { key: "abnormalVaginalDischarge", label: "Abnormal vaginal discharge" },
+  { key: "phenobarbitalRifampicin", label: "Intake of phenobarbital anti-seizure or rifampicin anti-TB" },
+  { key: "smoker", label: "Is the client a smoker?" },
+  { key: "withDisability", label: "With disability?" },
 ];
 
 const MedicalHistoryStep = ({ data, onChange, disabled, hideHeader }) => (
   <div>
-    {!hideHeader && <SectionHeader title="Medical History" subtitle="Please provide information about past and current medical conditions" />}
+    {!hideHeader && <SectionHeader title="Medical History" subtitle="Please provide information about the client's past and current medical conditions." />}
     <p className="text-sm font-bold text-[#1E3A5F] mb-4">
-      Does the client have any of the following conditions?
+      Does the client have any of the following?
     </p>
 
-    {/* First row: full-width severe headaches */}
-    <div className="mb-3">
-      <YesNoCard
-        label="Severe headaches/Migraines"
-        name="severeHeadaches"
-        value={data.severeHeadaches}
-        onChange={v => onChange("severeHeadaches", v)}
-        disabled={disabled}
-      />
-    </div>
-
-    {/* Remaining conditions in 3-col grid */}
-    <div className="grid grid-cols-3 gap-3 mb-4">
-      {MEDICAL_CONDITIONS.slice(1).map(({ key, label }) => (
-        <YesNoCard key={key} label={label} name={key}
-          value={data[key]} onChange={v => onChange(key, v)} disabled={disabled} />
+    <div className="grid grid-cols-1 lg:grid-cols-2 gap-3">
+      {MEDICAL_CONDITIONS.map(({ key, label }) => (
+        <div key={key} className={key === "withDisability" && data.withDisability === "yes" ? "grid gap-3" : ""}>
+          <YesNoCard label={label} name={key}
+            value={data[key]}
+            onChange={v => {
+              onChange(key, v);
+              if (key === "withDisability" && v !== "yes") onChange("disabilityDetails", "");
+            }}
+            disabled={disabled} />
+          {key === "withDisability" && data.withDisability === "yes" && (
+            <TextField
+              label="If yes, please specify: ____________________"
+              value={data.disabilityDetails}
+              onChange={e => onChange("disabilityDetails", e.target.value)}
+              disabled={disabled}
+            />
+          )}
+        </div>
       ))}
     </div>
-
-    <TextField label="Additional Medical Notes" value={data.notes}
-      onChange={e => onChange("notes", e.target.value)} rows={3} disabled={disabled} />
   </div>
 );
 
@@ -286,33 +469,100 @@ const PREGNANCY_QUESTIONS = [
   "Have you been using a reliable contraceptive method consistently and correctly?",
 ];
 
+const LAST_DELIVERY_OPTIONS = [
+  { value: "vaginal", label: "Vaginal" },
+  { value: "cesareanSection", label: "Cesarean Section" },
+];
+
+const MENSTRUAL_FLOW_OPTIONS = [
+  { value: "scanty", label: "Scanty: 1-2 pads per day" },
+  { value: "moderate", label: "Moderate: 3-5 pads per day" },
+  { value: "heavy", label: "Heavy: more than 5 pads per day" },
+];
+
+const YES_NO_OPTIONS = [
+  { value: "yes", label: "Yes" },
+  { value: "no", label: "No" },
+];
+
 const ObstetricalStep = ({ data, onChange, disabled, hideHeader }) => (
   <div>
     {!hideHeader && <SectionHeader title="Obstetrical History" subtitle="Information about pregnancy and childbirth history" />}
 
-    {/* GTPAL fields */}
-    <div className="grid gap-4">
-      <div className="grid grid-cols-3 gap-4">
+    <div className="grid gap-5">
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
         <TextField label="Number of Pregnancies (G)" type="number" value={data.gravida}
           onChange={e => onChange("gravida", e.target.value)} disabled={disabled} />
-        <TextField label="Number of Term Births (P)" type="number" value={data.term}
+        <TextField label="Parity / Number of Deliveries (P)" type="number" value={data.parity}
+          onChange={e => onChange("parity", e.target.value)} disabled={disabled} />
+        <TextField label="Full Term" type="number" value={data.term}
           onChange={e => onChange("term", e.target.value)} disabled={disabled} />
-        <TextField label="Number of Premature (P)" type="number" value={data.premature}
-          onChange={e => onChange("premature", e.target.value)} disabled={disabled} />
       </div>
-      <div className="grid grid-cols-4 gap-4">
+
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+        <TextField label="Premature" type="number" value={data.premature}
+          onChange={e => onChange("premature", e.target.value)} disabled={disabled} />
         <TextField label="Number of Abortions (A)" type="number" value={data.abortion}
           onChange={e => onChange("abortion", e.target.value)} disabled={disabled} />
         <TextField label="Living Children (L)" type="number" value={data.living}
           onChange={e => onChange("living", e.target.value)} disabled={disabled} />
-        <TextField label="Date of Last Delivery" type="date" value={data.lastDeliveryDate}
-          onChange={e => onChange("lastDeliveryDate", e.target.value)} disabled={disabled} />
-        <TextField label="Type of Last Delivery" value={data.lastDeliveryType}
-          onChange={e => onChange("lastDeliveryType", e.target.value)} disabled={disabled} />
       </div>
-      <div className="grid grid-cols-4 gap-4">
-        <TextField label="Last Menstrual Period" type="date" value={data.lmp}
+
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+        <TextField label="Date of Last Delivery (dd/mm/yyyy)" type="date" value={data.lastDeliveryDate}
+          onChange={e => onChange("lastDeliveryDate", e.target.value)} disabled={disabled} />
+        <CheckboxOptionGroup
+          label="Type of Last Delivery"
+          name="lastDeliveryType"
+          options={LAST_DELIVERY_OPTIONS}
+          value={data.lastDeliveryType}
+          onChange={v => onChange("lastDeliveryType", v)}
+          disabled={disabled}
+        />
+      </div>
+
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+        <TextField label="Last Menstrual Period (dd/mm/yyyy)" type="date" value={data.lmp}
           onChange={e => onChange("lmp", e.target.value)} disabled={disabled} />
+        <TextField label="Previous Menstrual Period (dd/mm/yyyy)" type="date" value={data.previousMenstrualPeriod}
+          onChange={e => onChange("previousMenstrualPeriod", e.target.value)} disabled={disabled} />
+      </div>
+
+      <CheckboxOptionGroup
+        label="Menstrual Flow"
+        name="menstrualFlow"
+        options={MENSTRUAL_FLOW_OPTIONS}
+        value={data.menstrualFlow}
+        onChange={v => onChange("menstrualFlow", v)}
+        disabled={disabled}
+        columns="md:grid-cols-3"
+      />
+
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+        <CheckboxOptionGroup
+          label="Dysmenorrhea"
+          name="dysmenorrhea"
+          options={YES_NO_OPTIONS}
+          value={data.dysmenorrhea}
+          onChange={v => onChange("dysmenorrhea", v)}
+          disabled={disabled}
+        />
+        <CheckboxOptionGroup
+          label="Hydatidiform Mole within the Last 12 Months"
+          name="hydatidiformMole"
+          options={YES_NO_OPTIONS}
+          value={data.hydatidiformMole}
+          onChange={v => onChange("hydatidiformMole", v)}
+          disabled={disabled}
+        />
+        <CheckboxOptionGroup
+          label="History of Ectopic Pregnancy"
+          name="ectopicPregnancy"
+          options={YES_NO_OPTIONS}
+          value={data.ectopicPregnancy}
+          onChange={v => onChange("ectopicPregnancy", v)}
+          disabled={disabled}
+        />
       </div>
     </div>
   </div>
@@ -321,31 +571,76 @@ const ObstetricalStep = ({ data, onChange, disabled, hideHeader }) => (
 /* ─── Step 5: STI Risks ─────────────────────────────────────────────── */
 const STIRisksStep = ({ data, onChange, disabled, hideHeader }) => (
   <div>
-    {!hideHeader && <SectionHeader title="STI Risk Assessment" subtitle="Screening for sexually transmitted infections risk factors" />}
-    <p className="text-sm font-bold text-[#1E3A5F] mb-4">Risk Screening Questions</p>
+    {!hideHeader && <SectionHeader title="RISKS FOR SEXUALLY TRANSMITTED INFECTIONS" subtitle="Screening for sexually transmitted infections risk factors" />}
+    <p className="text-sm font-bold text-[#1E3A5F] mb-4">
+      Does the client or the client's partner have any of the following?
+    </p>
     <div className="flex flex-col gap-3">
-      {/* Q1 full width */}
-      <YesNoCard label="Does the client have unusual discharge from genital area?"
-        name="unusualDischarge" value={data.unusualDischarge} onChange={v => onChange("unusualDischarge", v)} disabled={disabled} />
-      {/* Q2 full width */}
-      <YesNoCard label="Does the client experience pain or burning during urination?"
-        name="painUrination" value={data.painUrination} onChange={v => onChange("painUrination", v)} disabled={disabled} />
-      {/* Q3 full width */}
-      <YesNoCard label="Does the client have sores, ulcers or rashes in genital area?"
-        name="soresRashes" value={data.soresRashes} onChange={v => onChange("soresRashes", v)} disabled={disabled} />
-      {/* Q4 & Q5 side by side */}
-      <div className="grid grid-cols-2 gap-3">
-        <YesNoCard label="Does the client have multiple sexual partners?"
-          name="multiplePartners" value={data.multiplePartners} onChange={v => onChange("multiplePartners", v)} disabled={disabled} />
-        <YesNoCard label="Does the partner have other sexual partners?"
-          name="partnerOtherPartners" value={data.partnerOtherPartners} onChange={v => onChange("partnerOtherPartners", v)} disabled={disabled} />
+      <div className="rounded-lg border border-slate-200 bg-slate-50 p-3">
+        <YesNoCard
+          label="Abnormal discharge from the genital area"
+          name="abnormalDischarge"
+          value={data.abnormalDischarge}
+          onChange={v => {
+            onChange("abnormalDischarge", v);
+            if (v !== "yes") {
+              onChange("dischargeFromVagina", false);
+              onChange("dischargeFromPenis", false);
+            }
+          }}
+          disabled={disabled}
+        />
+        {data.abnormalDischarge === "yes" && (
+          <div className="mt-3 rounded-lg border border-slate-200 bg-white p-3">
+            <p className="mb-2 text-xs font-semibold text-[#1E3A5F]">If YES, please indicate if from:</p>
+            <div className="grid grid-cols-1 gap-2 sm:grid-cols-2">
+              <CheckboxField
+                label="Vagina"
+                name="dischargeFromVagina"
+                checked={data.dischargeFromVagina}
+                onChange={checked => onChange("dischargeFromVagina", checked)}
+                disabled={disabled}
+              />
+              <CheckboxField
+                label="Penis"
+                name="dischargeFromPenis"
+                checked={data.dischargeFromPenis}
+                onChange={checked => onChange("dischargeFromPenis", checked)}
+                disabled={disabled}
+              />
+            </div>
+          </div>
+        )}
       </div>
-      {/* Q6 + Additional Notes side by side */}
-      <div className="grid grid-cols-2 gap-3 items-start">
-        <YesNoCard label="History of STI in the past?"
-          name="historySTI" value={data.historySTI} onChange={v => onChange("historySTI", v)} disabled={disabled} />
-        <TextField label="Additional Notes" value={data.notes}
-          onChange={e => onChange("notes", e.target.value)} rows={3} disabled={disabled} />
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-3">
+        <YesNoCard
+          label="Sores or ulcers in the genital area"
+          name="soresUlcers"
+          value={data.soresUlcers}
+          onChange={v => onChange("soresUlcers", v)}
+          disabled={disabled}
+        />
+        <YesNoCard
+          label="Pain or burning sensation in the genital area"
+          name="painBurningGenital"
+          value={data.painBurningGenital}
+          onChange={v => onChange("painBurningGenital", v)}
+          disabled={disabled}
+        />
+        <YesNoCard
+          label="History of treatment for sexually transmitted infections"
+          name="historyTreatmentSTI"
+          value={data.historyTreatmentSTI}
+          onChange={v => onChange("historyTreatmentSTI", v)}
+          disabled={disabled}
+        />
+        <YesNoCard
+          label="HIV / AIDS / Pelvic inflammatory disease"
+          name="hivAidsPid"
+          value={data.hivAidsPid}
+          onChange={v => onChange("hivAidsPid", v)}
+          disabled={disabled}
+        />
       </div>
     </div>
   </div>
@@ -357,99 +652,285 @@ const VAWRisksStep = ({ data, onChange, disabled, hideHeader }) => (
     {!hideHeader && <SectionHeader title="Violence Against Women (VAW) Screening"
       subtitle="Confidential screening for domestic violence" />}
 
-    {/* Confidentiality notice */}
-    <div className="mb-5 rounded-lg border border-red-300 bg-red-50 px-5 py-3">
-      <p className="text-sm italic text-red-700">
+    <div className="mb-5 rounded-lg border border-slate-200 bg-slate-50 px-5 py-3">
+      <p className="mb-1 text-xs font-bold uppercase tracking-wider text-[#1E3A5F]">
+        Confidentiality Notice:
+      </p>
+      <p className="text-sm italic text-slate-700">
         All information provided is strictly confidential and will be used only for appropriate counseling and referral.
       </p>
     </div>
 
-    <div className="flex flex-col gap-3">
-      {/* Q1 full width */}
-      <YesNoCard label="Has your partner ever physically hurt you (e.g., slapped, kicked, pushed)?"
-        name="physicalHurt" value={data.physicalHurt} onChange={v => onChange("physicalHurt", v)} disabled={disabled} />
-      {/* Q2 & Q3 side by side */}
-      <div className="grid grid-cols-2 gap-3">
-        <YesNoCard label="Has your partner ever forced you to have sexual intercourse?"
-          name="forcedSex" value={data.forcedSex} onChange={v => onChange("forcedSex", v)} disabled={disabled} />
-        <YesNoCard label="Are you afraid of your partner?"
-          name="afraidPartner" value={data.afraidPartner} onChange={v => onChange("afraidPartner", v)} disabled={disabled} />
-      </div>
-      {/* Q4 full width */}
-      <YesNoCard label="Does your partner threaten or intimidate you?"
-        name="threatenIntimidate" value={data.threatenIntimidate} onChange={v => onChange("threatenIntimidate", v)} disabled={disabled} />
-      {/* Q5 full width */}
-      <YesNoCard label="Does your partner control your activities or isolate you from family/friends?"
-        name="controlIsolate" value={data.controlIsolate} onChange={v => onChange("controlIsolate", v)} disabled={disabled} />
-      {/* Q6 + Counseling notes side by side */}
-      <div className="grid grid-cols-2 gap-3 items-start">
-        <YesNoCard label="Has your partner ever prevented you from using family planning?"
-          name="preventFP" value={data.preventFP} onChange={v => onChange("preventFP", v)} disabled={disabled} />
-        <TextField label="Counseling Notes / Remarks" value={data.counselingNotes}
-          onChange={e => onChange("counselingNotes", e.target.value)} rows={3} disabled={disabled} />
-      </div>
+    <div className="grid gap-5">
+      <section>
+        <h3 className="mb-3 flex items-center gap-2 text-xs font-bold uppercase tracking-wider text-[#1E3A5F]">
+          <span className="h-3 w-1.5 rounded-full bg-[#F5C518]" />
+          IV. RISKS FOR VIOLENCE AGAINST WOMEN (VAW)
+        </h3>
+        <div className="grid grid-cols-1 gap-3">
+          <YesNoCard
+            label="1. Unpleasant relationship with partner"
+            name="unpleasantRelationship"
+            value={data.unpleasantRelationship}
+            onChange={v => onChange("unpleasantRelationship", v)}
+            disabled={disabled}
+          />
+          <YesNoCard
+            label="2. Partner does not approve of the visit to FP clinic"
+            name="partnerDisapprovesFPVisit"
+            value={data.partnerDisapprovesFPVisit}
+            onChange={v => onChange("partnerDisapprovesFPVisit", v)}
+            disabled={disabled}
+          />
+          <YesNoCard
+            label="3. History of domestic violence or VAW"
+            name="historyDomesticViolenceVAW"
+            value={data.historyDomesticViolenceVAW}
+            onChange={v => onChange("historyDomesticViolenceVAW", v)}
+            disabled={disabled}
+          />
+        </div>
+      </section>
+
+      <section className="rounded-lg border border-slate-200 bg-slate-50 px-4 py-3">
+        <p className="mb-3 text-xs font-semibold text-[#1E3A5F]">Referred to:</p>
+        <div className="grid grid-cols-1 gap-2 sm:grid-cols-2">
+          <VAWReferralOption
+            label="DSWD"
+            name="referredDSWD"
+            checked={data.referredDSWD}
+            onChange={v => onChange("referredDSWD", v)}
+            disabled={disabled}
+          />
+          <VAWReferralOption
+            label="WCPU"
+            name="referredWCPU"
+            checked={data.referredWCPU}
+            onChange={v => onChange("referredWCPU", v)}
+            disabled={disabled}
+          />
+          <VAWReferralOption
+            label="NGOs"
+            name="referredNGOs"
+            checked={data.referredNGOs}
+            onChange={v => onChange("referredNGOs", v)}
+            disabled={disabled}
+          />
+          <VAWReferralOption
+            name="referredOthers"
+            checked={data.referredOthers}
+            onChange={v => onChange("referredOthers", v)}
+            disabled={disabled}
+          >
+            <span className="shrink-0">Others (Specify:</span>
+            <input
+              type="text"
+              value={data.referredOthersSpecify}
+              onChange={e => onChange("referredOthersSpecify", e.target.value)}
+              disabled={disabled}
+              aria-label="Others specify"
+              className="min-w-0 flex-1 border-0 border-b border-slate-300 bg-transparent px-1 py-0.5 text-sm text-slate-700 outline-none transition focus:border-[#F5C518] disabled:text-slate-700 disabled:opacity-100"
+            />
+            <span>)</span>
+          </VAWReferralOption>
+        </div>
+      </section>
+
+      <TextField
+        label="Counseling Notes / Remarks"
+        value={data.counselingNotes}
+        onChange={e => onChange("counselingNotes", e.target.value)}
+        rows={3}
+        disabled={disabled}
+      />
     </div>
   </div>
 );
 
 /* ─── Step 7: Physical Exam ─────────────────────────────────────────── */
+const MeasurementField = ({ label, unit, value, onChange, disabled }) => (
+  <div className="rounded-lg border border-slate-200 bg-slate-50 px-4 py-3">
+    <label className="mb-2 block text-xs font-semibold text-[#1E3A5F]">{label}</label>
+    <div className="flex items-center gap-2">
+      <input
+        type="text"
+        value={value}
+        onChange={onChange}
+        disabled={disabled}
+        className="min-w-0 flex-1 rounded-lg border border-slate-300 bg-white px-3 py-2.5 text-sm text-slate-700 outline-none transition focus:border-[#F5C518] focus:ring-2 focus:ring-[#F5C518]/20 disabled:border-slate-200 disabled:bg-slate-50 disabled:text-slate-700 disabled:opacity-100"
+      />
+      <span className="shrink-0 text-sm font-semibold text-slate-600">{unit}</span>
+    </div>
+  </div>
+);
+
+const ExamCheckboxGroup = ({ title, options, data, onChange, disabled }) => (
+  <section className="rounded-xl border border-slate-200 bg-white p-4 shadow-sm">
+    <h4 className="mb-3 text-xs font-bold uppercase tracking-wider text-[#1E3A5F]">{title}</h4>
+    <div className="grid grid-cols-1 gap-2 sm:grid-cols-2">
+      {options.map(option => (
+        <CheckboxField
+          key={option.key}
+          label={option.label}
+          name={option.key}
+          checked={data[option.key]}
+          onChange={checked => onChange(option.key, checked)}
+          disabled={disabled}
+        />
+      ))}
+    </div>
+  </section>
+);
+
+const PHYSICAL_EXAM_GROUPS = [
+  {
+    title: "SKIN:",
+    options: [
+      { key: "skinNormal", label: "normal" },
+      { key: "skinPale", label: "pale" },
+      { key: "skinYellowish", label: "yellowish" },
+      { key: "skinHematoma", label: "hematoma" },
+    ],
+  },
+  {
+    title: "CONJUNCTIVA:",
+    options: [
+      { key: "conjunctivaNormal", label: "normal" },
+      { key: "conjunctivaPale", label: "pale" },
+      { key: "conjunctivaYellowish", label: "yellowish" },
+    ],
+  },
+  {
+    title: "NECK:",
+    options: [
+      { key: "neckNormal", label: "normal" },
+      { key: "neckMass", label: "neck mass" },
+      { key: "neckEnlargedLymphNodes", label: "enlarged lymph nodes" },
+    ],
+  },
+  {
+    title: "BREAST:",
+    options: [
+      { key: "breastNormal", label: "normal" },
+      { key: "breastMass", label: "mass" },
+      { key: "breastNippleDischarge", label: "nipple discharge" },
+    ],
+  },
+  {
+    title: "ABDOMEN:",
+    options: [
+      { key: "abdomenNormal", label: "normal" },
+      { key: "abdomenMass", label: "abdominal mass" },
+      { key: "abdomenVaricosities", label: "varicosities" },
+    ],
+  },
+  {
+    title: "EXTREMITIES:",
+    options: [
+      { key: "extremitiesNormal", label: "normal" },
+      { key: "extremitiesEdema", label: "edema" },
+      { key: "extremitiesVaricosities", label: "varicosities" },
+    ],
+  },
+];
+
 const PhysicalExamStep = ({ data, onChange, disabled, hideHeader }) => (
   <div>
     {!hideHeader && <SectionHeader title="Physical Examination"
       subtitle="Record vital signs and physical examination findings" />}
 
-    {/* Section 1: Vital Signs */}
-    <div className="mb-6">
-      <h3 className="text-xs font-bold text-[#1E3A5F] mb-3 flex items-center gap-2 uppercase tracking-wider">
-        <span className="w-1.5 h-3 bg-[#F5C518] rounded-full" />
-        Vital Signs
-      </h3>
-      <div className="grid grid-cols-4 gap-4">
-        <TextField label="Weight (kg)" type="number" value={data.weight} onChange={e => onChange("weight", e.target.value)} disabled={disabled} />
-        <TextField label="Height (cm)" type="number" value={data.height} onChange={e => onChange("height", e.target.value)} disabled={disabled} />
-        <TextField label="Blood Pressure (mmHg)" value={data.bp} onChange={e => onChange("bp", e.target.value)} disabled={disabled} />
-        <TextField label="Pulse Rate (bpm)" type="number" value={data.pulse} onChange={e => onChange("pulse", e.target.value)} disabled={disabled} />
-      </div>
-    </div>
+    <div className="grid gap-6">
 
-    {/* Section 2: Physical Examination Findings */}
-    <div className="mb-6">
-      <h3 className="text-xs font-bold text-[#1E3A5F] mb-3 flex items-center gap-2 uppercase tracking-wider">
-        <span className="w-1.5 h-3 bg-[#F5C518] rounded-full" />
-        Physical Examination Findings
-      </h3>
-      <div className="grid grid-cols-3 gap-4">
-        <TextField label="Skin Examination" value={data.skin} onChange={e => onChange("skin", e.target.value)} disabled={disabled} />
-        <TextField label="Extremities" value={data.extremities} onChange={e => onChange("extremities", e.target.value)} disabled={disabled} />
-        <TextField label="Conjunctiva" value={data.conjunctiva} onChange={e => onChange("conjunctiva", e.target.value)} disabled={disabled} />
-        <TextField label="Neck Examination" value={data.neck} onChange={e => onChange("neck", e.target.value)} disabled={disabled} />
-        <TextField label="Breast Examination" value={data.breast} onChange={e => onChange("breast", e.target.value)} disabled={disabled} />
-        <TextField label="Abdomen Examination" value={data.abdomen} onChange={e => onChange("abdomen", e.target.value)} disabled={disabled} />
-      </div>
-    </div>
+      <section>
+        <h3 className="mb-3 flex items-center gap-2 text-xs font-bold uppercase tracking-wider text-[#1E3A5F]">
+          <span className="h-3 w-1.5 rounded-full bg-[#F5C518]" />
+          VITAL SIGNS:
+        </h3>
+        <div className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-4">
+          <MeasurementField label="Weight:" unit="kg" value={data.weight} onChange={e => onChange("weight", e.target.value)} disabled={disabled} />
+          <MeasurementField label="Blood pressure:" unit="mmHg" value={data.bp} onChange={e => onChange("bp", e.target.value)} disabled={disabled} />
+          <MeasurementField label="Height:" unit="m" value={data.height} onChange={e => onChange("height", e.target.value)} disabled={disabled} />
+          <MeasurementField label="Pulse rate:" unit="/min" value={data.pulse} onChange={e => onChange("pulse", e.target.value)} disabled={disabled} />
+        </div>
+      </section>
 
-    {/* Section 3: Pelvic Examination */}
-    <div className="mb-6">
-      <h3 className="text-xs font-bold text-[#1E3A5F] mb-3 flex items-center gap-2 uppercase tracking-wider">
-        <span className="w-1.5 h-3 bg-[#F5C518] rounded-full" />
-        Pelvic Examination
-      </h3>
-      <div className="grid grid-cols-4 gap-4">
-        <TextField label="Perineum" value={data.perineum} onChange={e => onChange("perineum", e.target.value)} disabled={disabled} />
-        <TextField label="Vagina" value={data.vagina} onChange={e => onChange("vagina", e.target.value)} disabled={disabled} />
-        <TextField label="Cervix" value={data.cervix} onChange={e => onChange("cervix", e.target.value)} disabled={disabled} />
-        <TextField label="Uterus" value={data.uterus} onChange={e => onChange("uterus", e.target.value)} disabled={disabled} />
-      </div>
-    </div>
+      <section>
+        <h3 className="mb-3 flex items-center gap-2 text-xs font-bold uppercase tracking-wider text-[#1E3A5F]">
+          <span className="h-3 w-1.5 rounded-full bg-[#F5C518]" />
+          PHYSICAL EXAMINATION FINDINGS:
+        </h3>
+        <div className="grid grid-cols-1 gap-4 lg:grid-cols-2">
+          {PHYSICAL_EXAM_GROUPS.map(group => (
+            <ExamCheckboxGroup
+              key={group.title}
+              title={group.title}
+              options={group.options}
+              data={data}
+              onChange={onChange}
+              disabled={disabled}
+            />
+          ))}
+        </div>
+      </section>
 
-    {/* Section 4: Additional Notes */}
-    <div>
-      <h3 className="text-xs font-bold text-[#1E3A5F] mb-3 flex items-center gap-2 uppercase tracking-wider">
-        <span className="w-1.5 h-3 bg-[#F5C518] rounded-full" />
-        Additional Notes
-      </h3>
-      <TextField label="Additional Examination Notes" value={data.additionalNotes}
-        onChange={e => onChange("additionalNotes", e.target.value)} rows={3} disabled={disabled} />
+      <section>
+        <h3 className="mb-3 flex items-center gap-2 text-xs font-bold uppercase tracking-wider text-[#1E3A5F]">
+          <span className="h-3 w-1.5 rounded-full bg-[#F5C518]" />
+          PELVIC EXAMINATION:
+        </h3>
+        <div className="rounded-xl border border-slate-200 bg-slate-50 p-4">
+          <p className="mb-3 text-sm font-bold text-[#1E3A5F]">For IUD Acceptors</p>
+          <div className="grid grid-cols-1 gap-2 md:grid-cols-2">
+            <CheckboxField label="normal" name="pelvicNormal" checked={data.pelvicNormal} onChange={checked => onChange("pelvicNormal", checked)} disabled={disabled} />
+            <CheckboxField label="mass" name="pelvicMass" checked={data.pelvicMass} onChange={checked => onChange("pelvicMass", checked)} disabled={disabled} />
+            <CheckboxField label="abnormal discharge" name="pelvicAbnormalDischarge" checked={data.pelvicAbnormalDischarge} onChange={checked => onChange("pelvicAbnormalDischarge", checked)} disabled={disabled} />
+            <CheckboxField label="cervical tenderness" name="cervicalTenderness" checked={data.cervicalTenderness} onChange={checked => onChange("cervicalTenderness", checked)} disabled={disabled} />
+            <CheckboxField label="adnexal mass / tenderness" name="adnexalMassTenderness" checked={data.adnexalMassTenderness} onChange={checked => onChange("adnexalMassTenderness", checked)} disabled={disabled} />
+          </div>
+
+          <div className="mt-3 grid grid-cols-1 gap-3 lg:grid-cols-3">
+            <div className="rounded-lg border border-slate-200 bg-white p-3">
+              <CheckboxField label="cervical abnormalities" name="cervicalAbnormalities" checked={data.cervicalAbnormalities} onChange={checked => onChange("cervicalAbnormalities", checked)} disabled={disabled} />
+              <div className="mt-2 grid grid-cols-1 gap-2 pl-6">
+                <CheckboxField label="warts" name="cervicalWarts" checked={data.cervicalWarts} onChange={checked => onChange("cervicalWarts", checked)} disabled={disabled} />
+                <CheckboxField label="polyp or cyst" name="cervicalPolypOrCyst" checked={data.cervicalPolypOrCyst} onChange={checked => onChange("cervicalPolypOrCyst", checked)} disabled={disabled} />
+                <CheckboxField label="inflammation or erosion" name="cervicalInflammationOrErosion" checked={data.cervicalInflammationOrErosion} onChange={checked => onChange("cervicalInflammationOrErosion", checked)} disabled={disabled} />
+                <CheckboxField label="bloody discharge" name="cervicalBloodyDischarge" checked={data.cervicalBloodyDischarge} onChange={checked => onChange("cervicalBloodyDischarge", checked)} disabled={disabled} />
+              </div>
+            </div>
+
+            <div className="rounded-lg border border-slate-200 bg-white p-3">
+              <CheckboxField label="cervical consistency" name="cervicalConsistency" checked={data.cervicalConsistency} onChange={checked => onChange("cervicalConsistency", checked)} disabled={disabled} />
+              <div className="mt-2 grid grid-cols-1 gap-2 pl-6">
+                <CheckboxField label="firm" name="cervicalFirm" checked={data.cervicalFirm} onChange={checked => onChange("cervicalFirm", checked)} disabled={disabled} />
+                <CheckboxField label="soft" name="cervicalSoft" checked={data.cervicalSoft} onChange={checked => onChange("cervicalSoft", checked)} disabled={disabled} />
+              </div>
+            </div>
+
+            <div className="rounded-lg border border-slate-200 bg-white p-3">
+              <CheckboxField label="uterine position:" name="uterinePosition" checked={data.uterinePosition} onChange={checked => onChange("uterinePosition", checked)} disabled={disabled} />
+              <div className="mt-2 grid grid-cols-1 gap-2 pl-6">
+                <CheckboxField label="mid" name="uterineMid" checked={data.uterineMid} onChange={checked => onChange("uterineMid", checked)} disabled={disabled} />
+                <CheckboxField label="anteflexed" name="uterineAnteflexed" checked={data.uterineAnteflexed} onChange={checked => onChange("uterineAnteflexed", checked)} disabled={disabled} />
+                <CheckboxField label="retroflexed" name="uterineRetroflexed" checked={data.uterineRetroflexed} onChange={checked => onChange("uterineRetroflexed", checked)} disabled={disabled} />
+              </div>
+            </div>
+          </div>
+
+          <div className="mt-3 max-w-sm">
+            <MeasurementField label="uterine depth:" unit="cm" value={data.uterineDepth} onChange={e => onChange("uterineDepth", e.target.value)} disabled={disabled} />
+          </div>
+        </div>
+      </section>
+
+      <section>
+        <h3 className="mb-3 flex items-center gap-2 text-xs font-bold uppercase tracking-wider text-[#1E3A5F]">
+          <span className="h-3 w-1.5 rounded-full bg-[#F5C518]" />
+          Additional examination Notes
+        </h3>
+        <TextField label="Additional examination Notes" value={data.additionalNotes}
+          onChange={e => onChange("additionalNotes", e.target.value)} rows={3} disabled={disabled} />
+      </section>
     </div>
   </div>
 );
@@ -822,7 +1303,7 @@ const ReviewStep = ({ allData, onEditSection }) => {
               <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" className="w-5 h-5 text-[#1E3A5F]">
                 <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z" />
               </svg>
-              <h3 className="text-sm font-bold text-[#1E3A5F]">STI Risk Assessment</h3>
+              <h3 className="text-sm font-bold text-[#1E3A5F]">III. RISKS FOR SEXUALLY TRANSMITTED INFECTIONS</h3>
             </div>
             <button type="button" onClick={() => onEditSection(4)}
               className="text-xs font-bold text-[#1E3A5F] hover:text-[#F5C518] flex items-center gap-1 transition-colors">
@@ -847,7 +1328,7 @@ const ReviewStep = ({ allData, onEditSection }) => {
                 <line x1="12" y1="8" x2="12" y2="12" />
                 <line x1="12" y1="16" x2="12.01" y2="16" />
               </svg>
-              <h3 className="text-sm font-bold text-[#1E3A5F]">Violence Against Women (VAW) Screening</h3>
+              <h3 className="text-sm font-bold text-[#1E3A5F]">IV. RISKS FOR VIOLENCE AGAINST WOMEN (VAW)</h3>
             </div>
             <button type="button" onClick={() => onEditSection(5)}
               className="text-xs font-bold text-[#1E3A5F] hover:text-[#F5C518] flex items-center gap-1 transition-colors">
@@ -870,7 +1351,7 @@ const ReviewStep = ({ allData, onEditSection }) => {
               <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" className="w-5 h-5 text-[#1E3A5F]">
                 <polyline points="22 12 18 12 15 21 9 3 6 12 2 12" />
               </svg>
-              <h3 className="text-sm font-bold text-[#1E3A5F]">Physical Examination</h3>
+              <h3 className="text-sm font-bold text-[#1E3A5F]">V. PHYSICAL EXAMINATION</h3>
             </div>
             <button type="button" onClick={() => onEditSection(6)}
               className="text-xs font-bold text-[#1E3A5F] hover:text-[#F5C518] flex items-center gap-1 transition-colors">
@@ -1575,37 +2056,56 @@ const StaffAssessmentView = () => {
 
   const [formData, setFormData] = useState({
     clientInfo: {
-      clientId: "", philhealth: "", nr: "", pr: "",
+      clientId: "", philhealth: "", nhts: "", fourPs: "",
       firstName: "", middleName: "", lastName: "",
-      dob: "", age: "", contact: "", address: "", civilStatus: "",
+      dob: "", age: "", educationalAttainment: "", occupation: "",
+      houseUnitNo: "", street: "", barangay: "", municipalityCity: "", province: "",
+      contact: "", civilStatus: "", religion: "",
+      spouseLastName: "", spouseFirstName: "", spouseMiddleName: "",
+      spouseDob: "", spouseAge: "", spouseOccupation: "",
+      livingChildren: "", planMoreChildren: "", averageMonthlyIncome: "",
     },
     clientType: {
       type: "", fpReason: "", fpOther: "",
+      method: "", methodOther: "",
+      medicalCondition: false, sideEffects: false, additionalNotes: "",
     },
     medicalHistory: {
-      severeHeadaches: "", strokeHistory: "", hypertension: "", diabetes: "",
-      epilepsy: "", asthma: "", tuberculosis: "", hepatitis: "",
-      kidney: "", thyroid: "", bloodClotting: "", cancer: "",
-      allergies: "", notes: "",
+      severeHeadaches: "", strokeHeartHypertension: "", frequentBruisingBleeding: "",
+      breastCancerMass: "", severeChestPain: "", coughMoreThan14Days: "",
+      jaundice: "", unexplainedVaginalBleeding: "", abnormalVaginalDischarge: "",
+      phenobarbitalRifampicin: "", smoker: "", withDisability: "", disabilityDetails: "",
     },
     obstetrical: {
-      gravida: "", term: "", premature: "", abortion: "", living: "",
-      lastDeliveryDate: "", lastDeliveryType: "", lmp: "",
+      gravida: "", parity: "", term: "", premature: "", abortion: "", living: "",
+      lastDeliveryDate: "", lastDeliveryType: "", lmp: "", previousMenstrualPeriod: "",
+      menstrualFlow: "", dysmenorrhea: "", hydatidiformMole: "", ectopicPregnancy: "",
       pregQ1: "", pregQ2: "", pregQ3: "", pregQ4: "", pregQ5: "", pregQ6: "",
     },
     stiRisks: {
-      unusualDischarge: "", painUrination: "", soresRashes: "",
-      multiplePartners: "", partnerOtherPartners: "", historySTI: "", notes: "",
+      abnormalDischarge: "", dischargeFromVagina: false, dischargeFromPenis: false,
+      soresUlcers: "", painBurningGenital: "", historyTreatmentSTI: "", hivAidsPid: "",
     },
     vawRisks: {
-      physicalHurt: "", forcedSex: "", afraidPartner: "",
-      threatenIntimidate: "", controlIsolate: "", preventFP: "", counselingNotes: "",
+      unpleasantRelationship: "", partnerDisapprovesFPVisit: "", historyDomesticViolenceVAW: "",
+      referredDSWD: false, referredWCPU: false, referredNGOs: false,
+      referredOthers: false, referredOthersSpecify: "", counselingNotes: "",
     },
     physicalExam: {
-      weight: "", height: "", bg: "", bp: "", pulse: "",
-      skin: "", extremities: "", conjunctiva: "", neck: "",
-      breast: "", abdomen: "", perineum: "", vagina: "",
-      cervix: "", uterus: "", additionalNotes: "",
+      weight: "", bp: "", height: "", pulse: "",
+      skinNormal: false, skinPale: false, skinYellowish: false, skinHematoma: false,
+      conjunctivaNormal: false, conjunctivaPale: false, conjunctivaYellowish: false,
+      neckNormal: false, neckMass: false, neckEnlargedLymphNodes: false,
+      breastNormal: false, breastMass: false, breastNippleDischarge: false,
+      abdomenNormal: false, abdomenMass: false, abdomenVaricosities: false,
+      extremitiesNormal: false, extremitiesEdema: false, extremitiesVaricosities: false,
+      pelvicNormal: false, pelvicMass: false, pelvicAbnormalDischarge: false,
+      cervicalAbnormalities: false, cervicalWarts: false, cervicalPolypOrCyst: false,
+      cervicalInflammationOrErosion: false, cervicalBloodyDischarge: false,
+      cervicalConsistency: false, cervicalFirm: false, cervicalSoft: false,
+      cervicalTenderness: false, adnexalMassTenderness: false,
+      uterinePosition: false, uterineMid: false, uterineAnteflexed: false,
+      uterineRetroflexed: false, uterineDepth: "", additionalNotes: "",
     },
     visitRecords: {
       visitDate: "", nextVisit: "", services: "", meds: "", provider: "", remarks: "",
