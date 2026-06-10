@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useSearchParams } from "react-router-dom";
 import { useAuth } from "../../context/AuthContext";
 import StaffDashboardView from "./staffPages/StaffDashboardView";
 import StaffDirectoryView from "./staffPages/StaffDirectoryView";
@@ -142,15 +142,31 @@ function StaffLogoutBtn({ isIconOnly, logout }) {
 }
 
 const StaffDashboard = () => {
-  const [currentView, setCurrentView] = useState("dashboard");
+  const [searchParams, setSearchParams] = useSearchParams();
+  const viewParam = searchParams.get("view");
+  const [currentView, setCurrentViewState] = useState(viewParam || "dashboard");
   const [menuOpen, setMenuOpen] = useState(false);
   const [sidebarHovered, setSidebarHovered] = useState(false);
   const [isMobile, setIsMobile] = useState(window.innerWidth < 768);
   const [profile, setProfile] = useState(null);
   const [appointments, setAppointments] = useState([]);
-  const [loading, setLoading] = useState(true);
+  const [_loading, _setLoading] = useState(true);
   const navigate = useNavigate();
   const { logout } = useAuth();
+
+  // Sync currentView with URL search parameter
+  const setCurrentView = (viewId) => {
+    setCurrentViewState(viewId);
+    setSearchParams({ view: viewId }, { replace: true });
+  };
+
+  // Update currentView when URL search parameter changes
+  useEffect(() => {
+    if (viewParam && viewParam !== currentView) {
+      setCurrentViewState(viewParam);
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [viewParam]);
 
   useEffect(() => {
     fetchProfile();
@@ -202,7 +218,7 @@ const StaffDashboard = () => {
     } catch (err) {
       console.error("Failed to load appointments:", err);
     } finally {
-      setLoading(false);
+      _setLoading(false);
     }
   };
 

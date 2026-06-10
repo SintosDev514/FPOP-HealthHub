@@ -1,4 +1,7 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
+import useLocalStorageSave from "../../../hooks/useLocalStorageSave";
+import useUnsavedFormWarning from "../../../hooks/useUnsavedFormWarning";
+import { deepMerge } from "../../../utils/storageHelpers";
 
 /* ─── Step definitions ──────────────────────────────────────────────── */
 const STEPS = [
@@ -2050,10 +2053,6 @@ const StaffAssessmentView = () => {
     });
   };
 
-  const handleSaveVisits = () => {
-    setVisitsSubmitted(true);
-  };
-
   const [formData, setFormData] = useState({
     clientInfo: {
       clientId: "", philhealth: "", nhts: "", fourPs: "",
@@ -2145,6 +2144,146 @@ const StaffAssessmentView = () => {
 
   const updateHivForm = (field, value) =>
     setHivFormData(prev => ({ ...prev, [field]: value }));
+
+  /* ─── localStorage Auto-Save Hooks ────────────────────────────────── */
+  const fpFormASave = useLocalStorageSave("fp_assessment_form_a_data", formData);
+  const fpFormBSave = useLocalStorageSave("fp_assessment_form_b_data", visits);
+
+  /* ─── Unsaved Form Warning ────────────────────────────────────────── */
+  const hasUnsavedFPA = fpFormASave.hasUnsavedChanges && !submitted;
+  const hasUnsavedFPB = fpFormBSave.hasUnsavedChanges && !visitsSubmitted;
+  useUnsavedFormWarning(hasUnsavedFPA || hasUnsavedFPB, "FP Assessment Form");
+
+  /* ─── Load Saved Data on Mount ────────────────────────────────────── */
+  useEffect(() => {
+    const savedFormA = fpFormASave.loadData();
+    const savedFormB = fpFormBSave.loadData();
+
+    if (savedFormA && Object.keys(savedFormA).length > 0) {
+      setFormData(prev => deepMerge(prev, savedFormA));
+    }
+
+    if (savedFormB && Array.isArray(savedFormB) && savedFormB.length > 0) {
+      setVisits(savedFormB);
+    }
+    // Only run on mount - disable eslint rule since we're intentionally loading data once
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
+  /* ─── Auto-Save formData on Change ────────────────────────────────── */
+  useEffect(() => {
+    if (formData && formData.clientInfo) {
+      fpFormASave.autoSave(formData);
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [formData]);
+
+  /* ─── Auto-Save visits on Change ──────────────────────────────────── */
+  useEffect(() => {
+    if (visits && Array.isArray(visits)) {
+      fpFormBSave.autoSave(visits);
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [visits]);
+
+  /* ─── Form Reset & Clear Handlers ─────────────────────────────────── */
+  const handleResetFormA = () => {
+    if (window.confirm("Are you sure you want to clear all Side A data? This action cannot be undone.")) {
+      setFormData({
+        clientInfo: {
+          clientId: "", philhealth: "", nhts: "", fourPs: "",
+          firstName: "", middleName: "", lastName: "",
+          dob: "", age: "", educationalAttainment: "", occupation: "",
+          houseUnitNo: "", street: "", barangay: "", municipalityCity: "", province: "",
+          contact: "", civilStatus: "", religion: "",
+          spouseLastName: "", spouseFirstName: "", spouseMiddleName: "",
+          spouseDob: "", spouseAge: "", spouseOccupation: "",
+          livingChildren: "", planMoreChildren: "", averageMonthlyIncome: "",
+        },
+        clientType: {
+          type: "", fpReason: "", fpOther: "",
+          method: "", methodOther: "",
+          medicalCondition: false, sideEffects: false, additionalNotes: "",
+        },
+        medicalHistory: {
+          severeHeadaches: "", strokeHeartHypertension: "", frequentBruisingBleeding: "",
+          breastCancerMass: "", severeChestPain: "", coughMoreThan14Days: "",
+          jaundice: "", unexplainedVaginalBleeding: "", abnormalVaginalDischarge: "",
+          phenobarbitalRifampicin: "", smoker: "", withDisability: "", disabilityDetails: "",
+        },
+        obstetrical: {
+          gravida: "", parity: "", term: "", premature: "", abortion: "", living: "",
+          lastDeliveryDate: "", lastDeliveryType: "", lmp: "", previousMenstrualPeriod: "",
+          menstrualFlow: "", dysmenorrhea: "", hydatidiformMole: "", ectopicPregnancy: "",
+          pregQ1: "", pregQ2: "", pregQ3: "", pregQ4: "", pregQ5: "", pregQ6: "",
+        },
+        stiRisks: {
+          abnormalDischarge: "", dischargeFromVagina: false, dischargeFromPenis: false,
+          soresUlcers: "", painBurningGenital: "", historyTreatmentSTI: "", hivAidsPid: "",
+        },
+        vawRisks: {
+          unpleasantRelationship: "", partnerDisapprovesFPVisit: "", historyDomesticViolenceVAW: "",
+          referredDSWD: false, referredWCPU: false, referredNGOs: false,
+          referredOthers: false, referredOthersSpecify: "", counselingNotes: "",
+        },
+        physicalExam: {
+          weight: "", bp: "", height: "", pulse: "",
+          skinNormal: false, skinPale: false, skinYellowish: false, skinHematoma: false,
+          conjunctivaNormal: false, conjunctivaPale: false, conjunctivaYellowish: false,
+          neckNormal: false, neckMass: false, neckEnlargedLymphNodes: false,
+          breastNormal: false, breastMass: false, breastNippleDischarge: false,
+          abdomenNormal: false, abdomenMass: false, abdomenVaricosities: false,
+          extremitiesNormal: false, extremitiesEdema: false, extremitiesVaricosities: false,
+          pelvicNormal: false, pelvicMass: false, pelvicAbnormalDischarge: false,
+          cervicalAbnormalities: false, cervicalWarts: false, cervicalPolypOrCyst: false,
+          cervicalInflammationOrErosion: false, cervicalBloodyDischarge: false,
+          cervicalConsistency: false, cervicalFirm: false, cervicalSoft: false,
+          cervicalTenderness: false, adnexalMassTenderness: false,
+          uterinePosition: false, uterineMid: false, uterineAnteflexed: false,
+          uterineRetroflexed: false, uterineDepth: "", additionalNotes: "",
+        },
+        visitRecords: {
+          visitDate: "", nextVisit: "", services: "", meds: "", provider: "", remarks: "",
+        },
+      });
+      fpFormASave.clearData();
+      setCurrentStep(0);
+      setSubmitted(false);
+    }
+  };
+
+  const handleResetFormB = () => {
+    if (window.confirm("Are you sure you want to clear all Visit Records data? This action cannot be undone.")) {
+      setVisits([
+        {
+          dateOfVisit: "",
+          medicalFindings: "",
+          methodAccepted: "",
+          providerName: "",
+          providerSignature: "",
+          followUpDate: ""
+        }
+      ]);
+      fpFormBSave.clearData();
+      setVisitsSubmitted(false);
+    }
+  };
+
+  const handleSubmitFormA = () => {
+    setSubmitted(true);
+    // Clear localStorage data after successful submission
+    setTimeout(() => {
+      fpFormASave.clearData();
+    }, 500);
+  };
+
+  const handleSubmitFormB = () => {
+    setVisitsSubmitted(true);
+    // Clear localStorage data after successful submission
+    setTimeout(() => {
+      fpFormBSave.clearData();
+    }, 500);
+  };
 
   const updateSection = (section) => (field, value) =>
     setFormData(prev => ({ ...prev, [section]: { ...prev[section], [field]: value } }));
@@ -2482,7 +2621,7 @@ const StaffAssessmentView = () => {
                       </button>
                     ) : (
                       <button
-                        onClick={() => setSubmitted(true)}
+                        onClick={handleSubmitFormA}
                         className="flex items-center gap-2 rounded-xl bg-[#1E3A5F] px-7 py-2.5 text-sm font-bold text-white shadow-md hover:bg-[#152c4a] transition-all hover:-translate-y-0.5"
                       >
                         Submit Side A
@@ -2492,6 +2631,35 @@ const StaffAssessmentView = () => {
                         </svg>
                       </button>
                     )}
+                    <div className="flex items-center gap-3 ml-4">
+                      <div className="flex items-center gap-2 text-xs">
+                        {fpFormASave.isSaving && (
+                          <>
+                            <div className="animate-spin w-3 h-3 border-1.5 border-slate-300 border-t-[#F5C518] rounded-full" />
+                            <span className="text-slate-500">Saving...</span>
+                          </>
+                        )}
+                        {!fpFormASave.isSaving && fpFormASave.lastSaveTime && !fpFormASave.hasUnsavedChanges && (
+                          <>
+                            <svg className="w-3.5 h-3.5 text-emerald-600" fill="none" stroke="currentColor" strokeWidth="2.5" viewBox="0 0 24 24">
+                              <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" />
+                            </svg>
+                            <span className="text-slate-500">Saved at {fpFormASave.lastSaveTime}</span>
+                          </>
+                        )}
+                      </div>
+                    </div>
+                    <button
+                      type="button"
+                      onClick={handleResetFormA}
+                      className="flex items-center gap-2 rounded-xl border border-red-300 bg-red-50 px-5 py-2.5 text-sm font-semibold text-red-600 hover:bg-red-100 hover:border-red-400 transition-colors"
+                      title="Clear all form data and localStorage"
+                    >
+                      <svg className="w-4 h-4" fill="none" stroke="currentColor" strokeWidth="2.5" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+                      </svg>
+                      Clear Form
+                    </button>
                   </div>
                 </>
               )
@@ -2521,12 +2689,45 @@ const StaffAssessmentView = () => {
                     onChange={handleVisitChange}
                     onAddVisit={handleAddVisit}
                     onDeleteVisit={handleDeleteVisit}
-                    onSave={handleSaveVisits}
+                    onSave={handleSubmitFormB}
                     submitted={visitsSubmitted}
                     setSubmitted={setVisitsSubmitted}
                     obstetricalData={formData.obstetrical}
                     onObstetricalChange={updateSection("obstetrical")}
                   />
+                  
+                  {/* Side B Action Buttons */}
+                  {!visitsSubmitted && (
+                    <div className="flex items-center justify-between gap-4 mt-6 pt-6 border-t border-slate-100">
+                      <div className="flex items-center gap-2 text-xs">
+                        {fpFormBSave.isSaving && (
+                          <>
+                            <div className="animate-spin w-3 h-3 border-1.5 border-slate-300 border-t-[#F5C518] rounded-full" />
+                            <span className="text-slate-500">Saving...</span>
+                          </>
+                        )}
+                        {!fpFormBSave.isSaving && fpFormBSave.lastSaveTime && !fpFormBSave.hasUnsavedChanges && (
+                          <>
+                            <svg className="w-3.5 h-3.5 text-emerald-600" fill="none" stroke="currentColor" strokeWidth="2.5" viewBox="0 0 24 24">
+                              <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" />
+                            </svg>
+                            <span className="text-slate-500">Last saved at {fpFormBSave.lastSaveTime}</span>
+                          </>
+                        )}
+                      </div>
+                      <button
+                        type="button"
+                        onClick={handleResetFormB}
+                        className="flex items-center gap-2 rounded-xl border border-red-300 bg-red-50 px-4 py-2 text-xs font-semibold text-red-600 hover:bg-red-100 hover:border-red-400 transition-colors"
+                        title="Clear all visit records and localStorage"
+                      >
+                        <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" strokeWidth="2.5" viewBox="0 0 24 24">
+                          <path strokeLinecap="round" strokeLinejoin="round" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+                        </svg>
+                        Clear Records
+                      </button>
+                    </div>
+                  )}
                 </div>
               </div>
             )}
