@@ -5,6 +5,7 @@ import DashboardOverview from "./DashboardOverview";
 import UserManagement from "./UserManagement";
 import StaffManagement from "./StaffManagement";
 import Appointments from "./Appointments";
+import AdminInventoryView from "./AdminInventoryView";
 import Analytics from "./Analytics";
 import Reports from "./Reports";
 import Notifications from "./Notifications";
@@ -23,6 +24,7 @@ import {
   IcoSearch,
   IcoStaff,
   IcoClient,
+  IcoInventory,
 } from "../../../components/icon/AdminIcons";
 
 /* ── Brand palette ──────────────────────────────── */
@@ -43,6 +45,7 @@ const NAV_ITEMS = [
   { key: "users",        label: "Client Management",  Icon: IcoClient,  path: "/admin/users"         },
   { key: "staff",        label: "Staff Management",   Icon: IcoStaff,  path: "/admin/staff"         },
   { key: "appointments", label: "Appointments",       Icon: IcoCal,    path: "/admin/appointments"  },
+  { key: "inventory",    label: "Inventory",          Icon: IcoInventory, path: "/admin/inventory"  },
   { key: "analytics",   label: "Analytics",          Icon: IcoChart,  path: "/admin/analytics"     },
   { key: "reports",     label: "Reports",             Icon: IcoReport, path: "/admin/reports"       },
 ];
@@ -413,6 +416,7 @@ function AdminShell({ activeNav }) {
         {activeNav === "users"        && <UserManagement   isMobile={isMobile} />}
         {activeNav === "staff"        && <StaffManagement   isMobile={isMobile} />}
         {activeNav === "appointments" && <Appointments      isMobile={isMobile} />}
+        {activeNav === "inventory"    && <AdminInventoryView />}
         {activeNav === "analytics"   && <Analytics         isMobile={isMobile} />}
         {activeNav === "reports"     && <Reports            isMobile={isMobile} />}
         {activeNav === "notifications" && <Notifications   isMobile={isMobile} />}
@@ -467,6 +471,7 @@ export default function AdminDashboard() {
       <Route path="/users"         element={<AdminShell activeNav="users"        />} />
       <Route path="/staff"         element={<AdminShell activeNav="staff"        />} />
       <Route path="/appointments"  element={<AdminShell activeNav="appointments" />} />
+      <Route path="/inventory"     element={<AdminShell activeNav="inventory"    />} />
       <Route path="/analytics"     element={<AdminShell activeNav="analytics"    />} />
       <Route path="/reports"       element={<AdminShell activeNav="reports"      />} />
       <Route path="/notifications" element={<AdminShell activeNav="notifications"/>} />
