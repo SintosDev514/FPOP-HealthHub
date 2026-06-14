@@ -10,6 +10,7 @@ import staffRouter from "./routes/staffRoutes.js";
 import appointmentRouter from "./routes/appointmentRoutes.js";
 import adminRouter from "./routes/adminRoutes.js";
 import notificationRouter from "./routes/notificationRoutes.js";
+import myNotificationRouter from "./routes/myNotificationRoutes.js";
 import inventoryRouter from "./routes/inventoryRoutes.js";
 
 import connectDB from "./config/Mongodb.js";
@@ -35,13 +36,14 @@ app.use(cookieParser());
 connectDB();
 
 /// API ENDPOINTS
-app.use("/uploads", express.static(path.join(__dirname, "uploads")));
+
 app.use("/api/auth", authRouter);
 app.use("/api/user", userRoute);
 app.use("/api/staff", staffRouter);
 app.use("/api/appointments", appointmentRouter);
 app.use("/api/admin", adminRouter);
 app.use("/api/admin/notifications", notificationRouter);
+app.use("/api/notifications", myNotificationRouter);
 app.use("/api/inventory", inventoryRouter);
 
 app.listen(port, () => {

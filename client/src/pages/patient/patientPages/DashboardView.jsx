@@ -271,7 +271,7 @@ const DashboardView = ({
                 Here's what's happening with your healthcare today
               </p>
             </div>
-            <div className="relative hidden h-20 w-20 items-center justify-center overflow-hidden rounded-[14px] border border-white/20 bg-white/10 sm:flex">
+            <div className="relative hidden h-20 w-20 items-center justify-center overflow-hidden rounded-full border border-white/20 bg-white/10 sm:flex">
               {getAvatarSrc(profile?.avatar) && !imgError ? (
                 <img
                   src={getAvatarSrc(profile.avatar)}
@@ -414,7 +414,7 @@ const DashboardView = ({
           <div className="rounded-[12px] border border-slate-200 bg-white p-8 shadow-[0_3px_10px_rgba(15,23,42,0.1)]">
             <h2 className="text-2xl font-bold text-[#061022]">Your Profile</h2>
             <div className="mt-12 flex items-center gap-5">
-              <div className="relative flex h-16 w-16 shrink-0 items-center justify-center overflow-hidden rounded-[14px] bg-[#244783] text-white">
+              <div className="relative flex h-16 w-16 shrink-0 items-center justify-center overflow-hidden rounded-full bg-[#244783] text-white">
                 {getAvatarSrc(profile?.avatar) && !imgError ? (
                   <img
                     src={getAvatarSrc(profile.avatar)}

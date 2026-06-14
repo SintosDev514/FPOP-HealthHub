@@ -47,7 +47,7 @@ const updateUserData = async (req, res) => {
     }
 
     const { name, phone, address, dateOfBirth } = req.body;
-    const avatar = req.file ? `/uploads/${req.file.filename}` : undefined;
+    const avatar = req.file ? req.file.path : undefined;
 
     const updateFields = {};
     if (name !== undefined) {

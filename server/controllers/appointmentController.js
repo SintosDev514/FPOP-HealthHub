@@ -161,9 +161,28 @@ const createAppointment = async (req, res) => {
       await transporter.sendMail(mailOptions).catch(() => {});
     }
 
+    const staffName = `${populated.staffId?.firstName || ""} ${populated.staffId?.lastName || ""}`.trim();
+    const patientName = patient?.firstName || "A patient";
+
+    await notificationModel.create({
+      title: "Appointment Booked",
+      text: `Your appointment for ${serviceName} with ${staffName} on ${date} at ${time} has been submitted. Awaiting confirmation.`,
+      category: "Appointment",
+      priority: "Medium",
+      userId: patientId,
+    });
+
+    await notificationModel.create({
+      title: "New Appointment",
+      text: `${patientName} booked ${serviceName} with ${staffName} on ${date} at ${time}.`,
+      category: "Appointment",
+      priority: "Medium",
+      userId: populated.staffId?._id,
+    });
+
     await notificationModel.create({
       title: "New Appointment Booked",
-      text: `${patient?.firstName || "A patient"} booked ${serviceName} with ${populated.staffId?.firstName || ""} ${populated.staffId?.lastName || ""} on ${date} at ${time}.`,
+      text: `${patientName} booked ${serviceName} with ${staffName} on ${date} at ${time}.`,
       category: "Appointment",
       priority: "Medium",
     });
@@ -288,6 +307,14 @@ const updateAppointmentStatus = async (req, res) => {
     };
 
     await transporter.sendMail(mailOptions).catch(() => {});
+
+    await notificationModel.create({
+      title: `Appointment ${statusLabel}`,
+      text: `Your appointment with ${staff.firstName} ${staff.lastName} on ${appointment.date} at ${appointment.time} has been ${statusLabel.toLowerCase()}.`,
+      category: "Appointment",
+      priority: status === "confirmed" ? "Medium" : "High",
+      userId: patient._id,
+    });
 
     await notificationModel.create({
       title: `Appointment ${statusLabel}`,

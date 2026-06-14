@@ -127,6 +127,7 @@ const CombinedDashboard = () => {
     <div className="min-h-screen bg-gray-50 flex flex-col">
       <Navbar
         currentView={currentView}
+        profile={profile}
         onNavigateToDashboard={() => setCurrentView("dashboard")}
         onNavigateToBook={() => setCurrentView("booking")}
         onNavigateToAppointments={() => setCurrentView("appointments")}

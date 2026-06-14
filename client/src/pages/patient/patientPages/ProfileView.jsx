@@ -152,7 +152,7 @@ const ProfileView = ({ profile, onSaveProfile, appointments = [] }) => {
               <button
                 type="button"
                 onClick={handleAvatarClick}
-                className={`group relative mx-auto flex h-32 w-32 items-center justify-center overflow-hidden rounded-[24px] bg-[#244783] text-white shadow-[0_10px_22px_rgba(15,23,42,0.2)] ${
+                className={`group relative mx-auto flex h-32 w-32 items-center justify-center overflow-hidden rounded-full bg-[#244783] text-white shadow-[0_10px_22px_rgba(15,23,42,0.2)] ${
                   isEditing ? "cursor-pointer" : "cursor-default"
                 }`}
                 aria-label="Change profile picture"
