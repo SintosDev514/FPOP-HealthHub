@@ -154,9 +154,8 @@ const CheckboxOptionGroup = ({ label, name, options, value, onChange, disabled, 
       {options.map(option => (
         <label
           key={option.value}
-          className={`flex min-h-[42px] items-center gap-2 rounded-lg border border-slate-200 bg-white px-3 py-2 text-sm font-medium text-slate-700 transition-colors ${
-            disabled ? "cursor-default opacity-100" : "cursor-pointer hover:border-[#F5C518]"
-          }`}
+          className={`flex min-h-[42px] items-center gap-2 rounded-lg border border-slate-200 bg-white px-3 py-2 text-sm font-medium text-slate-700 transition-colors ${disabled ? "cursor-default opacity-100" : "cursor-pointer hover:border-[#F5C518]"
+            }`}
         >
           <input
             type="checkbox"
@@ -175,9 +174,8 @@ const CheckboxOptionGroup = ({ label, name, options, value, onChange, disabled, 
 
 const CheckboxField = ({ label, name, checked, onChange, disabled }) => (
   <label
-    className={`flex min-h-[42px] items-center gap-2 rounded-lg border border-slate-200 bg-white px-3 py-2 text-sm font-medium text-slate-700 transition-colors ${
-      disabled ? "cursor-default opacity-100" : "cursor-pointer hover:border-[#F5C518]"
-    }`}
+    className={`flex min-h-[42px] items-center gap-2 rounded-lg border border-slate-200 bg-white px-3 py-2 text-sm font-medium text-slate-700 transition-colors ${disabled ? "cursor-default opacity-100" : "cursor-pointer hover:border-[#F5C518]"
+      }`}
   >
     <input
       type="checkbox"
@@ -192,9 +190,8 @@ const CheckboxField = ({ label, name, checked, onChange, disabled }) => (
 );
 
 const VAWReferralOption = ({ label, name, checked, onChange, disabled, children }) => {
-  const optionClass = `flex min-h-[42px] items-center gap-2 rounded-lg border border-slate-200 bg-white px-3 py-2 text-sm font-medium text-slate-700 transition-colors ${
-    disabled ? "cursor-default opacity-100" : "cursor-pointer hover:border-[#F5C518]"
-  }`;
+  const optionClass = `flex min-h-[42px] items-center gap-2 rounded-lg border border-slate-200 bg-white px-3 py-2 text-sm font-medium text-slate-700 transition-colors ${disabled ? "cursor-default opacity-100" : "cursor-pointer hover:border-[#F5C518]"
+    }`;
   const checkbox = (
     <input
       type="checkbox"
@@ -238,8 +235,8 @@ const ClientInfoStep = ({ data, onChange, disabled, hideHeader }) => (
     <div className="grid gap-6">
       <ClientInfoSection title="Client Details">
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-        <TextField label="Client ID" value={data.clientId} onChange={e => onChange("clientId", e.target.value)} disabled={disabled} />
-        <TextField label="PhilHealth No." value={data.philhealth} onChange={e => onChange("philhealth", e.target.value)} disabled={disabled} />
+          <TextField label="Client ID" value={data.clientId} onChange={e => onChange("clientId", e.target.value)} disabled={disabled} />
+          <TextField label="PhilHealth No." value={data.philhealth} onChange={e => onChange("philhealth", e.target.value)} disabled={disabled} />
           <YesNoCard label="NHTS?" name="nhts" value={data.nhts} onChange={v => onChange("nhts", v)} disabled={disabled} />
           <YesNoCard label="4Ps?" name="fourPs" value={data.fourPs} onChange={v => onChange("fourPs", v)} disabled={disabled} />
         </div>
@@ -247,13 +244,13 @@ const ClientInfoStep = ({ data, onChange, disabled, hideHeader }) => (
 
       <ClientInfoSection title="Name of Client">
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-        <TextField label="Last Name" value={data.lastName} onChange={e => onChange("lastName", e.target.value)} disabled={disabled} />
+          <TextField label="Last Name" value={data.lastName} onChange={e => onChange("lastName", e.target.value)} disabled={disabled} />
           <TextField label="Given Name / First Name" value={data.firstName} onChange={e => onChange("firstName", e.target.value)} disabled={disabled} />
           <TextField label="Middle Initial / Middle Name" value={data.middleName} onChange={e => onChange("middleName", e.target.value)} disabled={disabled} />
         </div>
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mt-4">
-        <TextField label="Date of Birth" type="date" value={data.dob} onChange={e => onChange("dob", e.target.value)} disabled={disabled} />
-        <TextField label="Age" type="number" value={data.age} onChange={e => onChange("age", e.target.value)} disabled={disabled} />
+          <TextField label="Date of Birth" type="date" value={data.dob} onChange={e => onChange("dob", e.target.value)} disabled={disabled} />
+          <TextField label="Age" type="number" value={data.age} onChange={e => onChange("age", e.target.value)} disabled={disabled} />
           <TextField label="Educational Attainment" value={data.educationalAttainment} onChange={e => onChange("educationalAttainment", e.target.value)} disabled={disabled} />
           <TextField label="Occupation" value={data.occupation} onChange={e => onChange("occupation", e.target.value)} disabled={disabled} />
         </div>
@@ -269,7 +266,7 @@ const ClientInfoStep = ({ data, onChange, disabled, hideHeader }) => (
         </div>
         <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mt-4">
           <TextField label="Contact Number" value={data.contact} onChange={e => onChange("contact", e.target.value)} disabled={disabled} />
-        <TextField label="Civil Status" value={data.civilStatus} onChange={e => onChange("civilStatus", e.target.value)} disabled={disabled} />
+          <TextField label="Civil Status" value={data.civilStatus} onChange={e => onChange("civilStatus", e.target.value)} disabled={disabled} />
           <TextField label="Religion" value={data.religion} onChange={e => onChange("religion", e.target.value)} disabled={disabled} />
         </div>
       </ClientInfoSection>
@@ -1162,11 +1159,10 @@ const VisitRecordsStep = ({
                       type="button"
                       disabled={visits.length <= 1}
                       onClick={() => onDeleteVisit(idx)}
-                      className={`p-2 rounded-lg transition-colors ${
-                        visits.length <= 1
+                      className={`p-2 rounded-lg transition-colors ${visits.length <= 1
                           ? "text-slate-200 cursor-not-allowed"
                           : "text-red-500 hover:bg-red-50 hover:text-red-700"
-                      }`}
+                        }`}
                     >
                       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" className="w-5 h-5">
                         <path strokeLinecap="round" strokeLinejoin="round" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
@@ -1223,7 +1219,7 @@ const ReviewStep = ({ allData, onEditSection }) => {
             </button>
           </div>
           <div className="p-6">
-            <ClientInfoStep data={allData.clientInfo} onChange={() => {}} disabled={true} hideHeader={true} />
+            <ClientInfoStep data={allData.clientInfo} onChange={() => { }} disabled={true} hideHeader={true} />
           </div>
         </div>
 
@@ -1247,7 +1243,7 @@ const ReviewStep = ({ allData, onEditSection }) => {
             </button>
           </div>
           <div className="p-6">
-            <ClientTypeStep data={allData.clientType} onChange={() => {}} disabled={true} hideHeader={true} />
+            <ClientTypeStep data={allData.clientType} onChange={() => { }} disabled={true} hideHeader={true} />
           </div>
         </div>
 
@@ -1270,7 +1266,7 @@ const ReviewStep = ({ allData, onEditSection }) => {
             </button>
           </div>
           <div className="p-6">
-            <MedicalHistoryStep data={allData.medicalHistory} onChange={() => {}} disabled={true} hideHeader={true} />
+            <MedicalHistoryStep data={allData.medicalHistory} onChange={() => { }} disabled={true} hideHeader={true} />
           </div>
         </div>
 
@@ -1295,7 +1291,7 @@ const ReviewStep = ({ allData, onEditSection }) => {
             </button>
           </div>
           <div className="p-6">
-            <ObstetricalStep data={allData.obstetrical} onChange={() => {}} disabled={true} hideHeader={true} />
+            <ObstetricalStep data={allData.obstetrical} onChange={() => { }} disabled={true} hideHeader={true} />
           </div>
         </div>
 
@@ -1318,7 +1314,7 @@ const ReviewStep = ({ allData, onEditSection }) => {
             </button>
           </div>
           <div className="p-6">
-            <STIRisksStep data={allData.stiRisks} onChange={() => {}} disabled={true} hideHeader={true} />
+            <STIRisksStep data={allData.stiRisks} onChange={() => { }} disabled={true} hideHeader={true} />
           </div>
         </div>
 
@@ -1343,7 +1339,7 @@ const ReviewStep = ({ allData, onEditSection }) => {
             </button>
           </div>
           <div className="p-6">
-            <VAWRisksStep data={allData.vawRisks} onChange={() => {}} disabled={true} hideHeader={true} />
+            <VAWRisksStep data={allData.vawRisks} onChange={() => { }} disabled={true} hideHeader={true} />
           </div>
         </div>
 
@@ -1366,7 +1362,7 @@ const ReviewStep = ({ allData, onEditSection }) => {
             </button>
           </div>
           <div className="p-6">
-            <PhysicalExamStep data={allData.physicalExam} onChange={() => {}} disabled={true} hideHeader={true} />
+            <PhysicalExamStep data={allData.physicalExam} onChange={() => { }} disabled={true} hideHeader={true} />
           </div>
         </div>
       </div>
@@ -1376,12 +1372,12 @@ const ReviewStep = ({ allData, onEditSection }) => {
 
 /* ─── HTS Form 2021 — 6-Step Wizard Components ─────────────────────── */
 const HTS_STEPS = [
-  { id: "consent",      label: "Informed Consent" },
+  { id: "consent", label: "Informed Consent" },
   { id: "demographics", label: "Demographic Data" },
-  { id: "education",    label: "Education & Occupation" },
-  { id: "risk",         label: "Risk Assessment" },
-  { id: "medical",      label: "Medical History" },
-  { id: "provider",     label: "Provider Details" },
+  { id: "education", label: "Education & Occupation" },
+  { id: "risk", label: "Risk Assessment" },
+  { id: "medical", label: "Medical History" },
+  { id: "provider", label: "Provider Details" },
 ];
 
 /* ─ Step 1: Informed Consent ─ */
@@ -1484,8 +1480,8 @@ const HivDemographicsStep = ({ data, onChange }) => (
             <span className="text-sm font-semibold text-slate-700">Test Date</span>
           </div>
           <div className="grid grid-cols-3 gap-3 ml-8">
-            {["testDateMonth","testDateDay","testDateYear"].map((f,i) => (
-              <input key={f} type="text" placeholder={["Month","Day","Year"][i]} value={data[f]} onChange={e => onChange(f, e.target.value)}
+            {["testDateMonth", "testDateDay", "testDateYear"].map((f, i) => (
+              <input key={f} type="text" placeholder={["Month", "Day", "Year"][i]} value={data[f]} onChange={e => onChange(f, e.target.value)}
                 className="rounded border border-slate-300 px-3 py-2 text-sm outline-none focus:border-purple-500 focus:ring-2 focus:ring-purple-500/20" />
             ))}
           </div>
@@ -1524,7 +1520,7 @@ const HivDemographicsStep = ({ data, onChange }) => (
             <span className="text-sm font-semibold text-slate-700">Name (Full Name)</span>
           </div>
           <div className="grid grid-cols-4 gap-3 ml-8">
-            {[["firstName","First Name"],["middleName","Middle Name"],["lastName","Last Name"],["suffix","Suffix"]].map(([f,ph]) => (
+            {[["firstName", "First Name"], ["middleName", "Middle Name"], ["lastName", "Last Name"], ["suffix", "Suffix"]].map(([f, ph]) => (
               <input key={f} type="text" placeholder={ph} value={data[f]} onChange={e => onChange(f, e.target.value)}
                 className="rounded border border-slate-300 px-3 py-2 text-sm outline-none focus:border-purple-500 focus:ring-2 focus:ring-purple-500/20" />
             ))}
@@ -1552,8 +1548,8 @@ const HivDemographicsStep = ({ data, onChange }) => (
           <div className="ml-8">
             <p className="text-xs text-slate-500 mb-2">Birth Date</p>
             <div className="grid grid-cols-5 gap-3">
-              {["dobMonth","dobDay","dobYear"].map((f,i) => (
-                <input key={f} type="text" placeholder={["Month","Day","Year"][i]} value={data[f]} onChange={e => onChange(f, e.target.value)}
+              {["dobMonth", "dobDay", "dobYear"].map((f, i) => (
+                <input key={f} type="text" placeholder={["Month", "Day", "Year"][i]} value={data[f]} onChange={e => onChange(f, e.target.value)}
                   className="rounded border border-slate-300 px-3 py-2 text-sm outline-none focus:border-purple-500" />
               ))}
               <input type="number" placeholder="Age" value={data.age} onChange={e => onChange("age", e.target.value)}
@@ -1571,7 +1567,7 @@ const HivDemographicsStep = ({ data, onChange }) => (
           <div className="ml-8 flex flex-col gap-2">
             <div className="flex items-center gap-6">
               <span className="text-xs font-semibold text-slate-600 w-40 shrink-0">Sex (assigned at birth):</span>
-              {["Male","Female"].map(s => (
+              {["Male", "Female"].map(s => (
                 <label key={s} className="flex items-center gap-1.5 text-sm text-slate-700 cursor-pointer">
                   <input type="radio" name="hts-sex" value={s} checked={data.sex === s} onChange={() => onChange("sex", s)} className="accent-purple-600 w-4 h-4" />
                   {s}
@@ -1580,7 +1576,7 @@ const HivDemographicsStep = ({ data, onChange }) => (
             </div>
             <div className="flex items-center gap-6">
               <span className="text-xs font-semibold text-slate-600 w-40 shrink-0">Gender Identity:</span>
-              {["Man","Woman","Others"].map(g => (
+              {["Man", "Woman", "Others"].map(g => (
                 <label key={g} className="flex items-center gap-1.5 text-sm text-slate-700 cursor-pointer">
                   <input type="radio" name="hts-gender" value={g} checked={data.gender === g} onChange={() => onChange("gender", g)} className="accent-purple-600 w-4 h-4" />
                   {g}
@@ -1622,10 +1618,10 @@ const HivDemographicsStep = ({ data, onChange }) => (
             <span className="text-sm font-semibold text-slate-700">Nationality</span>
           </div>
           <div className="ml-8 flex items-center gap-6">
-            {["Filipino","Other"].map(v => (
+            {["Filipino", "Other"].map(v => (
               <label key={v} className="flex items-center gap-1.5 text-sm text-slate-700 cursor-pointer">
                 <input type="radio" name="hts-nationality" value={v} checked={(data.nationality || "Filipino") === v}
-                  onChange={() => { onChange("nationality", v); if(v !== "Other") onChange("nationalityOther",""); }} className="accent-purple-600 w-4 h-4" />
+                  onChange={() => { onChange("nationality", v); if (v !== "Other") onChange("nationalityOther", ""); }} className="accent-purple-600 w-4 h-4" />
                 {v === "Other" ? "Other, please specify:" : v}
               </label>
             ))}
@@ -1641,7 +1637,7 @@ const HivDemographicsStep = ({ data, onChange }) => (
             <span className="text-sm font-semibold text-slate-700">Civil Status</span>
           </div>
           <div className="ml-8 flex flex-wrap gap-4">
-            {["Single","Married","Separated","Widowed","Divorced"].map(s => (
+            {["Single", "Married", "Separated", "Widowed", "Divorced"].map(s => (
               <label key={s} className="flex items-center gap-1.5 text-sm text-slate-700 cursor-pointer">
                 <input type="radio" name="hts-civil" value={s} checked={data.civilStatus === s} onChange={() => onChange("civilStatus", s)} className="accent-purple-600 w-4 h-4" />
                 {s}
@@ -1655,7 +1651,7 @@ const HivDemographicsStep = ({ data, onChange }) => (
             <span className="text-sm font-semibold text-slate-700">Are you currently living with a partner?</span>
           </div>
           <div className="ml-8 flex items-center gap-6">
-            {["No","Yes"].map(v => (
+            {["No", "Yes"].map(v => (
               <label key={v} className="flex items-center gap-1.5 text-sm text-slate-700 cursor-pointer">
                 <input type="radio" name="hts-partner" value={v} checked={data.hasPartner === v} onChange={() => onChange("hasPartner", v)} className="accent-purple-600 w-4 h-4" />
                 {v}
@@ -1672,7 +1668,7 @@ const HivDemographicsStep = ({ data, onChange }) => (
             <span className="text-sm font-semibold text-slate-700">Are you currently pregnant? <span className="text-xs font-normal text-slate-400">(for female clients only)</span></span>
           </div>
           <div className="ml-8 flex gap-6">
-            {["No","Yes"].map(v => (
+            {["No", "Yes"].map(v => (
               <label key={v} className="flex items-center gap-1.5 text-sm text-slate-700 cursor-pointer">
                 <input type="radio" name="hts-pregnant" value={v} checked={data.pregnant === v} onChange={() => onChange("pregnant", v)} className="accent-purple-600 w-4 h-4" />
                 {v}
@@ -1703,10 +1699,10 @@ const HivEducationStep = ({ data, onChange }) => (
             <span className="text-sm font-semibold text-slate-700">Highest Education Attainment?</span>
           </div>
           <div className="ml-8 flex flex-wrap gap-4">
-            {["No grade completed","Pre-school","Elementary","Highschool","College","Vocational","Post-Graduate"].map(e => (
+            {["No grade completed", "Pre-school", "Elementary", "Highschool", "College", "Vocational", "Post-Graduate"].map(e => (
               <label key={e} className="flex items-center gap-1.5 text-sm text-slate-700 cursor-pointer">
-                <input type="checkbox" checked={!!data[`edu_${e.replace(/[\s-]/g,"_")}`]}
-                  onChange={ev => onChange(`edu_${e.replace(/[\s-]/g,"_")}`, ev.target.checked)} className="w-4 h-4 accent-purple-600" />
+                <input type="checkbox" checked={!!data[`edu_${e.replace(/[\s-]/g, "_")}`]}
+                  onChange={ev => onChange(`edu_${e.replace(/[\s-]/g, "_")}`, ev.target.checked)} className="w-4 h-4 accent-purple-600" />
                 {e}
               </label>
             ))}
@@ -1718,7 +1714,7 @@ const HivEducationStep = ({ data, onChange }) => (
             <span className="text-sm font-semibold text-slate-700">Are you currently in school?</span>
           </div>
           <div className="ml-8 flex gap-6">
-            {["No","Yes"].map(v => (
+            {["No", "Yes"].map(v => (
               <label key={v} className="flex items-center gap-1.5 text-sm text-slate-700 cursor-pointer">
                 <input type="radio" name="hts-school" value={v} checked={data.inSchool === v} onChange={() => onChange("inSchool", v)} className="accent-purple-600 w-4 h-4" />
                 {v}
@@ -1756,7 +1752,7 @@ const HivEducationStep = ({ data, onChange }) => (
             <span className="text-sm font-semibold text-slate-700">Did you reside or work overseas/abroad in the past 6 years?</span>
           </div>
           <div className="ml-8 flex gap-6">
-            {["No","Yes"].map(v => (
+            {["No", "Yes"].map(v => (
               <label key={v} className="flex items-center gap-1.5 text-sm text-slate-700 cursor-pointer">
                 <input type="radio" name="hts-overseas" value={v} checked={data.overseas === v} onChange={() => onChange("overseas", v)} className="accent-purple-600 w-4 h-4" />
                 {v}
@@ -1814,7 +1810,7 @@ const HivRiskStep = ({ data, onChange }) => (
           <div className="flex items-center justify-between rounded-lg border border-slate-200 bg-slate-50 px-4 py-2.5 gap-4">
             <span className="text-xs font-semibold text-[#1E3A5F]">Had a previous HIV test?</span>
             <div className="flex gap-4">
-              {["yes","no"].map(v => (
+              {["yes", "no"].map(v => (
                 <label key={v} className="flex items-center gap-1.5 text-sm text-slate-700 cursor-pointer">
                   <input type="radio" name="hts-prevtest" value={v} checked={data.prevTest === v} onChange={() => onChange("prevTest", v)} className="accent-purple-600 w-4 h-4" />
                   {v.charAt(0).toUpperCase() + v.slice(1)}
@@ -1856,15 +1852,15 @@ const HivMedicalStep = ({ data, onChange }) => (
       <div className="p-5 grid gap-3">
         {[
           { key: "unusualDischarge", label: "Unusual discharge from penis/vagina/anus?" },
-          { key: "soresRashes",      label: "Sores or rashes on genital area or body?" },
-          { key: "painUrination",    label: "Pain or burning sensation during urination?" },
-          { key: "historySTI",       label: "History of sexually transmitted infection (STI)?" },
-          { key: "tbHistory",        label: "History of tuberculosis (TB) or current TB treatment?" },
+          { key: "soresRashes", label: "Sores or rashes on genital area or body?" },
+          { key: "painUrination", label: "Pain or burning sensation during urination?" },
+          { key: "historySTI", label: "History of sexually transmitted infection (STI)?" },
+          { key: "tbHistory", label: "History of tuberculosis (TB) or current TB treatment?" },
         ].map(({ key, label }) => (
           <div key={key} className="flex items-center justify-between rounded-lg border border-slate-200 bg-slate-50 px-4 py-2.5 gap-4">
             <span className="text-xs font-semibold text-[#1E3A5F]">{label}</span>
             <div className="flex gap-4 shrink-0">
-              {["yes","no"].map(v => (
+              {["yes", "no"].map(v => (
                 <label key={v} className="flex items-center gap-1.5 text-sm text-slate-700 cursor-pointer">
                   <input type="radio" name={`hts-med-${key}`} value={v} checked={data[key] === v} onChange={() => onChange(key, v)} className="accent-purple-600 w-4 h-4" />
                   {v.charAt(0).toUpperCase() + v.slice(1)}
@@ -2148,16 +2144,19 @@ const StaffAssessmentView = () => {
   /* ─── localStorage Auto-Save Hooks ────────────────────────────────── */
   const fpFormASave = useLocalStorageSave("fp_assessment_form_a_data", formData);
   const fpFormBSave = useLocalStorageSave("fp_assessment_form_b_data", visits);
+  const hivFormSave = useLocalStorageSave("hiv_form_2021_data", hivFormData);
 
   /* ─── Unsaved Form Warning ────────────────────────────────────────── */
   const hasUnsavedFPA = fpFormASave.hasUnsavedChanges && !submitted;
   const hasUnsavedFPB = fpFormBSave.hasUnsavedChanges && !visitsSubmitted;
-  useUnsavedFormWarning(hasUnsavedFPA || hasUnsavedFPB, "FP Assessment Form");
+  const hasUnsavedHIV = hivFormSave.hasUnsavedChanges && !hivSaved;
+  useUnsavedFormWarning(hasUnsavedFPA || hasUnsavedFPB || hasUnsavedHIV, "Assessment Form");
 
   /* ─── Load Saved Data on Mount ────────────────────────────────────── */
   useEffect(() => {
     const savedFormA = fpFormASave.loadData();
     const savedFormB = fpFormBSave.loadData();
+    const savedHiv = hivFormSave.loadData();
 
     if (savedFormA && Object.keys(savedFormA).length > 0) {
       setFormData(prev => deepMerge(prev, savedFormA));
@@ -2165,6 +2164,10 @@ const StaffAssessmentView = () => {
 
     if (savedFormB && Array.isArray(savedFormB) && savedFormB.length > 0) {
       setVisits(savedFormB);
+    }
+
+    if (savedHiv && Object.keys(savedHiv).length > 0) {
+      setHivFormData(prev => deepMerge(prev, savedHiv));
     }
     // Only run on mount - disable eslint rule since we're intentionally loading data once
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -2185,6 +2188,14 @@ const StaffAssessmentView = () => {
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [visits]);
+
+  /* ─── Auto-Save HIV Form Data on Change ───────────────────────────── */
+  useEffect(() => {
+    if (hivFormData && Object.keys(hivFormData).length > 0) {
+      hivFormSave.autoSave(hivFormData);
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [hivFormData]);
 
   /* ─── Form Reset & Clear Handlers ─────────────────────────────────── */
   const handleResetFormA = () => {
@@ -2285,6 +2296,45 @@ const StaffAssessmentView = () => {
     }, 500);
   };
 
+  const handleResetHivForm = () => {
+    if (window.confirm("Are you sure you want to clear all HIV form data? This action cannot be undone.")) {
+      setHivFormData({
+        clientName: "", verbalConsent: false, contactNumber: "", email: "", consentConfirmed: false,
+        testDateMonth: "", testDateDay: "", testDateYear: "",
+        philhealth: "", noPhilhealth: false, philsys: "", noPhilsys: false,
+        firstName: "", middleName: "", lastName: "", suffix: "",
+        motherInitials: "", fatherInitials: "", birthOrder: "",
+        dobMonth: "", dobDay: "", dobYear: "", age: "", ageMonths: "",
+        sex: "", gender: "",
+        currentCity: "", currentProvince: "", permCity: "", permProvince: "",
+        birthCity: "", birthProvince: "",
+        nationality: "Filipino", nationalityOther: "",
+        civilStatus: "", hasPartner: "", numChildren: "", pregnant: "",
+        inSchool: "", currentlyWorking: false, occupation: "", notWorking: false, prevOccupation: "", overseas: "",
+        popGroup: "", reason: "", prevTest: "", prevTestDate: "",
+        unusualDischarge: "", soresRashes: "", painUrination: "", historySTI: "", tbHistory: "",
+        preCheck0: false, preCheck1: false, preCheck2: false,
+        preCheck3: false, preCheck4: false, preCheck5: false,
+        kitName: "", lotNo: "", expiryDate: "", dateOfTest: "", result: "",
+        confirmatoryDate: "", confirmatoryResult: "",
+        postCheck0: false, postCheck1: false, postCheck2: false,
+        postCheck3: false, postCheck4: false, postCheck5: false,
+        referral: "", followUpDate: "", provider: "", remarks: "",
+      });
+      hivFormSave.clearData();
+      setHivCurrentStep(0);
+      setHivSaved(false);
+    }
+  };
+
+  const handleSubmitHivForm = () => {
+    setHivSaved(true);
+    // Clear localStorage data after successful submission
+    setTimeout(() => {
+      hivFormSave.clearData();
+    }, 500);
+  };
+
   const updateSection = (section) => (field, value) =>
     setFormData(prev => ({ ...prev, [section]: { ...prev[section], [field]: value } }));
 
@@ -2309,11 +2359,10 @@ const StaffAssessmentView = () => {
           <h1 className="text-xl sm:text-2xl font-bold text-[#1E3A5F]">
             {activeForm === "fp" ? "Family Planning Client Assessment Record" : "HIV Testing Service (HTS) Form 2021"}
           </h1>
-          <span className={`rounded-full px-4 py-1.5 text-xs font-bold shadow-sm transition-colors duration-250 ${
-            activeForm === "fp"
+          <span className={`rounded-full px-4 py-1.5 text-xs font-bold shadow-sm transition-colors duration-250 ${activeForm === "fp"
               ? fpTab === "side-a" ? "bg-[#1E3A5F]/15 text-[#1E3A5F]" : "bg-[#F5C518] text-[#1E3A5F]"
               : "bg-purple-100 text-purple-700"
-          }`}>
+            }`}>
             {activeForm === "fp"
               ? fpTab === "side-a" ? "FP FORM 1 - Side A" : "FP FORM 1 - Side B"
               : hivSaved ? "HTS Record Saved" : `Step ${hivCurrentStep + 1} of 6 — ${HTS_STEPS[hivCurrentStep].label}`}
@@ -2369,9 +2418,8 @@ const StaffAssessmentView = () => {
             {/* Step label */}
             <div className="flex items-center justify-between mb-3">
               <div className="flex items-center gap-2">
-                <span className={`text-xs font-bold uppercase tracking-widest transition-colors duration-300 ${
-                  fpTab === "side-a" ? "text-[#1E3A5F]" : "text-[#B88900]"
-                }`}>
+                <span className={`text-xs font-bold uppercase tracking-widest transition-colors duration-300 ${fpTab === "side-a" ? "text-[#1E3A5F]" : "text-[#B88900]"
+                  }`}>
                   {fpTab === "side-a" ? "Step 1 of 2 — FP Assessment (Side A)" : "Step 2 of 2 — Visit Records (Side B)"}
                 </span>
               </div>
@@ -2380,11 +2428,10 @@ const StaffAssessmentView = () => {
                 <button
                   type="button"
                   onClick={() => setFpTab("side-a")}
-                  className={`flex items-center gap-1.5 rounded-full px-3 py-1 text-xs font-bold border transition-all duration-200 ${
-                    fpTab === "side-a"
+                  className={`flex items-center gap-1.5 rounded-full px-3 py-1 text-xs font-bold border transition-all duration-200 ${fpTab === "side-a"
                       ? "bg-[#1E3A5F] text-white border-[#1E3A5F] shadow-sm"
                       : "bg-white text-slate-500 border-slate-300 hover:border-[#1E3A5F] hover:text-[#1E3A5F]"
-                  }`}
+                    }`}
                 >
                   {submitted ? (
                     <svg className="w-3 h-3" fill="none" stroke="currentColor" strokeWidth="3" viewBox="0 0 24 24">
@@ -2395,19 +2442,17 @@ const StaffAssessmentView = () => {
                   )}
                   Side A
                 </button>
-                <div className={`h-0.5 w-6 rounded-full transition-colors duration-300 ${
-                  submitted ? "bg-[#1E3A5F]" : "bg-slate-200"
-                }`} />
+                <div className={`h-0.5 w-6 rounded-full transition-colors duration-300 ${submitted ? "bg-[#1E3A5F]" : "bg-slate-200"
+                  }`} />
                 <button
                   type="button"
                   onClick={() => submitted && setFpTab("side-b")}
-                  className={`flex items-center gap-1.5 rounded-full px-3 py-1 text-xs font-bold border transition-all duration-200 ${
-                    fpTab === "side-b"
+                  className={`flex items-center gap-1.5 rounded-full px-3 py-1 text-xs font-bold border transition-all duration-200 ${fpTab === "side-b"
                       ? "bg-[#F5C518] text-[#1E3A5F] border-[#F5C518] shadow-sm"
                       : submitted
                         ? "bg-white text-slate-500 border-slate-300 hover:border-[#F5C518] hover:text-[#B88900]"
                         : "bg-white text-slate-300 border-slate-200 cursor-not-allowed"
-                  }`}
+                    }`}
                 >
                   <span className="w-3 h-3 flex items-center justify-center text-[10px]">2</span>
                   Side B
@@ -2695,7 +2740,7 @@ const StaffAssessmentView = () => {
                     obstetricalData={formData.obstetrical}
                     onObstetricalChange={updateSection("obstetrical")}
                   />
-                  
+
                   {/* Side B Action Buttons */}
                   {!visitsSubmitted && (
                     <div className="flex items-center justify-between gap-4 mt-6 pt-6 border-t border-slate-100">
@@ -2810,7 +2855,7 @@ const StaffAssessmentView = () => {
                     ) : (
                       <button
                         type="button"
-                        onClick={() => setHivSaved(true)}
+                        onClick={handleSubmitHivForm}
                         className="flex items-center gap-2 rounded-xl bg-[#1E3A5F] px-7 py-2.5 text-sm font-bold text-white shadow-md hover:bg-[#152c4a] hover:-translate-y-0.5 active:translate-y-0 transition-all duration-200"
                       >
                         Save HTS Record
@@ -2819,6 +2864,35 @@ const StaffAssessmentView = () => {
                         </svg>
                       </button>
                     )}
+                  </div>
+                  <div className="flex items-center gap-3">
+                    <div className="flex items-center gap-2 text-xs">
+                      {hivFormSave.isSaving && (
+                        <>
+                          <div className="animate-spin w-3 h-3 border-1.5 border-slate-300 border-t-purple-600 rounded-full" />
+                          <span className="text-slate-500">Saving...</span>
+                        </>
+                      )}
+                      {!hivFormSave.isSaving && hivFormSave.lastSaveTime && !hivFormSave.hasUnsavedChanges && (
+                        <>
+                          <svg className="w-3.5 h-3.5 text-emerald-600" fill="none" stroke="currentColor" strokeWidth="2.5" viewBox="0 0 24 24">
+                            <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" />
+                          </svg>
+                          <span className="text-slate-500">Saved at {hivFormSave.lastSaveTime}</span>
+                        </>
+                      )}
+                    </div>
+                    <button
+                      type="button"
+                      onClick={handleResetHivForm}
+                      className="flex items-center gap-2 rounded-xl border border-red-300 bg-red-50 px-5 py-2.5 text-sm font-semibold text-red-600 hover:bg-red-100 hover:border-red-400 transition-colors"
+                      title="Clear all HIV form data and localStorage"
+                    >
+                      <svg className="w-4 h-4" fill="none" stroke="currentColor" strokeWidth="2.5" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+                      </svg>
+                      Clear Form
+                    </button>
                   </div>
                 </div>
               </>
