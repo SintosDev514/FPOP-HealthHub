@@ -2148,16 +2148,19 @@ const StaffAssessmentView = () => {
   /* ─── localStorage Auto-Save Hooks ────────────────────────────────── */
   const fpFormASave = useLocalStorageSave("fp_assessment_form_a_data", formData);
   const fpFormBSave = useLocalStorageSave("fp_assessment_form_b_data", visits);
+  const hivFormSave = useLocalStorageSave("hiv_form_2021_data", hivFormData);
 
   /* ─── Unsaved Form Warning ────────────────────────────────────────── */
   const hasUnsavedFPA = fpFormASave.hasUnsavedChanges && !submitted;
   const hasUnsavedFPB = fpFormBSave.hasUnsavedChanges && !visitsSubmitted;
-  useUnsavedFormWarning(hasUnsavedFPA || hasUnsavedFPB, "FP Assessment Form");
+  const hasUnsavedHIV = hivFormSave.hasUnsavedChanges && !hivSaved;
+  useUnsavedFormWarning(hasUnsavedFPA || hasUnsavedFPB || hasUnsavedHIV, "Assessment Form");
 
   /* ─── Load Saved Data on Mount ────────────────────────────────────── */
   useEffect(() => {
     const savedFormA = fpFormASave.loadData();
     const savedFormB = fpFormBSave.loadData();
+    const savedHiv = hivFormSave.loadData();
 
     if (savedFormA && Object.keys(savedFormA).length > 0) {
       setFormData(prev => deepMerge(prev, savedFormA));
@@ -2165,6 +2168,10 @@ const StaffAssessmentView = () => {
 
     if (savedFormB && Array.isArray(savedFormB) && savedFormB.length > 0) {
       setVisits(savedFormB);
+    }
+
+    if (savedHiv && Object.keys(savedHiv).length > 0) {
+      setHivFormData(prev => deepMerge(prev, savedHiv));
     }
     // Only run on mount - disable eslint rule since we're intentionally loading data once
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -2185,6 +2192,14 @@ const StaffAssessmentView = () => {
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [visits]);
+
+  /* ─── Auto-Save HIV Form Data on Change ───────────────────────────── */
+  useEffect(() => {
+    if (hivFormData && Object.keys(hivFormData).length > 0) {
+      hivFormSave.autoSave(hivFormData);
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [hivFormData]);
 
   /* ─── Form Reset & Clear Handlers ─────────────────────────────────── */
   const handleResetFormA = () => {
@@ -2282,6 +2297,45 @@ const StaffAssessmentView = () => {
     // Clear localStorage data after successful submission
     setTimeout(() => {
       fpFormBSave.clearData();
+    }, 500);
+  };
+
+  const handleResetHivForm = () => {
+    if (window.confirm("Are you sure you want to clear all HIV form data? This action cannot be undone.")) {
+      setHivFormData({
+        clientName: "", verbalConsent: false, contactNumber: "", email: "", consentConfirmed: false,
+        testDateMonth: "", testDateDay: "", testDateYear: "",
+        philhealth: "", noPhilhealth: false, philsys: "", noPhilsys: false,
+        firstName: "", middleName: "", lastName: "", suffix: "",
+        motherInitials: "", fatherInitials: "", birthOrder: "",
+        dobMonth: "", dobDay: "", dobYear: "", age: "", ageMonths: "",
+        sex: "", gender: "",
+        currentCity: "", currentProvince: "", permCity: "", permProvince: "",
+        birthCity: "", birthProvince: "",
+        nationality: "Filipino", nationalityOther: "",
+        civilStatus: "", hasPartner: "", numChildren: "", pregnant: "",
+        inSchool: "", currentlyWorking: false, occupation: "", notWorking: false, prevOccupation: "", overseas: "",
+        popGroup: "", reason: "", prevTest: "", prevTestDate: "",
+        unusualDischarge: "", soresRashes: "", painUrination: "", historySTI: "", tbHistory: "",
+        preCheck0: false, preCheck1: false, preCheck2: false,
+        preCheck3: false, preCheck4: false, preCheck5: false,
+        kitName: "", lotNo: "", expiryDate: "", dateOfTest: "", result: "",
+        confirmatoryDate: "", confirmatoryResult: "",
+        postCheck0: false, postCheck1: false, postCheck2: false,
+        postCheck3: false, postCheck4: false, postCheck5: false,
+        referral: "", followUpDate: "", provider: "", remarks: "",
+      });
+      hivFormSave.clearData();
+      setHivCurrentStep(0);
+      setHivSaved(false);
+    }
+  };
+
+  const handleSubmitHivForm = () => {
+    setHivSaved(true);
+    // Clear localStorage data after successful submission
+    setTimeout(() => {
+      hivFormSave.clearData();
     }, 500);
   };
 
@@ -2810,7 +2864,7 @@ const StaffAssessmentView = () => {
                     ) : (
                       <button
                         type="button"
-                        onClick={() => setHivSaved(true)}
+                        onClick={handleSubmitHivForm}
                         className="flex items-center gap-2 rounded-xl bg-[#1E3A5F] px-7 py-2.5 text-sm font-bold text-white shadow-md hover:bg-[#152c4a] hover:-translate-y-0.5 active:translate-y-0 transition-all duration-200"
                       >
                         Save HTS Record
@@ -2819,6 +2873,35 @@ const StaffAssessmentView = () => {
                         </svg>
                       </button>
                     )}
+                  </div>
+                  <div className="flex items-center gap-3">
+                    <div className="flex items-center gap-2 text-xs">
+                      {hivFormSave.isSaving && (
+                        <>
+                          <div className="animate-spin w-3 h-3 border-1.5 border-slate-300 border-t-purple-600 rounded-full" />
+                          <span className="text-slate-500">Saving...</span>
+                        </>
+                      )}
+                      {!hivFormSave.isSaving && hivFormSave.lastSaveTime && !hivFormSave.hasUnsavedChanges && (
+                        <>
+                          <svg className="w-3.5 h-3.5 text-emerald-600" fill="none" stroke="currentColor" strokeWidth="2.5" viewBox="0 0 24 24">
+                            <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" />
+                          </svg>
+                          <span className="text-slate-500">Saved at {hivFormSave.lastSaveTime}</span>
+                        </>
+                      )}
+                    </div>
+                    <button
+                      type="button"
+                      onClick={handleResetHivForm}
+                      className="flex items-center gap-2 rounded-xl border border-red-300 bg-red-50 px-5 py-2.5 text-sm font-semibold text-red-600 hover:bg-red-100 hover:border-red-400 transition-colors"
+                      title="Clear all HIV form data and localStorage"
+                    >
+                      <svg className="w-4 h-4" fill="none" stroke="currentColor" strokeWidth="2.5" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+                      </svg>
+                      Clear Form
+                    </button>
                   </div>
                 </div>
               </>
