@@ -191,25 +191,25 @@ function LocationPage() {
               >
                 <h1
                   ref={titleRef}
-                  className="text-3xl font-bold tracking-tight sm:text-4xl md:text-5xl"
+                  className="text-2xl font-bold tracking-tight sm:text-3xl md:text-4xl"
                 >
                   Our Location
                 </h1>
 
                 <p
                   ref={subtitleRef}
-                  className="mt-3 text-base leading-7 text-white/80 sm:text-lg"
+                  className="mt-2 text-sm leading-6 text-white/80"
                 >
                   Visit our clinic at the address below:
                 </p>
 
-                <div className="mt-5">
-                  <p ref={clinicRef} className="text-2xl font-bold sm:text-3xl">
+                <div className="mt-4">
+                  <p ref={clinicRef} className="text-xl font-bold sm:text-2xl">
                     FPOP Calbayog Clinic
                   </p>
                   <p
                     ref={addressRef}
-                    className="mt-2 text-lg text-white/80 sm:text-xl"
+                    className="mt-1 text-sm text-white/80"
                   >
                     Calbayog City, Samar, Philippines
                   </p>
@@ -224,22 +224,22 @@ function LocationPage() {
                 {/* hide floating cards on mobile */}
                 <div
                   ref={(el) => setFloatingCardRef(el, 0)}
-                  className="float-card absolute left-0 top-25 z-10 hidden rounded-2xl border border-white/10 bg-white/10 px-6 py-4 text-white backdrop-blur-md sm:block lg:left-30 px-8"
+                  className="float-card absolute left-0 top-25 z-10 hidden rounded-2xl border border-white/10 bg-white/10 px-5 py-3 text-white backdrop-blur-md sm:block lg:left-30 px-8"
                 >
-                  <p className="text-[10px] font-bold uppercase tracking-[0.22em] text-white/65">
+                  <p className="text-[9px] font-bold uppercase tracking-[0.22em] text-white/65">
                     Visit Us
                   </p>
-                  <p className="mt-1 text-sm font-bold">Calbayog City</p>
+                  <p className="mt-0.5 text-xs font-bold">Calbayog City</p>
                 </div>
 
                 <div
                   ref={(el) => setFloatingCardRef(el, 1)}
-                  className="float-card absolute right-2 top-8 z-10 hidden rounded-2xl border border-white/10 bg-white/10 px-6 py-4 text-white backdrop-blur-md sm:block lg:right-0"
+                  className="float-card absolute right-2 top-8 z-10 hidden rounded-2xl border border-white/10 bg-white/10 px-5 py-3 text-white backdrop-blur-md sm:block lg:right-0"
                 >
-                  <p className="text-[10px] font-bold uppercase tracking-[0.22em] text-white/65">
+                  <p className="text-[9px] font-bold uppercase tracking-[0.22em] text-white/65">
                     Clinic
                   </p>
-                  <p className="mt-1 text-sm font-bold">FPOP Calbayog</p>
+                  <p className="mt-0.5 text-xs font-bold">FPOP Calbayog</p>
                 </div>
 
                 <img
@@ -259,12 +259,12 @@ function LocationPage() {
               ref={mapCardRef}
               className="overflow-hidden rounded-[24px] border border-[#1E3A5F]/10 bg-white shadow-[0_16px_38px_rgba(30,58,95,0.10)]"
             >
-              <div className="flex items-center justify-between border-b border-[#1E3A5F]/10 bg-[#F9FAFB] px-4 py-3 sm:px-5">
+              <div className="flex items-center justify-between border-b border-[#1E3A5F]/10 bg-[#F9FAFB] px-4 py-2.5 sm:px-5">
                 <div>
-                  <p className="text-[11px] font-bold uppercase tracking-[0.22em] text-[#1E3A5F]/65">
+                  <p className="text-[10px] font-bold uppercase tracking-[0.22em] text-[#1E3A5F]/65">
                     Map Preview
                   </p>
-                  <p className="mt-1 text-sm text-[#1F2937]/75">
+                  <p className="mt-0.5 text-xs text-[#1F2937]/75">
                     View our clinic location in Calbayog City
                   </p>
                 </div>
@@ -273,7 +273,7 @@ function LocationPage() {
                   href="https://www.google.com/maps/place/Calbayog+City,+Samar,+Philippines"
                   target="_blank"
                   rel="noreferrer"
-                  className="hidden rounded-xl bg-[#1E3A5F] px-4 py-2.5 text-sm font-bold text-white transition-colors duration-300 hover:bg-[#F5C518] hover:text-[#1F2937] sm:inline-flex"
+                  className="hidden rounded-xl bg-[#1E3A5F] px-3.5 py-2 text-xs font-bold text-white transition-colors duration-300 hover:bg-[#F5C518] hover:text-[#1F2937] sm:inline-flex"
                 >
                   Open Map
                 </a>
@@ -292,12 +292,12 @@ function LocationPage() {
                 ></iframe>
               </div>
 
-              <div className="border-t border-[#1E3A5F]/10 bg-white px-4 py-3 sm:hidden">
+              <div className="border-t border-[#1E3A5F]/10 bg-white px-4 py-2.5 sm:hidden">
                 <a
                   href="https://maps.app.goo.gl/m6RKu85CKZxybmV49"
                   target="_blank"
                   rel="noreferrer"
-                  className="inline-flex rounded-xl bg-[#1E3A5F] px-4 py-2.5 text-sm font-bold text-white transition-colors duration-300 hover:bg-[#F5C518] hover:text-[#1F2937]"
+                  className="inline-flex rounded-xl bg-[#1E3A5F] px-3.5 py-2 text-xs font-bold text-white transition-colors duration-300 hover:bg-[#F5C518] hover:text-[#1F2937]"
                 >
                   Open Map
                 </a>

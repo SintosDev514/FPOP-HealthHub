@@ -195,16 +195,16 @@ function AboutPage() {
               ref={heroTextRef}
               className="text-center text-white md:text-left"
             >
-              <h1 className="text-3xl font-bold sm:text-4xl md:text-5xl">
+              <h1 className="text-2xl font-bold sm:text-3xl md:text-4xl">
                 About Us
               </h1>
 
-              <p className="mt-4 max-w-[520px] text-base leading-7 text-white/80 mx-auto md:mx-0">
+              <p className="mt-3 max-w-[520px] text-sm leading-6 text-white/80 mx-auto md:mx-0">
                 Building healthier communities through education, outreach, and
                 accessible reproductive health services.
               </p>
 
-              <p className="mt-6 max-w-[520px] text-sm leading-7 text-white/75 mx-auto md:mx-0">
+              <p className="mt-4 max-w-[520px] text-xs leading-6 text-white/75 mx-auto md:mx-0">
                 At FPOP, we are committed to providing comprehensive
                 reproductive health services with compassion and expertise. Our
                 mission is to empower individuals and families with knowledge,
@@ -291,50 +291,50 @@ function AboutPage() {
               ref={secondTextRef}
               className="rounded-2xl border border-white/15 bg-white/8 px-5 py-5 shadow-[0_8px_32px_rgba(30,58,95,0.1)] transition-all duration-300 backdrop-blur-sm hover:border-[#F5C518]/30 hover:shadow-[0_16px_48px_rgba(245,197,24,0.2)] hover:bg-white/12 sm:px-6 sm:py-6 md:px-8 md:py-8"
             >
-              <p className="text-lg font-bold uppercase tracking-[0.3em] text-black/50">
+              <p className="text-xs font-bold uppercase tracking-[0.3em] text-black/50">
                 Our Mission
               </p>
 
-              <h2 className="mt-3 text-2xl font-bold leading-tight text-[#1E3A5F] sm:text-3xl md:text-4xl">
+              <h2 className="mt-2 text-xl font-bold leading-tight text-[#1E3A5F] sm:text-2xl md:text-3xl">
                 Making healthcare easier and more accessible.
               </h2>
 
-              <p className="mt-4 text-sm leading-6 text-slate-700 md:text-base">
+              <p className="mt-3 text-xs leading-5 text-slate-700 md:text-sm">
                 Connecting patients with healthcare providers through an
                 innovative digital platform for better access, education, and
                 care for all communities.
               </p>
             </div>
 
-           <div className="grid gap-4 sm:grid-cols-2 sm:gap-6 lg:grid-cols-3">
-  <article className="group rounded-xl bg-[#1E3A5F] px-5 py-6 text-left text-white shadow-[0_16px_28px_rgba(30,58,95,0.18)] transition-all duration-300 border-2 border-transparent hover:bg-white hover:border-[#F5C518] hover:shadow-[0_0_20px_rgba(245,197,24,0.3)] sm:px-6 sm:py-7 md:px-8">
-    <p className="text-sm font-bold uppercase tracking-[0.16em] text-blue-100 transition-colors duration-300 group-hover:text-[#1E3A5F]">
+           <div className="grid gap-3 sm:grid-cols-2 sm:gap-4 lg:grid-cols-3">
+  <article className="group rounded-xl bg-[#1E3A5F] px-4 py-5 text-left text-white shadow-[0_16px_28px_rgba(30,58,95,0.18)] transition-all duration-300 border-2 border-transparent hover:bg-white hover:border-[#F5C518] hover:shadow-[0_0_20px_rgba(245,197,24,0.3)] sm:px-5 sm:py-6">
+    <p className="text-[11px] font-bold uppercase tracking-[0.16em] text-blue-100 transition-colors duration-300 group-hover:text-[#1E3A5F]">
       Community Outreach
     </p>
 
-    <p className="mt-4 text-[15px] leading-7 text-blue-100 transition-colors duration-300 group-hover:text-slate-700">
+    <p className="mt-3 text-xs leading-6 text-blue-100 transition-colors duration-300 group-hover:text-slate-700">
       Bringing family planning information, health counseling, and
       support directly to underserved communities.
     </p>
   </article>
 
-  <article className="group rounded-xl bg-[#1E3A5F] px-5 py-6 text-left text-white shadow-[0_16px_28px_rgba(30,58,95,0.18)] transition-all duration-300 border-2 border-transparent hover:bg-white hover:border-[#F5C518] hover:shadow-[0_0_20px_rgba(245,197,24,0.3)] sm:px-6 sm:py-7 md:px-8">
-    <p className="text-sm font-bold uppercase tracking-[0.16em] text-blue-100 transition-colors duration-300 group-hover:text-[#1E3A5F]">
+  <article className="group rounded-xl bg-[#1E3A5F] px-4 py-5 text-left text-white shadow-[0_16px_28px_rgba(30,58,95,0.18)] transition-all duration-300 border-2 border-transparent hover:bg-white hover:border-[#F5C518] hover:shadow-[0_0_20px_rgba(245,197,24,0.3)] sm:px-5 sm:py-6">
+    <p className="text-[11px] font-bold uppercase tracking-[0.16em] text-blue-100 transition-colors duration-300 group-hover:text-[#1E3A5F]">
       Youth Education
     </p>
 
-    <p className="mt-4 text-[15px] leading-7 text-blue-100 transition-colors duration-300 group-hover:text-slate-700">
+    <p className="mt-3 text-xs leading-6 text-blue-100 transition-colors duration-300 group-hover:text-slate-700">
       Promoting adolescent reproductive health, comprehensive
       sexuality education, and informed decision-making.
     </p>
   </article>
 
-  <article className="group rounded-xl bg-[#1E3A5F] px-5 py-6 text-left text-white shadow-[0_16px_28px_rgba(30,58,95,0.18)] transition-all duration-300 border-2 border-transparent hover:bg-white hover:border-[#F5C518] hover:shadow-[0_0_20px_rgba(245,197,24,0.3)] sm:px-6 sm:py-7 md:px-8">
-    <p className="text-sm font-bold uppercase tracking-[0.16em] text-blue-100 transition-colors duration-300 group-hover:text-[#1E3A5F]">
+  <article className="group rounded-xl bg-[#1E3A5F] px-4 py-5 text-left text-white shadow-[0_16px_28px_rgba(30,58,95,0.18)] transition-all duration-300 border-2 border-transparent hover:bg-white hover:border-[#F5C518] hover:shadow-[0_0_20px_rgba(245,197,24,0.3)] sm:px-5 sm:py-6">
+    <p className="text-[11px] font-bold uppercase tracking-[0.16em] text-blue-100 transition-colors duration-300 group-hover:text-[#1E3A5F]">
       Clinic Services
     </p>
 
-    <p className="mt-4 text-[15px] leading-7 text-blue-100 transition-colors duration-300 group-hover:text-slate-700">
+    <p className="mt-3 text-xs leading-6 text-blue-100 transition-colors duration-300 group-hover:text-slate-700">
       Supporting appointments, records access, referrals, and
       patient communication through a secure digital portal.
     </p>

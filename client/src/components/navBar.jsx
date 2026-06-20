@@ -17,7 +17,7 @@ export default function NavBar() {
       "
     >
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="flex items-center justify-between min-h-[76px]">
+        <div className="flex items-center justify-between min-h-[56px]">
           
           {/* LOGO & TITLE */}
           <div
@@ -25,25 +25,24 @@ export default function NavBar() {
             className="flex items-center gap-2 cursor-pointer group"
           >
             <div className="relative">
-              <div className="absolute inset-0 bg-[#F5C518]/20 rounded-full blur-md group-hover:bg-[#F5C518]/30 transition-all duration-300"></div>
               <img
                 src="/FPOPLOGO1.png"
                 alt="Logo"
-                className="relative w-14 h-14 object-contain transform group-hover:scale-105 transition-all duration-300"
+                className="relative w-9 h-9 object-contain"
               />
             </div>
             <div className="flex flex-col">
-              <h2 className="text-md sm:text-lg font-bold text-white tracking-wide group-hover:text-[#F5C518] transition-colors duration-300">
+              <h2 className="text-xs font-bold text-white tracking-wide">
                 FPOP Clinic Portal
               </h2>
-              <span className="text-[10px] text-[#F5C518]/80 uppercase tracking-widest -mt-1 font-semibold">
+              <span className="text-[8px] text-[#F5C518]/70 uppercase tracking-widest -mt-0.5 font-medium">
                 Healthcare Hub
               </span>
             </div>
           </div>
 
           {/* DESKTOP NAVIGATION */}
-          <nav className="hidden md:flex absolute left-1/2 -translate-x-1/2 items-center gap-1 bg-[#1E3A5F]/50 border border-[#F5C518]/20 rounded-full py-1.5 px-2 backdrop-blur-md">
+          <nav className="hidden md:flex absolute left-1/2 -translate-x-1/2 items-center gap-0.5 bg-[#1E3A5F]/50 border border-[#F5C518]/20 rounded-full py-1 px-1.5 backdrop-blur-md">
             {[
               { name: "Contact", path: "/contact" },
               { name: "About Us", path: "/about" },
@@ -53,8 +52,8 @@ export default function NavBar() {
                 key={i}
                 onClick={() => navigate(item.path)}
                 className="
-                  px-5 py-1.5 rounded-full
-                  text-sm font-semibold text-white/90
+                  px-3.5 py-1 rounded-full
+                  text-[11px] font-medium text-white/80
                   transition-all duration-300
                   hover:text-[#F5C518] hover:bg-white/5
                 "
@@ -65,14 +64,14 @@ export default function NavBar() {
           </nav>
 
           {/* DESKTOP ACTIONS */}
-          <div className="hidden md:flex items-center gap-4">
+          <div className="hidden md:flex items-center gap-2.5">
             <button
               onClick={() => navigate("/login")}
               className="
-                h-10 px-5 rounded-full
-                border border-[#F5C518]/40 hover:border-[#F5C518]
+                h-8 px-4 rounded-full
+                border border-[#F5C518]/30 hover:border-[#F5C518]
                 bg-[#1E3A5F] hover:bg-white
-                text-sm font-semibold text-white hover:text-[#1E3A5F]
+                text-[11px] font-medium text-white hover:text-[#1E3A5F]
                 transition-all duration-300
               "
             >
@@ -82,9 +81,9 @@ export default function NavBar() {
             <button
               onClick={() => navigate("/signup")}
               className="
-                h-10 px-6 rounded-full
+                h-8 px-4 rounded-full
                 bg-[#F5C518] text-[#1E3A5F]
-                text-sm font-bold border border-[#F5C518]
+                text-[11px] font-semibold border border-[#F5C518]
                 shadow-[0_4px_14px_rgba(245,197,24,0.2)]
                 hover:bg-white hover:text-[#1E3A5F]
                 transform hover:-translate-y-0.5
@@ -98,14 +97,14 @@ export default function NavBar() {
           {/* MOBILE MENU BUTTON */}
           <button
             onClick={() => setMenuOpen(!menuOpen)}
-            className="md:hidden flex items-center justify-center w-10 h-10 rounded-full border border-[#F5C518]/20 bg-white/5 text-white/80 hover:text-white hover:bg-white/10 transition-all duration-300"
+            className="md:hidden flex items-center justify-center w-8 h-8 rounded-full border border-[#F5C518]/20 bg-white/5 text-white/80 hover:text-white hover:bg-white/10 transition-all duration-300"
           >
             {menuOpen ? (
-              <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M6 18L18 6M6 6l12 12" />
               </svg>
             ) : (
-              <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M4 6h16M4 12h16M4 18h16" />
               </svg>
             )}

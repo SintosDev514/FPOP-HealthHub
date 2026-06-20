@@ -51,25 +51,25 @@ const Footer = () => {
 
   return (
     <footer className="mt-auto w-full bg-[#1E3A5F] text-white/80">
-      <div className="mx-auto max-w-6xl px-4 py-10 sm:px-6 lg:px-8 md:py-12">
-        <div className="grid grid-cols-1 gap-10 md:grid-cols-3 md:items-start">
+      <div className="mx-auto max-w-6xl px-4 py-8 sm:px-6 lg:px-8 md:py-10">
+        <div className="grid grid-cols-1 gap-8 md:grid-cols-3 md:items-start">
           <div className="flex w-full max-w-sm flex-col items-start text-left">
-            <p className="max-w-[260px] text-sm font-semibold leading-tight text-white">
+            <p className="max-w-[260px] text-xs font-semibold leading-tight text-white">
               Family Planning Organization of the Philippines
             </p>
-            <p className="mt-1 text-xs text-[#F5C518]">- Established 1969</p>
-            <p className="mt-4 text-sm leading-relaxed text-white/80">
+            <p className="mt-0.5 text-[10px] text-[#F5C518]">- Established 1969</p>
+            <p className="mt-3 text-xs leading-relaxed text-white/80">
               Calbayog Clinic <br />
               Community Healthcare Clinic
             </p>
           </div>
 
           <div className="flex w-full max-w-sm flex-col items-start text-left">
-            <h3 className="mb-3 flex items-center gap-2 text-sm font-semibold text-white">
-              <LocationIcon className="h-4 w-4 text-[#F5C518]" />
+            <h3 className="mb-2 flex items-center gap-1.5 text-xs font-semibold text-white">
+              <LocationIcon className="h-3.5 w-3.5 text-[#F5C518]" />
               Location
             </h3>
-            <div className="space-y-2 text-sm">
+            <div className="space-y-1.5 text-xs">
               <div className="leading-relaxed text-white/70">
                 Rosales Blvd Corner Galit St.
                 <br />
@@ -81,14 +81,14 @@ const Footer = () => {
           </div>
 
           <div className="flex w-full max-w-sm flex-col items-start text-left">
-            <h3 className="mb-3 flex items-center gap-2 text-sm font-semibold text-white">
-              <FollowUsIcon className="h-4 w-4 text-[#F5C518]" />
+            <h3 className="mb-2 flex items-center gap-1.5 text-xs font-semibold text-white">
+              <FollowUsIcon className="h-3.5 w-3.5 text-[#F5C518]" />
               Follow Us
             </h3>
-            <p className="mb-4 text-sm text-white/70">
+            <p className="mb-3 text-xs text-white/70">
               Stay connected for updates and health information.
             </p>
-            <div className="flex items-center gap-3">
+            <div className="flex items-center gap-2.5">
               <a
                 href="https://www.facebook.com/share/1C2otjjGyM/"
                 className="text-white/60 transition hover:text-[#F5C518]"
@@ -96,7 +96,7 @@ const Footer = () => {
                 title="Facebook"
               >
                 <svg
-                  className="h-5 w-5"
+                  className="h-4 w-4"
                   fill="currentColor"
                   viewBox="0 0 24 24"
                 >
@@ -111,7 +111,7 @@ const Footer = () => {
                 title={copiedItem === "email" ? "Copied" : "Copy email address"}
               >
                 <svg
-                  className="h-5 w-5"
+                  className="h-4 w-4"
                   fill="none"
                   stroke="currentColor"
                   viewBox="0 0 24 24"
@@ -131,7 +131,7 @@ const Footer = () => {
                 </svg>
               </button>
               {copiedItem === "email" ? (
-                <span className="text-xs font-medium text-[#F5C518]">
+                <span className="text-[10px] font-medium text-[#F5C518]">
                   Copied
                 </span>
               ) : null}
@@ -143,7 +143,7 @@ const Footer = () => {
                 title={copiedItem === "phone" ? "Copied" : "Copy phone number"}
               >
                 <svg
-                  className="h-5 w-5"
+                  className="h-4 w-4"
                   fill="none"
                   stroke="currentColor"
                   viewBox="0 0 24 24"
@@ -157,7 +157,7 @@ const Footer = () => {
                 </svg>
               </button>
               {copiedItem === "phone" ? (
-                <span className="text-xs font-medium text-[#F5C518]">
+                <span className="text-[10px] font-medium text-[#F5C518]">
                   Copied
                 </span>
               ) : null}
@@ -167,8 +167,8 @@ const Footer = () => {
       </div>
 
       <div className="border-t border-white/10">
-        <div className="mx-auto max-w-7xl px-4 py-4 sm:px-6 lg:px-8">
-          <p className="text-center text-xs text-white/50">
+        <div className="mx-auto max-w-7xl px-4 py-3 sm:px-6 lg:px-8">
+          <p className="text-center text-[10px] text-white/50">
             © {new Date().getFullYear()} Family Planning Organization of the
             Philippines. All Rights Reserved.
           </p>
