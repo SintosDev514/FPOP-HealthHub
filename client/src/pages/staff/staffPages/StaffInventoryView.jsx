@@ -1,4 +1,8 @@
 import React, { useMemo, useState, useEffect } from "react";
+import ExcelJS from "exceljs";
+import { saveAs } from "file-saver";
+import jsPDF from "jspdf";
+import autoTable from "jspdf-autotable";
 
 const receiptColumns = [
   { label: "NW", fullName: "National Warehouse" },
@@ -71,6 +75,237 @@ const getGroupTitle = (group) => {
 
 const formatNumber = (value) => new Intl.NumberFormat("en-US").format(value);
 
+const getReportDate = () => {
+  const now = new Date();
+  const filenameDate = [
+    now.getFullYear(),
+    String(now.getMonth() + 1).padStart(2, "0"),
+    String(now.getDate()).padStart(2, "0"),
+  ].join("-");
+
+  return {
+    filenameDate,
+    displayDate: now.toLocaleDateString("en-US", {
+      year: "numeric",
+      month: "long",
+      day: "numeric",
+    }),
+  };
+};
+
+const toSafeNumber = (value) => {
+  const parsedValue = Number(value);
+  return Number.isFinite(parsedValue) ? parsedValue : 0;
+};
+
+const getStockTotal = (values) => {
+  if (!Array.isArray(values) || values.length === 0) return 0;
+  return toSafeNumber(values[values.length - 1]);
+};
+
+const getStockValue = (values, index) => {
+  if (!Array.isArray(values)) return 0;
+  return toSafeNumber(values[index]);
+};
+
+const formatPdfStockValue = (value) => {
+  const numericValue = toSafeNumber(value);
+  return numericValue === 0 ? "" : formatNumber(numericValue);
+};
+
+const createLis5HeaderRows = () => [
+  [
+    { content: "TYPE / BRAND", rowSpan: 2 },
+    { content: "BEGINNING\nBALANCE", rowSpan: 2 },
+    { content: "RECEIPTS", colSpan: 6 },
+    { content: "ISSUANCES", colSpan: 9 },
+    { content: "ENDING\nBALANCE", rowSpan: 2 },
+  ],
+  [
+    "Stockroom\n(Total)",
+    "National\nWarehouse",
+    "Other Agency\n/ ROH, etc.",
+    "Chapter\nLocal\nPurchase",
+    "*Other\nFPOP\nClinics",
+    "Returned\nby CSV",
+    "Total",
+    "Private Physicians\nand other\nMedical\nPractitioner",
+    "Government",
+    "Other\nAgency",
+    "CBV",
+    "Clinic",
+    "Outreach /\nMobile",
+    "*Other\nFPOP\nClinics",
+    "Expired /\nPromo",
+    "Total",
+    "Stockroom\n(Total)",
+  ],
+  Array.from({ length: 18 }, (_, index) => String(index + 1)),
+];
+
+const createLis5ItemRow = (item) => [
+  item.name || "",
+  formatPdfStockValue(item.beginning),
+  formatPdfStockValue(getStockValue(item.receipts, 0)),
+  formatPdfStockValue(getStockValue(item.receipts, 1)),
+  formatPdfStockValue(getStockValue(item.receipts, 2)),
+  formatPdfStockValue(getStockValue(item.receipts, 3)),
+  formatPdfStockValue(getStockValue(item.receipts, 4)),
+  formatPdfStockValue(getStockTotal(item.receipts)),
+  formatPdfStockValue(getStockValue(item.issuances, 0)),
+  formatPdfStockValue(getStockValue(item.issuances, 1)),
+  formatPdfStockValue(getStockValue(item.issuances, 2)),
+  formatPdfStockValue(getStockValue(item.issuances, 3)),
+  formatPdfStockValue(getStockValue(item.issuances, 4)),
+  formatPdfStockValue(getStockValue(item.issuances, 5)),
+  formatPdfStockValue(getStockValue(item.issuances, 6)),
+  formatPdfStockValue(getStockValue(item.issuances, 7)),
+  formatPdfStockValue(getStockTotal(item.issuances)),
+  formatPdfStockValue(item.ending),
+];
+
+const createBlankLis5Row = () => Array.from({ length: 18 }, () => "");
+
+const createLis5BodyRows = (table) => {
+  const rows = [];
+
+  (table.categories || []).forEach((category) => {
+    rows.push([
+      {
+        content: category.name,
+        colSpan: 18,
+        styles: {
+          fillColor: [229, 231, 235],
+          fontStyle: "bold",
+          halign: "left",
+          textColor: [31, 41, 55],
+        },
+      },
+    ]);
+
+    (category.items || []).forEach((item) => {
+      rows.push(createLis5ItemRow(item));
+    });
+
+    const blankRows = Math.max(2, 4 - (category.items || []).length);
+    Array.from({ length: blankRows }).forEach(() => rows.push(createBlankLis5Row()));
+  });
+
+  if (rows.length === 0) {
+    rows.push([
+      {
+        content: "No inventory items match the current filters.",
+        colSpan: 18,
+        styles: {
+          halign: "center",
+          fontStyle: "italic",
+          textColor: [100, 116, 139],
+        },
+      },
+    ]);
+    Array.from({ length: 6 }).forEach(() => rows.push(createBlankLis5Row()));
+  }
+
+  return rows;
+};
+
+const createLis5ExcelItemRow = (item) => [
+  item.name || "",
+  toSafeNumber(item.beginning),
+  getStockValue(item.receipts, 0),
+  getStockValue(item.receipts, 1),
+  getStockValue(item.receipts, 2),
+  getStockValue(item.receipts, 3),
+  getStockValue(item.receipts, 4),
+  getStockTotal(item.receipts),
+  getStockValue(item.issuances, 0),
+  getStockValue(item.issuances, 1),
+  getStockValue(item.issuances, 2),
+  getStockValue(item.issuances, 3),
+  getStockValue(item.issuances, 4),
+  getStockValue(item.issuances, 5),
+  getStockValue(item.issuances, 6),
+  getStockValue(item.issuances, 7),
+  getStockTotal(item.issuances),
+  toSafeNumber(item.ending),
+];
+
+const sanitizeWorksheetName = (name, fallback, existingNames) => {
+  const cleanedName = (name || fallback)
+    .replace(/[*?:/\\[\]]/g, " ")
+    .replace(/\s+/g, " ")
+    .trim()
+    .slice(0, 31);
+  const baseName = cleanedName || fallback;
+  let worksheetName = baseName;
+  let counter = 2;
+
+  while (existingNames.has(worksheetName)) {
+    const suffix = ` ${counter}`;
+    worksheetName = `${baseName.slice(0, 31 - suffix.length)}${suffix}`;
+    counter += 1;
+  }
+
+  existingNames.add(worksheetName);
+  return worksheetName;
+};
+
+const thinExcelBorder = {
+  top: { style: "thin", color: { argb: "FF4B5563" } },
+  left: { style: "thin", color: { argb: "FF4B5563" } },
+  bottom: { style: "thin", color: { argb: "FF4B5563" } },
+  right: { style: "thin", color: { argb: "FF4B5563" } },
+};
+
+const solidExcelFill = (argb) => ({
+  type: "pattern",
+  pattern: "solid",
+  fgColor: { argb },
+});
+
+const styleExcelRange = (worksheet, rowNumber, startColumn, endColumn, styles) => {
+  for (let columnNumber = startColumn; columnNumber <= endColumn; columnNumber += 1) {
+    const cell = worksheet.getCell(rowNumber, columnNumber);
+    Object.assign(cell, styles);
+  }
+};
+
+const filterTablesBySearch = (inventoryTables, searchValue) => {
+  if (!searchValue) return inventoryTables;
+
+  return inventoryTables
+    .map((table) => {
+      const tableMatches = table.name.toLowerCase().includes(searchValue);
+      if (tableMatches) return table;
+
+      return {
+        ...table,
+        categories: table.categories
+          .map((category) => {
+            const categoryMatches = category.name.toLowerCase().includes(searchValue);
+            return {
+              ...category,
+              items: categoryMatches
+                ? category.items
+                : category.items.filter((item) =>
+                    item.name.toLowerCase().includes(searchValue)
+                  ),
+            };
+          })
+          .filter(
+            (category) =>
+              category.name.toLowerCase().includes(searchValue) ||
+              category.items.length > 0
+          ),
+      };
+    })
+    .filter(
+      (table) =>
+        table.name.toLowerCase().includes(searchValue) ||
+        table.categories.length > 0
+    );
+};
+
 const toneClasses = {
   blue: "bg-blue-50 text-blue-600",
   green: "bg-emerald-50 text-emerald-600",
@@ -122,9 +357,10 @@ const StatCard = ({ label, value, icon, tone, detail, featured }) => (
   </article>
 );
 
-const ToolbarButton = ({ icon, children, primary }) => (
+const ToolbarButton = ({ icon, children, primary, onClick }) => (
   <button
     type="button"
+    onClick={onClick}
     className={`inline-flex h-11 items-center justify-center gap-2 rounded-lg px-6 text-sm font-bold transition ${
       primary
         ? "bg-blue-600 text-white hover:bg-blue-700"
@@ -234,6 +470,12 @@ const StaffInventoryView = () => {
   const [openCategories, setOpenCategories] = useState({});
   const [query, setQuery] = useState("");
   const [selectedTableFilter, setSelectedTableFilter] = useState("all");
+  const [selectedQuarter, setSelectedQuarter] = useState("Q2");
+  const [selectedYear, setSelectedYear] = useState(
+    new Date().getFullYear().toString()
+  );
+  const [exportTableScope, setExportTableScope] = useState("all");
+  const [selectedExportTableId, setSelectedExportTableId] = useState("all");
   const [activeTableId, setActiveTableId] = useState(null);
   const [activeCategoryId, setActiveCategoryId] = useState(null);
   const [modalMode, setModalMode] = useState("add");
@@ -284,39 +526,23 @@ const StaffInventoryView = () => {
         ? tables
         : tables.filter((table) => table._id === selectedTableFilter);
 
-    if (!searchValue) return scopedTables;
-
-    return scopedTables
-      .map((table) => {
-        const tableMatches = table.name.toLowerCase().includes(searchValue);
-        if (tableMatches) return table;
-        return {
-          ...table,
-          categories: table.categories
-            .map((cat) => {
-              const catMatches = cat.name.toLowerCase().includes(searchValue);
-              return {
-                ...cat,
-                items: catMatches
-                  ? cat.items
-                  : cat.items.filter((item) =>
-                      item.name.toLowerCase().includes(searchValue)
-                    ),
-              };
-            })
-            .filter(
-              (cat) =>
-                cat.name.toLowerCase().includes(searchValue) ||
-                cat.items.length > 0
-            ),
-        };
-      })
-      .filter(
-        (table) =>
-          table.name.toLowerCase().includes(searchValue) ||
-          table.categories.length > 0
-      );
+    return filterTablesBySearch(scopedTables, searchValue);
   }, [tables, query, selectedTableFilter]);
+
+  const tablesForExport = useMemo(() => {
+    const searchValue = query.trim().toLowerCase();
+
+    if (exportTableScope === "specific" && selectedExportTableId === "all") {
+      return filterTablesBySearch(tables, searchValue);
+    }
+
+    const scopedTables =
+      exportTableScope === "specific"
+        ? tables.filter((table) => table._id === selectedExportTableId)
+        : tables;
+
+    return filterTablesBySearch(scopedTables, searchValue);
+  }, [exportTableScope, query, selectedExportTableId, tables]);
 
   const getStatCards = (allTables) => {
     const items = allTables.flatMap((table) =>
@@ -394,6 +620,391 @@ const StaffInventoryView = () => {
 
   const handleTableFilterChange = (event) => {
     setSelectedTableFilter(event.target.value);
+  };
+
+  const handleExportPDF = () => {
+    const { filenameDate, displayDate } = getReportDate();
+    const doc = new jsPDF({ orientation: "landscape", unit: "pt", format: "a4" });
+    const reportTables =
+      tablesForExport.length > 0
+        ? tablesForExport
+        : [
+            {
+              name: "Inventory Report",
+              chapter: "",
+              categories: [],
+            },
+          ];
+
+    reportTables.forEach((table, index) => {
+      if (index > 0) doc.addPage("a4", "landscape");
+
+      const pageWidth = doc.internal.pageSize.getWidth();
+      const chapter = table.chapter || "";
+
+      doc.setFont("helvetica", "bold");
+      doc.setFontSize(8);
+      doc.text(
+        "F A M I L Y  P L A N N I N G  O R G A N I Z A T I O N  O F  T H E  P H I L I P P I N E S",
+        pageWidth / 2,
+        32,
+        { align: "center" }
+      );
+      doc.setFontSize(7.5);
+      doc.text(
+        "CONSUMABLE/DISPOSABLE COMMODITIES INVENTORY LIS-5",
+        pageWidth / 2,
+        48,
+        { align: "center" }
+      );
+
+      doc.setFontSize(7);
+      doc.text(`Chapter: ${chapter}`, 32, 78);
+      doc.text(`Quarter: ${selectedQuarter}`, 32, 91);
+      doc.text(`Year: ${selectedYear}`, 32, 104);
+      doc.setFont("helvetica", "normal");
+      doc.text(`Date Generated: ${displayDate}`, pageWidth - 32, 104, {
+        align: "right",
+      });
+
+      doc.setFont("helvetica", "bold");
+      doc.text(table.name || "Inventory Report", 32, 128);
+
+      autoTable(doc, {
+        startY: 136,
+        margin: { left: 32, right: 32 },
+        tableWidth: "auto",
+        head: createLis5HeaderRows(),
+        body: createLis5BodyRows(table),
+        theme: "grid",
+        styles: {
+          font: "helvetica",
+          fontSize: 5.5,
+          cellPadding: 1.4,
+          overflow: "linebreak",
+          lineColor: [74, 85, 104],
+          lineWidth: 0.25,
+          textColor: [31, 41, 55],
+          minCellHeight: 9,
+          valign: "middle",
+        },
+        headStyles: {
+          fillColor: [229, 231, 235],
+          textColor: [17, 24, 39],
+          fontStyle: "bold",
+          halign: "center",
+          valign: "middle",
+          lineColor: [55, 65, 81],
+          lineWidth: 0.35,
+        },
+        bodyStyles: {
+          fillColor: [255, 255, 255],
+        },
+        alternateRowStyles: {
+          fillColor: [255, 255, 255],
+        },
+        columnStyles: {
+          0: { cellWidth: 96, halign: "left" },
+          1: { cellWidth: 42, halign: "right", fillColor: [249, 250, 251] },
+          2: { cellWidth: 44, halign: "right" },
+          3: { cellWidth: 48, halign: "right" },
+          4: { cellWidth: 42, halign: "right" },
+          5: { cellWidth: 42, halign: "right" },
+          6: { cellWidth: 38, halign: "right" },
+          7: { cellWidth: 38, halign: "right", fillColor: [239, 246, 255] },
+          8: { cellWidth: 50, halign: "right" },
+          9: { cellWidth: 44, halign: "right" },
+          10: { cellWidth: 42, halign: "right" },
+          11: { cellWidth: 38, halign: "right" },
+          12: { cellWidth: 38, halign: "right" },
+          13: { cellWidth: 38, halign: "right" },
+          14: { cellWidth: 42, halign: "right" },
+          15: { cellWidth: 40, halign: "right" },
+          16: { cellWidth: 38, halign: "right", fillColor: [239, 246, 255] },
+          17: { cellWidth: 42, halign: "right", fillColor: [254, 243, 199] },
+        },
+        didParseCell: (data) => {
+          if (data.section === "head") {
+            data.cell.styles.minCellHeight = data.row.index === 0 ? 14 : 26;
+            if (data.row.index === 2) {
+              data.cell.styles.minCellHeight = 9;
+              data.cell.styles.fontSize = 5;
+            }
+          }
+
+          if (data.section === "body" && data.cell.raw === "") {
+            data.cell.styles.minCellHeight = 9.5;
+          }
+        },
+        didDrawPage: () => {
+          doc.setFont("helvetica", "normal");
+          doc.setFontSize(6);
+          doc.text(
+            "*Other information / additional relevant commodities must be recorded to the blank rows provided in the quarterly clinic issue",
+            32,
+            doc.internal.pageSize.getHeight() - 20
+          );
+        },
+      });
+    });
+
+    doc.save(`staff_inventory_lis5_report_${filenameDate}.pdf`);
+  };
+
+  const handleExportExcel = async () => {
+    const { filenameDate, displayDate } = getReportDate();
+    const workbook = new ExcelJS.Workbook();
+    workbook.creator = "FPOP Clinic Portal";
+    workbook.created = new Date();
+    const worksheetNames = new Set();
+    const reportTables =
+      tablesForExport.length > 0
+        ? tablesForExport
+        : [
+            {
+              name: "Inventory Report",
+              chapter: "",
+              categories: [],
+            },
+          ];
+
+    reportTables.forEach((table, tableIndex) => {
+      const worksheet = workbook.addWorksheet(
+        sanitizeWorksheetName(table.name, `Inventory ${tableIndex + 1}`, worksheetNames),
+        {
+          views: [{ state: "frozen", ySplit: 11 }],
+          pageSetup: {
+            orientation: "landscape",
+            fitToPage: true,
+            fitToWidth: 1,
+            fitToHeight: 0,
+            margins: {
+              left: 0.25,
+              right: 0.25,
+              top: 0.35,
+              bottom: 0.35,
+              header: 0.15,
+              footer: 0.15,
+            },
+          },
+        }
+      );
+
+      worksheet.columns = [
+        { width: 28 },
+        { width: 11 },
+        { width: 12 },
+        { width: 13 },
+        { width: 12 },
+        { width: 12 },
+        { width: 11 },
+        { width: 10 },
+        { width: 15 },
+        { width: 12 },
+        { width: 11 },
+        { width: 9 },
+        { width: 9 },
+        { width: 10 },
+        { width: 12 },
+        { width: 11 },
+        { width: 10 },
+        { width: 12 },
+      ];
+
+      worksheet.mergeCells("A1:R1");
+      worksheet.getCell("A1").value =
+        "FAMILY PLANNING ORGANIZATION OF THE PHILIPPINES";
+      worksheet.getCell("A1").font = { bold: true, size: 12 };
+      worksheet.getCell("A1").alignment = { horizontal: "center" };
+
+      worksheet.mergeCells("A2:R2");
+      worksheet.getCell("A2").value =
+        "CONSUMABLE/DISPOSABLE COMMODITIES INVENTORY LIS-5";
+      worksheet.getCell("A2").font = { bold: true, size: 10 };
+      worksheet.getCell("A2").alignment = { horizontal: "center" };
+
+      worksheet.getCell("A4").value = `Chapter: ${table.chapter || ""}`;
+      worksheet.getCell("A5").value = `Quarter: ${selectedQuarter}`;
+      worksheet.getCell("A6").value = `Year: ${selectedYear}`;
+      worksheet.getCell("N6").value = `Generated: ${displayDate}`;
+
+      ["A4", "A5", "A6", "N6"].forEach((cellAddress) => {
+        worksheet.getCell(cellAddress).font = { bold: true, size: 9 };
+      });
+
+      worksheet.mergeCells("A8:R8");
+      worksheet.getCell("A8").value = table.name || "Inventory Report";
+      worksheet.getCell("A8").font = { bold: true, size: 9 };
+
+      worksheet.mergeCells("A9:A10");
+      worksheet.mergeCells("B9:B10");
+      worksheet.mergeCells("C9:H9");
+      worksheet.mergeCells("I9:Q9");
+      worksheet.mergeCells("R9:R10");
+
+      worksheet.getRow(9).values = [
+        "",
+        "TYPE / BRAND",
+        "BEGINNING\nBALANCE",
+        "RECEIPTS",
+        "",
+        "",
+        "",
+        "",
+        "",
+        "ISSUANCES",
+        "",
+        "",
+        "",
+        "",
+        "",
+        "",
+        "",
+        "",
+        "ENDING\nBALANCE",
+      ];
+      worksheet.getRow(10).values = [
+        "",
+        "",
+        "",
+        "National\nWarehouse",
+        "Other Agency\n/ ROH, etc.",
+        "Chapter\nLocal\nPurchase",
+        "*Other\nFPOP\nClinics",
+        "Returned\nby CSV",
+        "Total",
+        "Private Physicians\nand other\nMedical\nPractitioner",
+        "Government",
+        "Other\nAgency",
+        "CBV",
+        "Clinic",
+        "Outreach /\nMobile",
+        "*Other\nFPOP\nClinics",
+        "Expired /\nPromo",
+        "Total",
+        "",
+      ];
+      worksheet.getRow(11).values = [
+        "",
+        ...Array.from({ length: 18 }, (_, index) => index + 1),
+      ];
+
+      [9, 10, 11].forEach((rowNumber) => {
+        const row = worksheet.getRow(rowNumber);
+        row.height = rowNumber === 10 ? 50 : 20;
+        for (let columnNumber = 1; columnNumber <= 18; columnNumber += 1) {
+          const cell = row.getCell(columnNumber);
+          cell.font = { bold: true, size: rowNumber === 11 ? 8 : 7 };
+          cell.alignment = {
+            horizontal: "center",
+            vertical: "middle",
+            wrapText: true,
+          };
+          cell.fill = solidExcelFill("FFE5E7EB");
+          cell.border = thinExcelBorder;
+        }
+      });
+
+      let nextRowNumber = 12;
+      let hasItems = false;
+
+      (table.categories || []).forEach((category) => {
+        worksheet.mergeCells(`A${nextRowNumber}:R${nextRowNumber}`);
+        const categoryCell = worksheet.getCell(`A${nextRowNumber}`);
+        categoryCell.value = category.name;
+        categoryCell.font = { bold: true, size: 9 };
+        categoryCell.fill = solidExcelFill("FFE5E7EB");
+        categoryCell.alignment = { horizontal: "left", vertical: "middle" };
+        styleExcelRange(worksheet, nextRowNumber, 1, 18, {
+          border: thinExcelBorder,
+          fill: solidExcelFill("FFE5E7EB"),
+        });
+        nextRowNumber += 1;
+
+        (category.items || []).forEach((item) => {
+          hasItems = true;
+          const row = worksheet.getRow(nextRowNumber);
+          row.values = ["", ...createLis5ExcelItemRow(item)];
+          row.height = 18;
+
+          for (let columnNumber = 1; columnNumber <= 18; columnNumber += 1) {
+            const cell = row.getCell(columnNumber);
+            cell.border = thinExcelBorder;
+            cell.font = { size: 8 };
+            cell.alignment = {
+              horizontal: columnNumber === 1 ? "left" : "right",
+              vertical: "middle",
+              wrapText: true,
+            };
+
+            if (columnNumber === 8 || columnNumber === 17) {
+              cell.fill = solidExcelFill("FFEFF6FF");
+              cell.font = { bold: true, size: 8 };
+            }
+
+            if (columnNumber === 18) {
+              cell.fill = solidExcelFill("FFFEF3C7");
+              cell.font = { bold: true, size: 8 };
+            }
+
+            if (columnNumber > 1) {
+              cell.numFmt = "#,##0";
+            }
+          }
+
+          nextRowNumber += 1;
+        });
+
+        const blankRows = Math.max(2, 4 - (category.items || []).length);
+        Array.from({ length: blankRows }).forEach(() => {
+          const row = worksheet.getRow(nextRowNumber);
+          row.height = 18;
+          for (let columnNumber = 1; columnNumber <= 18; columnNumber += 1) {
+            const cell = row.getCell(columnNumber);
+            cell.border = thinExcelBorder;
+            cell.alignment = { vertical: "middle" };
+            if (columnNumber === 8 || columnNumber === 17) {
+              cell.fill = solidExcelFill("FFEFF6FF");
+            }
+            if (columnNumber === 18) {
+              cell.fill = solidExcelFill("FFFEF3C7");
+            }
+          }
+          nextRowNumber += 1;
+        });
+      });
+
+      if (!hasItems) {
+        worksheet.mergeCells(`A${nextRowNumber}:R${nextRowNumber}`);
+        const emptyCell = worksheet.getCell(`A${nextRowNumber}`);
+        emptyCell.value = "No inventory items match the current filters.";
+        emptyCell.font = { italic: true, color: { argb: "FF64748B" } };
+        emptyCell.alignment = { horizontal: "center" };
+        styleExcelRange(worksheet, nextRowNumber, 1, 18, {
+          border: thinExcelBorder,
+        });
+        nextRowNumber += 1;
+
+        Array.from({ length: 6 }).forEach(() => {
+          for (let columnNumber = 1; columnNumber <= 18; columnNumber += 1) {
+            worksheet.getCell(nextRowNumber, columnNumber).border = thinExcelBorder;
+          }
+          nextRowNumber += 1;
+        });
+      }
+
+      worksheet.getCell(`A${nextRowNumber + 1}`).value =
+        "*Other information / additional relevant commodities must be recorded to the blank rows provided in the quarterly clinic issue";
+      worksheet.getCell(`A${nextRowNumber + 1}`).font = { italic: true, size: 8 };
+    });
+
+    const buffer = await workbook.xlsx.writeBuffer();
+    saveAs(
+      new Blob([buffer], {
+        type: "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+      }),
+      `staff_inventory_lis5_report_${filenameDate}.xlsx`
+    );
   };
 
   const openCreateTableModal = () => {
@@ -645,24 +1256,70 @@ const StaffInventoryView = () => {
       </section>
 
       <section className="mb-6 rounded-lg border border-slate-200 bg-white p-6 shadow-[0_2px_12px_rgba(15,23,42,0.07)]">
-        <div className="grid gap-4 xl:grid-cols-[repeat(3,minmax(160px,1fr))_repeat(4,minmax(140px,1fr))]">
-          <select className="h-11 rounded-lg border border-slate-300 bg-white px-4 text-sm text-slate-950 outline-none focus:border-blue-500">
-            <option>Q2</option>
-            <option>Q1</option>
-            <option>Q3</option>
-            <option>Q4</option>
+        <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-[repeat(5,minmax(150px,1fr))_repeat(4,minmax(130px,1fr))]">
+          <select
+            value={selectedQuarter}
+            onChange={(event) => setSelectedQuarter(event.target.value)}
+            className="h-11 rounded-lg border border-slate-300 bg-white px-4 text-sm text-slate-950 outline-none focus:border-blue-500"
+          >
+            <option value="Q2">Q2</option>
+            <option value="Q1">Q1</option>
+            <option value="Q3">Q3</option>
+            <option value="Q4">Q4</option>
           </select>
-          <select className="h-11 rounded-lg border border-slate-300 bg-white px-4 text-sm text-slate-950 outline-none focus:border-blue-500">
-            <option>2026</option>
-            <option>2025</option>
+          <select
+            value={selectedYear}
+            onChange={(event) => setSelectedYear(event.target.value)}
+            className="h-11 rounded-lg border border-slate-300 bg-white px-4 text-sm text-slate-950 outline-none focus:border-blue-500"
+          >
+            {Array.from({ length: 10 }, (_, i) => {
+              const year = new Date().getFullYear() - 5 + i;
+              return (
+                <option key={year} value={year}>
+                  {year}
+                </option>
+              );
+            })}
           </select>
           <select className="h-11 rounded-lg border border-slate-300 bg-white px-4 text-sm text-slate-950 outline-none focus:border-blue-500">
             <option>All Branches</option>
             <option>Community</option>
             <option>Clinic</option>
           </select>
-          <ToolbarButton icon="download">PDF</ToolbarButton>
-          <ToolbarButton icon="download">Excel</ToolbarButton>
+          <select
+            value={exportTableScope}
+            onChange={(event) => {
+              setExportTableScope(event.target.value);
+              if (event.target.value !== "specific") {
+                setSelectedExportTableId("all");
+              }
+            }}
+            className="h-11 rounded-lg border border-slate-300 bg-white px-4 text-sm text-slate-950 outline-none focus:border-blue-500"
+            aria-label="Export scope"
+          >
+            <option value="all">All tables</option>
+            <option value="specific">Specific table</option>
+          </select>
+          <select
+            value={selectedExportTableId}
+            onChange={(event) => setSelectedExportTableId(event.target.value)}
+            disabled={exportTableScope !== "specific"}
+            className="h-11 rounded-lg border border-slate-300 bg-white px-4 text-sm text-slate-950 outline-none transition focus:border-blue-500 disabled:cursor-not-allowed disabled:bg-slate-100 disabled:text-slate-400"
+            aria-label="Export table"
+          >
+            <option value="all">Select table</option>
+            {tables.map((table) => (
+              <option key={table._id} value={table._id}>
+                {table.name}
+              </option>
+            ))}
+          </select>
+          <ToolbarButton icon="download" onClick={handleExportPDF}>
+            PDF
+          </ToolbarButton>
+          <ToolbarButton icon="download" onClick={handleExportExcel}>
+            Excel
+          </ToolbarButton>
           <ToolbarButton icon="printer">Print</ToolbarButton>
           <ToolbarButton icon="plus" primary>
             Add Transaction
