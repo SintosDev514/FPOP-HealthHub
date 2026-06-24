@@ -1,0 +1,30 @@
+jay alayun naak pag start san page san patient place holder la ig butang tas pag ad comment nano ine 
+pah imo Home.jsx
+ine an location 
+
+src > pages  ("pag create pages na FOLDER") sulod sana create > patients   ("pag create patients  na FOLDER") dida ig butang an Home.jsx 
+
+ngan pag himo lat navbar 
+src> components ("sulod sana pag create patientNav.jsx")
+
+
+border 	text-white
+
+Primary #1E3A5F
+Navbar, Buttons
+
+Accent #F5C518
+Highlights
+
+Light Background: #F9FAFB
+ 
+text
+ Primary Text: #1F2937
+Secondary Text: #6B7280
+
+
+
+boder-[#F5C518]
+
+
+<!-- From Uiverse.io by ilkhoeri --> 
