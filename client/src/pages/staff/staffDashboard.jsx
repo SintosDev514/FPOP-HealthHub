@@ -249,7 +249,7 @@ const StaffDashboard = () => {
   };
 
   return (
-    <div className="min-h-screen bg-[#F9FAFB] font-poppins text-[#1F2937]">
+    <div className="h-screen overflow-hidden bg-[#F9FAFB] font-poppins text-[#1F2937] flex flex-col">
       <header
         className="
           sticky top-0 z-50
@@ -346,7 +346,7 @@ const StaffDashboard = () => {
         </div>
       </header>
 
-      <div style={{ minHeight: "calc(100vh - 76px)", position: "relative", display: "flex" }}>
+      <div style={{ height: "calc(100vh - 76px)", position: "relative", display: "flex", overflow: "hidden" }}>
         {/* ════════════════ SIDEBAR ════════════════ */}
         <aside
           onMouseEnter={() => setSidebarHovered(true)}
@@ -437,10 +437,11 @@ const StaffDashboard = () => {
         <div
           style={{
             marginLeft: sidebarW,
+            width: `calc(100% - ${sidebarW})`,
             flex: 1,
             display: "flex",
             flexDirection: "column",
-            transition: "margin-left 0.3s cubic-bezier(0.4, 0, 0.2, 1)",
+            transition: "margin-left 0.3s cubic-bezier(0.4, 0, 0.2, 1), width 0.3s cubic-bezier(0.4, 0, 0.2, 1)",
             minWidth: 0,
           }}
         >
