@@ -260,7 +260,7 @@ const StaffDashboard = () => {
           transition-all duration-300
         "
       >
-        <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+        <div className="w-full px-4 sm:px-8 lg:px-[32px]">
           <div className="flex min-h-[76px] items-center justify-between">
             <button
               type="button"
