@@ -72,14 +72,14 @@ const StatCard = ({ icon, label, value, tone = "neutral" }) => {
   const selectedTone = tones[tone];
 
   return (
-    <div className={`rounded-[12px] border p-6 ${selectedTone.card}`}>
+    <div className={`rounded-[12px] border p-4 ${selectedTone.card}`}>
       <div className="flex items-start justify-between">
-        <span className={`flex h-12 w-12 items-center justify-center rounded-[12px] ${selectedTone.icon}`}>
-          <Icon type={icon} />
+        <span className={`flex h-10 w-10 items-center justify-center rounded-[12px] ${selectedTone.icon}`}>
+          <Icon type={icon} className="h-[18px] w-[18px]" />
         </span>
-        <strong className="text-3xl font-bold leading-none">{value}</strong>
+        <strong className="text-2xl font-bold leading-none">{value}</strong>
       </div>
-      <p className="mt-5 text-sm font-bold">{label}</p>
+      <p className="mt-4 text-xs font-bold">{label}</p>
     </div>
   );
 };
@@ -129,19 +129,19 @@ const AppointmentCard = ({ appointment, onSelect }) => {
     <button
       type="button"
       onClick={() => onSelect(appointment)}
-      className={`w-full rounded-[12px] border border-slate-200 border-l-[5px] ${style.rail} bg-white p-7 text-left shadow-[0_1px_5px_rgba(15,23,42,0.05)] transition hover:-translate-y-0.5 hover:shadow-md`}
+      className={`w-full rounded-[12px] border border-slate-200 border-l-[5px] ${style.rail} bg-white p-5 text-left shadow-[0_1px_5px_rgba(15,23,42,0.05)] transition hover:-translate-y-0.5 hover:shadow-md`}
     >
-      <div className="flex items-start gap-5">
-        <div className={`hidden h-[118px] w-[62px] shrink-0 items-start justify-center rounded-[12px] border pt-5 sm:flex ${style.tile}`}>
-          <Icon type="calendar" className="h-7 w-7" />
+      <div className="flex items-start gap-4">
+        <div className={`hidden h-[92px] w-[52px] shrink-0 items-start justify-center rounded-[12px] border pt-4 sm:flex ${style.tile}`}>
+          <Icon type="calendar" className="h-5 w-5" />
         </div>
         <div className="min-w-0 flex-1">
-          <div className="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
+          <div className="flex flex-col gap-2 sm:flex-row sm:items-start sm:justify-between">
             <div>
-              <h2 className="text-xl font-bold text-[#061022]">{appointment.serviceName}</h2>
-              <p className="mt-6 flex items-center gap-3 text-base font-medium text-[#18304d]">
-                <span className="flex h-8 w-8 items-center justify-center rounded-[8px] bg-slate-100 text-slate-500">
-                  <Icon type="user" className="h-4 w-4" />
+              <h2 className="text-lg font-bold text-[#061022]">{appointment.serviceName}</h2>
+              <p className="mt-4 flex items-center gap-2.5 text-sm font-medium text-[#18304d]">
+                <span className="flex h-7 w-7 items-center justify-center rounded-[8px] bg-slate-100 text-slate-500">
+                  <Icon type="user" className="h-3.5 w-3.5" />
                 </span>
                 {appointment.doctorName}
               </p>
@@ -152,22 +152,22 @@ const AppointmentCard = ({ appointment, onSelect }) => {
             </span>
           </div>
 
-          <div className="mt-5 flex flex-wrap gap-x-8 gap-y-3 text-sm font-medium text-[#18304d]">
-            <span className="flex items-center gap-3">
-              <span className="flex h-8 w-8 items-center justify-center rounded-[8px] bg-slate-100 text-slate-500">
-                <Icon type="calendar" className="h-4 w-4" />
+          <div className="mt-4 flex flex-wrap gap-x-6 gap-y-2.5 text-xs font-medium text-[#18304d]">
+            <span className="flex items-center gap-2.5">
+              <span className="flex h-7 w-7 items-center justify-center rounded-[8px] bg-slate-100 text-slate-500">
+                <Icon type="calendar" className="h-3.5 w-3.5" />
               </span>
               {formatDate(appointment.date)}
             </span>
-            <span className="flex items-center gap-3">
-              <span className="flex h-8 w-8 items-center justify-center rounded-[8px] bg-slate-100 text-slate-500">
-                <Icon type="clock" className="h-4 w-4" />
+            <span className="flex items-center gap-2.5">
+              <span className="flex h-7 w-7 items-center justify-center rounded-[8px] bg-slate-100 text-slate-500">
+                <Icon type="clock" className="h-3.5 w-3.5" />
               </span>
               {appointment.time}
             </span>
-            <span className="flex items-center gap-3">
-              <span className="flex h-8 w-8 items-center justify-center rounded-[8px] bg-slate-100 text-slate-500">
-                <Icon type="location" className="h-4 w-4" />
+            <span className="flex items-center gap-2.5">
+              <span className="flex h-7 w-7 items-center justify-center rounded-[8px] bg-slate-100 text-slate-500">
+                <Icon type="location" className="h-3.5 w-3.5" />
               </span>
               {appointment.location}
             </span>
@@ -189,39 +189,39 @@ const MyAppointmentsView = ({ appointments = [], onNavigateToBook }) => {
   });
 
   return (
-    <main className="flex-1 bg-[#f7f8fa] px-4 py-12 sm:px-6 lg:px-8">
-      <div className="mx-auto max-w-[1234px] space-y-10">
-        <section className="flex flex-col gap-6 sm:flex-row sm:items-center sm:justify-between">
+    <main className="flex-1 bg-[#f7f8fa] px-4 py-8 sm:px-6 lg:px-8">
+      <div className="mx-auto max-w-[1120px] space-y-7">
+        <section className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
           <div>
-            <h1 className="text-4xl font-bold text-[#061022]">My Appointments</h1>
-            <p className="mt-3 text-lg text-[#334155]">Manage and track your healthcare appointments</p>
+            <h1 className="text-3xl font-bold text-[#061022]">My Appointments</h1>
+            <p className="mt-2 text-base text-[#334155]">Manage and track your healthcare appointments</p>
           </div>
           <button
             type="button"
             onClick={onNavigateToBook}
-            className="flex items-center justify-center gap-3 rounded-[7px] bg-[#244783] px-5 py-4 text-sm font-bold text-white shadow-[0_3px_7px_rgba(15,23,42,0.22)] transition hover:bg-[#1c396f]"
+            className="flex items-center justify-center gap-2.5 rounded-[7px] bg-[#244783] px-4 py-3 text-sm font-bold text-white shadow-[0_3px_7px_rgba(15,23,42,0.22)] transition hover:bg-[#1c396f]"
           >
-            <Icon type="calendar" />
+            <Icon type="calendar" className="h-[18px] w-[18px]" />
             Book New Appointment
           </button>
         </section>
 
-        <section className="grid grid-cols-1 gap-6 md:grid-cols-2 xl:grid-cols-4">
+        <section className="grid grid-cols-1 gap-4 md:grid-cols-2 xl:grid-cols-4">
           <StatCard icon="chart" label="Total Appointments" value={appointmentStats.total} />
           <StatCard icon="calendar" label="Upcoming" value={appointmentStats.upcoming} tone="blue" />
           <StatCard icon="check" label="Completed" value={appointmentStats.completed} tone="green" />
           <StatCard icon="alert" label="Pending" value={appointmentStats.pending} tone="orange" />
         </section>
 
-        <section className="flex flex-col gap-4 rounded-[12px] bg-white p-6 shadow-[0_2px_8px_rgba(15,23,42,0.1)] sm:flex-row sm:items-center sm:justify-between">
-          <div className="flex flex-col gap-4 sm:flex-row sm:items-center">
-            <span className="flex h-11 w-11 items-center justify-center rounded-[12px] bg-[#eef5ff] text-[#244783]">
-              <Icon type="filter" />
+        <section className="flex flex-col gap-3 rounded-[12px] bg-white p-4 shadow-[0_2px_8px_rgba(15,23,42,0.1)] sm:flex-row sm:items-center sm:justify-between">
+          <div className="flex flex-col gap-3 sm:flex-row sm:items-center">
+            <span className="flex h-9 w-9 items-center justify-center rounded-[12px] bg-[#eef5ff] text-[#244783]">
+              <Icon type="filter" className="h-[18px] w-[18px]" />
             </span>
             <select
               value={statusFilter}
               onChange={(event) => setStatusFilter(event.target.value)}
-              className="min-w-[256px] appearance-none rounded-[7px] bg-slate-100 px-4 py-3 text-sm font-bold text-[#061022] outline-none"
+              className="min-w-[220px] appearance-none rounded-[7px] bg-slate-100 px-4 py-2.5 text-sm font-bold text-[#061022] outline-none"
             >
               <option value="all">All Appointments</option>
               <option value="upcoming">Upcoming</option>
@@ -229,25 +229,25 @@ const MyAppointmentsView = ({ appointments = [], onNavigateToBook }) => {
               <option value="pending">Pending</option>
             </select>
           </div>
-          <div className="flex items-center gap-3 rounded-[12px] border border-slate-200 bg-slate-50 px-5 py-3 text-sm font-semibold text-[#18304d]">
-            <span className="h-2.5 w-2.5 rounded-full bg-[#546c9a]" />
+          <div className="flex items-center gap-2.5 rounded-[12px] border border-slate-200 bg-slate-50 px-4 py-2.5 text-sm font-semibold text-[#18304d]">
+            <span className="h-2 w-2 rounded-full bg-[#546c9a]" />
             {appointmentStats.total} appointments
           </div>
         </section>
 
         {filteredAppointments.length === 0 ? (
-          <section className="rounded-[12px] border border-slate-200 bg-white p-12 text-center shadow-[0_1px_5px_rgba(15,23,42,0.05)]">
-            <p className="mb-6 text-lg text-[#334155]">No {statusFilter} appointments to show.</p>
+          <section className="rounded-[12px] border border-slate-200 bg-white p-8 text-center shadow-[0_1px_5px_rgba(15,23,42,0.05)]">
+            <p className="mb-5 text-base text-[#334155]">No {statusFilter} appointments to show.</p>
             <button
               type="button"
               onClick={onNavigateToBook}
-              className="rounded-[7px] bg-[#244783] px-8 py-3 text-sm font-bold text-white transition hover:bg-[#1c396f]"
+              className="rounded-[7px] bg-[#244783] px-6 py-2.5 text-sm font-bold text-white transition hover:bg-[#1c396f]"
             >
               Book an Appointment Now
             </button>
           </section>
         ) : (
-          <section className="space-y-6">
+          <section className="space-y-4">
             {filteredAppointments.map((appointment) => (
               <AppointmentCard
                 key={appointment.id}
@@ -263,7 +263,7 @@ const MyAppointmentsView = ({ appointments = [], onNavigateToBook }) => {
           <div className="w-full max-w-lg rounded-[12px] bg-white p-6 shadow-xl">
             <div className="flex items-start justify-between gap-4">
               <div>
-                <h2 className="text-xl font-bold text-[#061022]">{selectedAppointment.serviceName}</h2>
+                <h2 className="text-lg font-bold text-[#061022]">{selectedAppointment.serviceName}</h2>
                 <p className="mt-2 text-sm capitalize text-[#18304d]">{selectedAppointment.status}</p>
               </div>
               <button

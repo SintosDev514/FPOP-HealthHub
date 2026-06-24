@@ -1,5 +1,16 @@
 import React, { useState, useEffect } from "react";
 
+const styles = `
+  select {
+    max-height: 200px;
+  }
+  select option {
+    padding: 3px 6px;
+    line-height: 1.3;
+    font-size: 11px;
+  }
+`;
+
 const Icon = ({ type, className = "h-5 w-5" }) => {
   const paths = {
     calendar: "M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z",
@@ -18,7 +29,7 @@ const Icon = ({ type, className = "h-5 w-5" }) => {
 
 const toInputDate = (date) => {
   if (!date) return "";
-  const year = date.getFullYear();
+  const year = String(date.getFullYear()).padStart(4, "0");
   const month = String(date.getMonth() + 1).padStart(2, "0");
   const day = String(date.getDate()).padStart(2, "0");
   return `${year}-${month}-${day}`;
@@ -45,6 +56,7 @@ const AppointmentBooking = ({ onSaveAppointment }) => {
   const [selectedService, setSelectedService] = useState(null);
   const [selectedProvider, setSelectedProvider] = useState(null);
   const [selectedDate, setSelectedDate] = useState(null);
+  const [selectedDateInput, setSelectedDateInput] = useState("");
   const [selectedTime, setSelectedTime] = useState(null);
   const [availableSlots, setAvailableSlots] = useState([]);
   const [loadingSlots, setLoadingSlots] = useState(false);
@@ -130,7 +142,29 @@ const AppointmentBooking = ({ onSaveAppointment }) => {
 
   const handleDateChange = (event) => {
     const value = event.target.value;
-    setSelectedDate(value ? new Date(`${value}T00:00:00`) : null);
+    setSelectedDateInput(value);
+
+    if (/^\d{4}-\d{2}-\d{2}$/.test(value)) {
+      const [yearText, monthText, dayText] = value.split("-");
+      const year = Number(yearText);
+      const month = Number(monthText) - 1;
+      const day = Number(dayText);
+      const nextDate = new Date(year, month, day);
+      nextDate.setFullYear(year);
+
+      if (
+        nextDate.getFullYear() === year &&
+        nextDate.getMonth() === month &&
+        nextDate.getDate() === day
+      ) {
+        setSelectedDate(nextDate);
+      } else {
+        setSelectedDate(null);
+      }
+    } else {
+      setSelectedDate(null);
+    }
+
     setSelectedTime(null);
   };
 
@@ -172,40 +206,51 @@ const AppointmentBooking = ({ onSaveAppointment }) => {
     setSelectedService(null);
     setSelectedProvider(null);
     setSelectedDate(null);
+    setSelectedDateInput("");
     setSelectedTime(null);
     setAvailableSlots([]);
     setError("");
   };
 
   return (
-    <main className="flex-1 bg-[#f7f8fa] px-4 py-12 sm:px-6 lg:px-8">
-      <div className="mx-auto max-w-[1234px]">
-        <header className="mb-10">
-          <h1 className="text-4xl font-bold text-[#061022]">Book an Appointment</h1>
-          <p className="mt-3 text-lg text-[#18304d]">
+    <>
+      <style>{styles}</style>
+      <main className="flex-1 bg-[#f7f8fa] px-4 py-4 h-[calc(100vh-4rem)] overflow-hidden sm:px-6 lg:px-8">
+      <div className="mx-auto flex h-full max-w-[1120px] flex-col">
+        <header className="mb-4 flex flex-col gap-2 sm:flex-row sm:items-end sm:justify-between flex-shrink-0">
+          <div>
+            <p className="text-xs font-bold uppercase tracking-[0.18em] text-[#244783]">Patient Portal</p>
+            <h1 className="mt-1 text-2xl sm:text-3xl font-bold tracking-tight text-[#061022]">Book an Appointment</h1>
+          </div>
+          <p className="max-w-md text-sm font-sm text-[#18304d]">
             Schedule your visit with our healthcare professionals
           </p>
         </header>
 
-        <div className="grid grid-cols-1 gap-8 lg:grid-cols-[1fr_390px]">
-          <section className="rounded-[12px] border border-slate-200 bg-white p-10 shadow-[0_3px_10px_rgba(15,23,42,0.1)]">
-            <div>
-              <h2 className="text-2xl font-bold text-[#061022]">Appointment Details</h2>
-              <p className="mt-2 text-sm text-[#18304d]">Please fill in all required fields</p>
+        <div className="grid flex-1 grid-cols-1 gap-4 min-h-0 lg:grid-cols-[minmax(0,1fr)_330px]">
+          <section className="rounded-[10px] border border-slate-200 bg-white p-5 shadow-[0_10px_30px_rgba(15,23,42,0.08)] min-h-0 overflow-y-auto">
+            <div className="flex items-center justify-between gap-4">
+              <div>
+                <h2 className="text-lg font-bold text-[#061022]">Appointment Details</h2>
+                <p className="mt-1 text-xs text-[#18304d]">Please fill in all required fields</p>
+              </div>
+              <span className="hidden rounded-full bg-[#eef4ff] px-3 py-1 text-xs font-bold text-[#244783] sm:inline-flex">
+                Required fields
+              </span>
             </div>
 
-            <div className="my-8 h-px bg-slate-200" />
+            <div className="my-4 h-px bg-slate-200" />
 
-            <div className="space-y-8">
+            <div className="space-y-5">
               <div>
-                <label className="mb-3 block text-sm font-bold text-[#061022]">
+                <label className="mb-2 block text-sm font-bold text-[#061022]">
                   Service Type <span className="text-red-500">*</span>
                 </label>
                 <div className="relative">
                   <select
                     value={selectedService || ""}
                     onChange={handleServiceChange}
-                    className="h-12 w-full appearance-none rounded-[8px] border-0 bg-slate-100 px-4 pr-11 text-sm font-medium text-[#4b5563] outline-none focus:ring-2 focus:ring-[#244783]/30"
+                    className="h-10 w-full appearance-none rounded-[8px] border border-slate-200 bg-white px-3 pr-10 text-[10px] font-medium text-[#334155] outline-none transition hover:border-slate-300 focus:border-[#244783] focus:bg-white focus:ring-2 focus:ring-[#244783]/10"
                   >
                     <option value="">Select the service you need</option>
                     {services.map((service) => (
@@ -214,12 +259,12 @@ const AppointmentBooking = ({ onSaveAppointment }) => {
                       </option>
                     ))}
                   </select>
-                  <Icon type="chevron" className="pointer-events-none absolute right-4 top-1/2 h-4 w-4 -translate-y-1/2 text-slate-400" />
+                  <Icon type="chevron" className="pointer-events-none absolute right-3 top-1/2 h-4 w-4 -translate-y-1/2 text-slate-500" />
                 </div>
               </div>
 
               <div>
-                <label className="mb-3 block text-sm font-bold text-[#061022]">
+                <label className="mb-2 block text-sm font-bold text-[#061022]">
                   Healthcare Provider <span className="text-red-500">*</span>
                 </label>
                 <div className="relative">
@@ -229,7 +274,7 @@ const AppointmentBooking = ({ onSaveAppointment }) => {
                       setSelectedProvider(event.target.value || null);
                       setSelectedTime(null);
                     }}
-                    className="h-12 w-full appearance-none rounded-[8px] border-0 bg-slate-100 px-4 pr-11 text-sm font-medium text-[#4b5563] outline-none focus:ring-2 focus:ring-[#244783]/30"
+                    className="h-10 w-full appearance-none rounded-[8px] border border-slate-200 bg-white px-3 pr-10 text-[10px] font-medium text-[#334155] outline-none transition hover:border-slate-300 focus:border-[#244783] focus:bg-white focus:ring-2 focus:ring-[#244783]/10"
                   >
                     <option value="">
                       {loadingStaff ? "Loading staff..." : selectedDate ? "Choose available provider" : "First select a date"}
@@ -245,31 +290,28 @@ const AppointmentBooking = ({ onSaveAppointment }) => {
                       </option>
                     ))}
                   </select>
-                  <Icon type="chevron" className="pointer-events-none absolute right-4 top-1/2 h-4 w-4 -translate-y-1/2 text-slate-400" />
+                  <Icon type="chevron" className="pointer-events-none absolute right-3 top-1/2 h-4 w-4 -translate-y-1/2 text-slate-500" />
                 </div>
-                {selectedDate && availableStaff.length === 0 && !loadingStaff && (
-                  <p className="mt-2 text-sm text-red-600">No providers available on this date</p>
-                )}
               </div>
 
-              <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
+              <div className="grid grid-cols-1 gap-5 md:grid-cols-2">
                 <div>
-                  <label className="mb-3 block text-sm font-bold text-[#061022]">
+                  <label className="mb-2 block text-xs font-bold text-[#061022]">
                     Appointment Date <span className="text-red-500">*</span>
                   </label>
                   <div className="relative">
                     <Icon type="calendar" className="pointer-events-none absolute left-4 top-1/2 h-5 w-5 -translate-y-1/2 text-slate-500" />
                     <input
                       type="date"
-                      value={toInputDate(selectedDate)}
+                      value={selectedDateInput}
                       onChange={handleDateChange}
-                      className="h-12 w-full rounded-[8px] border-0 bg-slate-100 pl-12 pr-4 text-sm font-medium text-[#4b5563] outline-none focus:ring-2 focus:ring-[#244783]/30"
+                      className="h-10 w-full rounded-[8px] border border-slate-200 bg-white pl-10 pr-4 text-xs font-medium text-[#334155] outline-none transition hover:border-slate-300 focus:border-[#244783] focus:bg-white focus:ring-2 focus:ring-[#244783]/10"
                     />
                   </div>
                 </div>
 
                 <div>
-                  <label className="mb-3 block text-sm font-bold text-[#061022]">
+                  <label className="mb-2 block text-xs font-bold text-[#061022]">
                     Appointment Time <span className="text-red-500">*</span>
                   </label>
                   <div className="relative">
@@ -277,13 +319,13 @@ const AppointmentBooking = ({ onSaveAppointment }) => {
                       value={selectedTime || ""}
                       onChange={(event) => setSelectedTime(event.target.value || null)}
                       disabled={!selectedProvider || !selectedDate || loadingSlots}
-                      className="h-12 w-full appearance-none rounded-[8px] border-0 bg-slate-100 px-4 pr-11 text-sm font-medium text-[#4b5563] outline-none focus:ring-2 focus:ring-[#244783]/30 disabled:opacity-50"
+                      className="h-10 w-full appearance-none rounded-[8px] border border-slate-200 bg-white px-3 pr-10 text-[10px] font-medium text-[#334155] outline-none transition hover:border-slate-300 focus:border-[#244783] focus:bg-white focus:ring-2 focus:ring-[#244783]/10 disabled:bg-slate-50 disabled:text-slate-400 disabled:opacity-100"
                     >
                       <option value="">
                         {loadingSlots
                           ? "Loading available times..."
                           : !selectedProvider
-                            ? "Select a provider first"
+                            ? "Select provider & date first"
                             : availableSlots.length === 0
                               ? "No available times"
                               : "Select preferred time"}
@@ -294,24 +336,24 @@ const AppointmentBooking = ({ onSaveAppointment }) => {
                         </option>
                       ))}
                     </select>
-                    <Icon type="chevron" className="pointer-events-none absolute right-4 top-1/2 h-4 w-4 -translate-y-1/2 text-slate-400" />
+                    <Icon type="chevron" className="pointer-events-none absolute right-3 top-1/2 h-4 w-4 -translate-y-1/2 text-slate-500" />
                   </div>
                 </div>
               </div>
             </div>
 
-            <div className="my-8 h-px bg-slate-200" />
+            <div className="my-4 h-px bg-slate-200" />
 
             {error && (
               <p className="mb-4 rounded-[8px] bg-red-50 px-4 py-3 text-sm font-semibold text-red-700">{error}</p>
             )}
 
-            <div className="flex flex-col-reverse gap-4 sm:flex-row">
+            <div className="flex flex-col-reverse gap-3 sm:flex-row">
               <button
                 type="button"
                 onClick={handleConfirm}
                 disabled={!canConfirm}
-                className={`flex h-12 flex-1 items-center justify-center gap-3 rounded-[8px] text-sm font-bold text-white transition ${
+                className={`flex h-10 flex-1 items-center justify-center gap-3 rounded-[8px] text-sm font-bold text-white shadow-sm transition ${
                   canConfirm
                     ? "bg-[#244783] hover:bg-[#1c396f]"
                     : "cursor-not-allowed bg-[#94a3bd]"
@@ -319,7 +361,7 @@ const AppointmentBooking = ({ onSaveAppointment }) => {
               >
                 {submitting ? "Booking..." : (
                   <>
-                    <Icon type="check" className="h-5 w-5" />
+                    <Icon type="check" className="h-4 w-4" />
                     Confirm Appointment
                   </>
                 )}
@@ -327,51 +369,51 @@ const AppointmentBooking = ({ onSaveAppointment }) => {
               <button
                 type="button"
                 onClick={handleCancel}
-                className="h-12 rounded-[8px] border border-slate-200 bg-white px-8 text-sm font-bold text-[#061022] transition hover:bg-slate-50"
+                className="h-10 rounded-[8px] border border-slate-200 bg-white px-7 text-sm font-bold text-[#061022] transition hover:bg-slate-50"
               >
                 Cancel
               </button>
             </div>
           </section>
 
-          <aside className="overflow-hidden rounded-[12px] border border-slate-200 bg-white shadow-[0_3px_10px_rgba(15,23,42,0.13)]">
-            <div className="bg-[#244783] px-8 py-8 text-white">
-              <h2 className="text-2xl font-bold">Booking Summary</h2>
-              <p className="mt-2 text-sm text-white/95">Review your details</p>
+          <aside className="overflow-hidden rounded-[10px] border border-slate-200 bg-white shadow-[0_10px_30px_rgba(15,23,42,0.08)] flex flex-col min-h-0">
+            <div className="bg-[#244783] px-5 py-4 text-white flex-shrink-0">
+              <h2 className="text-lg font-bold">Booking Summary</h2>
+              <p className="mt-1 text-xs text-white/90">Review your selected schedule</p>
             </div>
 
-            <div className="p-8">
+            <div className="p-5 overflow-y-auto min-h-0 flex-1">
               {!hasAnyDetail ? (
-                <div className="rounded-[12px] border border-slate-200 bg-slate-50 px-8 py-8 text-center">
-                  <div className="mx-auto flex h-20 w-20 items-center justify-center rounded-full bg-white text-slate-400 shadow-sm">
-                    <Icon type="clipboard" className="h-10 w-10" />
+                <div className="rounded-[10px] border border-dashed border-slate-300 bg-slate-50 px-5 py-6 text-center">
+                  <div className="mx-auto flex h-14 w-14 items-center justify-center rounded-full bg-white text-slate-400 shadow-sm">
+                    <Icon type="clipboard" className="h-7 w-7" />
                   </div>
-                  <h3 className="mt-8 text-base font-bold text-[#18304d]">No Details Yet</h3>
-                  <p className="mt-3 text-sm leading-6 text-[#4b6178]">
+                  <h3 className="mt-4 text-sm font-bold text-[#18304d]">No Details Yet</h3>
+                  <p className="mt-1 text-xs leading-5 text-[#4b6178]">
                     Fill out the form to see your appointment summary
                   </p>
                 </div>
               ) : (
-                <div className="rounded-[12px] border border-slate-200 bg-slate-50 p-6">
-                  <div className="space-y-5 text-sm">
+                <div className="rounded-[10px] border border-slate-200 bg-slate-50 p-4">
+                  <div className="space-y-4 text-sm">
                     <div>
-                      <p className="text-slate-500">Service</p>
+                      <p className="text-slate-500 text-xs">Service</p>
                       <p className="mt-1 font-bold text-[#061022]">
                         {selectedServiceDetails?.name || "Not selected"}
                       </p>
                     </div>
                     <div>
-                      <p className="text-slate-500">Provider</p>
+                      <p className="text-slate-500 text-xs">Provider</p>
                       <p className="mt-1 font-bold text-[#061022]">
                         {selectedStaff?.name || "Not selected"}
                       </p>
                     </div>
                     <div>
-                      <p className="text-slate-500">Date</p>
+                      <p className="text-slate-500 text-xs">Date</p>
                       <p className="mt-1 font-bold text-[#061022]">{formatDate(selectedDate)}</p>
                     </div>
                     <div>
-                      <p className="text-slate-500">Time</p>
+                      <p className="text-slate-500 text-xs">Time</p>
                       <p className="mt-1 font-bold text-[#061022]">{selectedTime || "Not selected"}</p>
                     </div>
                   </div>
@@ -382,6 +424,7 @@ const AppointmentBooking = ({ onSaveAppointment }) => {
         </div>
       </div>
     </main>
+    </>
   );
 };
 

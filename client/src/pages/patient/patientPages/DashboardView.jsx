@@ -65,18 +65,18 @@ const StatCard = ({ icon, label, value, tone = "blue" }) => {
   };
 
   return (
-    <div className="rounded-[12px] border border-slate-200 bg-white p-6 shadow-[0_1px_4px_rgba(15,23,42,0.04)]">
+    <div className="rounded-[12px] border border-slate-200 bg-white p-4 shadow-[0_1px_4px_rgba(15,23,42,0.04)]">
       <div className="flex items-start justify-between">
         <div
-          className={`flex h-12 w-12 items-center justify-center rounded-[12px] ${tones[tone]}`}
+          className={`flex h-10 w-10 items-center justify-center rounded-[10px] ${tones[tone]}`}
         >
-          <Icon type={icon} />
+          <Icon type={icon} className="h-4 w-4" />
         </div>
-        <p className="text-3xl font-bold leading-none text-[#061022]">
+        <p className="text-2xl font-bold leading-none text-[#061022]">
           {value}
         </p>
       </div>
-      <p className="mt-5 text-sm font-medium text-[#18304d]">{label}</p>
+      <p className="mt-3 text-xs font-medium text-[#18304d]">{label}</p>
     </div>
   );
 };
@@ -87,13 +87,13 @@ const ActionCard = ({ icon, title, subtitle, onClick, accent = "navy" }) => {
   const content = (
     <>
       <span
-        className={`flex h-[60px] w-[60px] shrink-0 items-center justify-center rounded-[14px] ${iconClass}`}
+        className={`flex h-12 w-12 shrink-0 items-center justify-center rounded-[12px] ${iconClass}`}
       >
-        <Icon type={icon} className="h-7 w-7" />
+        <Icon type={icon} className="h-6 w-6" />
       </span>
       <span>
-        <span className="block text-lg font-bold text-[#061022]">{title}</span>
-        <span className="mt-1 block text-sm text-[#18304d]">{subtitle}</span>
+        <span className="block text-sm font-bold text-[#061022]">{title}</span>
+        <span className="mt-1 block text-xs text-[#18304d]">{subtitle}</span>
       </span>
     </>
   );
@@ -103,7 +103,7 @@ const ActionCard = ({ icon, title, subtitle, onClick, accent = "navy" }) => {
       <button
         type="button"
         onClick={onClick}
-        className="flex min-h-[112px] items-center gap-4 rounded-[12px] bg-white px-7 text-left shadow-[0_1px_4px_rgba(15,23,42,0.04)] transition hover:-translate-y-0.5 hover:shadow-md"
+        className="flex min-h-[88px] items-center gap-3 rounded-[12px] bg-white px-5 text-left shadow-[0_1px_4px_rgba(15,23,42,0.04)] transition hover:-translate-y-0.5 hover:shadow-md"
       >
         {content}
       </button>
@@ -111,7 +111,7 @@ const ActionCard = ({ icon, title, subtitle, onClick, accent = "navy" }) => {
   }
 
   return (
-    <div className="flex min-h-[112px] items-center gap-4 rounded-[12px] bg-white px-7 shadow-[0_1px_4px_rgba(15,23,42,0.04)]">
+    <div className="flex min-h-[88px] items-center gap-3 rounded-[12px] bg-white px-5 shadow-[0_1px_4px_rgba(15,23,42,0.04)]">
       {content}
     </div>
   );
@@ -130,17 +130,17 @@ const AppointmentRow = ({ appointment }) => {
   const isPending = status === "pending";
 
   return (
-    <div className="rounded-[12px] border border-slate-200 bg-slate-50/40 px-5 py-5">
-      <div className="flex items-start justify-between gap-4">
+    <div className="rounded-[12px] border border-slate-200 bg-slate-50/40 px-4 py-4">
+      <div className="flex items-start justify-between gap-3">
         <div>
-          <h4 className="text-base font-bold text-[#061022]">
+          <h4 className="text-sm font-bold text-[#061022]">
             {appointment.serviceName}
           </h4>
-          <p className="mt-4 flex items-center gap-2 text-sm text-[#18304d]">
+          <p className="mt-3 flex items-center gap-2 text-xs text-[#18304d]">
             <Icon type="user" className="h-4 w-4" />
             {getDoctorName(appointment)}
           </p>
-          <div className="mt-3 flex flex-wrap items-center gap-x-7 gap-y-2 text-sm text-[#18304d]">
+          <div className="mt-2 flex flex-wrap items-center gap-x-5 gap-y-2 text-xs text-[#18304d]">
             <span className="flex items-center gap-2">
               <Icon type="calendar" className="h-4 w-4" />
               {formatAppointmentDate(appointment.date)}
@@ -152,7 +152,7 @@ const AppointmentRow = ({ appointment }) => {
           </div>
         </div>
         <span
-          className={`rounded-[8px] border px-3 py-1 text-xs font-semibold ${
+          className={`rounded-[8px] border px-2.5 py-0.5 text-xs font-semibold ${
             isPending
               ? "border-amber-300 bg-amber-100 text-[#b45309]"
               : "border-blue-200 bg-blue-100 text-blue-700"
@@ -258,20 +258,20 @@ const DashboardView = ({
   };
 
   return (
-    <main className="flex-1 bg-[#f7f8fa] px-4 py-10 sm:px-6 lg:px-8">
-      <div className="mx-auto max-w-[1234px] space-y-10">
-        <section className="relative overflow-hidden rounded-[12px] bg-[#244783] px-10 py-12 text-white shadow-[0_4px_12px_rgba(15,23,42,0.22)]">
-          <div className="absolute -right-14 -top-32 h-80 w-80 rounded-full bg-white/8" />
-          <div className="relative z-10 flex items-center justify-between gap-6">
+    <main className="flex-1 bg-[#f7f8fa] px-4 py-6 sm:px-6 lg:px-8">
+      <div className="mx-auto max-w-[1060px] space-y-6">
+        <section className="relative overflow-hidden rounded-[12px] bg-[#244783] px-7 py-8 text-white shadow-[0_4px_12px_rgba(15,23,42,0.22)]">
+          <div className="absolute -right-12 -top-28 h-64 w-64 rounded-full bg-white/8" />
+          <div className="relative z-10 flex items-center justify-between gap-5">
             <div>
-              <h1 className="text-3xl font-bold leading-tight sm:text-4xl">
+              <h1 className="text-2xl font-bold leading-tight sm:text-3xl">
                 Welcome Back{firstName ? `, ${firstName}` : ""}!
               </h1>
-              <p className="mt-3 text-base text-white/95 sm:text-lg">
+              <p className="mt-2 text-sm text-white/95 sm:text-base">
                 Here's what's happening with your healthcare today
               </p>
             </div>
-            <div className="relative hidden h-20 w-20 items-center justify-center overflow-hidden rounded-full border border-white/20 bg-white/10 sm:flex">
+            <div className="relative hidden h-16 w-16 items-center justify-center overflow-hidden rounded-full border border-white/20 bg-white/10 sm:flex">
               {getAvatarSrc(profile?.avatar) && !imgError ? (
                 <img
                   src={getAvatarSrc(profile.avatar)}
@@ -280,11 +280,11 @@ const DashboardView = ({
                   onError={() => setImgError(true)}
                 />
               ) : (
-                <Icon type="user" className="h-11 w-11" />
+                <Icon type="user" className="h-8 w-8" />
               )}
               {profile?.isAccountVerified && (
-                <span className="absolute -bottom-1 -right-1 flex h-6 w-6 items-center justify-center rounded-full bg-green-500 text-white shadow-md">
-                  <svg className="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <span className="absolute -bottom-0.5 -right-0.5 flex h-5 w-5 items-center justify-center rounded-full bg-green-500 text-white shadow-md">
+                  <svg className="h-3 w-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M5 13l4 4L19 7" />
                   </svg>
                 </span>
@@ -293,7 +293,7 @@ const DashboardView = ({
           </div>
         </section>
 
-        <section className="grid grid-cols-1 gap-5 md:grid-cols-2 xl:grid-cols-4">
+        <section className="grid grid-cols-1 gap-4 md:grid-cols-2 xl:grid-cols-4">
           <StatCard
             icon="calendar"
             label="Upcoming"
@@ -319,7 +319,7 @@ const DashboardView = ({
           />
         </section>
 
-        <section className="grid grid-cols-1 gap-6 lg:grid-cols-3">
+        <section className="grid grid-cols-1 gap-4 lg:grid-cols-3">
           <ActionCard
             icon="calendar"
             title="Book Appointment"
@@ -349,10 +349,10 @@ const DashboardView = ({
           )}
         </section>
 
-        <section className="rounded-[12px] border border-slate-200 bg-white p-8 shadow-[0_3px_10px_rgba(15,23,42,0.1)]">
-          <div className="mb-12 flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
+        <section className="rounded-[12px] border border-slate-200 bg-white p-6 shadow-[0_3px_10px_rgba(15,23,42,0.1)]">
+          <div className="mb-8 flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
             <div>
-              <h2 className="text-2xl font-bold text-[#061022]">
+              <h2 className="text-xl font-bold text-[#061022]">
                 Upcoming Appointments
               </h2>
               <p className="mt-1 text-sm text-[#18304d]">
@@ -363,7 +363,7 @@ const DashboardView = ({
               <button
                 type="button"
                 onClick={() => setAppointmentFilter("confirmed")}
-                className={`rounded-[8px] border px-5 py-2 text-sm font-semibold ${
+                className={`rounded-[8px] border px-4 py-1.5 text-xs font-semibold ${
                   appointmentFilter === "confirmed"
                     ? "border-[#244783] bg-[#244783] text-white"
                     : "border-slate-200 text-[#061022]"
@@ -374,7 +374,7 @@ const DashboardView = ({
               <button
                 type="button"
                 onClick={() => setAppointmentFilter("pending")}
-                className={`rounded-[8px] border px-5 py-2 text-sm font-semibold ${
+                className={`rounded-[8px] border px-4 py-1.5 text-xs font-semibold ${
                   appointmentFilter === "pending"
                     ? "border-[#ffae0b] bg-[#fff7e6] text-[#f07a00]"
                     : "border-[#ffae0b] text-[#f07a00]"
@@ -386,11 +386,11 @@ const DashboardView = ({
           </div>
 
           {filteredAppointments.length === 0 ? (
-            <div className="rounded-[12px] border border-dashed border-slate-300 bg-slate-50 p-8 text-center text-[#18304d]">
+            <div className="rounded-[12px] border border-dashed border-slate-300 bg-slate-50 p-6 text-center text-sm text-[#18304d]">
               No {appointmentFilter} appointments to show.
             </div>
           ) : (
-            <div className="space-y-4">
+            <div className="space-y-3">
               {filteredAppointments.map((appointment) => (
                 <AppointmentRow
                   key={appointment.id}
@@ -403,18 +403,18 @@ const DashboardView = ({
           <button
             type="button"
             onClick={onBookAppointment}
-            className="mt-12 flex w-full items-center justify-center gap-3 rounded-[7px] bg-[#244783] px-6 py-4 text-sm font-bold text-white shadow-sm transition hover:bg-[#1c396f]"
+            className="mt-8 flex w-full items-center justify-center gap-3 rounded-[7px] bg-[#244783] px-5 py-3 text-sm font-bold text-white shadow-sm transition hover:bg-[#1c396f]"
           >
             <Icon type="calendar" className="h-5 w-5" />
             Book New Appointment
           </button>
         </section>
 
-        <section className="grid grid-cols-1 gap-6 lg:grid-cols-2">
-          <div className="rounded-[12px] border border-slate-200 bg-white p-8 shadow-[0_3px_10px_rgba(15,23,42,0.1)]">
-            <h2 className="text-2xl font-bold text-[#061022]">Your Profile</h2>
-            <div className="mt-12 flex items-center gap-5">
-              <div className="relative flex h-16 w-16 shrink-0 items-center justify-center overflow-hidden rounded-full bg-[#244783] text-white">
+        <section className="grid grid-cols-1 gap-4 lg:grid-cols-2">
+          <div className="rounded-[12px] border border-slate-200 bg-white p-6 shadow-[0_3px_10px_rgba(15,23,42,0.1)]">
+            <h2 className="text-xl font-bold text-[#061022]">Your Profile</h2>
+            <div className="mt-8 flex items-center gap-3">
+              <div className="relative flex h-14 w-14 shrink-0 items-center justify-center overflow-hidden rounded-full bg-[#244783] text-white">
                 {getAvatarSrc(profile?.avatar) && !imgError ? (
                   <img
                     src={getAvatarSrc(profile.avatar)}
@@ -423,7 +423,7 @@ const DashboardView = ({
                     onError={() => setImgError(true)}
                   />
                 ) : (
-                  <Icon type="user" className="h-9 w-9" />
+                  <Icon type="user" className="h-8 w-8" />
                 )}
                 {profile?.isAccountVerified && (
                   <span className="absolute -bottom-0.5 -right-0.5 flex h-5 w-5 items-center justify-center rounded-full bg-green-500 text-white shadow-md">
@@ -434,7 +434,7 @@ const DashboardView = ({
                 )}
               </div>
               <div className="min-w-0">
-                <h3 className="text-lg font-bold text-[#061022]">
+                <h3 className="text-base font-bold text-[#061022]">
                   {profile?.name || "Sarah Johnson"}
                 </h3>
                 <p className="mt-1 text-sm text-[#18304d]">
@@ -442,8 +442,8 @@ const DashboardView = ({
                 </p>
               </div>
             </div>
-            <div className="my-8 h-px bg-slate-200" />
-            <div className="space-y-8 text-sm">
+            <div className="my-6 h-px bg-slate-200" />
+            <div className="space-y-5 text-sm">
               <div className="flex justify-between gap-4">
                 <span className="text-[#18304d]">Member since</span>
                 <strong className="text-[#061022]">{formatMemberSince(profile?.memberSince)}</strong>
@@ -458,20 +458,20 @@ const DashboardView = ({
             <button
               type="button"
               onClick={onViewProfile}
-              className="mt-12 w-full rounded-[8px] border border-slate-200 px-5 py-3 text-sm font-bold text-[#061022] transition hover:bg-slate-50"
+              className="mt-8 w-full rounded-[8px] border border-slate-200 px-5 py-2.5 text-sm font-bold text-[#061022] transition hover:bg-slate-50"
             >
               View Full Profile
             </button>
           </div>
 
-          <div className="rounded-[12px] border border-slate-200 bg-white p-8 shadow-[0_3px_10px_rgba(15,23,42,0.1)]">
-            <h2 className="text-2xl font-bold text-[#061022]">
+          <div className="rounded-[12px] border border-slate-200 bg-white p-6 shadow-[0_3px_10px_rgba(15,23,42,0.1)]">
+            <h2 className="text-xl font-bold text-[#061022]">
               Account Status
             </h2>
-            <div className="mt-8 space-y-5 text-sm">
-              <div className="flex items-center justify-between rounded-[12px] border border-slate-200 bg-slate-50 p-5">
-                <div className="flex items-center gap-4">
-                  <span className={`flex h-11 w-11 items-center justify-center rounded-[10px] ${profile?.isAccountVerified ? "bg-green-100 text-green-700" : "bg-amber-100 text-amber-700"}`}>
+            <div className="mt-6 space-y-4 text-sm">
+              <div className="flex items-center justify-between rounded-[12px] border border-slate-200 bg-slate-50 p-4">
+                <div className="flex items-center gap-3">
+                  <span className={`flex h-10 w-10 items-center justify-center rounded-[10px] ${profile?.isAccountVerified ? "bg-green-100 text-green-700" : "bg-amber-100 text-amber-700"}`}>
                     <Icon type="mail" className="h-5 w-5" />
                   </span>
                   <div>
@@ -483,15 +483,15 @@ const DashboardView = ({
                   <button
                     type="button"
                     onClick={() => setOtpOpen(true)}
-                    className="rounded-[8px] bg-[#244783] px-4 py-2 text-xs font-bold text-white hover:bg-[#1c396f]"
+                    className="rounded-[8px] bg-[#244783] px-3 py-1.5 text-xs font-bold text-white hover:bg-[#1c396f]"
                   >
                     Verify
                   </button>
                 )}
               </div>
-              <div className="flex items-center justify-between rounded-[12px] border border-slate-200 bg-slate-50 p-5">
-                <div className="flex items-center gap-4">
-                  <span className="flex h-11 w-11 items-center justify-center rounded-[10px] bg-blue-100 text-blue-700">
+              <div className="flex items-center justify-between rounded-[12px] border border-slate-200 bg-slate-50 p-4">
+                <div className="flex items-center gap-3">
+                  <span className="flex h-10 w-10 items-center justify-center rounded-[10px] bg-blue-100 text-blue-700">
                     <Icon type="calendar" className="h-5 w-5" />
                   </span>
                   <div>
@@ -507,7 +507,7 @@ const DashboardView = ({
       {otpOpen && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-slate-900/40 px-4">
           <div className="w-full max-w-md rounded-[12px] bg-white p-6 shadow-xl">
-            <div className="flex items-start justify-between gap-4">
+            <div className="flex items-start justify-between gap-3">
               <div>
                 <h2 className="text-xl font-bold text-[#061022]">
                   Verify Email
