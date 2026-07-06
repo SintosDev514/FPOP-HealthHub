@@ -86,21 +86,30 @@ const StatCard = ({ icon, label, value, tone = "neutral" }) => {
 
 const statusStyles = {
   upcoming: {
-    rail: "border-l-blue-600",
-    tile: "border-blue-100 bg-blue-50 text-blue-600",
-    badge: "border-blue-200 bg-blue-100 text-blue-700",
+    gradient: "from-blue-500 via-blue-400 to-indigo-500",
+    dotColor: "bg-blue-500",
+    dotGlow: "shadow-[0_0_8px_rgba(59,130,246,0.5)]",
+    iconBg: "bg-gradient-to-br from-blue-500 to-indigo-600",
+    badge: "bg-blue-500/10 text-blue-700 ring-1 ring-blue-500/20",
+    hoverBg: "hover:bg-blue-50/40",
     icon: "calendar",
   },
   completed: {
-    rail: "border-l-[#00a65a]",
-    tile: "border-green-100 bg-green-50 text-green-600",
-    badge: "border-green-200 bg-green-100 text-green-700",
+    gradient: "from-emerald-500 via-green-400 to-teal-500",
+    dotColor: "bg-emerald-500",
+    dotGlow: "shadow-[0_0_8px_rgba(16,185,129,0.5)]",
+    iconBg: "bg-gradient-to-br from-emerald-500 to-teal-600",
+    badge: "bg-emerald-500/10 text-emerald-700 ring-1 ring-emerald-500/20",
+    hoverBg: "hover:bg-emerald-50/40",
     icon: "check",
   },
   pending: {
-    rail: "border-l-[#ff9500]",
-    tile: "border-amber-100 bg-amber-50 text-[#f07a00]",
-    badge: "border-amber-300 bg-amber-100 text-[#b45309]",
+    gradient: "from-amber-400 via-orange-400 to-rose-400",
+    dotColor: "bg-amber-500",
+    dotGlow: "shadow-[0_0_8px_rgba(245,158,11,0.5)]",
+    iconBg: "bg-gradient-to-br from-amber-400 to-orange-500",
+    badge: "bg-amber-500/10 text-amber-700 ring-1 ring-amber-500/20",
+    hoverBg: "hover:bg-amber-50/40",
     icon: "alert",
   },
 };
@@ -129,48 +138,53 @@ const AppointmentCard = ({ appointment, onSelect }) => {
     <button
       type="button"
       onClick={() => onSelect(appointment)}
-      className={`w-full rounded-[12px] border border-slate-200 border-l-[5px] ${style.rail} bg-white p-5 text-left shadow-[0_1px_5px_rgba(15,23,42,0.05)] transition hover:-translate-y-0.5 hover:shadow-md`}
+      className={`group relative w-full overflow-hidden rounded-[16px] border border-slate-200/80 bg-white p-0 text-left shadow-[0_2px_12px_rgba(15,23,42,0.06)] transition-all duration-300 hover:-translate-y-1 hover:shadow-[0_8px_30px_rgba(15,23,42,0.12)] ${style.hoverBg}`}
     >
-      <div className="flex items-start gap-4">
-        <div className={`hidden h-[92px] w-[52px] shrink-0 items-start justify-center rounded-[12px] border pt-4 sm:flex ${style.tile}`}>
-          <Icon type="calendar" className="h-5 w-5" />
-        </div>
-        <div className="min-w-0 flex-1">
-          <div className="flex flex-col gap-2 sm:flex-row sm:items-start sm:justify-between">
-            <div>
-              <h2 className="text-lg font-bold text-[#061022]">{appointment.serviceName}</h2>
-              <p className="mt-4 flex items-center gap-2.5 text-sm font-medium text-[#18304d]">
-                <span className="flex h-7 w-7 items-center justify-center rounded-[8px] bg-slate-100 text-slate-500">
-                  <Icon type="user" className="h-3.5 w-3.5" />
-                </span>
-                {appointment.doctorName}
-              </p>
-            </div>
-            <span className={`inline-flex items-center gap-2 self-start rounded-[8px] border px-3 py-1 text-xs font-bold capitalize ${style.badge}`}>
-              <Icon type={style.icon} className="h-3.5 w-3.5" />
-              {status}
-            </span>
+      {/* Top gradient accent bar */}
+      <div className={`h-[3px] w-full bg-gradient-to-r ${style.gradient}`} />
+
+      <div className="p-5">
+        <div className="flex items-start gap-4">
+          {/* Icon tile with gradient */}
+          <div className={`hidden h-12 w-12 shrink-0 items-center justify-center rounded-[12px] text-white sm:flex ${style.iconBg} shadow-lg transition-transform duration-300 group-hover:scale-110`}>
+            <Icon type="calendar" className="h-5 w-5" />
           </div>
 
-          <div className="mt-4 flex flex-wrap gap-x-6 gap-y-2.5 text-xs font-medium text-[#18304d]">
-            <span className="flex items-center gap-2.5">
-              <span className="flex h-7 w-7 items-center justify-center rounded-[8px] bg-slate-100 text-slate-500">
-                <Icon type="calendar" className="h-3.5 w-3.5" />
+          <div className="min-w-0 flex-1">
+            <div className="flex flex-col gap-2 sm:flex-row sm:items-start sm:justify-between">
+              <div>
+                <h2 className="text-lg font-bold text-[#061022] transition-colors group-hover:text-[#244783]">{appointment.serviceName}</h2>
+                <p className="mt-3 flex items-center gap-2.5 text-sm font-medium text-[#18304d]">
+                  <span className="flex h-7 w-7 items-center justify-center rounded-full bg-slate-100 text-slate-500 transition-colors group-hover:bg-slate-200">
+                    <Icon type="user" className="h-3.5 w-3.5" />
+                  </span>
+                  {appointment.doctorName}
+                </p>
+              </div>
+              {/* Badge with glowing dot */}
+              <span className={`inline-flex items-center gap-2 self-start rounded-full px-3.5 py-1.5 text-xs font-bold capitalize ${style.badge}`}>
+                <span className="relative flex h-2 w-2">
+                  <span className={`absolute inline-flex h-full w-full animate-ping rounded-full opacity-75 ${style.dotColor}`}></span>
+                  <span className={`relative inline-flex h-2 w-2 rounded-full ${style.dotColor} ${style.dotGlow}`}></span>
+                </span>
+                {status}
               </span>
-              {formatDate(appointment.date)}
-            </span>
-            <span className="flex items-center gap-2.5">
-              <span className="flex h-7 w-7 items-center justify-center rounded-[8px] bg-slate-100 text-slate-500">
-                <Icon type="clock" className="h-3.5 w-3.5" />
+            </div>
+
+            <div className="mt-4 flex flex-wrap gap-x-5 gap-y-2.5 text-xs font-medium text-[#18304d]">
+              <span className="flex items-center gap-2 rounded-full bg-slate-50 px-3 py-1.5 transition-colors group-hover:bg-slate-100">
+                <Icon type="calendar" className="h-3.5 w-3.5 text-slate-400" />
+                {formatDate(appointment.date)}
               </span>
-              {appointment.time}
-            </span>
-            <span className="flex items-center gap-2.5">
-              <span className="flex h-7 w-7 items-center justify-center rounded-[8px] bg-slate-100 text-slate-500">
-                <Icon type="location" className="h-3.5 w-3.5" />
+              <span className="flex items-center gap-2 rounded-full bg-slate-50 px-3 py-1.5 transition-colors group-hover:bg-slate-100">
+                <Icon type="clock" className="h-3.5 w-3.5 text-slate-400" />
+                {appointment.time}
               </span>
-              {appointment.location}
-            </span>
+              <span className="flex items-center gap-2 rounded-full bg-slate-50 px-3 py-1.5 transition-colors group-hover:bg-slate-100">
+                <Icon type="location" className="h-3.5 w-3.5 text-slate-400" />
+                {appointment.location}
+              </span>
+            </div>
           </div>
         </div>
       </div>
