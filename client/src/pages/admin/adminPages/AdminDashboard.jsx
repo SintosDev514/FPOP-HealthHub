@@ -214,7 +214,7 @@ function AdminShell({ activeNav }) {
           }}
         >
           <img
-            src="/FPOPLOGO1.png"
+            src="/logoo.png"
             alt="FPOP Logo"
             style={{ width: "36px", height: "36px", objectFit: "contain", flexShrink: 0 }}
           />
