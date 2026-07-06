@@ -464,7 +464,7 @@ const InventoryTableHeader = () => (
   </thead>
 );
 
-const StaffInventoryView = () => {
+const StaffInventoryView = ({ hideHeader = false }) => {
   const [tables, setTables] = useState([]);
   const [loading, setLoading] = useState(true);
   const [openCategories, setOpenCategories] = useState({});
@@ -1007,6 +1007,232 @@ const StaffInventoryView = () => {
     );
   };
 
+  const handlePrint = () => {
+    const printWindow = window.open("", "_blank");
+    if (!printWindow) return;
+
+    const { displayDate } = getReportDate();
+
+    let html = `
+      <html>
+        <head>
+          <title>Inventory LIS-5 Report - ${displayDate}</title>
+          <style>
+            @media print {
+              body { margin: 0; padding: 0; }
+              @page { size: landscape; margin: 1cm; }
+            }
+            body {
+              font-family: 'Inter', -apple-system, sans-serif;
+              color: #1e293b;
+              padding: 20px;
+              line-height: 1.2;
+            }
+            .header-container {
+              text-align: center;
+              margin-bottom: 20px;
+            }
+            .org-title {
+              font-size: 14px;
+              font-weight: 800;
+              text-transform: uppercase;
+              color: #1e3a5f;
+              letter-spacing: 0.5px;
+              margin: 0 0 4px 0;
+            }
+            .report-title {
+              font-size: 12px;
+              font-weight: 700;
+              color: #475569;
+              margin: 0 0 15px 0;
+            }
+            .meta-grid {
+              display: flex;
+              justify-content: space-between;
+              font-size: 10px;
+              font-weight: 600;
+              margin-bottom: 15px;
+              border-bottom: 1.5px solid #cbd5e1;
+              padding-bottom: 8px;
+            }
+            .table-container {
+              margin-bottom: 30px;
+              page-break-inside: avoid;
+            }
+            .table-name {
+              font-size: 11px;
+              font-weight: 800;
+              color: #0f172a;
+              margin-bottom: 6px;
+              text-transform: uppercase;
+              letter-spacing: 0.3px;
+            }
+            table {
+              width: 100%;
+              border-collapse: collapse;
+              font-size: 8px;
+              margin-bottom: 10px;
+            }
+            th, td {
+              border: 0.5px solid #475569;
+              padding: 4px 5px;
+              text-align: center;
+              vertical-align: middle;
+            }
+            th {
+              background-color: #f1f5f9;
+              font-weight: 700;
+              color: #0f172a;
+              font-size: 7.5px;
+            }
+            .col-left {
+              text-align: left;
+              font-weight: 600;
+            }
+            .category-row {
+              background-color: #e2e8f0;
+              font-weight: 700;
+              text-align: left;
+            }
+            .category-row td {
+              text-align: left;
+              padding: 5px 8px;
+              font-size: 9px;
+            }
+            .footnote {
+              font-size: 7px;
+              font-style: italic;
+              color: #64748b;
+              margin-top: 5px;
+            }
+          </style>
+        </head>
+        <body>
+          <div class="header-container">
+            <h1 class="org-title">Family Planning Organization of the Philippines</h1>
+            <h2 class="report-title">Consumable/Disposable Commodities Inventory LIS-5 Report</h2>
+          </div>
+          
+          <div class="meta-grid">
+            <div>Quarter: ${selectedQuarter} | Year: ${selectedYear}</div>
+            <div>Generated: ${displayDate}</div>
+          </div>
+    `;
+
+    const reportTables = tablesForExport.length > 0 ? tablesForExport : tables;
+
+    reportTables.forEach((table) => {
+      html += `
+        <div class="table-container">
+          <div class="table-name">${table.name || "Inventory Report"} ${table.chapter ? `(${table.chapter})` : ""}</div>
+          <table>
+            <thead>
+              <tr>
+                <th rowspan="2" style="width: 15%; text-align: left;">TYPE / BRAND</th>
+                <th rowspan="2" style="width: 6%;">BEGINNING BALANCE</th>
+                <th colspan="6">RECEIPTS</th>
+                <th colspan="9">ISSUANCES</th>
+                <th rowspan="2" style="width: 6%;">ENDING BALANCE</th>
+              </tr>
+              <tr>
+                <th style="font-size: 7px;">National Warehouse</th>
+                <th style="font-size: 7px;">Other Agency / ROH</th>
+                <th style="font-size: 7px;">Chapter Local Purchase</th>
+                <th style="font-size: 7px;">*Other FPOP Clinics</th>
+                <th style="font-size: 7px;">Returned by CSV</th>
+                <th style="font-weight: 800;">Total</th>
+                <th style="font-size: 7px;">Private Physicians</th>
+                <th style="font-size: 7px;">Government</th>
+                <th style="font-size: 7px;">Other Agency</th>
+                <th style="font-size: 7px;">CBV</th>
+                <th style="font-size: 7px;">Clinic</th>
+                <th style="font-size: 7px;">Outreach / Mobile</th>
+                <th style="font-size: 7px;">*Other FPOP Clinics</th>
+                <th style="font-size: 7px;">Expired / Promo</th>
+                <th style="font-weight: 800;">Total</th>
+              </tr>
+              <tr style="background-color: #f8fafc; font-size: 7px; height: 12px;">
+                ${Array.from({ length: 18 }, (_, i) => `<th style="padding: 1px 0; font-weight: normal; color: #64748b;">${i + 1}</th>`).join("")}
+              </tr>
+            </thead>
+            <tbody>
+      `;
+
+      if (!table.categories || table.categories.length === 0) {
+        html += `<tr><td colspan="18" style="text-align: center; color: #64748b; font-style: italic;">No categories or items available</td></tr>`;
+      } else {
+        table.categories.forEach((cat) => {
+          html += `
+            <tr class="category-row">
+              <td colspan="18">${cat.name}</td>
+            </tr>
+          `;
+
+          if (!cat.items || cat.items.length === 0) {
+            html += `<tr><td colspan="18" style="text-align: center; color: #94a3b8; font-style: italic;">No items in this category</td></tr>`;
+          } else {
+            cat.items.forEach((item) => {
+              const rowData = createLis5ExcelItemRow(item);
+              html += `
+                <tr>
+                  <td class="col-left">${rowData[0]}</td>
+                  <td>${rowData[1] || "-"}</td>
+                  <td>${rowData[2] || "-"}</td>
+                  <td>${rowData[3] || "-"}</td>
+                  <td>${rowData[4] || "-"}</td>
+                  <td>${rowData[5] || "-"}</td>
+                  <td>${rowData[6] || "-"}</td>
+                  <td style="font-weight: 700;">${rowData[7] || "-"}</td>
+                  <td>${rowData[8] || "-"}</td>
+                  <td>${rowData[9] || "-"}</td>
+                  <td>${rowData[10] || "-"}</td>
+                  <td>${rowData[11] || "-"}</td>
+                  <td>${rowData[12] || "-"}</td>
+                  <td>${rowData[13] || "-"}</td>
+                  <td>${rowData[14] || "-"}</td>
+                  <td>${rowData[15] || "-"}</td>
+                  <td style="font-weight: 700;">${rowData[16] || "-"}</td>
+                  <td style="font-weight: 700;">${rowData[17] || "-"}</td>
+                </tr>
+              `;
+            });
+          }
+
+          // Add blank rows for formatting
+          const blankRowsCount = Math.max(2, 4 - (cat.items || []).length);
+          Array.from({ length: blankRowsCount }).forEach(() => {
+            html += `
+              <tr style="height: 18px;">
+                ${Array.from({ length: 18 }, () => `<td></td>`).join("")}
+              </tr>
+            `;
+          });
+        });
+      }
+
+      html += `
+            </tbody>
+          </table>
+          <div class="footnote">*Other information / additional relevant commodities must be recorded to the blank rows provided.</div>
+        </div>
+      `;
+    });
+
+    html += `
+        </body>
+      </html>
+    `;
+
+    printWindow.document.write(html);
+    printWindow.document.close();
+    printWindow.focus();
+
+    setTimeout(() => {
+      printWindow.print();
+      printWindow.close();
+    }, 500);
+  };
+
   const openCreateTableModal = () => {
     setTableNameForm("");
     setTableChapterForm("");
@@ -1246,14 +1472,16 @@ const StaffInventoryView = () => {
 
   return (
     <main className="flex-1 bg-[#f8fafc] px-4 py-9 sm:px-8 lg:px-[32px] overflow-y-auto overflow-x-hidden min-w-0">
-      <section className="mb-8">
-        <h2 className="text-base font-extrabold leading-tight text-slate-950">
-          Inventory
-        </h2>
-        <p className="mt-2 text-[10px] font-medium text-slate-600">
-          Track all stock items by category, receipts, issuances, and balances.
-        </p>
-      </section>
+      {!hideHeader && (
+        <section className="mb-8">
+          <h2 className="text-base font-extrabold leading-tight text-slate-950">
+            Inventory
+          </h2>
+          <p className="mt-2 text-[10px] font-medium text-slate-600">
+            Track all stock items by category, receipts, issuances, and balances.
+          </p>
+        </section>
+      )}
 
       <section className="mb-6 rounded-lg border border-slate-200 bg-white p-6 shadow-[0_2px_12px_rgba(15,23,42,0.07)]">
         <div className="flex flex-wrap gap-3">
@@ -1320,7 +1548,7 @@ const StaffInventoryView = () => {
           <ToolbarButton icon="download" onClick={handleExportExcel}>
             Excel
           </ToolbarButton>
-          <ToolbarButton icon="printer">Print</ToolbarButton>
+          <ToolbarButton icon="printer" onClick={handlePrint}>Print</ToolbarButton>
 
         </div>
       </section>
