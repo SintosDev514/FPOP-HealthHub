@@ -65,35 +65,56 @@ const StatCard = ({ icon, label, value, tone = "blue" }) => {
   };
 
   return (
-    <div className="rounded-[12px] border border-slate-200 bg-white p-4 shadow-[0_1px_4px_rgba(15,23,42,0.04)]">
-      <div className="flex items-start justify-between">
-        <div
-          className={`flex h-10 w-10 items-center justify-center rounded-[10px] ${tones[tone]}`}
-        >
-          <Icon type={icon} className="h-4 w-4" />
+    <div className="min-w-0 rounded-[12px] border border-slate-200 bg-white p-2.5 shadow-[0_2px_8px_rgba(15,23,42,0.08)] md:min-h-0 md:p-4 md:shadow-[0_1px_4px_rgba(15,23,42,0.04)]">
+      <div className="flex min-h-[110px] min-w-0 flex-col items-start md:block md:min-h-0">
+        <div className="contents md:flex md:items-start md:justify-between">
+          <div
+            className={`order-1 flex h-9 w-9 shrink-0 items-center justify-center rounded-[10px] md:h-10 md:w-10 ${tones[tone]}`}
+          >
+            <Icon type={icon} className="h-4 w-4" />
+          </div>
+          <p className="order-3 mt-3 text-2xl font-bold leading-none text-[#061022] md:order-none md:mt-0">
+            {value}
+          </p>
         </div>
-        <p className="text-2xl font-bold leading-none text-[#061022]">
-          {value}
+        <p className="order-2 mt-3 w-full min-w-0 truncate text-[11px] font-semibold leading-tight text-[#061022] min-[390px]:text-xs md:text-xs md:font-medium md:text-[#18304d]">
+          {label}
         </p>
       </div>
-      <p className="mt-3 text-xs font-medium text-[#18304d]">{label}</p>
     </div>
   );
 };
 
-const ActionCard = ({ icon, title, subtitle, onClick, accent = "navy" }) => {
+const ActionCard = ({
+  icon,
+  title,
+  subtitle,
+  onClick,
+  accent = "navy",
+  mobileStacked = false,
+}) => {
   const iconClass =
     accent === "orange" ? "bg-[#ffae0b] text-white" : "bg-[#244783] text-white";
+  const actionClass = mobileStacked
+    ? "flex min-h-[124px] w-full min-w-0 max-w-full flex-col items-start justify-center gap-3 rounded-[12px] bg-white px-4 text-left shadow-[0_1px_4px_rgba(15,23,42,0.04)] transition hover:-translate-y-0.5 hover:shadow-md md:min-h-[88px] md:flex-row md:items-center md:justify-start md:px-5"
+    : "flex min-h-[88px] items-center gap-3 rounded-[12px] bg-white px-5 text-left shadow-[0_1px_4px_rgba(15,23,42,0.04)] transition hover:-translate-y-0.5 hover:shadow-md";
+  const staticClass = mobileStacked
+    ? "flex min-h-[124px] w-full min-w-0 max-w-full flex-col items-start justify-center gap-3 rounded-[12px] bg-white px-4 shadow-[0_1px_4px_rgba(15,23,42,0.04)] md:min-h-[88px] md:flex-row md:items-center md:justify-start md:px-5"
+    : "flex min-h-[88px] items-center gap-3 rounded-[12px] bg-white px-5 shadow-[0_1px_4px_rgba(15,23,42,0.04)]";
   const content = (
     <>
       <span
-        className={`flex h-12 w-12 shrink-0 items-center justify-center rounded-[12px] ${iconClass}`}
+        className={`flex h-11 w-11 shrink-0 items-center justify-center rounded-[12px] md:h-12 md:w-12 ${iconClass}`}
       >
-        <Icon type={icon} className="h-6 w-6" />
+        <Icon type={icon} className="h-5 w-5 md:h-6 md:w-6" />
       </span>
-      <span>
-        <span className="block text-sm font-bold text-[#061022]">{title}</span>
-        <span className="mt-1 block text-xs text-[#18304d]">{subtitle}</span>
+      <span className="min-w-0 max-w-full">
+        <span className="block max-w-full break-words text-xs font-bold leading-tight text-[#061022] min-[390px]:text-sm">
+          {title}
+        </span>
+        <span className="mt-1 block max-w-full break-words text-[11px] leading-snug text-[#18304d] min-[390px]:text-xs">
+          {subtitle}
+        </span>
       </span>
     </>
   );
@@ -103,7 +124,7 @@ const ActionCard = ({ icon, title, subtitle, onClick, accent = "navy" }) => {
       <button
         type="button"
         onClick={onClick}
-        className="flex min-h-[88px] items-center gap-3 rounded-[12px] bg-white px-5 text-left shadow-[0_1px_4px_rgba(15,23,42,0.04)] transition hover:-translate-y-0.5 hover:shadow-md"
+        className={actionClass}
       >
         {content}
       </button>
@@ -111,7 +132,7 @@ const ActionCard = ({ icon, title, subtitle, onClick, accent = "navy" }) => {
   }
 
   return (
-    <div className="flex min-h-[88px] items-center gap-3 rounded-[12px] bg-white px-5 shadow-[0_1px_4px_rgba(15,23,42,0.04)]">
+    <div className={staticClass}>
       {content}
     </div>
   );
@@ -130,29 +151,31 @@ const AppointmentRow = ({ appointment }) => {
   const isPending = status === "pending";
 
   return (
-    <div className="rounded-[12px] border border-slate-200 bg-slate-50/40 px-4 py-4">
-      <div className="flex items-start justify-between gap-3">
-        <div>
-          <h4 className="text-sm font-bold text-[#061022]">
+    <div className="min-w-0 rounded-[12px] border border-slate-200 bg-slate-50/40 px-3 py-4 sm:px-4">
+      <div className="flex min-w-0 items-start justify-between gap-2 sm:gap-3">
+        <div className="min-w-0 flex-1">
+          <h4 className="max-w-full truncate text-xs font-bold text-[#061022] min-[390px]:text-sm">
             {appointment.serviceName}
           </h4>
-          <p className="mt-3 flex items-center gap-2 text-xs text-[#18304d]">
-            <Icon type="user" className="h-4 w-4" />
-            {getDoctorName(appointment)}
+          <p className="mt-3 flex min-w-0 items-center gap-2 text-[11px] text-[#18304d] min-[390px]:text-xs">
+            <Icon type="user" className="h-4 w-4 shrink-0" />
+            <span className="truncate">{getDoctorName(appointment)}</span>
           </p>
-          <div className="mt-2 flex flex-wrap items-center gap-x-5 gap-y-2 text-xs text-[#18304d]">
-            <span className="flex items-center gap-2">
-              <Icon type="calendar" className="h-4 w-4" />
-              {formatAppointmentDate(appointment.date)}
+          <div className="mt-2 grid min-w-0 gap-2 text-[11px] text-[#18304d] min-[390px]:text-xs sm:grid-cols-2 sm:gap-x-5">
+            <span className="flex min-w-0 items-center gap-2">
+              <Icon type="calendar" className="h-4 w-4 shrink-0" />
+              <span className="truncate">
+                {formatAppointmentDate(appointment.date)}
+              </span>
             </span>
-            <span className="flex items-center gap-2">
-              <Icon type="clock" className="h-4 w-4" />
-              {appointment.time}
+            <span className="flex min-w-0 items-center gap-2">
+              <Icon type="clock" className="h-4 w-4 shrink-0" />
+              <span className="truncate">{appointment.time}</span>
             </span>
           </div>
         </div>
         <span
-          className={`rounded-[8px] border px-2.5 py-0.5 text-xs font-semibold ${
+          className={`max-w-[72px] shrink-0 truncate rounded-[8px] border px-1.5 py-0.5 text-[10px] font-semibold leading-5 min-[390px]:max-w-[82px] min-[390px]:px-2 min-[390px]:text-[11px] sm:max-w-[92px] sm:px-2.5 sm:text-xs ${
             isPending
               ? "border-amber-300 bg-amber-100 text-[#b45309]"
               : "border-blue-200 bg-blue-100 text-blue-700"
@@ -203,6 +226,8 @@ const DashboardView = ({
     if (appointmentFilter === "pending") return status === "pending";
     return status !== "pending";
   });
+  const visibleAppointments = filteredAppointments.slice(0, 4);
+  const hasMoreAppointments = filteredAppointments.length > visibleAppointments.length;
   useEffect(() => {
     if (!otpOpen) return;
     const sendOtp = async () => {
@@ -211,7 +236,7 @@ const DashboardView = ({
       setOtpSent(false);
       setOtpValue("");
       try {
-        const res = await fetch("http://localhost:5000/api/auth/sendEmailOtp", {
+        const res = await fetch(`${__API_BASE__}/api/auth/sendEmailOtp`, {
           method: "POST",
           credentials: "include",
         });
@@ -235,7 +260,7 @@ const DashboardView = ({
     setOtpVerifying(true);
     setOtpError("");
     try {
-      const res = await fetch("http://localhost:5000/api/auth/VerifyEmail", {
+      const res = await fetch(`${__API_BASE__}/api/auth/VerifyEmail`, {
         method: "POST",
         credentials: "include",
         headers: { "Content-Type": "application/json" },
@@ -293,7 +318,7 @@ const DashboardView = ({
           </div>
         </section>
 
-        <section className="grid grid-cols-1 gap-4 md:grid-cols-2 xl:grid-cols-4">
+        <section className="grid grid-cols-4 gap-2 min-[390px]:gap-3 md:grid-cols-2 md:gap-4 xl:grid-cols-4">
           <StatCard
             icon="calendar"
             label="Upcoming"
@@ -319,7 +344,7 @@ const DashboardView = ({
           />
         </section>
 
-        <section className="grid grid-cols-1 gap-4 lg:grid-cols-3">
+        <section className="hidden grid-cols-1 gap-4 md:grid lg:grid-cols-3">
           <ActionCard
             icon="calendar"
             title="Book Appointment"
@@ -349,7 +374,138 @@ const DashboardView = ({
           )}
         </section>
 
-        <section className="rounded-[12px] border border-slate-200 bg-white p-6 shadow-[0_3px_10px_rgba(15,23,42,0.1)]">
+        <section className="grid min-w-0 grid-cols-[minmax(0,1.35fr)_minmax(0,0.9fr)] gap-3 min-[390px]:gap-4 md:hidden">
+          <div className="min-w-0 rounded-[12px] border border-slate-200 bg-white p-4 shadow-[0_3px_10px_rgba(15,23,42,0.1)] min-[390px]:p-5">
+            <div className="mb-6">
+              <h2 className="break-words text-base font-bold leading-tight text-[#061022] min-[390px]:text-lg">
+                Upcoming Appointments
+              </h2>
+              <p className="mt-1 break-words text-[11px] leading-snug text-[#18304d] min-[390px]:text-xs">
+                Your next scheduled visits
+              </p>
+            </div>
+
+            <div className="mb-5 flex min-w-0 flex-wrap gap-2">
+              <button
+                type="button"
+                onClick={() => setAppointmentFilter("confirmed")}
+                className={`min-w-0 rounded-[8px] border px-2.5 py-1.5 text-[11px] font-semibold min-[390px]:px-3 min-[390px]:text-xs ${
+                  appointmentFilter === "confirmed"
+                    ? "border-[#244783] bg-[#244783] text-white"
+                    : "border-slate-200 text-[#061022]"
+                }`}
+              >
+                Confirmed
+              </button>
+              <button
+                type="button"
+                onClick={() => setAppointmentFilter("pending")}
+                className={`min-w-0 rounded-[8px] border px-2.5 py-1.5 text-[11px] font-semibold min-[390px]:px-3 min-[390px]:text-xs ${
+                  appointmentFilter === "pending"
+                    ? "border-[#ffae0b] bg-[#fff7e6] text-[#f07a00]"
+                    : "border-[#ffae0b] text-[#f07a00]"
+                }`}
+              >
+                Pending
+              </button>
+            </div>
+
+            {visibleAppointments.length === 0 ? (
+              <div className="rounded-[12px] border border-dashed border-slate-300 bg-slate-50 p-4 text-center text-xs text-[#18304d]">
+                No {appointmentFilter} appointments to show.
+              </div>
+            ) : (
+              <div className="space-y-3">
+                {visibleAppointments.map((appointment) => (
+                  <AppointmentRow
+                    key={appointment.id}
+                    appointment={appointment}
+                  />
+                ))}
+              </div>
+            )}
+            {hasMoreAppointments && (
+              <button
+                type="button"
+                onClick={onViewAppointments}
+                className="mt-5 w-full rounded-[8px] border border-[#244783] px-4 py-2 text-xs font-bold text-[#244783] transition hover:bg-[#244783] hover:text-white"
+              >
+                View more
+              </button>
+            )}
+          </div>
+
+          <div className="min-w-0 space-y-4">
+            <ActionCard
+              icon="calendar"
+              title="Book Appointment"
+              subtitle="Schedule a new visit"
+              onClick={onBookAppointment}
+              mobileStacked
+            />
+            <ActionCard
+              icon="document"
+              title="My Appointments"
+              subtitle="View your history"
+              onClick={onViewAppointments}
+              mobileStacked
+            />
+            {profile?.isAccountVerified ? (
+              <ActionCard
+                icon="check"
+                title="Email Verified"
+                subtitle="Your email is verified"
+                mobileStacked
+              />
+            ) : (
+              <ActionCard
+                icon="mail"
+                title="Verify Email"
+                subtitle="Send OTP verification"
+                accent="orange"
+                onClick={() => setOtpOpen(true)}
+                mobileStacked
+              />
+            )}
+
+            <div className="min-w-0 rounded-[12px] border border-slate-200 bg-white p-3 shadow-[0_3px_10px_rgba(15,23,42,0.1)] min-[390px]:p-4">
+              <h2 className="break-words text-sm font-bold leading-tight text-[#061022] min-[390px]:text-base">
+                Account Status
+              </h2>
+              <div className="mt-4 space-y-3 text-xs">
+                <div className="min-w-0 rounded-[12px] border border-slate-200 bg-slate-50 p-2.5 min-[390px]:p-3">
+                  <div className="mb-2 flex h-9 w-9 shrink-0 items-center justify-center rounded-[10px] bg-blue-100 text-blue-700 min-[390px]:h-10 min-[390px]:w-10">
+                    <Icon type="mail" className="h-4 w-4 min-[390px]:h-5 min-[390px]:w-5" />
+                  </div>
+                  <p className="break-words text-xs font-bold leading-tight text-[#061022] min-[390px]:text-sm">Email Verification</p>
+                  <p className="mt-0.5 break-words text-[11px] leading-snug text-[#18304d] min-[390px]:text-xs">
+                    {profile?.isAccountVerified ? "Verified" : "Not verified"}
+                  </p>
+                  {!profile?.isAccountVerified && (
+                    <button
+                      type="button"
+                      onClick={() => setOtpOpen(true)}
+                      className="mt-3 rounded-[8px] bg-[#244783] px-3 py-1.5 text-xs font-bold text-white hover:bg-[#1c396f]"
+                    >
+                      Verify
+                    </button>
+                  )}
+                </div>
+                <div className="min-w-0 rounded-[12px] border border-slate-200 bg-slate-50 p-2.5 min-[390px]:p-3">
+                  <div className="mb-2 flex h-9 w-9 shrink-0 items-center justify-center rounded-[10px] bg-blue-100 text-blue-700 min-[390px]:h-10 min-[390px]:w-10">
+                    <Icon type="calendar" className="h-4 w-4 min-[390px]:h-5 min-[390px]:w-5" />
+                  </div>
+                  <p className="break-words text-xs font-bold leading-tight text-[#061022] min-[390px]:text-sm">Total Appointments</p>
+                  <p className="mt-0.5 break-words text-[11px] leading-snug text-[#18304d] min-[390px]:text-xs">
+                    {appointmentStats.total} appointment{appointmentStats.total !== 1 ? "s" : ""}
+                  </p>
+                </div>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <section className="hidden rounded-[12px] border border-slate-200 bg-white p-6 shadow-[0_3px_10px_rgba(15,23,42,0.1)] md:block">
           <div className="mb-8 flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
             <div>
               <h2 className="text-xl font-bold text-[#061022]">
@@ -385,19 +541,28 @@ const DashboardView = ({
             </div>
           </div>
 
-          {filteredAppointments.length === 0 ? (
+          {visibleAppointments.length === 0 ? (
             <div className="rounded-[12px] border border-dashed border-slate-300 bg-slate-50 p-6 text-center text-sm text-[#18304d]">
               No {appointmentFilter} appointments to show.
             </div>
           ) : (
             <div className="space-y-3">
-              {filteredAppointments.map((appointment) => (
+              {visibleAppointments.map((appointment) => (
                 <AppointmentRow
                   key={appointment.id}
                   appointment={appointment}
                 />
               ))}
             </div>
+          )}
+          {hasMoreAppointments && (
+            <button
+              type="button"
+              onClick={onViewAppointments}
+              className="mt-5 w-full rounded-[8px] border border-[#244783] px-4 py-2.5 text-sm font-bold text-[#244783] transition hover:bg-[#244783] hover:text-white"
+            >
+              View more
+            </button>
           )}
 
           <button
@@ -410,7 +575,60 @@ const DashboardView = ({
           </button>
         </section>
 
-        <section className="grid grid-cols-1 gap-4 lg:grid-cols-2">
+        <section className="rounded-[12px] border border-slate-200 bg-white p-6 shadow-[0_3px_10px_rgba(15,23,42,0.1)] md:hidden">
+          <h2 className="text-xl font-bold text-[#061022]">Your Profile</h2>
+          <div className="mt-8 flex items-center gap-3">
+            <div className="relative flex h-14 w-14 shrink-0 items-center justify-center overflow-hidden rounded-full bg-[#244783] text-white">
+              {getAvatarSrc(profile?.avatar) && !imgError ? (
+                <img
+                  src={getAvatarSrc(profile.avatar)}
+                  alt="Profile"
+                  className="h-full w-full object-cover"
+                  onError={() => setImgError(true)}
+                />
+              ) : (
+                <Icon type="user" className="h-8 w-8" />
+              )}
+              {profile?.isAccountVerified && (
+                <span className="absolute -bottom-0.5 -right-0.5 flex h-5 w-5 items-center justify-center rounded-full bg-green-500 text-white shadow-md">
+                  <svg className="h-3 w-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M5 13l4 4L19 7" />
+                  </svg>
+                </span>
+              )}
+            </div>
+            <div className="min-w-0">
+              <h3 className="text-base font-bold text-[#061022]">
+                {profile?.name || "Sarah Johnson"}
+              </h3>
+              <p className="mt-1 text-sm text-[#18304d]">
+                {profile?.email || "sarah.j@email.com"}
+              </p>
+            </div>
+          </div>
+          <div className="my-6 h-px bg-slate-200" />
+          <div className="space-y-5 text-sm">
+            <div className="flex justify-between gap-4">
+              <span className="text-[#18304d]">Member since</span>
+              <strong className="text-[#061022]">{formatMemberSince(profile?.memberSince)}</strong>
+            </div>
+            <div className="flex justify-between gap-4">
+              <span className="text-[#18304d]">Total Appointments</span>
+              <strong className="text-[#061022]">
+                {appointmentStats.total}
+              </strong>
+            </div>
+          </div>
+          <button
+            type="button"
+            onClick={onViewProfile}
+            className="mt-8 w-full rounded-[8px] border border-slate-200 px-5 py-2.5 text-sm font-bold text-[#061022] transition hover:bg-slate-50"
+          >
+            View Full Profile
+          </button>
+        </section>
+
+        <section className="hidden grid-cols-1 gap-4 md:grid lg:grid-cols-2">
           <div className="rounded-[12px] border border-slate-200 bg-white p-6 shadow-[0_3px_10px_rgba(15,23,42,0.1)]">
             <h2 className="text-xl font-bold text-[#061022]">Your Profile</h2>
             <div className="mt-8 flex items-center gap-3">

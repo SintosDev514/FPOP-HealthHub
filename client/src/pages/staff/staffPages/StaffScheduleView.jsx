@@ -50,7 +50,7 @@ const ShiftCard = ({ title, count, detail, icon, tone = "navy" }) => {
 
   return (
   <article
-    className="rounded-2xl border border-[#1E3A5F]/[0.07] bg-white px-5 py-5 shadow-[0_2px_14px_rgba(30,58,95,0.07)] transition duration-200 hover:-translate-y-0.5 hover:shadow-[0_10px_32px_rgba(30,58,95,0.14)]"
+    className="rounded-lg border border-[#1E3A5F]/[0.07] bg-white px-5 py-5 shadow-[0_2px_14px_rgba(30,58,95,0.07)] transition duration-200 hover:-translate-y-0.5 hover:shadow-[0_10px_32px_rgba(30,58,95,0.14)]"
   >
     <div className="flex items-start justify-between gap-3">
       <div className="min-w-0">
@@ -63,7 +63,7 @@ const ShiftCard = ({ title, count, detail, icon, tone = "navy" }) => {
         <p className={`mt-3 text-[9px] font-bold ${colors.detail}`}>{detail}</p>
       </div>
       <div
-        className={`flex h-[46px] w-[46px] shrink-0 items-center justify-center rounded-xl ${colors.iconBg} ${colors.iconText}`}
+        className={`flex h-[46px] w-[46px] shrink-0 items-center justify-center rounded-lg ${colors.iconBg} ${colors.iconText}`}
       >
         <Icon name={icon} className="h-[22px] w-[22px]" />
       </div>
@@ -105,7 +105,7 @@ const StaffScheduleView = ({ appointments = [], onRefresh }) => {
   const handleStatusChange = async (id, status) => {
     setUpdating(id);
     try {
-      const res = await fetch(`http://localhost:5000/api/appointments/${id}/status`, {
+      const res = await fetch(`${__API_BASE__}/api/appointments/${id}/status`, {
         method: "PUT",
         credentials: "include",
         headers: { "Content-Type": "application/json" },
@@ -142,7 +142,7 @@ const StaffScheduleView = ({ appointments = [], onRefresh }) => {
     <main className="flex-1 bg-[#f1f4f8] px-4 py-7 sm:px-8 lg:px-[32px]">
       {feedback && (
         <div
-          className={`mb-4 rounded-xl px-5 py-3 text-[10px] font-bold shadow-lg transition-all ${
+          className={`mb-4 rounded-lg px-5 py-3 text-[10px] font-bold shadow-lg transition-all ${
             feedback.type === "success"
               ? "bg-[#dcfce7] text-[#15803d] border border-[#15803d]/20"
               : "bg-[#fee2e2] text-[#DC2626] border border-[#DC2626]/20"
@@ -175,7 +175,7 @@ const StaffScheduleView = ({ appointments = [], onRefresh }) => {
         />
       </section>
 
-      <section className="overflow-hidden rounded-2xl border border-[#1E3A5F]/[0.07] bg-white shadow-[0_2px_14px_rgba(30,58,95,0.07)]">
+      <section className="overflow-hidden rounded-lg border border-[#1E3A5F]/[0.07] bg-white shadow-[0_2px_14px_rgba(30,58,95,0.07)]">
         <div className="overflow-x-auto">
           <table className="w-full min-w-[1080px] border-collapse text-left">
             <thead className="bg-[#1E3A5F] text-white">
@@ -213,7 +213,7 @@ const StaffScheduleView = ({ appointments = [], onRefresh }) => {
                     >
                       <td className="px-5 py-4">
                         <div className="flex items-center gap-4">
-                          <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-[#1E3A5F] text-[9px] font-bold text-[#F5C518]">
+                          <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-lg bg-[#1E3A5F] text-[9px] font-bold text-[#F5C518]">
                             {getInitials(`${appt.patientId?.firstName || ""} ${appt.patientId?.lastName || ""}`)}
                           </div>
                           <span className="text-[10px] font-bold text-[#2d3748]">
@@ -260,7 +260,7 @@ const StaffScheduleView = ({ appointments = [], onRefresh }) => {
                             </button>
                           </div>
                         ) : (
-                          <span className="text-[9px] text-[#8a96a3]">—</span>
+                          <span className="text-[9px] text-[#8a96a3]">â€”</span>
                         )}
                       </td>
                     </tr>

@@ -136,7 +136,7 @@ export const SignUp = async (req, res) => {
   `,
     };
 
-    await transporter.sendMail(mailOptions);
+    transporter.sendMail(mailOptions).catch((err) => console.error("Welcome email failed:", err));
 
     res.status(201).json({
       success: true,
@@ -253,7 +253,7 @@ export const SendVerifyEmailOtp = async (req, res) => {
     user.verifyOtp = OTP;
     user.verifyOtpExpAt = Date.now() + 10 * 60 * 1000;
 
-    await user.save();
+    await user.save({ validateModifiedOnly: true });
 
     //otp email ine
 
@@ -395,7 +395,7 @@ export const VerifyEmail = async (req, res) => {
     user.verifyOtp = undefined;
     user.verifyOtpExpAt = undefined;
 
-    await user.save();
+    await user.save({ validateModifiedOnly: true });
 
     return res.status(200).json({
       success: true,
@@ -446,7 +446,7 @@ export const sendResetOtp = async (req, res) => {
     user.resetOtp = OTP;
     user.resetOtpExpireAt = Date.now() + 15 * 60 * 1000;
 
-    await user.save();
+    await user.save({ validateModifiedOnly: true });
 
     const mailOption = {
       from: process.env.SENDER_EMAIL,
@@ -592,7 +592,7 @@ export const resetPassword = async (req, res) => {
     user.resetOtp = undefined;
     user.resetOtpExpireAt = undefined;
 
-    await user.save();
+    await user.save({ validateModifiedOnly: true });
 
     return res.status(200).json({
       success: true,

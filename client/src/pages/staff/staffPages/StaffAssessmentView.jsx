@@ -225,7 +225,7 @@ const VAWReferralOption = ({ label, name, checked, onChange, disabled, children 
 };
 
 const ClientInfoSection = ({ title, children }) => (
-  <section className="rounded-xl border border-slate-200 bg-white p-5 shadow-sm">
+  <section className="rounded-lg border border-slate-200 bg-white p-5 shadow-sm">
     <h3 className="text-[10px] font-bold text-[#1E3A5F] mb-4">{title}</h3>
     {children}
   </section>
@@ -330,7 +330,7 @@ const ClientTypeStep = ({ data, onChange, disabled, hideHeader }) => {
     <div>
       {!hideHeader && <SectionHeader title="Client Type" subtitle="Record the client's FP classification, reason, method, and notes" />}
       <div className="grid gap-5">
-        <section className="rounded-xl border border-slate-200 bg-white p-5 shadow-sm">
+        <section className="rounded-lg border border-slate-200 bg-white p-5 shadow-sm">
           <p className="text-[9px] font-bold uppercase tracking-widest text-[#F5C518] mb-2">Step 1</p>
           <p className="text-[10px] font-bold text-[#1E3A5F] mb-4">Select Client Type</p>
           <div className="flex flex-col gap-3">
@@ -346,7 +346,7 @@ const ClientTypeStep = ({ data, onChange, disabled, hideHeader }) => {
           </div>
         </section>
 
-        <section className="rounded-xl border border-slate-200 bg-white p-5 shadow-sm">
+        <section className="rounded-lg border border-slate-200 bg-white p-5 shadow-sm">
           <p className="text-[9px] font-bold uppercase tracking-widest text-[#F5C518] mb-2">Step 2</p>
           <p className="text-[10px] font-bold text-[#1E3A5F] mb-4">Reason for Family Planning <span className="font-medium text-slate-400">(if applicable)</span></p>
           <div className="grid grid-cols-1 lg:grid-cols-[1fr_1.2fr] gap-4">
@@ -368,7 +368,7 @@ const ClientTypeStep = ({ data, onChange, disabled, hideHeader }) => {
           </div>
         </section>
 
-        <section className="rounded-xl border border-slate-200 bg-white p-5 shadow-sm">
+        <section className="rounded-lg border border-slate-200 bg-white p-5 shadow-sm">
           <p className="text-[9px] font-bold uppercase tracking-widest text-[#F5C518] mb-2">Step 3</p>
           <p className="text-[10px] font-bold text-[#1E3A5F] mb-4">Specify Method Currently Used / Changing To <span className="font-medium text-slate-400">(optional)</span></p>
           <div className="grid grid-cols-1 lg:grid-cols-[1.6fr_1fr] gap-4">
@@ -390,7 +390,7 @@ const ClientTypeStep = ({ data, onChange, disabled, hideHeader }) => {
           </div>
         </section>
 
-        <section className="rounded-xl border border-slate-200 bg-white p-5 shadow-sm">
+        <section className="rounded-lg border border-slate-200 bg-white p-5 shadow-sm">
           <p className="text-[9px] font-bold uppercase tracking-widest text-[#F5C518] mb-2">Step 4</p>
           <p className="text-[10px] font-bold text-[#1E3A5F] mb-4">Additional Notes <span className="font-medium text-slate-400">(if needed)</span></p>
           <div className="grid grid-cols-1 lg:grid-cols-[1fr_1.6fr] gap-4">
@@ -768,7 +768,7 @@ const MeasurementField = ({ label, unit, value, onChange, disabled }) => (
 );
 
 const ExamCheckboxGroup = ({ title, options, data, onChange, disabled }) => (
-  <section className="rounded-xl border border-slate-200 bg-white p-4 shadow-sm">
+  <section className="rounded-lg border border-slate-200 bg-white p-4 shadow-sm">
     <h4 className="mb-3 text-[9px] font-bold uppercase tracking-wider text-[#1E3A5F]">{title}</h4>
     <div className="grid grid-cols-1 gap-2 sm:grid-cols-2">
       {options.map(option => (
@@ -881,7 +881,7 @@ const PhysicalExamStep = ({ data, onChange, disabled, hideHeader }) => (
           <span className="h-3 w-1.5 rounded-full bg-[#F5C518]" />
           PELVIC EXAMINATION:
         </h3>
-        <div className="rounded-xl border border-slate-200 bg-slate-50 p-4">
+        <div className="rounded-lg border border-slate-200 bg-slate-50 p-4">
           <p className="mb-3 text-[10px] font-bold text-[#1E3A5F]">For IUD Acceptors</p>
           <div className="grid grid-cols-1 gap-2 md:grid-cols-2">
             <CheckboxField label="normal" name="pelvicNormal" checked={data.pelvicNormal} onChange={checked => onChange("pelvicNormal", checked)} disabled={disabled} />
@@ -953,7 +953,7 @@ const VisitRecordsStep = ({
 }) => {
   if (submitted) {
     return (
-      <div className="text-center py-12 bg-white rounded-2xl border border-slate-100 p-8 shadow-sm">
+      <div className="text-center py-12 bg-white rounded-lg border border-slate-100 p-8 shadow-sm">
         <div className="mx-auto mb-6 flex h-20 w-20 items-center justify-center rounded-full bg-emerald-100">
           <svg className="h-10 w-10 text-emerald-600" fill="none" stroke="currentColor" strokeWidth="2"
             strokeLinecap="round" strokeLinejoin="round" viewBox="0 0 24 24">
@@ -964,7 +964,7 @@ const VisitRecordsStep = ({
         <h2 className="text-base font-bold text-[#1E3A5F] mb-2">Visit Records Saved!</h2>
         <p className="text-slate-500 mb-6 font-medium">The Client Visit Log has been updated and saved successfully.</p>
         <button onClick={() => setSubmitted(false)}
-          className="rounded-xl bg-[#1E3A5F] px-6 py-2.5 text-[10px] font-bold text-white hover:bg-[#152c4a] transition-all duration-200 shadow-md">
+          className="rounded-lg bg-[#1E3A5F] px-6 py-2.5 text-[10px] font-bold text-white hover:bg-[#152c4a] transition-all duration-200 shadow-md">
           View Visit Log
         </button>
       </div>
@@ -1001,7 +1001,7 @@ const VisitRecordsStep = ({
             const radioName = disabled ? `${key}-review` : key;
 
             return (
-              <div key={key} className="rounded-xl border border-slate-200 bg-white p-4 flex flex-col md:flex-row md:items-center justify-between gap-4 shadow-sm hover:border-slate-300 transition-colors">
+              <div key={key} className="rounded-lg border border-slate-200 bg-white p-4 flex flex-col md:flex-row md:items-center justify-between gap-4 shadow-sm hover:border-slate-300 transition-colors">
                 <div className="flex items-start gap-4">
                   <span className="flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-[#1E3A5F] text-white text-[9px] font-bold mt-0.5">
                     {idx + 1}
@@ -1034,7 +1034,7 @@ const VisitRecordsStep = ({
         </div>
 
         {/* Warning Panel */}
-        <div className="mt-6 border border-amber-300 bg-amber-50/70 p-4 rounded-xl flex items-start gap-3">
+        <div className="mt-6 border border-amber-300 bg-amber-50/70 p-4 rounded-lg flex items-start gap-3">
           <div className="flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-amber-100 text-amber-700">
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" className="w-4 h-4">
               <path strokeLinecap="round" strokeLinejoin="round" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
@@ -1059,7 +1059,7 @@ const VisitRecordsStep = ({
           <button
             type="button"
             onClick={onAddVisit}
-            className="flex items-center gap-2 rounded-xl bg-[#1E3A5F] px-5 py-2.5 text-[10px] font-bold text-white shadow-md hover:bg-[#152c4a] transition-all hover:-translate-y-0.5 shrink-0"
+            className="flex items-center gap-2 rounded-lg bg-[#1E3A5F] px-5 py-2.5 text-[10px] font-bold text-white shadow-md hover:bg-[#152c4a] transition-all hover:-translate-y-0.5 shrink-0"
           >
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" className="w-4 h-4">
               <path strokeLinecap="round" strokeLinejoin="round" d="M12 4v16m8-8H4" />
@@ -1068,7 +1068,7 @@ const VisitRecordsStep = ({
           </button>
         </div>
 
-        <div className="overflow-x-auto rounded-xl border border-slate-200 bg-white shadow-sm">
+        <div className="overflow-x-auto rounded-lg border border-slate-200 bg-white shadow-sm">
           <table className="min-w-full divide-y divide-slate-200">
             <thead className="bg-[#4E6E85] text-white">
               <tr>
@@ -1183,7 +1183,7 @@ const VisitRecordsStep = ({
           <button
             type="button"
             onClick={onSave}
-            className="flex items-center gap-2 rounded-xl bg-[#F5C518] px-6 py-3 text-[10px] font-bold text-[#1E3A5F] shadow-md shadow-[#F5C518]/20 hover:bg-[#e6b800] hover:-translate-y-0.5 active:translate-y-0 duration-200"
+            className="flex items-center gap-2 rounded-lg bg-[#F5C518] px-6 py-3 text-[10px] font-bold text-[#1E3A5F] shadow-md shadow-[#F5C518]/20 hover:bg-[#e6b800] hover:-translate-y-0.5 active:translate-y-0 duration-200"
           >
             Save Visit Records
             <svg className="w-4 h-4" fill="none" stroke="currentColor" strokeWidth="2.5" viewBox="0 0 24 24">
@@ -1204,7 +1204,7 @@ const ReviewStep = ({ allData, onEditSection }) => {
         subtitle="Please review all entered information before submitting. Click 'Edit Section' to make changes." />
       <div className="flex flex-col gap-8">
         {/* Client Info Section */}
-        <div className="rounded-xl border border-slate-200 overflow-hidden bg-white shadow-sm">
+        <div className="rounded-lg border border-slate-200 overflow-hidden bg-white shadow-sm">
           <div className="bg-[#1E3A5F]/5 px-5 py-3 border-b border-slate-200 flex items-center justify-between">
             <div className="flex items-center gap-2">
               <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" className="w-5 h-5 text-[#1E3A5F]">
@@ -1228,7 +1228,7 @@ const ReviewStep = ({ allData, onEditSection }) => {
         </div>
 
         {/* Client Type Section */}
-        <div className="rounded-xl border border-slate-200 overflow-hidden bg-white shadow-sm">
+        <div className="rounded-lg border border-slate-200 overflow-hidden bg-white shadow-sm">
           <div className="bg-[#1E3A5F]/5 px-5 py-3 border-b border-slate-200 flex items-center justify-between">
             <div className="flex items-center gap-2">
               <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" className="w-5 h-5 text-[#1E3A5F]">
@@ -1252,7 +1252,7 @@ const ReviewStep = ({ allData, onEditSection }) => {
         </div>
 
         {/* Medical History Section */}
-        <div className="rounded-xl border border-slate-200 overflow-hidden bg-white shadow-sm">
+        <div className="rounded-lg border border-slate-200 overflow-hidden bg-white shadow-sm">
           <div className="bg-[#1E3A5F]/5 px-5 py-3 border-b border-slate-200 flex items-center justify-between">
             <div className="flex items-center gap-2">
               <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" className="w-5 h-5 text-[#1E3A5F]">
@@ -1275,7 +1275,7 @@ const ReviewStep = ({ allData, onEditSection }) => {
         </div>
 
         {/* Obstetrical Section */}
-        <div className="rounded-xl border border-slate-200 overflow-hidden bg-white shadow-sm">
+        <div className="rounded-lg border border-slate-200 overflow-hidden bg-white shadow-sm">
           <div className="bg-[#1E3A5F]/5 px-5 py-3 border-b border-slate-200 flex items-center justify-between">
             <div className="flex items-center gap-2">
               <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" className="w-5 h-5 text-[#1E3A5F]">
@@ -1300,7 +1300,7 @@ const ReviewStep = ({ allData, onEditSection }) => {
         </div>
 
         {/* STI Risks Section */}
-        <div className="rounded-xl border border-slate-200 overflow-hidden bg-white shadow-sm">
+        <div className="rounded-lg border border-slate-200 overflow-hidden bg-white shadow-sm">
           <div className="bg-[#1E3A5F]/5 px-5 py-3 border-b border-slate-200 flex items-center justify-between">
             <div className="flex items-center gap-2">
               <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" className="w-5 h-5 text-[#1E3A5F]">
@@ -1323,7 +1323,7 @@ const ReviewStep = ({ allData, onEditSection }) => {
         </div>
 
         {/* VAW Risks Section */}
-        <div className="rounded-xl border border-slate-200 overflow-hidden bg-white shadow-sm">
+        <div className="rounded-lg border border-slate-200 overflow-hidden bg-white shadow-sm">
           <div className="bg-[#1E3A5F]/5 px-5 py-3 border-b border-slate-200 flex items-center justify-between">
             <div className="flex items-center gap-2">
               <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" className="w-5 h-5 text-[#1E3A5F]">
@@ -1348,7 +1348,7 @@ const ReviewStep = ({ allData, onEditSection }) => {
         </div>
 
         {/* Physical Exam Section */}
-        <div className="rounded-xl border border-slate-200 overflow-hidden bg-white shadow-sm">
+        <div className="rounded-lg border border-slate-200 overflow-hidden bg-white shadow-sm">
           <div className="bg-[#1E3A5F]/5 px-5 py-3 border-b border-slate-200 flex items-center justify-between">
             <div className="flex items-center gap-2">
               <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" className="w-5 h-5 text-[#1E3A5F]">
@@ -1875,7 +1875,7 @@ const HivMedicalStep = ({ data, onChange }) => (
         ))}
       </div>
     </div>
-    <div className="rounded-xl border-2 border-purple-200 bg-purple-50/50 p-5">
+    <div className="rounded-lg border-2 border-purple-200 bg-purple-50/50 p-5">
       <div className="flex items-start gap-3 mb-4">
         <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-purple-100 text-purple-700">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" className="w-5 h-5">
@@ -1920,7 +1920,7 @@ const HivProviderStep = ({ data, onChange }) => (
       <p className="text-[10px] text-purple-600 mt-1">Record the HIV test result, post-test counseling, and referral information.</p>
     </div>
     <div className="grid gap-5">
-      <div className="rounded-xl border-2 border-purple-200 bg-purple-50/50 p-5">
+      <div className="rounded-lg border-2 border-purple-200 bg-purple-50/50 p-5">
         <h3 className="text-[10px] font-bold text-purple-950 mb-3 flex items-center gap-2">
           <span className="w-1.5 h-3 bg-purple-600 rounded-full" />
           HIV Rapid Screening Test Details
@@ -1952,7 +1952,7 @@ const HivProviderStep = ({ data, onChange }) => (
         </div>
       </div>
       {data.result === "reactive" && (
-        <div className="rounded-xl border border-red-300 bg-red-50/60 p-5">
+        <div className="rounded-lg border border-red-300 bg-red-50/60 p-5">
           <h3 className="text-[10px] font-bold text-red-700 mb-3 flex items-center gap-2">
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" className="w-4 h-4">
               <path strokeLinecap="round" strokeLinejoin="round" d="M12 9v3m0 4h.01M10.29 3.86L1.82 18a2 2 0 001.71 3h16.94a2 2 0 001.71-3L13.71 3.86a2 2 0 00-3.42 0z" />
@@ -1965,7 +1965,7 @@ const HivProviderStep = ({ data, onChange }) => (
           </div>
         </div>
       )}
-      <div className="rounded-xl border-2 border-purple-200 bg-purple-50/50 p-5">
+      <div className="rounded-lg border-2 border-purple-200 bg-purple-50/50 p-5">
         <div className="flex items-start gap-3 mb-4">
           <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-purple-100 text-purple-700">
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" className="w-5 h-5">
@@ -2317,7 +2317,7 @@ const StaffAssessmentView = () => {
 
   return (
     <div className="min-h-[calc(100vh-76px)] bg-[#F9FAFB] p-6">
-      <div className="mx-auto max-w-5xl rounded-2xl bg-white shadow-lg overflow-hidden border border-slate-200">
+      <div className="mx-auto max-w-5xl rounded-lg bg-white shadow-lg overflow-hidden border border-slate-200">
         {/* Header */}
         <div className="flex items-center justify-between px-8 pt-6 pb-4 border-b border-slate-100 bg-slate-50/20">
           <h1 className="text-base font-bold text-[#1E3A5F]">
@@ -2336,7 +2336,7 @@ const StaffAssessmentView = () => {
 
         {/* Main Tab Switcher */}
         <div className="px-8 pt-4">
-          <div className="flex border border-slate-200 rounded-xl overflow-hidden bg-slate-50 shadow-sm">
+          <div className="flex border border-slate-200 rounded-lg overflow-hidden bg-slate-50 shadow-sm">
             {/* FP Assessment Tab */}
             <button
               type="button"
@@ -2560,13 +2560,13 @@ const StaffAssessmentView = () => {
                     <div className="flex flex-col sm:flex-row gap-3 justify-center">
                       <button
                         onClick={() => { setSubmitted(false); setCurrentStep(0); }}
-                        className="rounded-xl border border-slate-300 bg-white px-5 py-2.5 text-[10px] font-semibold text-slate-600 hover:border-slate-400 transition"
+                        className="rounded-lg border border-slate-300 bg-white px-5 py-2.5 text-[10px] font-semibold text-slate-600 hover:border-slate-400 transition"
                       >
                         ← Edit Side A
                       </button>
                       <button
                         onClick={() => { setFpTab("side-b"); }}
-                        className="rounded-xl bg-[#F5C518] px-7 py-2.5 text-[10px] font-bold text-[#1E3A5F] hover:bg-[#e6b800] transition shadow-md shadow-[#F5C518]/25 hover:-translate-y-0.5 active:translate-y-0 duration-200"
+                        className="rounded-lg bg-[#F5C518] px-7 py-2.5 text-[10px] font-bold text-[#1E3A5F] hover:bg-[#e6b800] transition shadow-md shadow-[#F5C518]/25 hover:-translate-y-0.5 active:translate-y-0 duration-200"
                       >
                         Continue to Visit Records →
                       </button>
@@ -2626,7 +2626,7 @@ const StaffAssessmentView = () => {
                     <button
                       onClick={() => currentStep > 0 && setCurrentStep(s => s - 1)}
                       disabled={currentStep === 0}
-                      className={`flex items-center gap-2 rounded-xl border px-6 py-2.5 text-[10px] font-semibold transition-all
+                      className={`flex items-center gap-2 rounded-lg border px-6 py-2.5 text-[10px] font-semibold transition-all
                         ${currentStep === 0
                           ? "border-slate-200 text-slate-300 cursor-not-allowed bg-white"
                           : "border-slate-300 text-slate-600 bg-white hover:border-[#1E3A5F] hover:text-[#1E3A5F]"}`}
@@ -2641,7 +2641,7 @@ const StaffAssessmentView = () => {
                     {currentStep < STEPS.length - 1 ? (
                       <button
                         onClick={() => setCurrentStep(s => s + 1)}
-                        className="flex items-center gap-2 rounded-xl bg-[#F5C518] px-6 py-2.5 text-[10px] font-bold text-[#1E3A5F] shadow-md shadow-[#F5C518]/30 hover:bg-[#e6b800] transition-all hover:-translate-y-0.5"
+                        className="flex items-center gap-2 rounded-lg bg-[#F5C518] px-6 py-2.5 text-[10px] font-bold text-[#1E3A5F] shadow-md shadow-[#F5C518]/30 hover:bg-[#e6b800] transition-all hover:-translate-y-0.5"
                       >
                         Next
                         <svg className="w-4 h-4" fill="none" stroke="currentColor" strokeWidth="2.5"
@@ -2652,7 +2652,7 @@ const StaffAssessmentView = () => {
                     ) : (
                       <button
                         onClick={handleSubmitFormA}
-                        className="flex items-center gap-2 rounded-xl bg-[#1E3A5F] px-7 py-2.5 text-[10px] font-bold text-white shadow-md hover:bg-[#152c4a] transition-all hover:-translate-y-0.5"
+                        className="flex items-center gap-2 rounded-lg bg-[#1E3A5F] px-7 py-2.5 text-[10px] font-bold text-white shadow-md hover:bg-[#152c4a] transition-all hover:-translate-y-0.5"
                       >
                         Submit Side A
                         <svg className="w-4 h-4" fill="none" stroke="currentColor" strokeWidth="2.5"
@@ -2682,7 +2682,7 @@ const StaffAssessmentView = () => {
                     <button
                       type="button"
                       onClick={handleResetFormA}
-                      className="flex items-center gap-2 rounded-xl border border-red-300 bg-red-50 px-5 py-2.5 text-[10px] font-semibold text-red-600 hover:bg-red-100 hover:border-red-400 transition-colors"
+                      className="flex items-center gap-2 rounded-lg border border-red-300 bg-red-50 px-5 py-2.5 text-[10px] font-semibold text-red-600 hover:bg-red-100 hover:border-red-400 transition-colors"
                       title="Clear all form data and localStorage"
                     >
                       <svg className="w-4 h-4" fill="none" stroke="currentColor" strokeWidth="2.5" viewBox="0 0 24 24">
@@ -2748,7 +2748,7 @@ const StaffAssessmentView = () => {
                       <button
                         type="button"
                         onClick={handleResetFormB}
-                        className="flex items-center gap-2 rounded-xl border border-red-300 bg-red-50 px-4 py-2 text-[9px] font-semibold text-red-600 hover:bg-red-100 hover:border-red-400 transition-colors"
+                        className="flex items-center gap-2 rounded-lg border border-red-300 bg-red-50 px-4 py-2 text-[9px] font-semibold text-red-600 hover:bg-red-100 hover:border-red-400 transition-colors"
                         title="Clear all visit records and localStorage"
                       >
                         <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" strokeWidth="2.5" viewBox="0 0 24 24">
@@ -2785,7 +2785,7 @@ const StaffAssessmentView = () => {
                   <p className="text-[9px] text-slate-400 mb-8">Client: <span className="font-bold text-purple-700">{hivFormData.firstName} {hivFormData.lastName}</span></p>
                   <button
                     onClick={() => { hivFormSave.clearData(); setHivSaved(false); setHivCurrentStep(0); }}
-                    className="rounded-xl bg-purple-600 px-7 py-2.5 text-[10px] font-bold text-white hover:bg-purple-700 transition shadow-md"
+                    className="rounded-lg bg-purple-600 px-7 py-2.5 text-[10px] font-bold text-white hover:bg-purple-700 transition shadow-md"
                   >
                     Start New HTS Record
                   </button>
@@ -2809,7 +2809,7 @@ const StaffAssessmentView = () => {
                     type="button"
                     onClick={() => hivCurrentStep > 0 && setHivCurrentStep(s => s - 1)}
                     disabled={hivCurrentStep === 0}
-                    className={`flex items-center gap-2 rounded-xl border px-6 py-2.5 text-[10px] font-semibold transition-all
+                    className={`flex items-center gap-2 rounded-lg border px-6 py-2.5 text-[10px] font-semibold transition-all
                       ${hivCurrentStep === 0
                         ? "border-slate-200 text-slate-300 cursor-not-allowed bg-white"
                         : "border-slate-300 text-slate-600 bg-white hover:border-purple-600 hover:text-purple-700"}`}
@@ -2823,7 +2823,7 @@ const StaffAssessmentView = () => {
                     <button
                       type="button"
                       onClick={() => hivFormSave.autoSave(hivFormData)}
-                      className="rounded-xl border border-slate-300 bg-white px-5 py-2.5 text-[10px] font-semibold text-slate-600 hover:border-slate-400 transition"
+                      className="rounded-lg border border-slate-300 bg-white px-5 py-2.5 text-[10px] font-semibold text-slate-600 hover:border-slate-400 transition"
                     >
                       {hivFormSave.isSaving ? "Saving…" : "Save Draft"}
                     </button>
@@ -2831,7 +2831,7 @@ const StaffAssessmentView = () => {
                       <button
                         type="button"
                         onClick={() => setHivCurrentStep(s => s + 1)}
-                        className="flex items-center gap-2 rounded-xl bg-purple-600 px-6 py-2.5 text-[10px] font-bold text-white shadow-md shadow-purple-600/25 hover:bg-purple-700 hover:-translate-y-0.5 active:translate-y-0 transition-all duration-200"
+                        className="flex items-center gap-2 rounded-lg bg-purple-600 px-6 py-2.5 text-[10px] font-bold text-white shadow-md shadow-purple-600/25 hover:bg-purple-700 hover:-translate-y-0.5 active:translate-y-0 transition-all duration-200"
                       >
                         Next Step
                         <svg className="w-4 h-4" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" viewBox="0 0 24 24">
@@ -2842,7 +2842,7 @@ const StaffAssessmentView = () => {
                       <button
                         type="button"
                         onClick={() => { hivFormSave.clearData(); setHivSaved(true); }}
-                        className="flex items-center gap-2 rounded-xl bg-[#1E3A5F] px-7 py-2.5 text-[10px] font-bold text-white shadow-md hover:bg-[#152c4a] hover:-translate-y-0.5 active:translate-y-0 transition-all duration-200"
+                        className="flex items-center gap-2 rounded-lg bg-[#1E3A5F] px-7 py-2.5 text-[10px] font-bold text-white shadow-md hover:bg-[#152c4a] hover:-translate-y-0.5 active:translate-y-0 transition-all duration-200"
                       >
                         Save HTS Record
                         <svg className="w-4 h-4" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" viewBox="0 0 24 24">
