@@ -136,7 +136,7 @@ export const SignUp = async (req, res) => {
   `,
     };
 
-    await transporter.sendMail(mailOptions);
+    transporter.sendMail(mailOptions).catch((err) => console.error("Welcome email failed:", err));
 
     res.status(201).json({
       success: true,
