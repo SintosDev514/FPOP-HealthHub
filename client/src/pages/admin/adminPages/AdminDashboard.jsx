@@ -154,7 +154,7 @@ function AdminShell({ activeNav }) {
   const isIconOnly = !isMobile && !isExpanded;
 
   return (
-    <div style={{ display: "flex", minHeight: "100vh", fontFamily: "'Inter', 'Poppins', sans-serif" }}>
+    <div style={{ display: "flex", height: "100vh", overflow: "hidden", fontFamily: "'Inter', 'Poppins', sans-serif" }}>
 
       {/* ════════════════ SIDEBAR ════════════════ */}
       <aside
@@ -249,7 +249,7 @@ function AdminShell({ activeNav }) {
           display: "flex",
           flexDirection: "column",
           transition: "margin-left 0.3s cubic-bezier(0.4, 0, 0.2, 1)",
-          minHeight: "100vh",
+          height: "100vh",
           minWidth: 0,
           overflow: "hidden",
           background: "#f1f5f9",
@@ -414,15 +414,17 @@ function AdminShell({ activeNav }) {
         </header>
 
         {/* ════ PAGE CONTENT ════ */}
-        {activeNav === "dashboard"    && <DashboardOverview isMobile={isMobile} />}
-        {activeNav === "users"        && <UserManagement   isMobile={isMobile} />}
-        {activeNav === "staff"        && <StaffManagement   isMobile={isMobile} />}
-        {activeNav === "appointments" && <Appointments      isMobile={isMobile} />}
-        {activeNav === "inventory"    && <AdminInventoryView />}
-        {activeNav === "analytics"   && <Analytics         isMobile={isMobile} />}
-        {activeNav === "reports"     && <Reports            isMobile={isMobile} />}
-        {activeNav === "notifications" && <Notifications   isMobile={isMobile} />}
-        {activeNav === "settings"    && <Settings           isMobile={isMobile} />}
+        <div style={{ flex: 1, display: "flex", flexDirection: "column", overflow: "hidden", minHeight: 0 }}>
+          {activeNav === "dashboard"    && <DashboardOverview isMobile={isMobile} />}
+          {activeNav === "users"        && <UserManagement   isMobile={isMobile} />}
+          {activeNav === "staff"        && <StaffManagement   isMobile={isMobile} />}
+          {activeNav === "appointments" && <Appointments      isMobile={isMobile} />}
+          {activeNav === "inventory"    && <AdminInventoryView />}
+          {activeNav === "analytics"   && <Analytics         isMobile={isMobile} />}
+          {activeNav === "reports"     && <Reports            isMobile={isMobile} />}
+          {activeNav === "notifications" && <Notifications   isMobile={isMobile} />}
+          {activeNav === "settings"    && <Settings           isMobile={isMobile} />}
+        </div>
       </div>
     </div>
   );
