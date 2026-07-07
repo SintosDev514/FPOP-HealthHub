@@ -141,6 +141,30 @@ function AdminShell({ activeNav }) {
   const navigate = useNavigate();
   const { logout } = useAuth();
 
+  const pageTitle = {
+    dashboard: "Dashboard",
+    users: "Client Management",
+    staff: "Staff Management",
+    appointments: "Appointments",
+    inventory: "Inventory",
+    analytics: "Analytics",
+    reports: "Reports",
+    notifications: "Notifications",
+    settings: "Settings",
+  }[activeNav] || "FPOP HealthHub";
+
+  const pageSubtitle = {
+    dashboard: "Overview of your health hub analytics and stats.",
+    users: "Manage clinic clients, accounts, and registration details.",
+    staff: "Manage clinic doctors, nurses, and support staff.",
+    appointments: "Schedule, track, and manage client medical appointments.",
+    inventory: "Track all stock items by category, receipts, issuances, and balances.",
+    analytics: "Detailed visualization and charts of medical metrics.",
+    reports: "Generate, review, and print clinic performance reports.",
+    notifications: "System alerts, announcements, and user updates.",
+    settings: "Configure clinic settings, security, and preferences.",
+  }[activeNav] || "FPOP HealthHub Portal";
+
   useEffect(() => {
     const onResize = () => setIsMobile(window.innerWidth < 768);
     onResize();
@@ -263,6 +287,7 @@ function AdminShell({ activeNav }) {
             borderBottom: "1px solid rgba(30,58,95,0.08)",
             display: "flex",
             alignItems: "center",
+            justifyContent: "space-between",
             padding: isMobile ? "0 16px" : "0 28px",
             gap: "12px",
             position: "sticky",
@@ -271,145 +296,126 @@ function AdminShell({ activeNav }) {
             boxShadow: "0 2px 16px rgba(30,58,95,0.07)",
           }}
         >
-          {/* ── Search bar — LEFT ── */}
-          <div
-            style={{
-              position: "relative",
-              width: isMobile ? "180px" : "380px",
-              flexShrink: 0,
-            }}
-          >
-            <span
+          {/* Left: page title */}
+          <div style={{ flex: 1, display: "flex", flexDirection: "column", justifyContent: "center", minWidth: 0 }}>
+            <h1
               style={{
-                position: "absolute",
-                left: "14px",
-                top: "50%",
-                transform: "translateY(-50%)",
-                color: "#94a3b8",
-                pointerEvents: "none",
-                lineHeight: 0,
-              }}
-            >
-              <IcoSearch />
-            </span>
-            <input
-              id="admin-search"
-              type="text"
-              placeholder="Search anything..."
-              value={search}
-              onChange={(e) => setSearch(e.target.value)}
-              style={{
-                width: "100%",
-                padding: "10px 16px 10px 40px",
-                borderRadius: "10px",
-                border: "1.5px solid rgba(30,58,95,0.10)",
-                fontSize: "13.5px",
-                color: "#1e293b",
-                outline: "none",
-                background: "#f8fafc",
-                fontFamily: "'Inter', 'Poppins', sans-serif",
-                boxSizing: "border-box",
-                transition: "border-color 0.2s, box-shadow 0.2s",
-              }}
-              onFocus={(e) => {
-                e.target.style.borderColor = NAVY;
-                e.target.style.boxShadow = `0 0 0 3px rgba(30,58,95,0.10)`;
-                e.target.style.background = "#fff";
-              }}
-              onBlur={(e) => {
-                e.target.style.borderColor = "rgba(30,58,95,0.10)";
-                e.target.style.boxShadow = "none";
-                e.target.style.background = "#f8fafc";
-              }}
-            />
-          </div>
-
-          {/* ── Spacer ── */}
-          <div style={{ flex: 1 }} />
-
-          {/* ── RIGHT SIDE: notification + settings + profile ── */}
-
-          {/* Notification bell */}
-          <div style={{ position: "relative" }}>
-            <HeaderIconBtn
-              id="notifications-btn"
-              title="Notifications"
-              onClick={() => navigate("/admin/notifications")}
-              isActive={activeNav === "notifications"}
-            >
-              <IcoBell />
-            </HeaderIconBtn>
-            <span
-              style={{
-                position: "absolute",
-                top: "-4px",
-                right: "-4px",
-                width: "18px",
-                height: "18px",
-                borderRadius: "50%",
-                background: RED,
-                color: "#fff",
-                fontSize: "10px",
+                fontSize: "17px",
                 fontWeight: 800,
-                display: "flex",
-                alignItems: "center",
-                justifyContent: "center",
-                border: "2px solid #fff",
-                boxShadow: "0 2px 6px rgba(220,38,38,0.4)",
+                color: NAVY,
+                margin: 0,
+                fontFamily: "'Inter', 'Poppins', sans-serif",
+                letterSpacing: "-0.3px",
+                lineHeight: 1.2,
               }}
             >
-              2
-            </span>
+              {pageTitle}
+            </h1>
+            <p
+              style={{
+                fontSize: "10px",
+                color: "#64748b",
+                margin: "2.5px 0 0 0",
+                fontFamily: "'Inter', sans-serif",
+                fontWeight: 500,
+              }}
+            >
+              {pageSubtitle}
+            </p>
           </div>
 
-          {/* Settings */}
-          <HeaderIconBtn
-            id="settings-btn"
-            title="Settings"
-            onClick={() => navigate("/admin/settings")}
-            isActive={activeNav === "settings"}
-          >
-            <IcoGear />
-          </HeaderIconBtn>
-
-          {/* Profile divider */}
-          <div style={{ width: "1px", height: "32px", background: "rgba(30,58,95,0.10)", flexShrink: 0 }} />
-
-          {/* Admin avatar */}
+          {/* Right: profile + actions */}
           <div
             style={{
+              flex: 1,
               display: "flex",
               alignItems: "center",
-              gap: "10px",
-              cursor: "pointer",
+              justifyContent: "flex-end",
+              gap: isMobile ? "8px" : "12px",
             }}
           >
+            {/* Notification bell */}
+            <div style={{ position: "relative" }}>
+              <HeaderIconBtn
+                id="notifications-btn"
+                title="Notifications"
+                onClick={() => navigate("/admin/notifications")}
+                isActive={activeNav === "notifications"}
+              >
+                <IcoBell />
+              </HeaderIconBtn>
+              <span
+                style={{
+                  position: "absolute",
+                  top: "-4px",
+                  right: "-4px",
+                  width: "18px",
+                  height: "18px",
+                  borderRadius: "50%",
+                  background: RED,
+                  color: "#fff",
+                  fontSize: "10px",
+                  fontWeight: 800,
+                  display: "flex",
+                  alignItems: "center",
+                  justifyContent: "center",
+                  border: "2px solid #fff",
+                  boxShadow: "0 2px 6px rgba(220,38,38,0.4)",
+                }}
+              >
+                2
+              </span>
+            </div>
+
+            {/* Settings */}
+            <HeaderIconBtn
+              id="settings-btn"
+              title="Settings"
+              onClick={() => navigate("/admin/settings")}
+              isActive={activeNav === "settings"}
+            >
+              <IcoGear />
+            </HeaderIconBtn>
+
+            {/* Profile divider */}
+            <div style={{ width: "1px", height: "32px", background: "rgba(30,58,95,0.10)", flexShrink: 0 }} />
+
+            {/* Admin avatar */}
             <div
               style={{
-                width: "38px",
-                height: "38px",
-                borderRadius: "10px",
-                background: `linear-gradient(135deg, ${NAVY_DARK}, ${NAVY_LITE})`,
                 display: "flex",
                 alignItems: "center",
-                justifyContent: "center",
-                color: "#fff",
-                fontWeight: 800,
-                fontSize: "15px",
-                flexShrink: 0,
-                boxShadow: "0 2px 8px rgba(30,58,95,0.25)",
+                gap: "10px",
+                cursor: "pointer",
               }}
             >
-              A
-            </div>
-            {!isMobile && (
-              <div>
-                <div style={{ fontSize: "13px", fontWeight: 700, color: NAVY, lineHeight: 1.2, whiteSpace: "nowrap" }}>
-                  Admin User
-                </div>
-                <div style={{ fontSize: "11px", color: "#94a3b8", fontWeight: 500 }}>Administrator</div>
+              <div
+                style={{
+                  width: "38px",
+                  height: "38px",
+                  borderRadius: "10px",
+                  background: `linear-gradient(135deg, ${NAVY_DARK}, ${NAVY_LITE})`,
+                  display: "flex",
+                  alignItems: "center",
+                  justifyContent: "center",
+                  color: "#fff",
+                  fontWeight: 800,
+                  fontSize: "15px",
+                  flexShrink: 0,
+                  boxShadow: "0 2px 8px rgba(30,58,95,0.25)",
+                }}
+              >
+                A
               </div>
-            )}
+              {!isMobile && (
+                <div>
+                  <div style={{ fontSize: "13px", fontWeight: 700, color: NAVY, lineHeight: 1.2, whiteSpace: "nowrap" }}>
+                    Admin User
+                  </div>
+                  <div style={{ fontSize: "11px", color: "#94a3b8", fontWeight: 500 }}>Administrator</div>
+                </div>
+              )}
+            </div>
           </div>
         </header>
 
