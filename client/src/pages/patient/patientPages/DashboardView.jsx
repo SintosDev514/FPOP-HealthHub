@@ -96,10 +96,10 @@ const ActionCard = ({
   const iconClass =
     accent === "orange" ? "bg-[#ffae0b] text-white" : "bg-[#244783] text-white";
   const actionClass = mobileStacked
-    ? "flex min-h-[124px] flex-col items-start justify-center gap-3 rounded-[12px] bg-white px-4 text-left shadow-[0_1px_4px_rgba(15,23,42,0.04)] transition hover:-translate-y-0.5 hover:shadow-md md:min-h-[88px] md:flex-row md:items-center md:justify-start md:px-5 w-[170px]"
+    ? "flex min-h-[124px] w-full min-w-0 max-w-full flex-col items-start justify-center gap-3 rounded-[12px] bg-white px-4 text-left shadow-[0_1px_4px_rgba(15,23,42,0.04)] transition hover:-translate-y-0.5 hover:shadow-md md:min-h-[88px] md:flex-row md:items-center md:justify-start md:px-5"
     : "flex min-h-[88px] items-center gap-3 rounded-[12px] bg-white px-5 text-left shadow-[0_1px_4px_rgba(15,23,42,0.04)] transition hover:-translate-y-0.5 hover:shadow-md";
   const staticClass = mobileStacked
-    ? "flex min-h-[124px] flex-col items-start justify-center gap-3 rounded-[12px] bg-white px-4 shadow-[0_1px_4px_rgba(15,23,42,0.04)] md:min-h-[88px] md:flex-row md:items-center md:justify-start md:px-5"
+    ? "flex min-h-[124px] w-full min-w-0 max-w-full flex-col items-start justify-center gap-3 rounded-[12px] bg-white px-4 shadow-[0_1px_4px_rgba(15,23,42,0.04)] md:min-h-[88px] md:flex-row md:items-center md:justify-start md:px-5"
     : "flex min-h-[88px] items-center gap-3 rounded-[12px] bg-white px-5 shadow-[0_1px_4px_rgba(15,23,42,0.04)]";
   const content = (
     <>
