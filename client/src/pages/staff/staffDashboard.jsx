@@ -270,7 +270,7 @@ const StaffDashboard = () => {
               <div className="relative">
                 <div className="absolute inset-0 rounded-full bg-[#F5C518]/20 blur-md transition-all duration-300 group-hover:bg-[#F5C518]/30" />
                 <img
-                  src="/FPOPLOGO1.png"
+                  src="/logoo.png"
                   alt="FPOP Clinic Portal"
                   className="relative h-12 w-12 object-contain transition-all duration-300 group-hover:scale-105"
                 />
@@ -381,7 +381,7 @@ const StaffDashboard = () => {
             }}
           >
             <img
-              src="/FPOPLOGO1.png"
+              src="/logoo.png"
               alt="FPOP Logo"
               style={{ width: "36px", height: "36px", objectFit: "contain", flexShrink: 0 }}
             />

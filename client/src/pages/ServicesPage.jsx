@@ -11,7 +11,7 @@ function ServicesPage() {
       <div className="relative max-w-5xl mx-auto bg-white/80 backdrop-blur-sm rounded-[2rem] shadow-md p-6 overflow-hidden">
         <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
           <img
-            src="/FPOPLOGO2.jpg"
+            src="/logoo.png"
             alt="bg-logo"
             className="w-[320px] md:w-[450px] opacity-50 object-contain"
           />

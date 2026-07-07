@@ -25,7 +25,7 @@ export default function NavBar() {
           >
             <div className="relative">
               <img
-                src="/FPOPLOGO1.png"
+                src="/logoo.png"
                 alt="Logo"
                 className="relative w-9 h-9 object-contain"
               />
