@@ -345,7 +345,7 @@ export const SendVerifyEmailOtp = async (req, res) => {
   `,
     };
 
-    await transporter.sendMail(mailOption);
+    transporter.sendMail(mailOption).catch((err) => console.error("Verify email failed:", err));
     res
       .status(200)
       .json({ success: true, message: "Verification sent Successful" });
@@ -536,7 +536,7 @@ export const sendResetOtp = async (req, res) => {
   `,
     };
 
-    await transporter.sendMail(mailOption);
+    transporter.sendMail(mailOption).catch((err) => console.error("Reset OTP email failed:", err));
 
     return res.status(200).json({
       success: true,
