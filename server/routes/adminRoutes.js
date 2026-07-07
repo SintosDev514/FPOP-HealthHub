@@ -7,6 +7,7 @@ import {
   updateUser,
   deleteUser,
   getAllAppointments,
+  getAnalytics,
 } from "../controllers/adminController.js";
 import {
   updateAppointmentStatus,
@@ -23,5 +24,6 @@ adminRouter.delete("/users/:id", deleteUser);
 
 adminRouter.get("/appointments", getAllAppointments);
 adminRouter.put("/appointments/:id/status", updateAppointmentStatus);
+adminRouter.get("/analytics", getAnalytics);
 
 export default adminRouter;
