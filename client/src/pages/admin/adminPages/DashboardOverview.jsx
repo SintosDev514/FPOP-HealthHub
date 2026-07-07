@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { IcoUp, IcoDown } from "../../../components/icon/AdminIcons";
 
 /* ── Palette ── */
@@ -10,39 +10,52 @@ const RED_SOFT  = "#fee2e2";
 const GREEN     = "#16a34a";
 const SLATE     = "#64748b";
 
-/* ── Sample data ── */
-const growthData = [
-  { month: "Jan", users: 3200,  appts: 1100 },
-  { month: "Feb", users: 3800,  appts: 980  },
-  { month: "Mar", users: 4100,  appts: 1250 },
-  { month: "Apr", users: 5200,  appts: 2100 },
-  { month: "May", users: 6800,  appts: 3400 },
-  { month: "Jun", users: 7500,  appts: 4200 },
-  { month: "Jul", users: 8300,  appts: 4900 },
-  { month: "Aug", users: 9100,  appts: 5600 },
-  { month: "Sep", users: 10200, appts: 6100 },
-  { month: "Oct", users: 11400, appts: 7000 },
-  { month: "Nov", users: 12000, appts: 7800 },
-  { month: "Dec", users: 12584, appts: 8500 },
-];
+/* ── Dashboard defaults ── */
+const emptyGrowthData = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"]
+  .map((month) => ({ month, users: 0, appts: 0 }));
 
-const weeklyData = [
-  { day: "Mon", confirmed: 45, pending: 12, cancelled: 3 },
-  { day: "Tue", confirmed: 52, pending: 8,  cancelled: 2 },
-  { day: "Wed", confirmed: 48, pending: 15, cancelled: 5 },
-  { day: "Thu", confirmed: 61, pending: 10, cancelled: 1 },
-  { day: "Fri", confirmed: 55, pending: 18, cancelled: 7 },
-  { day: "Sat", confirmed: 38, pending: 5,  cancelled: 2 },
-  { day: "Sun", confirmed: 22, pending: 3,  cancelled: 1 },
-];
+const emptyWeeklyData = ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"]
+  .map((day) => ({ day, confirmed: 0, pending: 0, cancelled: 0 }));
 
-const recentActivity = [
-  { id: 1, user: "Maria Santos",   action: "Booked Family Planning Consultation", time: "2 mins ago",  type: "appointment" },
-  { id: 2, user: "Juan Dela Cruz", action: "Registered a new account",            time: "15 mins ago", type: "user"        },
-  { id: 3, user: "Ana Reyes",      action: "Cancelled her appointment",           time: "32 mins ago", type: "cancel"      },
-  { id: 4, user: "Pedro Lim",      action: "Requested medical records",           time: "1 hr ago",    type: "report"      },
-  { id: 5, user: "Liza Garcia",    action: "Completed her consultation",          time: "2 hrs ago",   type: "done"        },
-];
+const emptyDashboard = {
+  stats: {
+    totalUsers: { value: 0, change: 0 },
+    activeAppointments: { value: 0, change: 0 },
+    pendingRequests: { value: 0, change: 0 },
+    verifiedUserRate: { value: 0, change: 0 },
+  },
+  monthlyGrowth: emptyGrowthData,
+  weeklyAppointments: emptyWeeklyData,
+  recentActivity: [],
+  todaySummary: {
+    newRegistrations: 0,
+    appointmentsToday: 0,
+    completedSessions: 0,
+    pendingReviews: 0,
+  },
+  accountSummary: {
+    verifiedUsers: 0,
+    suspendedUsers: 0,
+    staffCount: 0,
+    unreadHighPriorityAlerts: 0,
+  },
+};
+
+const formatNumber = (value) => Number(value || 0).toLocaleString();
+const formatPercent = (value) => `${Number(value || 0).toLocaleString(undefined, { maximumFractionDigits: 1 })}%`;
+const formatChange = (value) => `${Number(value || 0) >= 0 ? "+" : ""}${Number(value || 0).toLocaleString(undefined, { maximumFractionDigits: 1 })}%`;
+const formatTimeAgo = (value) => {
+  if (!value) return "";
+  const diffMs = Date.now() - new Date(value).getTime();
+  if (Number.isNaN(diffMs)) return "";
+  const mins = Math.max(0, Math.floor(diffMs / 60000));
+  if (mins < 1) return "Just now";
+  if (mins < 60) return `${mins} min${mins !== 1 ? "s" : ""} ago`;
+  const hrs = Math.floor(mins / 60);
+  if (hrs < 24) return `${hrs} hr${hrs !== 1 ? "s" : ""} ago`;
+  const days = Math.floor(hrs / 24);
+  return `${days} day${days !== 1 ? "s" : ""} ago`;
+};
 
 /* ── Stat card icons ── */
 const StatIcoUsers = () => (
@@ -71,20 +84,21 @@ const StatIcoTrend = () => (
 );
 
 /* ── Line chart ── */
-function LineChartSVG() {
+function LineChartSVG({ data = emptyGrowthData }) {
   const [tooltip, setTooltip] = useState(null);
+  const growthData = data.length ? data : emptyGrowthData;
   const W = 500, H = 200;
   const PAD = { top: 12, right: 14, bottom: 30, left: 44 };
   const innerW = W - PAD.left - PAD.right;
   const innerH = H - PAD.top - PAD.bottom;
-  const maxUsers = 13000;
+  const maxUsers = Math.max(1, ...growthData.map((d) => Math.max(d.users || 0, d.appts || 0)));
 
-  const xOf = (i) => PAD.left + (i / (growthData.length - 1)) * innerW;
+  const xOf = (i) => PAD.left + (i / Math.max(growthData.length - 1, 1)) * innerW;
   const yOf = (v) => PAD.top + innerH - (v / maxUsers) * innerH;
 
   const usersPath = growthData.map((d, i) => `${i === 0 ? "M" : "L"}${xOf(i)},${yOf(d.users)}`).join(" ");
   const apptsPath = growthData.map((d, i) => `${i === 0 ? "M" : "L"}${xOf(i)},${yOf(d.appts)}`).join(" ");
-  const yTicks = [0, 3000, 6000, 9000, 12000];
+  const yTicks = [0, 0.25, 0.5, 0.75, 1].map((pct) => Math.round(maxUsers * pct));
 
   return (
     <div style={{ position: "relative" }}>
@@ -93,7 +107,7 @@ function LineChartSVG() {
           <g key={v}>
             <line x1={PAD.left} y1={yOf(v)} x2={W - PAD.right} y2={yOf(v)} stroke="rgba(30,58,95,0.07)" strokeDasharray="4 4"/>
             <text x={PAD.left - 6} y={yOf(v) + 4} textAnchor="end" fontSize="10" fill="#94a3b8">
-              {v === 0 ? "0" : `${v / 1000}k`}
+              {v >= 1000 ? `${Math.round(v / 100) / 10}k` : v}
             </text>
           </g>
         ))}
@@ -163,13 +177,14 @@ function LineChartSVG() {
 }
 
 /* ── Bar chart ── */
-function BarChartSVG() {
+function BarChartSVG({ data = emptyWeeklyData }) {
   const [tooltip, setTooltip] = useState(null);
+  const weeklyData = data.length ? data : emptyWeeklyData;
   const W = 500, H = 200;
   const PAD = { top: 10, right: 14, bottom: 30, left: 32 };
   const innerW = W - PAD.left - PAD.right;
   const innerH = H - PAD.top - PAD.bottom;
-  const maxVal = 70;
+  const maxVal = Math.max(1, ...weeklyData.flatMap((d) => [d.confirmed || 0, d.pending || 0, d.cancelled || 0]));
   const groupW = innerW / weeklyData.length;
   const barW = (groupW * 0.7) / 3;
   const yTicks = [0, 20, 40, 60];
@@ -237,7 +252,7 @@ function BarChartSVG() {
 }
 
 /* ── Stat card ── */
-function StatCard({ title, value, change, up, Icon, gradient }) {
+function StatCard({ title, value, change, up,gradient }) {
   const [hov, setHov] = useState(false);
   return (
     <div
@@ -309,6 +324,48 @@ const ActivityDot = ({ type }) => (
 
 /* ── Main export ── */
 export default function DashboardOverview({ isMobile }) {
+  const [dashboard, setDashboard] = useState(emptyDashboard);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState("");
+
+  useEffect(() => {
+    let mounted = true;
+
+    const loadDashboard = async () => {
+      setLoading(true);
+      setError("");
+
+      try {
+        const res = await fetch("http://localhost:5000/api/admin/dashboard", {
+          credentials: "include",
+        });
+        const data = await res.json();
+
+        if (!mounted) return;
+        if (data.success) {
+          setDashboard({ ...emptyDashboard, ...data.dashboard });
+        } else {
+          setError(data.message || "Failed to load dashboard data.");
+        }
+      } catch {
+        if (mounted) setError("Failed to load dashboard data.");
+      } finally {
+        if (mounted) setLoading(false);
+      }
+    };
+
+    loadDashboard();
+
+    return () => {
+      mounted = false;
+    };
+  }, []);
+
+  const stats = dashboard.stats || emptyDashboard.stats;
+  const todaySummary = dashboard.todaySummary || emptyDashboard.todaySummary;
+  const accountSummary = dashboard.accountSummary || emptyDashboard.accountSummary;
+  const recentActivity = dashboard.recentActivity || [];
+
   return (
     <main style={{ flex: 1, padding: isMobile ? "20px 16px" : "28px 32px", overflowY: "auto", background: "#f1f5f9" }}>
 
@@ -334,6 +391,35 @@ export default function DashboardOverview({ isMobile }) {
         </div>
       </div>
 
+      {error && (
+        <div style={{
+          marginBottom: "18px",
+          background: RED_SOFT,
+          border: `1px solid rgba(220,38,38,0.22)`,
+          borderRadius: "12px",
+          padding: "12px 16px",
+          color: RED,
+          fontSize: "13px",
+          fontWeight: 600,
+        }}>
+          {error}
+        </div>
+      )}
+      {loading && (
+        <div style={{
+          marginBottom: "18px",
+          background: "#fff",
+          border: "1px solid rgba(30,58,95,0.08)",
+          borderRadius: "12px",
+          padding: "12px 16px",
+          color: SLATE,
+          fontSize: "13px",
+          fontWeight: 600,
+        }}>
+          Loading real dashboard data...
+        </div>
+      )}
+
       {/* ── Stat cards ── */}
       <div style={{
         display: "grid",
@@ -343,33 +429,33 @@ export default function DashboardOverview({ isMobile }) {
       }}>
         <StatCard
           title="Total Users"
-          value="12,584"
-          change="+12.5%"
-          up
+          value={formatNumber(stats.totalUsers?.value)}
+          change={formatChange(stats.totalUsers?.change)}
+          up={(stats.totalUsers?.change || 0) >= 0}
           Icon={StatIcoUsers}
           gradient={`linear-gradient(135deg, ${NAVY_DARK}, ${NAVY_LITE})`}
         />
         <StatCard
           title="Active Appointments"
-          value="348"
-          change="+8.2%"
-          up
+          value={formatNumber(stats.activeAppointments?.value)}
+          change={formatChange(stats.activeAppointments?.change)}
+          up={(stats.activeAppointments?.change || 0) >= 0}
           Icon={StatIcoCal}
           gradient={`linear-gradient(135deg, #16a34a, #22c55e)`}
         />
         <StatCard
           title="Pending Requests"
-          value="56"
-          change="-4.3%"
-          up={false}
+          value={formatNumber(stats.pendingRequests?.value)}
+          change={formatChange(stats.pendingRequests?.change)}
+          up={(stats.pendingRequests?.change || 0) >= 0}
           Icon={StatIcoClock}
           gradient={`linear-gradient(135deg, #d97706, #f59e0b)`}
         />
         <StatCard
-          title="System Health"
-          value="94.5%"
-          change="+2.1%"
-          up
+          title="Verified Users"
+          value={formatPercent(stats.verifiedUserRate?.value)}
+          change={formatChange(stats.verifiedUserRate?.change)}
+          up={(stats.verifiedUserRate?.change || 0) >= 0}
           Icon={StatIcoTrend}
           gradient={`linear-gradient(135deg, ${RED}, #f87171)`}
         />
@@ -387,14 +473,14 @@ export default function DashboardOverview({ isMobile }) {
             <h2 style={{ margin: 0, fontSize: "15px", fontWeight: 700, color: NAVY }}>User Growth &amp; Appointments</h2>
             <span style={{ fontSize: "11px", fontWeight: 600, color: GREEN, background: "#dcfce7", borderRadius: "20px", padding: "3px 10px" }}>▲ Yearly</span>
           </div>
-          <LineChartSVG />
+          <LineChartSVG data={dashboard.monthlyGrowth} />
         </div>
         <div style={{ background: "#fff", borderRadius: "16px", padding: "22px 24px", boxShadow: "0 2px 14px rgba(30,58,95,0.07)", border: "1px solid rgba(30,58,95,0.07)" }}>
           <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: "16px" }}>
             <h2 style={{ margin: 0, fontSize: "15px", fontWeight: 700, color: NAVY }}>Weekly Appointment Status</h2>
             <span style={{ fontSize: "11px", fontWeight: 600, color: NAVY, background: `rgba(30,58,95,0.08)`, borderRadius: "20px", padding: "3px 10px" }}>This Week</span>
           </div>
-          <BarChartSVG />
+          <BarChartSVG data={dashboard.weeklyAppointments} />
         </div>
       </div>
 
@@ -416,6 +502,11 @@ export default function DashboardOverview({ isMobile }) {
               transition: "background 0.2s",
             }}>View All</button>
           </div>
+          {recentActivity.length === 0 && (
+            <div style={{ padding: "18px 0", color: "#94a3b8", fontSize: "13px" }}>
+              No recent activity yet.
+            </div>
+          )}
           {recentActivity.map((item, idx) => (
             <div key={item.id} style={{
               display: "flex", gap: "12px", alignItems: "flex-start",
@@ -427,7 +518,7 @@ export default function DashboardOverview({ isMobile }) {
                 <p style={{ margin: 0, fontSize: "13px", fontWeight: 600, color: "#1e293b" }}>
                   <span style={{ color: NAVY }}>{item.user}</span> — {item.action}
                 </p>
-                <p style={{ margin: "2px 0 0", fontSize: "11px", color: "#b0bac5" }}>{item.time}</p>
+                <p style={{ margin: "2px 0 0", fontSize: "11px", color: "#b0bac5" }}>{formatTimeAgo(item.time)}</p>
               </div>
             </div>
           ))}
@@ -446,10 +537,10 @@ export default function DashboardOverview({ isMobile }) {
               Today&rsquo;s Summary
             </h3>
             {[
-              { label: "New Registrations",  val: "23" },
-              { label: "Appointments Today", val: "41" },
-              { label: "Completed Sessions", val: "38" },
-              { label: "Pending Reviews",    val: "7"  },
+              { label: "New Registrations", val: formatNumber(todaySummary.newRegistrations) },
+              { label: "Appointments Today", val: formatNumber(todaySummary.appointmentsToday) },
+              { label: "Completed Sessions", val: formatNumber(todaySummary.completedSessions) },
+              { label: "Pending Reviews", val: formatNumber(todaySummary.pendingReviews) },
             ].map(({ label, val }) => (
               <div key={label} style={{
                 display: "flex", justifyContent: "space-between", alignItems: "center",
@@ -461,21 +552,28 @@ export default function DashboardOverview({ isMobile }) {
             ))}
           </div>
 
-          {/* System Health */}
+          {/* Account Summary */}
           <div style={{ background: "#fff", borderRadius: "16px", padding: "22px 24px", boxShadow: "0 2px 14px rgba(30,58,95,0.07)", border: "1px solid rgba(30,58,95,0.07)" }}>
-            <h3 style={{ margin: "0 0 16px", fontSize: "14px", fontWeight: 700, color: NAVY }}>System Health</h3>
+            <h3 style={{ margin: "0 0 16px", fontSize: "14px", fontWeight: 700, color: NAVY }}>Account Summary</h3>
             {[
-              { label: "Server Uptime",  pct: 99.8, color: GREEN },
-              { label: "DB Performance", pct: 87,   color: NAVY  },
-              { label: "API Response",   pct: 94,   color: RED   },
-            ].map(({ label, pct, color }) => (
+              { label: "Verified Users", val: accountSummary.verifiedUsers, color: GREEN },
+              { label: "Staff Accounts", val: accountSummary.staffCount, color: NAVY },
+              { label: "Suspended Users", val: accountSummary.suspendedUsers, color: RED },
+            ].map(({ label, val, color }) => (
               <div key={label} style={{ marginBottom: "14px" }}>
                 <div style={{ display: "flex", justifyContent: "space-between", marginBottom: "6px" }}>
                   <span style={{ fontSize: "12px", color: "#5a6475", fontWeight: 500 }}>{label}</span>
-                  <span style={{ fontSize: "12px", fontWeight: 700, color }}>{pct}%</span>
+                  <span style={{ fontSize: "12px", fontWeight: 700, color }}>{formatNumber(val)}</span>
                 </div>
                 <div style={{ height: "7px", borderRadius: "99px", background: "rgba(30,58,95,0.08)" }}>
-                  <div style={{ width: `${pct}%`, height: "100%", background: color, borderRadius: "99px", transition: "width 0.4s ease" }} />
+                  <div style={{
+                    width: `${Math.min(100, Number(val || 0) * 8)}%`,
+                    minWidth: Number(val || 0) > 0 ? "8px" : 0,
+                    height: "100%",
+                    background: color,
+                    borderRadius: "99px",
+                    transition: "width 0.4s ease",
+                  }} />
                 </div>
               </div>
             ))}
@@ -499,9 +597,9 @@ export default function DashboardOverview({ isMobile }) {
               </svg>
             </div>
             <div>
-              <p style={{ margin: "0 0 4px", fontSize: "13px", fontWeight: 700, color: RED }}>Emergency Alert</p>
+              <p style={{ margin: "0 0 4px", fontSize: "13px", fontWeight: 700, color: RED }}>Priority Alerts</p>
               <p style={{ margin: 0, fontSize: "12px", color: "#7f1d1d", lineHeight: 1.5 }}>
-                2 critical incident reports require immediate review.
+                {formatNumber(accountSummary.unreadHighPriorityAlerts)} unread high-priority alert{Number(accountSummary.unreadHighPriorityAlerts || 0) !== 1 ? "s" : ""} require review.
               </p>
             </div>
           </div>
