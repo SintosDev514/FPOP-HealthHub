@@ -31,7 +31,7 @@ export default function ForgotPasswordForm() {
     setIsLoading(true);
 
     try {
-      const res = await fetch("http://localhost:5000/api/auth/sendResetOtp", {
+      const res = await fetch("__API_BASE__/api/auth/sendResetOtp", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",

@@ -464,7 +464,7 @@ const InventoryTableHeader = () => (
   </thead>
 );
 
-const StaffInventoryView = () => {
+const StaffInventoryView = ({ hideHeader }) => {
   const [tables, setTables] = useState([]);
   const [loading, setLoading] = useState(true);
   const [openCategories, setOpenCategories] = useState({});
@@ -497,7 +497,7 @@ const StaffInventoryView = () => {
 
   const fetchTables = async () => {
     try {
-      const res = await fetch("http://localhost:5000/api/inventory/tables", {
+      const res = await fetch("__API_BASE__/api/inventory/tables", {
         credentials: "include",
       });
       const data = await res.json();
@@ -509,7 +509,7 @@ const StaffInventoryView = () => {
     }
   };
 
-  const API = "http://localhost:5000/api/inventory";
+  const API = "__API_BASE__/api/inventory";
 
   const activeTable = tables.find((t) => t._id === activeTableId);
   const activeCategory = activeTable?.categories.find(
@@ -1245,15 +1245,17 @@ const StaffInventoryView = () => {
   }
 
   return (
-    <main className="flex-1 bg-[#f8fafc] px-4 py-9 sm:px-8 lg:px-[32px] overflow-y-auto overflow-x-hidden min-w-0">
-      <section className="mb-8">
-        <h2 className="text-base font-extrabold leading-tight text-slate-950">
-          Inventory
-        </h2>
-        <p className="mt-2 text-[10px] font-medium text-slate-600">
-          Track all stock items by category, receipts, issuances, and balances.
-        </p>
-      </section>
+    <main className={`flex-1 bg-[#f8fafc] px-4 sm:px-8 lg:px-[32px] overflow-y-auto overflow-x-hidden min-w-0 ${hideHeader ? "py-4" : "py-9"}`}>
+      {!hideHeader && (
+        <section className="mb-8">
+          <h2 className="text-base font-extrabold leading-tight text-slate-950">
+            Inventory
+          </h2>
+          <p className="mt-2 text-[10px] font-medium text-slate-600">
+            Track all stock items by category, receipts, issuances, and balances.
+          </p>
+        </section>
+      )}
 
       <section className="mb-6 rounded-lg border border-slate-200 bg-white p-6 shadow-[0_2px_12px_rgba(15,23,42,0.07)]">
         <div className="flex flex-wrap gap-3">

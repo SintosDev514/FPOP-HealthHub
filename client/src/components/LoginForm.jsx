@@ -1,9 +1,8 @@
-import { useRef, useState } from "react";
+import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import logo from "../assets/logo.png";
 import { EyeIcon, EyeOffIcon } from "../components/icon/EyeIcons";
 import { useAuth } from "../context/AuthContext";
-import ReCaptcha from "./ReCaptcha";
 
 function LoginForm() {
   const [showPassword, setShowPassword] = useState(false);
@@ -16,15 +15,13 @@ function LoginForm() {
   const [error, setError] = useState("");
 
   const [rememberMe, setRememberMe] = useState("");
-  const [recaptchaToken, setRecaptchaToken] = useState("");
-  const recaptchaRef = useRef(null);
-  const canSubmit = email && password && recaptchaToken;
+  const canSubmit = email && password;
 
   const handleLogin = async (e) => {
     e.preventDefault();
 
     try {
-      const res = await fetch("http://localhost:5000/api/auth/login", {
+      const res = await fetch("__API_BASE__/api/auth/login", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -34,7 +31,6 @@ function LoginForm() {
           email,
           password,
           rememberMe,
-          recaptchaToken,
         }),
       });
 
@@ -51,12 +47,10 @@ function LoginForm() {
         else navigate("/home", { replace: true });
       } else {
         setError(data.message);
-        recaptchaRef.current?.reset();
       }
     } catch (err) {
       console.error(err);
       setError("Something went wrong. Please try again ");
-      recaptchaRef.current?.reset();
     }
   };
 
@@ -148,8 +142,6 @@ function LoginForm() {
                   {message}
                 </div>
               )}
-
-              <ReCaptcha ref={recaptchaRef} onChange={setRecaptchaToken} />
 
               <button
                 type="submit"

@@ -188,7 +188,7 @@ const StaffDashboard = () => {
 
   const fetchProfile = async () => {
     try {
-      const res = await fetch("http://localhost:5000/api/user/data", {
+      const res = await fetch("__API_BASE__/api/user/data", {
         credentials: "include",
       });
       const data = await res.json();
@@ -203,7 +203,7 @@ const StaffDashboard = () => {
   const fetchAppointments = async () => {
     try {
       console.log("Fetching staff appointments...");
-      const res = await fetch("http://localhost:5000/api/appointments/staff", {
+      const res = await fetch("__API_BASE__/api/appointments/staff", {
         credentials: "include",
       });
       console.log("Response status:", res.status);

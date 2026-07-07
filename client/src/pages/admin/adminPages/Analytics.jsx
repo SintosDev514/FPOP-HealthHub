@@ -61,7 +61,7 @@ export default function Analytics({ isMobile }) {
     setLoading(true);
     setErr(null);
     try {
-      const res = await fetch("http://localhost:5000/api/admin/analytics", { credentials: "include" });
+      const res = await fetch("__API_BASE__/api/admin/analytics", { credentials: "include" });
       const j = await res.json();
       if (j.success) setData(j.analytics);
       else setErr(j.message);

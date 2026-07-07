@@ -1,7 +1,6 @@
-import { useState, useEffect, useRef } from "react";
+import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import logo from "../assets/logo.png";
-import ReCaptcha from "../components/ReCaptcha";
 
 /* ICONS */
 const EyeIcon = () => (
@@ -41,13 +40,10 @@ export default function ResetPasswordForm({ onComplete }) {
   const [showNewPassword, setShowNewPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const [resendCooldown, setResendCooldown] = useState(0);
-  const [recaptchaToken, setRecaptchaToken] = useState("");
-  const recaptchaRef = useRef(null);
   const canSubmit =
     otp.join("").length === 6 &&
     newPassword &&
     confirmPassword &&
-    recaptchaToken &&
     !isLoading;
 
   const navigate = useNavigate();
@@ -84,7 +80,7 @@ export default function ResetPasswordForm({ onComplete }) {
     setResendCooldown(30);
 
     try {
-      await fetch("http://localhost:5000/api/auth/sendResetOtp", {
+      await fetch("__API_BASE__/api/auth/sendResetOtp", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ email }),
@@ -122,7 +118,7 @@ export default function ResetPasswordForm({ onComplete }) {
     setIsLoading(true);
 
     try {
-      const res = await fetch("http://localhost:5000/api/auth/resetPassword", {
+      const res = await fetch("__API_BASE__/api/auth/resetPassword", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         credentials: "include",
@@ -130,7 +126,6 @@ export default function ResetPasswordForm({ onComplete }) {
           newPassword,
           OTP: otpValue,
           email,
-          recaptchaToken,
         }),
       });
 
@@ -142,11 +137,9 @@ export default function ResetPasswordForm({ onComplete }) {
         navigate("/login");
       } else {
         setError(data.message || "Reset failed");
-        recaptchaRef.current?.reset();
       }
     } catch {
       setError("Network error");
-      recaptchaRef.current?.reset();
     } finally {
       setIsLoading(false);
     }
@@ -251,8 +244,6 @@ export default function ResetPasswordForm({ onComplete }) {
               {error}
             </div>
           )}
-
-          <ReCaptcha ref={recaptchaRef} onChange={setRecaptchaToken} />
 
           {/* BUTTON */}
           <button

@@ -272,7 +272,7 @@ const InventoryLineChart = () => {
   useEffect(() => {
     const fetchInventory = async () => {
       try {
-        const res = await fetch("http://localhost:5000/api/inventory/tables", {
+        const res = await fetch("__API_BASE__/api/inventory/tables", {
           credentials: "include",
         });
         const data = await res.json();

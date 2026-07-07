@@ -55,7 +55,7 @@ export default function Appointments({ isMobile }) {
     setLoading(true);
     setError(null);
     try {
-      const res = await fetch("http://localhost:5000/api/admin/appointments", {
+      const res = await fetch("__API_BASE__/api/admin/appointments", {
         credentials: "include",
       });
       const data = await res.json();
@@ -79,7 +79,7 @@ export default function Appointments({ isMobile }) {
     const prev = appointments;
     setAppointments(appointments.map(a => a._id === id ? { ...a, status: newStatus } : a));
     try {
-      const res = await fetch(`http://localhost:5000/api/admin/appointments/${id}/status`, {
+      const res = await fetch(`__API_BASE__/api/admin/appointments/${id}/status`, {
         method: "PUT",
         credentials: "include",
         headers: { "Content-Type": "application/json" },

@@ -30,7 +30,7 @@ const StaffDirectoryView = () => {
 
   const fetchStaff = async () => {
     try {
-      const res = await fetch("http://localhost:5000/api/staff", {
+      const res = await fetch("__API_BASE__/api/staff", {
         credentials: "include",
       });
       const data = await res.json();

@@ -1,9 +1,8 @@
-import { useRef, useState } from "react";
+import { useState } from "react";
 import logo from "../assets/logo.png";
 import { EyeIcon, EyeOffIcon } from "../components/icon/EyeIcons";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
-import ReCaptcha from "./ReCaptcha";
 
 function SignupForm() {
   const [showPassword, setShowPassword] = useState(false);
@@ -25,16 +24,13 @@ function SignupForm() {
   const [modalType, setModalType] = useState("");
 
   const [agreed, setAgreed] = useState(false);
-  const [recaptchaToken, setRecaptchaToken] = useState("");
-  const recaptchaRef = useRef(null);
   const canSubmit =
     firstName &&
     lastName &&
     email &&
     password &&
     confirmPassword &&
-    agreed &&
-    recaptchaToken;
+    agreed;
 
   const { checkAuth } = useAuth();
   const navigate = useNavigate();
@@ -65,7 +61,7 @@ function SignupForm() {
     }
 
     try {
-      const res = await fetch("http://localhost:5000/api/auth/register", {
+      const res = await fetch("__API_BASE__/api/auth/register", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -79,7 +75,6 @@ function SignupForm() {
           address,
           dateOfBirth,
           password,
-          recaptchaToken,
         }),
       });
 
@@ -97,12 +92,10 @@ function SignupForm() {
       } else {
         setError(data.message);
         setMessage("");
-        recaptchaRef.current?.reset();
       }
     } catch {
       setError("Signup failed. Please try again.");
       setMessage("");
-      recaptchaRef.current?.reset();
     }
   };
 
@@ -296,8 +289,6 @@ function SignupForm() {
                     {message}
                   </div>
                 )}
-
-                <ReCaptcha ref={recaptchaRef} onChange={setRecaptchaToken} />
 
                 <button
                   type="submit"

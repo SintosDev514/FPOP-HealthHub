@@ -17,7 +17,7 @@ export default function Notifications({ isMobile }) {
   const fetchNotifications = async () => {
     try {
       setLoading(true);
-      const res = await fetch("http://localhost:5000/api/admin/notifications", {
+      const res = await fetch("__API_BASE__/api/admin/notifications", {
         credentials: "include",
       });
       const data = await res.json();
@@ -33,7 +33,7 @@ export default function Notifications({ isMobile }) {
 
   const markAllRead = async () => {
     try {
-      const res = await fetch("http://localhost:5000/api/admin/notifications/read-all", {
+      const res = await fetch("__API_BASE__/api/admin/notifications/read-all", {
         method: "PUT",
         credentials: "include",
       });
@@ -46,7 +46,7 @@ export default function Notifications({ isMobile }) {
 
   const markSingleRead = async (id) => {
     try {
-      const res = await fetch(`http://localhost:5000/api/admin/notifications/${id}/read`, {
+      const res = await fetch(`__API_BASE__/api/admin/notifications/${id}/read`, {
         method: "PUT",
         credentials: "include",
       });

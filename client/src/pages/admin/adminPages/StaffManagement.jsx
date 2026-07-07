@@ -42,7 +42,7 @@ export default function StaffManagement({ isMobile }) {
     setLoading(true);
     setError("");
     try {
-      const res = await fetch("http://localhost:5000/api/admin/users", {
+      const res = await fetch("__API_BASE__/api/admin/users", {
         credentials: "include",
       });
       const data = await res.json();
@@ -68,7 +68,7 @@ export default function StaffManagement({ isMobile }) {
     setSaving(true);
     setError("");
     try {
-      const res = await fetch("http://localhost:5000/api/admin/users", {
+      const res = await fetch("__API_BASE__/api/admin/users", {
         method: "POST",
         credentials: "include",
         headers: { "Content-Type": "application/json" },
@@ -145,7 +145,7 @@ export default function StaffManagement({ isMobile }) {
     setError("");
     try {
       const res = await fetch(
-        `http://localhost:5000/api/admin/users/${editingStaff._id}`,
+        `__API_BASE__/api/admin/users/${editingStaff._id}`,
         {
           method: "PUT",
           credentials: "include",
@@ -187,7 +187,7 @@ export default function StaffManagement({ isMobile }) {
     setConfirmRemove(null);
     try {
       const res = await fetch(
-        `http://localhost:5000/api/admin/users/${member._id}`,
+        `__API_BASE__/api/admin/users/${member._id}`,
         {
           method: "PUT",
           credentials: "include",
