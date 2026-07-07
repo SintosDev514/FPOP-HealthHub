@@ -237,11 +237,11 @@ const updateAppointmentStatus = async (req, res) => {
       return res.json({ success: false, message: "Appointment not found" });
     }
 
-    if (appointment.staffId._id.toString() !== req.user.id.toString()) {
+    if (req.user.role !== "admin" && appointment.staffId._id.toString() !== req.user.id.toString()) {
       return res.json({ success: false, message: "Unauthorized" });
     }
 
-    if (appointment.status !== "pending") {
+    if (req.user.role !== "admin" && appointment.status !== "pending") {
       return res.json({ success: false, message: "Appointment is no longer pending" });
     }
 

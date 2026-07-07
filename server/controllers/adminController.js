@@ -146,6 +146,35 @@ const updateUser = async (req, res) => {
   }
 };
 
+const getAllAppointments = async (req, res) => {
+  try {
+    const appointments = await appointmentModel
+      .find({})
+      .populate("patientId", "firstName lastName phone email")
+      .populate("staffId", "firstName lastName specialty")
+      .sort({ date: -1, time: -1 });
+
+    const formatted = appointments.map((a) => ({
+      _id: a._id,
+      patient: `${a.patientId?.firstName || ""} ${a.patientId?.lastName || ""}`.trim(),
+      phone: a.patientId?.phone || "",
+      email: a.patientId?.email || "",
+      doctor: `Dr. ${a.staffId?.firstName || ""} ${a.staffId?.lastName || ""}`.trim(),
+      specialty: a.staffId?.specialty || "",
+      department: a.serviceName || a.staffId?.specialty || "General",
+      date: a.date,
+      time: a.time,
+      datetime: `${a.date} ${a.time}`,
+      status: a.status.charAt(0).toUpperCase() + a.status.slice(1),
+      serviceName: a.serviceName,
+    }));
+
+    res.json({ success: true, appointments: formatted });
+  } catch (error) {
+    res.json({ success: false, message: error.message });
+  }
+};
+
 const deleteUser = async (req, res) => {
   try {
     const user = await userModel.findByIdAndDelete(req.params.id);
@@ -170,4 +199,4 @@ const deleteUser = async (req, res) => {
   }
 };
 
-export { listUsers, createUser, updateUser, deleteUser };
+export { listUsers, createUser, updateUser, deleteUser, getAllAppointments };

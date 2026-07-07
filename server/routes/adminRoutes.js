@@ -6,7 +6,11 @@ import {
   createUser,
   updateUser,
   deleteUser,
+  getAllAppointments,
 } from "../controllers/adminController.js";
+import {
+  updateAppointmentStatus,
+} from "../controllers/appointmentController.js";
 
 const adminRouter = Router();
 
@@ -16,5 +20,8 @@ adminRouter.get("/users", listUsers);
 adminRouter.post("/users", createUser);
 adminRouter.put("/users/:id", updateUser);
 adminRouter.delete("/users/:id", deleteUser);
+
+adminRouter.get("/appointments", getAllAppointments);
+adminRouter.put("/appointments/:id/status", updateAppointmentStatus);
 
 export default adminRouter;
