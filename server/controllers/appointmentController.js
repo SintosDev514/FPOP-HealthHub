@@ -158,7 +158,7 @@ const createAppointment = async (req, res) => {
   </div>`,
       };
 
-      transporter.sendMail(mailOptions).catch(() => {});
+      transporter.sendMail(mailOptions).catch((err) => console.error("Email send failed:", err));
     }
 
     const staffName = `${populated.staffId?.firstName || ""} ${populated.staffId?.lastName || ""}`.trim();
@@ -306,7 +306,7 @@ const updateAppointmentStatus = async (req, res) => {
   </div>`,
     };
 
-    transporter.sendMail(mailOptions).catch(() => {});
+    transporter.sendMail(mailOptions).catch((err) => console.error("Email send failed:", err));
 
     Promise.all([
       notificationModel.create({
