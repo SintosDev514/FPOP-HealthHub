@@ -3,6 +3,189 @@ import userModel from "../models/userModel.js";
 import appointmentModel from "../models/appointmentModels.js";
 import notificationModel from "../models/notificationModel.js";
 
+const monthNames = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
+
+const startOfDay = (date) => {
+  const d = new Date(date);
+  d.setHours(0, 0, 0, 0);
+  return d;
+};
+
+const addDays = (date, days) => {
+  const d = new Date(date);
+  d.setDate(d.getDate() + days);
+  return d;
+};
+
+const formatDateKey = (date) => {
+  const d = new Date(date);
+  const year = d.getFullYear();
+  const month = String(d.getMonth() + 1).padStart(2, "0");
+  const day = String(d.getDate()).padStart(2, "0");
+  return `${year}-${month}-${day}`;
+};
+
+const getMonthRange = (offset = 0) => {
+  const now = new Date();
+  const start = new Date(now.getFullYear(), now.getMonth() + offset, 1);
+  const end = new Date(now.getFullYear(), now.getMonth() + offset + 1, 1);
+  return { start, end };
+};
+
+const inRange = (date, start, end) => {
+  if (!date) return false;
+  const d = new Date(date);
+  return !Number.isNaN(d.getTime()) && d >= start && d < end;
+};
+
+const getChange = (current, previous) => {
+  if (!previous) return current > 0 ? 100 : 0;
+  return Math.round(((current - previous) / previous) * 1000) / 10;
+};
+
+const countByCreatedAt = (items, start, end) =>
+  items.filter((item) => inRange(item.createdAt, start, end)).length;
+
+const getNotificationType = (notification) => {
+  const category = (notification.category || "").toLowerCase();
+  if (category === "appointment") return "appointment";
+  if (category === "user") return "user";
+  if (category === "security") return "cancel";
+  if (category === "alert") return "report";
+  return "done";
+};
+
+const getDashboardOverview = async (req, res) => {
+  try {
+    const now = new Date();
+    const todayStart = startOfDay(now);
+    const tomorrowStart = addDays(todayStart, 1);
+    const todayKey = formatDateKey(now);
+    const { start: currentMonthStart, end: nextMonthStart } = getMonthRange(0);
+    const { start: previousMonthStart } = getMonthRange(-1);
+
+    const weekStart = startOfDay(now);
+    weekStart.setDate(weekStart.getDate() - ((weekStart.getDay() + 6) % 7));
+    const weekKeys = Array.from({ length: 7 }, (_, index) => formatDateKey(addDays(weekStart, index)));
+    const dayLabels = ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"];
+
+    const [users, appointments, notifications] = await Promise.all([
+      userModel
+        .find({}, "role isAccountVerified isSuspended createdAt")
+        .lean(),
+      appointmentModel
+        .find({}, "status date createdAt")
+        .lean(),
+      notificationModel
+        .find({})
+        .sort({ createdAt: -1 })
+        .limit(12)
+        .lean(),
+    ]);
+
+    const totalUsers = users.length;
+    const activeAppointments = appointments.filter((a) => ["pending", "confirmed"].includes(a.status)).length;
+    const pendingRequests = appointments.filter((a) => a.status === "pending").length;
+    const verifiedUsers = users.filter((u) => u.isAccountVerified).length;
+    const verifiedRate = totalUsers ? Math.round((verifiedUsers / totalUsers) * 1000) / 10 : 0;
+
+    const currentMonthUsers = countByCreatedAt(users, currentMonthStart, nextMonthStart);
+    const previousMonthUsers = countByCreatedAt(users, previousMonthStart, currentMonthStart);
+    const currentMonthActive = appointments.filter(
+      (a) => ["pending", "confirmed"].includes(a.status) && inRange(a.createdAt, currentMonthStart, nextMonthStart)
+    ).length;
+    const previousMonthActive = appointments.filter(
+      (a) => ["pending", "confirmed"].includes(a.status) && inRange(a.createdAt, previousMonthStart, currentMonthStart)
+    ).length;
+    const currentMonthPending = appointments.filter(
+      (a) => a.status === "pending" && inRange(a.createdAt, currentMonthStart, nextMonthStart)
+    ).length;
+    const previousMonthPending = appointments.filter(
+      (a) => a.status === "pending" && inRange(a.createdAt, previousMonthStart, currentMonthStart)
+    ).length;
+    const previousMonthVerifiedUsers = users.filter(
+      (u) => u.isAccountVerified && inRange(u.createdAt, previousMonthStart, currentMonthStart)
+    ).length;
+    const currentMonthVerifiedUsers = users.filter(
+      (u) => u.isAccountVerified && inRange(u.createdAt, currentMonthStart, nextMonthStart)
+    ).length;
+
+    const monthlyGrowth = Array.from({ length: 12 }, (_, index) => {
+      const monthStart = new Date(now.getFullYear(), index, 1);
+      const monthEnd = new Date(now.getFullYear(), index + 1, 1);
+      return {
+        month: monthNames[index],
+        users: countByCreatedAt(users, monthStart, monthEnd),
+        appts: appointments.filter((a) => inRange(a.createdAt, monthStart, monthEnd)).length,
+      };
+    });
+
+    const weeklyAppointments = weekKeys.map((dateKey, index) => {
+      const dayAppointments = appointments.filter((appointment) => appointment.date === dateKey);
+      return {
+        day: dayLabels[index],
+        confirmed: dayAppointments.filter((a) => a.status === "confirmed").length,
+        pending: dayAppointments.filter((a) => a.status === "pending").length,
+        cancelled: dayAppointments.filter((a) => a.status === "cancelled").length,
+      };
+    });
+
+    const recentActivity = notifications.slice(0, 5).map((notification) => ({
+      id: notification._id,
+      user: notification.title,
+      action: notification.text,
+      time: notification.createdAt,
+      type: getNotificationType(notification),
+    }));
+
+    const highPriorityUnread = await notificationModel.countDocuments({
+      priority: "High",
+      read: false,
+    });
+
+    res.json({
+      success: true,
+      dashboard: {
+        stats: {
+          totalUsers: {
+            value: totalUsers,
+            change: getChange(currentMonthUsers, previousMonthUsers),
+          },
+          activeAppointments: {
+            value: activeAppointments,
+            change: getChange(currentMonthActive, previousMonthActive),
+          },
+          pendingRequests: {
+            value: pendingRequests,
+            change: getChange(currentMonthPending, previousMonthPending),
+          },
+          verifiedUserRate: {
+            value: verifiedRate,
+            change: getChange(currentMonthVerifiedUsers, previousMonthVerifiedUsers),
+          },
+        },
+        monthlyGrowth,
+        weeklyAppointments,
+        recentActivity,
+        todaySummary: {
+          newRegistrations: users.filter((u) => inRange(u.createdAt, todayStart, tomorrowStart)).length,
+          appointmentsToday: appointments.filter((a) => a.date === todayKey).length,
+          completedSessions: appointments.filter((a) => a.status === "completed" && a.date === todayKey).length,
+          pendingReviews: pendingRequests,
+        },
+        accountSummary: {
+          verifiedUsers,
+          suspendedUsers: users.filter((u) => u.isSuspended).length,
+          staffCount: users.filter((u) => u.role === "staff").length,
+          unreadHighPriorityAlerts: highPriorityUnread,
+        },
+      },
+    });
+  } catch (error) {
+    res.json({ success: false, message: error.message });
+  }
+};
+
 const listUsers = async (req, res) => {
   try {
     const users = await userModel.find({}, "-password").sort({ createdAt: -1 });
