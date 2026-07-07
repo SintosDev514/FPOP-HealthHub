@@ -55,7 +55,7 @@ const StaffDirectoryView = () => {
         </p>
       </section>
 
-      <section className="overflow-hidden rounded-2xl border border-[#1E3A5F]/[0.07] bg-white shadow-[0_2px_14px_rgba(30,58,95,0.07)]">
+      <section className="overflow-hidden rounded-lg border border-[#1E3A5F]/[0.07] bg-white shadow-[0_2px_14px_rgba(30,58,95,0.07)]">
         <div className="overflow-x-auto">
           <table className="w-full min-w-[950px] border-collapse text-left">
             <thead className="bg-[#1E3A5F] text-white">
@@ -82,7 +82,7 @@ const StaffDirectoryView = () => {
                   <td colSpan={4} className="px-5 py-8 text-center text-[10px] text-[#8a96a3]">No staff found</td>
                 </tr>
               ) : (
-                staffList.map((member, idx) => (
+                staffList.map((member) => (
                   <tr
                     key={member._id}
                     className="border-b border-[#1E3A5F]/[0.06] transition hover:bg-[#f7fafc]"
