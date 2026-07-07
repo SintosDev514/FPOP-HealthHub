@@ -126,7 +126,7 @@ export default function ForgotPasswordForm() {
               onClick={() => navigate("/login")}
               className="text-[#1E3A5F] hover:text-[#F5C518] font-bold transition-colors duration-300 flex items-center justify-center gap-1.5 mx-auto"
             >
-              <span>â†</span> Back to Sign In
+             Back to Sign In
             </button>
           </p>
         </form>
