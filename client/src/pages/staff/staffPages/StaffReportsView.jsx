@@ -120,7 +120,7 @@ const statTones = {
 
 const StatCard = ({ label, value, icon, tone = "navy" }) => (
   <article
-    className="rounded-2xl border border-[#1E3A5F]/[0.07] bg-white px-5 py-5 shadow-[0_2px_14px_rgba(30,58,95,0.07)] transition duration-200 hover:-translate-y-0.5 hover:shadow-[0_10px_32px_rgba(30,58,95,0.14)]"
+    className="rounded-lg border border-[#1E3A5F]/[0.07] bg-white px-5 py-5 shadow-[0_2px_14px_rgba(30,58,95,0.07)] transition duration-200 hover:-translate-y-0.5 hover:shadow-[0_10px_32px_rgba(30,58,95,0.14)]"
   >
     <div className="flex items-start justify-between gap-3">
       <div className="min-w-0">
@@ -131,7 +131,7 @@ const StatCard = ({ label, value, icon, tone = "navy" }) => (
           {value}
         </p>
       </div>
-      <div className={`flex h-[46px] w-[46px] shrink-0 items-center justify-center rounded-xl ${statTones[tone] || statTones.navy}`}>
+      <div className={`flex h-[46px] w-[46px] shrink-0 items-center justify-center rounded-lg ${statTones[tone] || statTones.navy}`}>
         <Icon name={icon} className="h-[22px] w-[22px]" />
       </div>
     </div>
@@ -191,7 +191,7 @@ const StaffReportsView = () => (
       ))}
     </section>
 
-    <section className="hidden overflow-hidden rounded-2xl border border-[#1E3A5F]/[0.07] bg-white shadow-[0_2px_14px_rgba(30,58,95,0.07)] lg:block">
+    <section className="hidden overflow-hidden rounded-lg border border-[#1E3A5F]/[0.07] bg-white shadow-[0_2px_14px_rgba(30,58,95,0.07)] lg:block">
       <div className="w-full overflow-hidden">
         <table className="w-full table-fixed border-collapse text-left">
           <thead className="bg-[#1E3A5F] text-white">
@@ -223,7 +223,7 @@ const StaffReportsView = () => (
               >
                 <td className="px-4 py-4">
                   <div className="flex items-center gap-3">
-                    <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-[#1E3A5F]/10 text-[#1E3A5F]">
+                    <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg bg-[#1E3A5F]/10 text-[#1E3A5F]">
                       <Icon name="file" className="h-5 w-5" />
                     </div>
                     <span className="min-w-0 text-[10px] font-bold text-[#2d3748]">
@@ -260,10 +260,10 @@ const StaffReportsView = () => (
       {reports.map((report) => (
         <article
           key={report.title}
-          className="rounded-2xl border border-[#1E3A5F]/[0.07] bg-white p-5 shadow-[0_2px_14px_rgba(30,58,95,0.07)]"
+          className="rounded-lg border border-[#1E3A5F]/[0.07] bg-white p-5 shadow-[0_2px_14px_rgba(30,58,95,0.07)]"
         >
           <div className="mb-4 flex items-start gap-3">
-            <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-[#1E3A5F]/10 text-[#1E3A5F]">
+            <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-lg bg-[#1E3A5F]/10 text-[#1E3A5F]">
               <Icon name="file" className="h-5 w-5" />
             </div>
             <div className="min-w-0">
