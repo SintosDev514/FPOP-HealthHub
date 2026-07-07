@@ -329,6 +329,110 @@ const updateUser = async (req, res) => {
   }
 };
 
+const getAllAppointments = async (req, res) => {
+  try {
+    const appointments = await appointmentModel
+      .find({})
+      .populate("patientId", "firstName lastName phone email")
+      .populate("staffId", "firstName lastName specialty")
+      .sort({ date: -1, time: -1 });
+
+    const formatted = appointments.map((a) => ({
+      _id: a._id,
+      patient: `${a.patientId?.firstName || ""} ${a.patientId?.lastName || ""}`.trim(),
+      phone: a.patientId?.phone || "",
+      email: a.patientId?.email || "",
+      doctor: `Dr. ${a.staffId?.firstName || ""} ${a.staffId?.lastName || ""}`.trim(),
+      specialty: a.staffId?.specialty || "",
+      department: a.serviceName || a.staffId?.specialty || "General",
+      date: a.date,
+      time: a.time,
+      datetime: `${a.date} ${a.time}`,
+      status: a.status.charAt(0).toUpperCase() + a.status.slice(1),
+      serviceName: a.serviceName,
+    }));
+
+    res.json({ success: true, appointments: formatted });
+  } catch (error) {
+    res.json({ success: false, message: error.message });
+  }
+};
+
+const getAnalytics = async (req, res) => {
+  try {
+    const appointments = await appointmentModel.find({});
+    const total = appointments.length;
+
+    const confirmed = appointments.filter(a => a.status === "confirmed").length;
+    const completed = appointments.filter(a => a.status === "completed").length;
+    const pending = appointments.filter(a => a.status === "pending").length;
+    const cancelled = appointments.filter(a => a.status === "cancelled").length;
+    const completedRate = total > 0 ? ((confirmed + completed) / total * 100).toFixed(1) : 0;
+
+    // By department (serviceName)
+    const deptMap = {};
+    appointments.forEach(a => {
+      const dept = a.serviceName || "General";
+      deptMap[dept] = (deptMap[dept] || 0) + 1;
+    });
+    const byDepartment = Object.entries(deptMap)
+      .map(([name, count]) => ({ name, count, pct: total > 0 ? +((count / total) * 100).toFixed(1) : 0 }))
+      .sort((a, b) => b.count - a.count);
+    const deptColors = ["#1E3A5F", "#7c3aed", "#22c55e", "#F5C518", "#ea580c", "#ef4444", "#06b6d4", "#ec4899"];
+    byDepartment.forEach((d, i) => { d.color = deptColors[i % deptColors.length]; });
+
+    // Monthly trend
+    const monthMap = {};
+    appointments.forEach(a => {
+      if (a.date) {
+        const m = a.date.substring(0, 7);
+        monthMap[m] = (monthMap[m] || 0) + 1;
+      }
+    });
+    const monthlyTrend = Object.entries(monthMap)
+      .map(([month, count]) => ({ month, count }))
+      .sort((a, b) => a.month.localeCompare(b.month));
+
+    // Day-of-week distribution
+    const dayNames = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"];
+    const dayMap = {};
+    appointments.forEach(a => {
+      if (a.date) {
+        const day = new Date(a.date + "T00:00:00").getDay();
+        dayMap[dayNames[day]] = (dayMap[dayNames[day]] || 0) + 1;
+      }
+    });
+    const peakDay = Object.entries(dayMap).sort((a, b) => b[1] - a[1])[0]?.[0] || "N/A";
+
+    // Today's appointments
+    const today = new Date().toISOString().split("T")[0];
+    const todayCount = appointments.filter(a => a.date === today).length;
+
+    // Attendance rate (non-cancelled / total)
+    const attendanceRate = total > 0 ? ((confirmed + completed) / total * 100).toFixed(1) : 0;
+
+    const topDept = byDepartment[0] || { name: "N/A", count: 0, pct: 0 };
+
+    res.json({
+      success: true,
+      analytics: {
+        overview: { total, confirmed, completed, pending, cancelled, completedRate },
+        byDepartment,
+        monthlyTrend,
+        daily: { today: todayCount },
+        performance: {
+          attendanceRate,
+          peakDay,
+          topDepartment: topDept,
+          totalDepts: byDepartment.length,
+        },
+      },
+    });
+  } catch (error) {
+    res.json({ success: false, message: error.message });
+  }
+};
+
 const deleteUser = async (req, res) => {
   try {
     const user = await userModel.findByIdAndDelete(req.params.id);
@@ -353,4 +457,4 @@ const deleteUser = async (req, res) => {
   }
 };
 
-export { getDashboardOverview, listUsers, createUser, updateUser, deleteUser };
+export { listUsers, createUser, updateUser, deleteUser, getAllAppointments, getAnalytics };

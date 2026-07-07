@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect, useCallback } from "react";
 
 const NAVY   = "#1E3A5F";
 const GREEN  = "#22c55e";
@@ -44,30 +44,65 @@ const IcoCancelled = () => (
 );
 
 export default function Appointments({ isMobile }) {
-  const [appointments, setAppointments] = useState([
-    { id: 1, patient: "Juan Dela Cruz", doctor: "Dr. Maria Santos", datetime: "2026-05-28 09:30 AM", department: "Family Planning", status: "Confirmed", phone: "+63 912 345 6789" },
-    { id: 2, patient: "Sarah Garcia", doctor: "Dr. Alan Reyes", datetime: "2026-05-28 11:00 AM", department: "OB-GYN", status: "Pending", phone: "+63 923 456 7890" },
-    { id: 3, patient: "Mike Wilson", doctor: "Dr. Karen Lim", datetime: "2026-05-28 02:00 PM", department: "General Medicine", status: "Confirmed", phone: "+63 934 567 8901" },
-    { id: 4, patient: "Liza Mendoza", doctor: "Dr. Maria Santos", datetime: "2026-05-29 10:15 AM", department: "Family Planning", status: "Cancelled", phone: "+63 945 678 9012" },
-    { id: 5, patient: "Robert Chen", doctor: "Dr. Alan Reyes", datetime: "2026-05-29 03:30 PM", department: "OB-GYN", status: "Pending", phone: "+63 956 789 0123" },
-    { id: 6, patient: "Emma Watson", doctor: "Dr. Karen Lim", datetime: "2026-05-30 09:00 AM", department: "General Medicine", status: "Confirmed", phone: "+63 967 890 1234" },
-  ]);
-
+  const [appointments, setAppointments] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
   const [search, setSearch] = useState("");
   const [deptFilter, setDeptFilter] = useState("All");
   const [statusFilter, setStatusFilter] = useState("All");
 
+  const fetchAppointments = useCallback(async () => {
+    setLoading(true);
+    setError(null);
+    try {
+      const res = await fetch(`${__API_BASE__}/api/admin/appointments`, {
+        credentials: "include",
+      });
+      const data = await res.json();
+      if (data.success) {
+        setAppointments(data.appointments);
+      } else {
+        setError(data.message || "Failed to fetch appointments");
+      }
+    } catch (err) {
+      setError(err.message || "Network error");
+    } finally {
+      setLoading(false);
+    }
+  }, []);
+
+  useEffect(() => {
+    fetchAppointments();
+  }, [fetchAppointments]);
+
+  const handleStatusChange = async (id, newStatus) => {
+    const prev = appointments;
+    setAppointments(appointments.map(a => a._id === id ? { ...a, status: newStatus } : a));
+    try {
+      const res = await fetch(`${__API_BASE__}/api/admin/appointments/${id}/status`, {
+        method: "PUT",
+        credentials: "include",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ status: newStatus.toLowerCase() }),
+      });
+      const data = await res.json();
+      if (!data.success) {
+        setAppointments(prev);
+        alert(data.message || "Failed to update status");
+      }
+    } catch {
+      setAppointments(prev);
+      alert("Network error");
+    }
+  };
+
   const filteredAppointments = appointments.filter(appt => {
-    const matchesSearch = appt.patient.toLowerCase().includes(search.toLowerCase()) || 
-                          appt.doctor.toLowerCase().includes(search.toLowerCase());
+    const matchesSearch = appt.patient?.toLowerCase().includes(search.toLowerCase()) || 
+                          appt.doctor?.toLowerCase().includes(search.toLowerCase());
     const matchesDept = deptFilter === "All" || appt.department === deptFilter;
     const matchesStatus = statusFilter === "All" || appt.status === statusFilter;
     return matchesSearch && matchesDept && matchesStatus;
   });
-
-  const handleStatusChange = (id, newStatus) => {
-    setAppointments(appointments.map(a => a.id === id ? { ...a, status: newStatus } : a));
-  };
 
   // Stats counters
   const total = appointments.length;
@@ -157,11 +192,23 @@ export default function Appointments({ isMobile }) {
         </div>
       </div>
 
-      {isMobile ? (
-        /* ── Mobile: card list ── */
+      {loading ? (
+        <div style={{ textAlign: "center", padding: "60px 20px", color: "#8a96a3", background: "#fff", borderRadius: "16px", border: "1px solid rgba(30,58,95,0.07)" }}>
+          <div style={{ width: "32px", height: "32px", border: "3px solid rgba(30,58,95,0.1)", borderTopColor: NAVY, borderRadius: "50%", animation: "spin 0.8s linear infinite", margin: "0 auto 12px" }} />
+          <p style={{ margin: 0, fontSize: "13px" }}>Loading appointments...</p>
+          <style>{`@keyframes spin { to { transform: rotate(360deg) } }`}</style>
+        </div>
+      ) : error ? (
+        <div style={{ textAlign: "center", padding: "40px 20px", color: RED, background: "#fff", borderRadius: "16px", border: "1px solid rgba(239,68,68,0.15)" }}>
+          <p style={{ margin: "0 0 8px", fontSize: "14px", fontWeight: 600 }}>Failed to load appointments</p>
+          <p style={{ margin: "0 0 16px", fontSize: "12px", color: "#8a96a3" }}>{error}</p>
+          <button onClick={fetchAppointments} style={{ border: "1px solid rgba(30,58,95,0.3)", background: "#fff", color: NAVY, borderRadius: "8px", padding: "6px 18px", fontSize: "12px", fontWeight: 600, cursor: "pointer" }}>Retry</button>
+        </div>
+      ) : isMobile ? (
+        /* â”€â”€ Mobile: card list â”€â”€ */
         <div style={{ display: "flex", flexDirection: "column", gap: "10px" }}>
           {filteredAppointments.length > 0 ? filteredAppointments.map(appt => (
-            <div key={appt.id} style={{ background: "#fff", borderRadius: "14px", padding: "16px", boxShadow: "0 2px 10px rgba(30,58,95,0.07)", border: "1px solid rgba(30,58,95,0.07)" }}>
+            <div key={appt._id} style={{ background: "#fff", borderRadius: "14px", padding: "16px", boxShadow: "0 2px 10px rgba(30,58,95,0.07)", border: "1px solid rgba(30,58,95,0.07)" }}>
               <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", marginBottom: "10px" }}>
                 <div>
                   <div style={{ fontWeight: 700, color: NAVY, fontSize: "14px" }}>{appt.patient}</div>
@@ -182,10 +229,10 @@ export default function Appointments({ isMobile }) {
               </div>
               <div style={{ display: "flex", gap: "8px", paddingTop: "10px", borderTop: "1px solid rgba(30,58,95,0.06)" }}>
                 {appt.status === "Pending" && (
-                  <button onClick={() => handleStatusChange(appt.id, "Confirmed")} style={{ border: "none", background: GREEN, color: "#fff", borderRadius: "6px", padding: "5px 12px", fontSize: "11px", fontWeight: 600, cursor: "pointer" }}>Approve</button>
+                  <button onClick={() => handleStatusChange(appt._id, "Confirmed")} style={{ border: "none", background: GREEN, color: "#fff", borderRadius: "6px", padding: "5px 12px", fontSize: "11px", fontWeight: 600, cursor: "pointer" }}>Approve</button>
                 )}
                 {appt.status !== "Cancelled" && (
-                  <button onClick={() => handleStatusChange(appt.id, "Cancelled")} style={{ border: "1px solid rgba(239,68,68,0.4)", background: "transparent", color: RED, borderRadius: "6px", padding: "5px 12px", fontSize: "11px", fontWeight: 600, cursor: "pointer" }}>Cancel</button>
+                  <button onClick={() => handleStatusChange(appt._id, "Cancelled")} style={{ border: "1px solid rgba(239,68,68,0.4)", background: "transparent", color: RED, borderRadius: "6px", padding: "5px 12px", fontSize: "11px", fontWeight: 600, cursor: "pointer" }}>Cancel</button>
                 )}
                 {appt.status === "Cancelled" && (
                   <span style={{ fontSize: "11px", color: "#a0aec0", fontStyle: "italic" }}>No Actions</span>
@@ -197,7 +244,7 @@ export default function Appointments({ isMobile }) {
           )}
         </div>
       ) : (
-        /* ── Desktop: table ── */
+        /* â”€â”€ Desktop: table â”€â”€ */
         <div style={{ 
           background: "#fff", 
           borderRadius: "0 0 16px 16px", 
@@ -220,7 +267,7 @@ export default function Appointments({ isMobile }) {
             <tbody>
               {filteredAppointments.length > 0 ? (
                 filteredAppointments.map(appt => (
-                  <tr key={appt.id} style={{ borderBottom: "1px solid rgba(30,58,95,0.04)", transition: "background 0.2s" }} onMouseEnter={e => e.currentTarget.style.background = "#f8fafc"} onMouseLeave={e => e.currentTarget.style.background = "transparent"}>
+                  <tr key={appt._id} style={{ borderBottom: "1px solid rgba(30,58,95,0.04)", transition: "background 0.2s" }} onMouseEnter={e => e.currentTarget.style.background = "#f8fafc"} onMouseLeave={e => e.currentTarget.style.background = "transparent"}>
                     <td style={{ padding: "16px 24px" }}>
                       <span style={{ fontWeight: 600, color: NAVY }}>{appt.patient}</span>
                     </td>
@@ -236,10 +283,10 @@ export default function Appointments({ isMobile }) {
                     <td style={{ padding: "16px 24px", textAlign: "right" }}>
                       <div style={{ display: "flex", gap: "8px", justifyContent: "flex-end" }}>
                         {appt.status === "Pending" && (
-                          <button onClick={() => handleStatusChange(appt.id, "Confirmed")} style={{ border: "none", background: GREEN, color: "#fff", borderRadius: "6px", padding: "4px 10px", fontSize: "11px", fontWeight: 600, cursor: "pointer" }}>Approve</button>
+                          <button onClick={() => handleStatusChange(appt._id, "Confirmed")} style={{ border: "none", background: GREEN, color: "#fff", borderRadius: "6px", padding: "4px 10px", fontSize: "11px", fontWeight: 600, cursor: "pointer" }}>Approve</button>
                         )}
                         {appt.status !== "Cancelled" && (
-                          <button onClick={() => handleStatusChange(appt.id, "Cancelled")} style={{ border: "1px solid rgba(239,68,68,0.4)", background: "transparent", color: RED, borderRadius: "6px", padding: "4px 10px", fontSize: "11px", fontWeight: 600, cursor: "pointer" }}>Cancel</button>
+                          <button onClick={() => handleStatusChange(appt._id, "Cancelled")} style={{ border: "1px solid rgba(239,68,68,0.4)", background: "transparent", color: RED, borderRadius: "6px", padding: "4px 10px", fontSize: "11px", fontWeight: 600, cursor: "pointer" }}>Cancel</button>
                         )}
                         {appt.status === "Cancelled" && (
                           <span style={{ fontSize: "11px", color: "#a0aec0", fontStyle: "italic" }}>No Actions</span>

@@ -1,0 +1,5 @@
+{
+  "rewrites": [
+    { "source": "/api/(.*)", "destination": "https://fpop-healthhub.onrender.com/api/$1" }
+  ]
+}

@@ -236,7 +236,7 @@ const DashboardView = ({
       setOtpSent(false);
       setOtpValue("");
       try {
-        const res = await fetch("http://localhost:5000/api/auth/sendEmailOtp", {
+        const res = await fetch(`${__API_BASE__}/api/auth/sendEmailOtp`, {
           method: "POST",
           credentials: "include",
         });
@@ -260,7 +260,7 @@ const DashboardView = ({
     setOtpVerifying(true);
     setOtpError("");
     try {
-      const res = await fetch("http://localhost:5000/api/auth/VerifyEmail", {
+      const res = await fetch(`${__API_BASE__}/api/auth/VerifyEmail`, {
         method: "POST",
         credentials: "include",
         headers: { "Content-Type": "application/json" },
