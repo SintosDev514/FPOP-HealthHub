@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 
-/* ─── SVG icon ─── */
+/* â”€â”€â”€ SVG icon â”€â”€â”€ */
 const Ico = ({ d, size = 14 }) => (
   <svg width={size} height={size} fill="none" stroke="currentColor"
     strokeLinecap="round" strokeLinejoin="round" strokeWidth="2"
@@ -24,7 +24,7 @@ const IC = {
   chevron:   "m9 18 6-6-6-6",
 };
 
-/* ─── palette ─── */
+/* â”€â”€â”€ palette â”€â”€â”€ */
 const TONES = {
   navy:   { bg: "#e8edf5", ic: "#1E3A5F", num: "#1E3A5F", sub: "#3b6ea8" },
   green:  { bg: "#dcfce7", ic: "#16a34a", num: "#15803d", sub: "#16a34a" },
@@ -32,7 +32,7 @@ const TONES = {
   orange: { bg: "#ffedd5", ic: "#ea580c", num: "#c2410c", sub: "#ea580c" },
 };
 
-/* ─── stat card ─── */
+/* â”€â”€â”€ stat card â”€â”€â”€ */
 const StatCard = ({ title, value, sub, icon, tone = "navy" }) => {
   const c = TONES[tone];
   return (
@@ -59,7 +59,7 @@ const StatCard = ({ title, value, sub, icon, tone = "navy" }) => {
   );
 };
 
-/* ─── donut chart ─── */
+/* â”€â”€â”€ donut chart â”€â”€â”€ */
 const DonutChart = ({ data, total }) => {
   const r = 36, circ = 2 * Math.PI * r;
   let off = 0;
@@ -104,7 +104,7 @@ const DonutChart = ({ data, total }) => {
   );
 };
 
-/* ─── mini calendar — compact version ─── */
+/* â”€â”€â”€ mini calendar â€” compact version â”€â”€â”€ */
 const MiniCalendar = ({ appointments }) => {
   const today = new Date();
   const [month, setMonth] = useState(today.getMonth());
@@ -169,7 +169,7 @@ const MiniCalendar = ({ appointments }) => {
   );
 };
 
-/* ─── status badge map ─── */
+/* â”€â”€â”€ status badge map â”€â”€â”€ */
 const SB = {
   completed: { bg: "#dcfce7", color: "#16a34a" },
   pending:   { bg: "#fef9c3", color: "#92400e" },
@@ -177,10 +177,10 @@ const SB = {
   cancelled: { bg: "#fee2e2", color: "#dc2626" },
 };
 
-/* ─── recent appointment row ─── */
+/* â”€â”€â”€ recent appointment row â”€â”€â”€ */
 const RecentApptRow = ({ appt }) => {
   const service = appt.serviceName || "General";
-  const name = `${appt.patientId?.firstName || "–"} ${appt.patientId?.lastName || ""}`.trim();
+  const name = `${appt.patientId?.firstName || "â€“"} ${appt.patientId?.lastName || ""}`.trim();
   const b = SB[appt.status] || { bg: "#f1f5f9", color: "#64748b" };
   return (
     <div style={{ display: "flex", alignItems: "center", gap: 8, padding: "4px 6px",
@@ -208,10 +208,10 @@ const RecentApptRow = ({ appt }) => {
   );
 };
 
-/* ─── schedule row ─── */
+/* â”€â”€â”€ schedule row â”€â”€â”€ */
 const ScheduleRow = ({ appt }) => {
   const service = appt.serviceName || "General";
-  const name = `${appt.patientId?.firstName || "–"} ${appt.patientId?.lastName || ""}`.trim();
+  const name = `${appt.patientId?.firstName || "â€“"} ${appt.patientId?.lastName || ""}`.trim();
   const time = appt.time || "09:00 AM";
   return (
     <div style={{ display: "flex", alignItems: "center", gap: 6, padding: "3px 0",
@@ -228,7 +228,7 @@ const ScheduleRow = ({ appt }) => {
   );
 };
 
-/* ─── activity helpers ─── */
+/* â”€â”€â”€ activity helpers â”€â”€â”€ */
 const actTime = appt => {
   const diff = Date.now() - new Date(appt.createdAt || appt.date).getTime();
   const d = Math.floor(diff / 86400000);
@@ -264,7 +264,7 @@ const ActivityItem = ({ appt }) => {
   );
 };
 
-/* ─── inventory line chart ─── */
+/* â”€â”€â”€ inventory line chart â”€â”€â”€ */
 const InventoryLineChart = () => {
   const [chartData, setChartData] = useState(null);
   const [loading, setLoading] = useState(true);
@@ -272,7 +272,7 @@ const InventoryLineChart = () => {
   useEffect(() => {
     const fetchInventory = async () => {
       try {
-        const res = await fetch("http://localhost:5000/api/inventory/tables", {
+        const res = await fetch(`${__API_BASE__}/api/inventory/tables`, {
           credentials: "include",
         });
         const data = await res.json();
@@ -304,7 +304,7 @@ const InventoryLineChart = () => {
   if (loading) {
     return (
       <div style={{ ...cardStyle, padding: "8px 10px", display: "flex", alignItems: "center", justifyContent: "center", minHeight: 120 }}>
-        <span style={{ fontSize: 9, color: "#94a3b8" }}>Loading inventory…</span>
+        <span style={{ fontSize: 9, color: "#94a3b8" }}>Loading inventoryâ€¦</span>
       </div>
     );
   }
@@ -367,9 +367,9 @@ const InventoryLineChart = () => {
   );
 };
 
-/* ═══════════════════════════════════════════
+/* â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
    MAIN COMPONENT
-═══════════════════════════════════════════ */
+â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• */
 const StaffDashboardView = ({ profile, appointments = [], onStartAssessment, onViewSchedule }) => {
   const todayStr     = new Date().toISOString().split("T")[0];
   const todayCount   = appointments.filter(a => a.date === todayStr).length;
@@ -416,7 +416,7 @@ const StaffDashboardView = ({ profile, appointments = [], onStartAssessment, onV
         padding: "8px 12px", gap: 6, overflow: "hidden",
       }}>
 
-        {/* ── HEADER ── */}
+        {/* â”€â”€ HEADER â”€â”€ */}
         <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", flexShrink: 0 }}>
           <div>
             <h2 style={{ fontSize: 16, fontWeight: 800, color: "#1E3A5F", margin: 0, lineHeight: 1.2 }}>Dashboard Overview</h2>
@@ -427,7 +427,7 @@ const StaffDashboardView = ({ profile, appointments = [], onStartAssessment, onV
           <div style={{ display: "flex", alignItems: "center", gap: 8 }} />
         </div>
 
-        {/* ── STAT CARDS ── */}
+        {/* â”€â”€ STAT CARDS â”€â”€ */}
         <div style={{ display: "grid", gridTemplateColumns: "repeat(4,1fr)", gap: 6, flexShrink: 0 }}>
           <StatCard title="Total Appointments" value={totalAppts}      sub={`${upcomingCount} upcoming`}  icon="calendar" tone="navy"   />
           <StatCard title="Today"              value={todayCount}      sub={`${todayCount} appointments`} icon="trend"    tone="green"  />
@@ -435,7 +435,7 @@ const StaffDashboardView = ({ profile, appointments = [], onStartAssessment, onV
           <StatCard title="Completed"          value={completedCount}  sub="Successfully done"            icon="check"    tone="orange" />
         </div>
 
-        {/* ── ROW 3: appointment overview + inventory chart + quick stats ── */}
+        {/* â”€â”€ ROW 3: appointment overview + inventory chart + quick stats â”€â”€ */}
         <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr 280px", gap: 6, flexShrink: 0 }}>
 
           {/* Appointment Overview */}
@@ -493,7 +493,7 @@ const StaffDashboardView = ({ profile, appointments = [], onStartAssessment, onV
           </div>
         </div>
 
-        {/* ── ROW 4: schedule + recent appointments + activity  ── */}
+        {/* â”€â”€ ROW 4: schedule + recent appointments + activity  â”€â”€ */}
         <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr 1fr", gap: 6, flex: 1, minHeight: 0 }}>
 
           {/* Upcoming Schedule */}
@@ -513,7 +513,7 @@ const StaffDashboardView = ({ profile, appointments = [], onStartAssessment, onV
             </div>
             {/* inline footer */}
             <div style={{ display: "flex", justifyContent: "space-between", marginTop: "auto", paddingTop: 4, flexShrink: 0 }}>
-              <span style={{ fontSize: 8, color: "#cbd5e1" }}>© 2026 Your Company. All rights reserved.</span>
+              <span style={{ fontSize: 8, color: "#cbd5e1" }}>Â© 2026 Your Company. All rights reserved.</span>
               <div style={{ display: "flex", gap: 8 }}>
                 <span style={{ fontSize: 8, color: "#94a3b8", cursor: "pointer" }}>Privacy Policy</span>
                 <span style={{ fontSize: 8, color: "#94a3b8", cursor: "pointer" }}>Terms of Service</span>

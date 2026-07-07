@@ -105,7 +105,7 @@ const StaffScheduleView = ({ appointments = [], onRefresh }) => {
   const handleStatusChange = async (id, status) => {
     setUpdating(id);
     try {
-      const res = await fetch(`http://localhost:5000/api/appointments/${id}/status`, {
+      const res = await fetch(`${__API_BASE__}/api/appointments/${id}/status`, {
         method: "PUT",
         credentials: "include",
         headers: { "Content-Type": "application/json" },
@@ -260,7 +260,7 @@ const StaffScheduleView = ({ appointments = [], onRefresh }) => {
                             </button>
                           </div>
                         ) : (
-                          <span className="text-[9px] text-[#8a96a3]">—</span>
+                          <span className="text-[9px] text-[#8a96a3]">â€”</span>
                         )}
                       </td>
                     </tr>

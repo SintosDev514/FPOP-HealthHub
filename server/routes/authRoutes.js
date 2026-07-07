@@ -12,11 +12,10 @@ import {
 } from "../controllers/authController.js";
 
 import userAuth from "../middleware/userAuth.js";
-import verifyRecaptcha from "../middleware/verifyRecaptcha.js";
 
 const authRouter = express.Router();
 
-authRouter.post("/register", verifyRecaptcha, SignUp);
+authRouter.post("/register", SignUp);
 authRouter.post("/login", SignIn);
 authRouter.post("/logout", Logout);
 
@@ -25,7 +24,7 @@ authRouter.post("/VerifyEmail", userAuth, VerifyEmail);
 authRouter.get("/isAuthenticated", userAuth, isAuthenticated);
 
 authRouter.post("/sendResetOtp", sendResetOtp);
-authRouter.post("/resetPassword", verifyRecaptcha, resetPassword);
+authRouter.post("/resetPassword", resetPassword);
 
 authRouter.get("/me", userAuth, (req, res) => {
   res.json({

@@ -188,7 +188,7 @@ const StaffDashboard = () => {
 
   const fetchProfile = async () => {
     try {
-      const res = await fetch("http://localhost:5000/api/user/data", {
+      const res = await fetch(`${__API_BASE__}/api/user/data`, {
         credentials: "include",
       });
       const data = await res.json();
@@ -203,7 +203,7 @@ const StaffDashboard = () => {
   const fetchAppointments = async () => {
     try {
       console.log("Fetching staff appointments...");
-      const res = await fetch("http://localhost:5000/api/appointments/staff", {
+      const res = await fetch(`${__API_BASE__}/api/appointments/staff`, {
         credentials: "include",
       });
       console.log("Response status:", res.status);
@@ -270,7 +270,7 @@ const StaffDashboard = () => {
               <div className="relative">
                 <div className="absolute inset-0 rounded-full bg-[#F5C518]/20 blur-md transition-all duration-300 group-hover:bg-[#F5C518]/30" />
                 <img
-                  src="/FPOPLOGO1.png"
+                  src="/logoo.png"
                   alt="FPOP Clinic Portal"
                   className="relative h-12 w-12 object-contain transition-all duration-300 group-hover:scale-105"
                 />
@@ -347,7 +347,7 @@ const StaffDashboard = () => {
       </header>
 
       <div style={{ height: "calc(100vh - 48px)", position: "relative", display: "flex", overflow: "hidden" }}>
-        {/* ════════════════ SIDEBAR ════════════════ */}
+        {/* â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• SIDEBAR â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• */}
         <aside
           onMouseEnter={() => setSidebarHovered(true)}
           onMouseLeave={() => setSidebarHovered(false)}
@@ -367,7 +367,7 @@ const StaffDashboard = () => {
             boxShadow: "4px 0 32px rgba(21,44,74,0.22)",
           }}
         >
-          {/* ── Brand logo ── */}
+          {/* â”€â”€ Brand logo â”€â”€ */}
           <div
             style={{
               padding: isIconOnly ? "20px 0" : "20px 18px",
@@ -381,7 +381,7 @@ const StaffDashboard = () => {
             }}
           >
             <img
-              src="/FPOPLOGO1.png"
+              src="/logoo.png"
               alt="FPOP Logo"
               style={{ width: "36px", height: "36px", objectFit: "contain", flexShrink: 0 }}
             />
@@ -397,14 +397,14 @@ const StaffDashboard = () => {
             )}
           </div>
 
-          {/* ── Section label ── */}
+          {/* â”€â”€ Section label â”€â”€ */}
           {!isIconOnly && (
             <div style={{ padding: "16px 18px 6px", fontSize: "10px", fontWeight: 700, color: "rgba(255,255,255,0.3)", textTransform: "uppercase", letterSpacing: "1.2px", whiteSpace: "nowrap" }}>
               Main Menu
             </div>
           )}
 
-          {/* ── Navigation links ── */}
+          {/* â”€â”€ Navigation links â”€â”€ */}
           <nav style={{ flex: 1, padding: "8px 0", display: "flex", flexDirection: "column", gap: "2px" }}>
             {navItems.map((item) => (
               <StaffNavBtn
@@ -417,23 +417,23 @@ const StaffDashboard = () => {
             ))}
           </nav>
 
-          {/* ── Divider ── */}
+          {/* â”€â”€ Divider â”€â”€ */}
           <div style={{ margin: "0 12px", height: "1px", background: "rgba(255,255,255,0.07)" }} />
 
-          {/* ── Bottom: Logout ── */}
+          {/* â”€â”€ Bottom: Logout â”€â”€ */}
           <div style={{ padding: "10px 0 16px", display: "flex", flexDirection: "column", gap: "2px" }}>
             <StaffLogoutBtn isIconOnly={isIconOnly} logout={logout} />
           </div>
 
-          {/* ── Sidebar footer watermark ── */}
+          {/* â”€â”€ Sidebar footer watermark â”€â”€ */}
           {!isIconOnly && (
             <div style={{ padding: "10px 18px 16px", fontSize: "10px", color: "rgba(255,255,255,0.18)", whiteSpace: "nowrap", fontStyle: "italic" }}>
-              © 2025 FPOP HealthHub System
+              Â© 2025 FPOP HealthHub System
             </div>
           )}
         </aside>
 
-        {/* ════════════════ MAIN CONTENT ════════════════ */}
+        {/* â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• MAIN CONTENT â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• */}
         <div
           style={{
             marginLeft: sidebarW,

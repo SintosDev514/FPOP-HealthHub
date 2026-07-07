@@ -11,7 +11,7 @@ export const AuthProvider = ({ children }) => {
 
   const checkAuth = async () => {
     try {
-      const res = await fetch("http://localhost:5000/api/auth/me", {
+      const res = await fetch(`${__API_BASE__}/api/auth/me`, {
         credentials: "include",
       });
 
@@ -37,7 +37,7 @@ export const AuthProvider = ({ children }) => {
 
   const logout = async () => {
     try {
-      await fetch("http://localhost:5000/api/auth/logout", {
+      await fetch(`${__API_BASE__}/api/auth/logout`, {
         method: "POST",
         credentials: "include",
       });
@@ -45,7 +45,7 @@ export const AuthProvider = ({ children }) => {
       console.error(err);
     } finally {
       setUser(null);
-      window.location.href = "/login";
+      window.location.href = "/";
     }
   };
 

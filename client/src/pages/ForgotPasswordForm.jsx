@@ -31,7 +31,7 @@ export default function ForgotPasswordForm() {
     setIsLoading(true);
 
     try {
-      const res = await fetch("http://localhost:5000/api/auth/sendResetOtp", {
+      const res = await fetch(`${__API_BASE__}/api/auth/sendResetOtp`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -116,7 +116,7 @@ export default function ForgotPasswordForm() {
                 Sending OTP...
               </>
             ) : (
-              "Send OTP"
+              "Send OTP â†’"
             )}
           </button>
 
@@ -126,7 +126,7 @@ export default function ForgotPasswordForm() {
               onClick={() => navigate("/login")}
               className="text-[#1E3A5F] hover:text-[#F5C518] font-bold transition-colors duration-300 flex items-center justify-center gap-1.5 mx-auto"
             >
-              Back to Sign In
+              <span>â†</span> Back to Sign In
             </button>
           </p>
         </form>
