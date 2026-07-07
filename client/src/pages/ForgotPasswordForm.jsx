@@ -116,7 +116,7 @@ export default function ForgotPasswordForm() {
                 Sending OTP...
               </>
             ) : (
-              "Send OTP â†’"
+              "Send OTP"
             )}
           </button>
 
