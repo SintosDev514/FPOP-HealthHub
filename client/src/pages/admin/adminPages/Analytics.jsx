@@ -61,7 +61,7 @@ export default function Analytics({ isMobile }) {
     setLoading(true);
     setErr(null);
     try {
-      const res = await fetch("__API_BASE__/api/admin/analytics", { credentials: "include" });
+      const res = await fetch(`${__API_BASE__}/api/admin/analytics`, { credentials: "include" });
       const j = await res.json();
       if (j.success) setData(j.analytics);
       else setErr(j.message);
@@ -124,7 +124,7 @@ export default function Analytics({ isMobile }) {
   return (
     <main style={{ flex: 1, padding: isMobile ? "20px 16px" : "28px 32px", overflowY: "auto", background: "#f8fafc" }}>
 
-      {/* ── Header ── */}
+      {/* â”€â”€ Header â”€â”€ */}
       <div style={{ marginBottom: 28, display: "flex", justifyContent: "space-between", alignItems: "flex-start", flexWrap: "wrap", gap: 12 }}>
         <div>
           <h1 style={{ margin: 0, fontSize: isMobile ? 22 : 26, fontWeight: 700, color: NAVY, letterSpacing: "-0.3px" }}>Analytics</h1>
@@ -138,7 +138,7 @@ export default function Analytics({ isMobile }) {
         </select>
       </div>
 
-      {/* ── Metric cards ── */}
+      {/* â”€â”€ Metric cards â”€â”€ */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
         {cards.map((c, i) => (
           <div key={i} style={{ background: "#fff", borderRadius: 12, padding: "18px 20px", border: "1px solid #eef2f6", boxShadow: "0 1px 3px rgba(0,0,0,.04)" }}>
@@ -152,7 +152,7 @@ export default function Analytics({ isMobile }) {
         ))}
       </div>
 
-      {/* ── Row 2: Status donut + Monthly trend ── */}
+      {/* â”€â”€ Row 2: Status donut + Monthly trend â”€â”€ */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-5 mb-6">
 
         <div style={{ background: "#fff", borderRadius: 12, padding: 24, border: "1px solid #eef2f6", boxShadow: "0 1px 3px rgba(0,0,0,.04)" }}>
@@ -191,7 +191,7 @@ export default function Analytics({ isMobile }) {
 
       </div>
 
-      {/* ── Row 3: Department bars + Performance ── */}
+      {/* â”€â”€ Row 3: Department bars + Performance â”€â”€ */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-5">
 
         <div style={{ background: "#fff", borderRadius: 12, padding: 24, border: "1px solid #eef2f6", boxShadow: "0 1px 3px rgba(0,0,0,.04)" }}>

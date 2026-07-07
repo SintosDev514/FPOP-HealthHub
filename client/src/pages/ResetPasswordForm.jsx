@@ -80,7 +80,7 @@ export default function ResetPasswordForm({ onComplete }) {
     setResendCooldown(30);
 
     try {
-      await fetch("__API_BASE__/api/auth/sendResetOtp", {
+      await fetch(`${__API_BASE__}/api/auth/sendResetOtp`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ email }),
@@ -118,7 +118,7 @@ export default function ResetPasswordForm({ onComplete }) {
     setIsLoading(true);
 
     try {
-      const res = await fetch("__API_BASE__/api/auth/resetPassword", {
+      const res = await fetch(`${__API_BASE__}/api/auth/resetPassword`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         credentials: "include",

@@ -497,7 +497,7 @@ const StaffInventoryView = ({ hideHeader }) => {
 
   const fetchTables = async () => {
     try {
-      const res = await fetch("__API_BASE__/api/inventory/tables", {
+      const res = await fetch(`${__API_BASE__}/api/inventory/tables`, {
         credentials: "include",
       });
       const data = await res.json();
@@ -509,7 +509,7 @@ const StaffInventoryView = ({ hideHeader }) => {
     }
   };
 
-  const API = "__API_BASE__/api/inventory";
+  const API = `${__API_BASE__}/api/inventory`;
 
   const activeTable = tables.find((t) => t._id === activeTableId);
   const activeCategory = activeTable?.categories.find(

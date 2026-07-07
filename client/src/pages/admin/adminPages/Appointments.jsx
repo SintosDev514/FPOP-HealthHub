@@ -55,7 +55,7 @@ export default function Appointments({ isMobile }) {
     setLoading(true);
     setError(null);
     try {
-      const res = await fetch("__API_BASE__/api/admin/appointments", {
+      const res = await fetch(`${__API_BASE__}/api/admin/appointments`, {
         credentials: "include",
       });
       const data = await res.json();
@@ -79,7 +79,7 @@ export default function Appointments({ isMobile }) {
     const prev = appointments;
     setAppointments(appointments.map(a => a._id === id ? { ...a, status: newStatus } : a));
     try {
-      const res = await fetch(`__API_BASE__/api/admin/appointments/${id}/status`, {
+      const res = await fetch(`${__API_BASE__}/api/admin/appointments/${id}/status`, {
         method: "PUT",
         credentials: "include",
         headers: { "Content-Type": "application/json" },
@@ -205,7 +205,7 @@ export default function Appointments({ isMobile }) {
           <button onClick={fetchAppointments} style={{ border: "1px solid rgba(30,58,95,0.3)", background: "#fff", color: NAVY, borderRadius: "8px", padding: "6px 18px", fontSize: "12px", fontWeight: 600, cursor: "pointer" }}>Retry</button>
         </div>
       ) : isMobile ? (
-        /* ── Mobile: card list ── */
+        /* â”€â”€ Mobile: card list â”€â”€ */
         <div style={{ display: "flex", flexDirection: "column", gap: "10px" }}>
           {filteredAppointments.length > 0 ? filteredAppointments.map(appt => (
             <div key={appt._id} style={{ background: "#fff", borderRadius: "14px", padding: "16px", boxShadow: "0 2px 10px rgba(30,58,95,0.07)", border: "1px solid rgba(30,58,95,0.07)" }}>
@@ -244,7 +244,7 @@ export default function Appointments({ isMobile }) {
           )}
         </div>
       ) : (
-        /* ── Desktop: table ── */
+        /* â”€â”€ Desktop: table â”€â”€ */
         <div style={{ 
           background: "#fff", 
           borderRadius: "0 0 16px 16px", 

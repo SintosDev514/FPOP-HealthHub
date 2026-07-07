@@ -70,7 +70,7 @@ const AppointmentBooking = ({ onSaveAppointment }) => {
   const fetchStaff = async () => {
     setLoadingStaff(true);
     try {
-      const res = await fetch("__API_BASE__/api/staff", {
+      const res = await fetch(`${__API_BASE__}/api/staff`, {
         credentials: "include",
       });
       const data = await res.json();
@@ -95,7 +95,7 @@ const AppointmentBooking = ({ onSaveAppointment }) => {
       try {
         const dateStr = toInputDate(selectedDate);
         const res = await fetch(
-          `__API_BASE__/api/appointments/slots?staffId=${selectedProvider}&date=${dateStr}`,
+          `${__API_BASE__}/api/appointments/slots?staffId=${selectedProvider}&date=${dateStr}`,
           { credentials: "include" }
         );
         const data = await res.json();
@@ -177,7 +177,7 @@ const AppointmentBooking = ({ onSaveAppointment }) => {
     setSubmitting(true);
     setError("");
     try {
-      const res = await fetch("__API_BASE__/api/appointments", {
+      const res = await fetch(`${__API_BASE__}/api/appointments`, {
         method: "POST",
         credentials: "include",
         headers: { "Content-Type": "application/json" },

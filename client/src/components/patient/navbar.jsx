@@ -74,7 +74,7 @@ const Navbar = ({
   const fetchNotifications = useCallback(async () => {
     try {
       setNotifLoading(true);
-      const res = await fetch("__API_BASE__/api/notifications", {
+      const res = await fetch(`${__API_BASE__}/api/notifications`, {
         credentials: "include",
       });
       const data = await res.json();
@@ -108,7 +108,7 @@ const Navbar = ({
   }, []);
 
   const markRead = async (id) => {
-    await fetch(`__API_BASE__/api/notifications/${id}/read`, {
+    await fetch(`${__API_BASE__}/api/notifications/${id}/read`, {
       method: "PUT",
       credentials: "include",
     });
@@ -119,7 +119,7 @@ const Navbar = ({
   };
 
   const markAllRead = async () => {
-    await fetch("__API_BASE__/api/notifications/read-all", {
+    await fetch(`${__API_BASE__}/api/notifications/read-all`, {
       method: "PUT",
       credentials: "include",
     });

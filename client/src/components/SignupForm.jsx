@@ -61,7 +61,7 @@ function SignupForm() {
     }
 
     try {
-      const res = await fetch("__API_BASE__/api/auth/register", {
+      const res = await fetch(`${__API_BASE__}/api/auth/register`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",

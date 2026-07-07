@@ -19,7 +19,7 @@ const CombinedDashboard = () => {
 
   const fetchUser = async () => {
     try {
-      const res = await fetch("__API_BASE__/api/user/data", {
+      const res = await fetch(`${__API_BASE__}/api/user/data`, {
         credentials: "include",
       });
 
@@ -50,7 +50,7 @@ const CombinedDashboard = () => {
 
   const fetchAppointments = async () => {
     try {
-      const res = await fetch("__API_BASE__/api/appointments", {
+      const res = await fetch(`${__API_BASE__}/api/appointments`, {
         credentials: "include",
       });
       const data = await res.json();
@@ -77,7 +77,7 @@ const CombinedDashboard = () => {
         body.append("avatar", formData.avatarFile);
       }
 
-      const res = await fetch("__API_BASE__/api/user/update", {
+      const res = await fetch(`${__API_BASE__}/api/user/update`, {
         method: "PUT",
         credentials: "include",
         body,

@@ -43,7 +43,7 @@ export default function UserManagement({ isMobile }) {
     setLoading(true);
     setError("");
     try {
-      const res = await fetch("__API_BASE__/api/admin/users", {
+      const res = await fetch(`${__API_BASE__}/api/admin/users`, {
         credentials: "include",
       });
       const data = await res.json();
@@ -92,7 +92,7 @@ export default function UserManagement({ isMobile }) {
     setSaving(true);
     setError("");
     try {
-      const res = await fetch("__API_BASE__/api/admin/users", {
+      const res = await fetch(`${__API_BASE__}/api/admin/users`, {
         method: "POST",
         credentials: "include",
         headers: { "Content-Type": "application/json" },
@@ -132,7 +132,7 @@ export default function UserManagement({ isMobile }) {
     const user = confirmDelete;
     setConfirmDelete(null);
     try {
-      const res = await fetch(`__API_BASE__/api/admin/users/${user._id}`, {
+      const res = await fetch(`${__API_BASE__}/api/admin/users/${user._id}`, {
         method: "DELETE",
         credentials: "include",
       });
@@ -150,7 +150,7 @@ export default function UserManagement({ isMobile }) {
   const toggleStatus = async (user) => {
     const newStatus = !user.isSuspended;
     try {
-      const res = await fetch(`__API_BASE__/api/admin/users/${user._id}`, {
+      const res = await fetch(`${__API_BASE__}/api/admin/users/${user._id}`, {
         method: "PUT",
         credentials: "include",
         headers: { "Content-Type": "application/json" },
@@ -178,7 +178,7 @@ export default function UserManagement({ isMobile }) {
     const { user, newRole } = confirmRole;
     setConfirmRole(null);
     try {
-      const res = await fetch(`__API_BASE__/api/admin/users/${user._id}`, {
+      const res = await fetch(`${__API_BASE__}/api/admin/users/${user._id}`, {
         method: "PUT",
         credentials: "include",
         headers: { "Content-Type": "application/json" },
@@ -198,7 +198,7 @@ export default function UserManagement({ isMobile }) {
   };
 
   const formatDate = (d) => {
-    if (!d) return "—";
+    if (!d) return "â€”";
     return new Date(d).toISOString().split("T")[0];
   };
 
