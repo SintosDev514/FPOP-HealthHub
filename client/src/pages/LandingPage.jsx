@@ -6,9 +6,15 @@ function LandingPage() {
 
   return (
     <section className="relative min-h-screen flex items-center overflow-hidden">
-      {/* Background image */}
+      {/* Background image - mobile */}
       <div
-        className="absolute inset-0 bg-cover bg-center bg-no-repeat"
+        className="absolute inset-0 bg-cover bg-center bg-no-repeat md:hidden"
+        style={{ backgroundImage: "url(/portrait-logo-mobile-view.jfif)" }}
+      />
+
+      {/* Background image - desktop */}
+      <div
+        className="absolute inset-0 bg-cover bg-center bg-no-repeat hidden md:block"
         style={{ backgroundImage: "url(/fpopbg1.jpg)" }}
       />
 
