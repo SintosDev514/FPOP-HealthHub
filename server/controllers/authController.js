@@ -1,7 +1,7 @@
 import bcrypt from "bcryptjs";
 import jwt from "jsonwebtoken";
 
-import transporter from "../config/nodeMailer.js";
+import resend from "../config/nodeMailer.js";
 import userModel from "../models/userModel.js";
 
 export const SignUp = async (req, res) => {
@@ -136,7 +136,7 @@ export const SignUp = async (req, res) => {
   `,
     };
 
-    transporter.sendMail(mailOptions).catch((err) => console.error("Welcome email failed:", err));
+    resend.emails.send(mailOptions).catch((err) => console.error("Welcome email failed:", err));
 
     res.status(201).json({
       success: true,
@@ -345,7 +345,7 @@ export const SendVerifyEmailOtp = async (req, res) => {
   `,
     };
 
-    transporter.sendMail(mailOption).catch((err) => console.error("Verify email failed:", err));
+    resend.emails.send(mailOption).catch((err) => console.error("Verify email failed:", err));
     res
       .status(200)
       .json({ success: true, message: "Verification sent Successful" });
@@ -536,7 +536,7 @@ export const sendResetOtp = async (req, res) => {
   `,
     };
 
-    transporter.sendMail(mailOption).catch((err) => console.error("Reset OTP email failed:", err));
+    resend.emails.send(mailOption).catch((err) => console.error("Reset OTP email failed:", err));
 
     return res.status(200).json({
       success: true,

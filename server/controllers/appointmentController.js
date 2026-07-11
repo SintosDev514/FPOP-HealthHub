@@ -1,6 +1,6 @@
 import appointmentModel from "../models/appointmentModels.js";
 import userModel from "../models/userModel.js";
-import transporter from "../config/nodeMailer.js";
+import resend from "../config/nodeMailer.js";
 import notificationModel from "../models/notificationModel.js";
 
 const generateTimeSlots = (start, end) => {
@@ -158,7 +158,7 @@ const createAppointment = async (req, res) => {
   </div>`,
       };
 
-      transporter.sendMail(mailOptions).catch((err) => console.error("Email send failed:", err));
+      resend.emails.send(mailOptions).catch((err) => console.error("Email send failed:", err));
     }
 
     const staffName = `${populated.staffId?.firstName || ""} ${populated.staffId?.lastName || ""}`.trim();
@@ -306,7 +306,7 @@ const updateAppointmentStatus = async (req, res) => {
   </div>`,
     };
 
-    transporter.sendMail(mailOptions).catch((err) => console.error("Email send failed:", err));
+    resend.emails.send(mailOptions).catch((err) => console.error("Email send failed:", err));
 
     Promise.all([
       notificationModel.create({

@@ -3,6 +3,7 @@ import { useNavigate } from "react-router-dom";
 import logo from "../assets/logo.png";
 import { EyeIcon, EyeOffIcon } from "../components/icon/EyeIcons";
 import { useAuth } from "../context/AuthContext";
+import API_BASE from "../apiBase";
 
 function LoginForm() {
   const [showPassword, setShowPassword] = useState(false);
@@ -21,7 +22,7 @@ function LoginForm() {
     e.preventDefault();
 
     try {
-      const res = await fetch(`${__API_BASE__}/api/auth/login`, {
+      const res = await fetch(`${API_BASE}/api/auth/login`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -97,7 +98,7 @@ function LoginForm() {
                     type={showPassword ? "text" : "password"}
                     value={password}
                     onChange={(e) => setPassword(e.target.value)}
-                    placeholder="â€¢â€¢â€¢â€¢â€¢â€¢â€¢â€¢"
+                    placeholder="************"
                     required
                     className="w-full h-9 rounded-xl border border-slate-200 bg-white/60 px-3 pr-10 outline-none focus:border-[#F5C518] focus:ring-4 focus:ring-[#F5C518]/10 transition-all duration-300 text-xs text-slate-700"
                   />
@@ -187,7 +188,11 @@ function LoginForm() {
 
         <div className="relative z-10 flex flex-col items-center text-center max-w-sm">
           <div className="w-20 h-20 lg:w-24 lg:h-24 bg-white/10 rounded-2xl flex items-center justify-center mb-4 ring-2 ring-[#F5C518]/30 backdrop-blur-sm">
-            <img src={logo} alt="FPOP Clinic" className="w-14 h-14 lg:w-16 lg:h-16" />
+            <img
+              src={logo}
+              alt="FPOP Clinic"
+              className="w-14 h-14 lg:w-16 lg:h-16"
+            />
           </div>
           <h1 className="text-xl lg:text-2xl font-bold text-white mb-1">
             FPOP Clinic Portal
@@ -204,8 +209,18 @@ function LoginForm() {
             ].map((text, i) => (
               <div key={i} className="flex items-center gap-2.5">
                 <div className="w-4 h-4 rounded-full bg-[#F5C518]/20 flex items-center justify-center flex-shrink-0">
-                  <svg className="w-2.5 h-2.5 text-[#F5C518]" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={3}>
-                    <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" />
+                  <svg
+                    className="w-2.5 h-2.5 text-[#F5C518]"
+                    fill="none"
+                    viewBox="0 0 24 24"
+                    stroke="currentColor"
+                    strokeWidth={3}
+                  >
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      d="M5 13l4 4L19 7"
+                    />
                   </svg>
                 </div>
                 <span className="text-white/80 text-xs">{text}</span>
