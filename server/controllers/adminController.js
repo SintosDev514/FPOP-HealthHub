@@ -457,4 +457,4 @@ const deleteUser = async (req, res) => {
   }
 };
 
-export { listUsers, createUser, updateUser, deleteUser, getAllAppointments, getAnalytics };
+export { getDashboardOverview, listUsers, createUser, updateUser, deleteUser, getAllAppointments, getAnalytics };
