@@ -1,5 +1,6 @@
 {
   "rewrites": [
-    { "source": "/api/(.*)", "destination": "https://fpop-healthhub.onrender.com/api/$1" }
+    { "source": "/api/(.*)", "destination": "https://fpop-healthhub.onrender.com/api/$1" },
+    { "source": "/((?!assets/|.*\\.).*)", "destination": "/index.html" }
   ]
 }
