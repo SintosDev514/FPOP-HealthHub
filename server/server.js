@@ -54,14 +54,13 @@ app.use("/api/inventory", inventoryRouter);
 
 import mailer from "./config/nodeMailer.js";
 
-if (!process.env.SENDGRID_API_KEY) {
-  console.warn("⚠ SENDGRID_API_KEY is not set - emails will not work");
+const emailVars = ["EMAILJS_SERVICE_ID", "EMAILJS_TEMPLATE_ID", "EMAILJS_PUBLIC_KEY"];
+const missing = emailVars.filter((v) => !process.env[v]);
+if (missing.length) {
+  console.warn("⚠ Missing email env vars:", missing.join(", "));
+} else {
+  console.log("EMAIL CONFIG: All EmailJS env vars set");
 }
-if (!process.env.SENDER_EMAIL) {
-  console.warn("⚠ SENDER_EMAIL is not set - emails will not work");
-}
-console.log("EMAIL CONFIG - SENDER:", process.env.SENDER_EMAIL || "NOT SET");
-console.log("EMAIL CONFIG - SENDGRID_API_KEY:", process.env.SENDGRID_API_KEY ? "SET" : "NOT SET");
 
 app.get("/api/test-email", async (req, res) => {
   const testTo = req.query.to;
@@ -70,16 +69,15 @@ app.get("/api/test-email", async (req, res) => {
   }
   try {
     await mailer.sendMail({
-      from: `"FPOP HealthHub" <${process.env.SENDER_EMAIL}>`,
       to: testTo,
       subject: "FPOP HealthHub - Test Email",
-      html: "<h1>It works!</h1><p>Your SendGrid email system is configured correctly.</p>",
+      html: "<h1>It works!</h1><p>Your EmailJS email system is configured correctly.</p>",
     });
     console.log("TEST EMAIL SUCCESS sent to:", testTo);
     res.json({ success: true, message: "Email sent!" });
   } catch (err) {
-    console.error("TEST EMAIL FAILED:", err.message, err.response?.body || err);
-    res.status(500).json({ success: false, error: err.message, details: err.response?.body || null });
+    console.error("TEST EMAIL FAILED:", err.message);
+    res.status(500).json({ success: false, error: err.message });
   }
 });
 
