@@ -8,7 +8,7 @@ const EyeIcon = () => (
     viewBox="0 0 24 24"
     fill="none"
     stroke="currentColor"
-    className="w-5 h-5"
+    className="w-4 h-4"
   >
     <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z" />
     <circle cx="12" cy="12" r="3" />
@@ -20,7 +20,7 @@ const EyeOffIcon = () => (
     viewBox="0 0 24 24"
     fill="none"
     stroke="currentColor"
-    className="w-5 h-5"
+    className="w-4 h-4"
   >
     <path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8" />
     <line x1="1" y1="1" x2="23" y2="23" />
@@ -28,7 +28,7 @@ const EyeOffIcon = () => (
 );
 
 const SpinnerIcon = () => (
-  <div className="animate-spin h-5 w-5 border-2 border-white border-t-transparent rounded-full"></div>
+  <div className="animate-spin h-4 w-4 border-2 border-white border-t-transparent rounded-full"></div>
 );
 
 export default function ResetPasswordForm({ onComplete }) {
@@ -146,114 +146,208 @@ export default function ResetPasswordForm({ onComplete }) {
   };
 
   return (
-    <div className="min-h-screen py-16 px-4 flex items-center justify-center relative overflow-hidden bg-[#F9FAFB]">
-      {/* Soft floating background gradient blobs */}
-      <div className="absolute top-1/4 left-1/4 w-[400px] h-[400px] bg-blue-100/40 rounded-full blur-3xl opacity-80 animate-pulse pointer-events-none -z-10" />
-      <div className="absolute bottom-1/4 right-1/4 w-[400px] h-[400px] bg-[#F5C518]/10 rounded-full blur-3xl opacity-60 animate-pulse pointer-events-none -z-10 [animation-delay:2s]" />
+    <div className="min-h-[calc(100vh-56px)] flex flex-col lg:flex-row bg-[#F9FAFB]">
+      {/* Left Panel - Form */}
+      <div className="relative lg:w-1/2 min-h-[calc(100vh-56px)] flex items-center justify-center p-4 lg:p-12 overflow-hidden">
+        {/* Background blobs */}
+        <div className="absolute top-1/3 -left-20 w-[350px] h-[350px] bg-blue-100/40 rounded-full blur-3xl opacity-80 pointer-events-none -z-10" />
+        <div className="absolute bottom-1/3 -right-20 w-[350px] h-[350px] bg-[#F5C518]/10 rounded-full blur-3xl opacity-60 pointer-events-none -z-10" />
 
-      <div className="w-full max-w-lg bg-white/85 backdrop-blur-md border border-white/40 shadow-[0_24px_50px_rgba(30,58,95,0.06)] rounded-[2.5rem] p-8 md:p-10 z-10">
-        <div className="text-center mb-8">
-          <img
-            src={logo}
-            alt="Logo"
-            className="w-16 h-16 mx-auto mb-4 rounded-full object-cover shadow-md border-2 border-white"
-          />
-          <h2 className="text-3xl md:text-4xl font-bold text-[#1E3A5F] tracking-tight">Reset Password</h2>
-          <p className="mt-2.5 text-slate-500 text-base break-all font-semibold">{email}</p>
-        </div>
-
-        <form onSubmit={handleSubmit} className="space-y-6">
-          {/* OTP */}
-          <div>
-            <label className="block text-[#1E3A5F] font-bold text-sm tracking-wide uppercase mb-3 text-center">
-              Enter OTP
-            </label>
-
-            <div className="flex justify-center gap-2">
-              {otp.map((digit, i) => (
-                <input
-                  key={i}
-                  id={`otp-${i}`}
-                  maxLength={1}
-                  value={digit}
-                  onChange={(e) => handleOtpChange(i, e.target.value)}
-                  className="w-12 h-14 text-center text-xl font-bold rounded-2xl border border-slate-200 bg-white/60 focus:border-[#F5C518] focus:ring-4 focus:ring-[#F5C518]/10 outline-none transition-all duration-300 text-[#1E3A5F]"
-                />
-              ))}
+        <div className="w-full max-w-md">
+          <div className="bg-white/85 backdrop-blur-md border border-white/40 shadow-[0_20px_42px_rgba(30,58,95,0.06)] rounded-[2rem] p-5 md:p-6">
+            <div className="mb-4">
+              <h2 className="text-xl font-bold text-[#1E3A5F] tracking-tight">
+                Reset Password
+              </h2>
+              <p className="mt-0.5 text-slate-500 text-xs break-all">
+                {email}
+              </p>
             </div>
 
-            <div className="text-center mt-4">
+            <form onSubmit={handleSubmit} className="space-y-3">
+              {/* OTP */}
+              <div>
+                <label className="block text-[#1E3A5F] font-semibold text-[10px] tracking-wide uppercase mb-1 text-center">
+                  Enter OTP
+                </label>
+
+                <div className="flex justify-center gap-2">
+                  {otp.map((digit, i) => (
+                    <input
+                      key={i}
+                      id={`otp-${i}`}
+                      maxLength={1}
+                      value={digit}
+                      onChange={(e) => handleOtpChange(i, e.target.value)}
+                      className="w-9 h-10 text-center text-sm font-bold rounded-xl border border-slate-200 bg-white/60 focus:border-[#F5C518] focus:ring-4 focus:ring-[#F5C518]/10 outline-none transition-all duration-300 text-[#1E3A5F]"
+                    />
+                  ))}
+                </div>
+
+                <div className="text-center mt-3">
+                  <button
+                    type="button"
+                    onClick={handleResendOTP}
+                    disabled={resendCooldown > 0}
+                    className={`text-[10px] font-bold transition-colors duration-300 ${
+                      resendCooldown > 0
+                        ? "text-slate-400 cursor-not-allowed"
+                        : "text-[#1E3A5F] hover:text-[#F5C518]"
+                    }`}
+                  >
+                    {resendCooldown > 0
+                      ? `Resend in ${resendCooldown}s`
+                      : "Resend OTP"}
+                  </button>
+                </div>
+              </div>
+
+              {/* NEW PASSWORD */}
+              <div>
+                <label className="block text-[#1E3A5F] font-semibold text-[10px] tracking-wide uppercase mb-1">
+                  New Password
+                </label>
+                <div className="relative">
+                  <input
+                    type={showNewPassword ? "text" : "password"}
+                    placeholder="************"
+                    value={newPassword}
+                    onChange={(e) => setNewPassword(e.target.value)}
+                    required
+                    className="w-full h-9 rounded-xl border border-slate-200 bg-white/60 px-3 pr-10 outline-none focus:border-[#F5C518] focus:ring-4 focus:ring-[#F5C518]/10 transition-all duration-300 text-xs text-slate-700"
+                  />
+                  <button
+                    type="button"
+                    onClick={() => setShowNewPassword(!showNewPassword)}
+                    className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 hover:text-[#1E3A5F] transition-colors focus:outline-none"
+                  >
+                    {showNewPassword ? <EyeOffIcon /> : <EyeIcon />}
+                  </button>
+                </div>
+              </div>
+
+              {/* CONFIRM PASSWORD */}
+              <div>
+                <label className="block text-[#1E3A5F] font-semibold text-[10px] tracking-wide uppercase mb-1">
+                  Confirm Password
+                </label>
+                <div className="relative">
+                  <input
+                    type={showConfirmPassword ? "text" : "password"}
+                    placeholder="************"
+                    value={confirmPassword}
+                    onChange={(e) => setConfirmPassword(e.target.value)}
+                    required
+                    className="w-full h-9 rounded-xl border border-slate-200 bg-white/60 px-3 pr-10 outline-none focus:border-[#F5C518] focus:ring-4 focus:ring-[#F5C518]/10 transition-all duration-300 text-xs text-slate-700"
+                  />
+                  <button
+                    type="button"
+                    onClick={() => setShowConfirmPassword(!showConfirmPassword)}
+                    className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 hover:text-[#1E3A5F] transition-colors focus:outline-none"
+                  >
+                    {showConfirmPassword ? <EyeOffIcon /> : <EyeIcon />}
+                  </button>
+                </div>
+              </div>
+
+              {/* ERROR */}
+              {error && (
+                <div className="p-2.5 rounded-xl bg-red-50 border border-red-100 text-red-600 text-xs font-medium">
+                  {error}
+                </div>
+              )}
+
+              {/* BUTTON */}
               <button
-                type="button"
-                onClick={handleResendOTP}
-                disabled={resendCooldown > 0}
-                className={`text-sm font-bold transition-colors duration-300 ${
-                  resendCooldown > 0
-                    ? "text-slate-400 cursor-not-allowed"
-                    : "text-[#1E3A5F] hover:text-[#F5C518]"
+                type="submit"
+                disabled={!canSubmit}
+                className={`w-full h-10 rounded-xl font-bold text-xs border-2 border-transparent transition-all duration-300 transform hover:-translate-y-0.5 shadow-[0_8px_20px_rgba(30,58,95,0.15)] ${
+                  canSubmit
+                    ? "bg-[#1E3A5F] text-white hover:bg-white hover:border-[#F5C518] hover:text-[#1E3A5F] cursor-pointer"
+                    : "bg-slate-300 text-slate-500 cursor-not-allowed shadow-none transform-none"
                 }`}
               >
-                {resendCooldown > 0
-                  ? `Resend in ${resendCooldown}s`
-                  : "Resend OTP"}
+                {isLoading ? (
+                  <span className="flex items-center justify-center gap-2">
+                    <SpinnerIcon /> Resetting...
+                  </span>
+                ) : (
+                  "Reset Password"
+                )}
               </button>
-            </div>
-          </div>
 
-          {/* NEW PASSWORD */}
-          <div className="relative">
-            <input
-              type={showNewPassword ? "text" : "password"}
-              placeholder="New Password"
-              value={newPassword}
-              onChange={(e) => setNewPassword(e.target.value)}
-              required
-              className="w-full h-14 rounded-2xl border border-slate-200 bg-white/60 px-5 pr-12 text-slate-700 outline-none focus:border-[#F5C518] focus:ring-4 focus:ring-[#F5C518]/10 transition-all duration-300"
+              <p className="text-center text-slate-500 text-[10px] font-medium">
+                Remember your password?{" "}
+                <button
+                  type="button"
+                  onClick={() => navigate("/login")}
+                  className="text-[#1E3A5F] hover:text-[#F5C518] font-bold transition-colors duration-300 underline underline-offset-4"
+                >
+                  Sign In
+                </button>
+              </p>
+            </form>
+          </div>
+        </div>
+      </div>
+
+      {/* Right Panel - Branding */}
+      <div className="relative lg:w-1/2 min-h-[40vh] lg:min-h-[calc(100vh-56px)] bg-[#1E3A5F] overflow-hidden flex items-center justify-center p-8 lg:p-12">
+        <div className="absolute inset-0 bg-gradient-to-br from-[#1E3A5F] to-[#152a47]" />
+
+        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[500px] h-[500px] rounded-full border border-[#F5C518]/10 hidden lg:block" />
+        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[350px] h-[350px] rounded-full border border-[#F5C518]/15 hidden lg:block" />
+        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[200px] h-[200px] rounded-full border border-[#F5C518]/20 hidden lg:block" />
+
+        <div className="absolute -top-24 -right-24 w-80 h-80 bg-[#F5C518]/10 rounded-full blur-3xl" />
+        <div className="absolute -bottom-24 -left-24 w-80 h-80 bg-blue-500/10 rounded-full blur-3xl" />
+
+        <div className="absolute top-1/4 right-1/4 w-2 h-2 bg-[#F5C518]/40 rounded-full hidden lg:block" />
+        <div className="absolute bottom-1/3 left-1/3 w-3 h-3 bg-[#F5C518]/30 rounded-full hidden lg:block" />
+        <div className="absolute top-2/3 right-1/3 w-1.5 h-1.5 bg-white/20 rounded-full hidden lg:block" />
+
+        <div className="relative z-10 flex flex-col items-center text-center max-w-sm">
+          <div className="w-20 h-20 lg:w-24 lg:h-24 bg-white/10 rounded-2xl flex items-center justify-center mb-4 ring-2 ring-[#F5C518]/30 backdrop-blur-sm">
+            <img
+              src={logo}
+              alt="FPOP Clinic"
+              className="w-14 h-14 lg:w-16 lg:h-16"
             />
-            <button
-              type="button"
-              onClick={() => setShowNewPassword(!showNewPassword)}
-              className="absolute right-4 top-1/2 -translate-y-1/2 text-slate-400 hover:text-[#1E3A5F] transition-colors focus:outline-none"
-            >
-              {showNewPassword ? <EyeOffIcon /> : <EyeIcon />}
-            </button>
           </div>
+          <h1 className="text-xl lg:text-2xl font-bold text-white mb-1">
+            FPOP Clinic Portal
+          </h1>
+          <p className="text-[#F5C518] text-xs lg:text-sm font-medium mb-6 lg:mb-8">
+            Your Health, Our Priority
+          </p>
 
-          {/* CONFIRM PASSWORD */}
-          <div className="relative">
-            <input
-              type={showConfirmPassword ? "text" : "password"}
-              placeholder="Confirm Password"
-              value={confirmPassword}
-              onChange={(e) => setConfirmPassword(e.target.value)}
-              required
-              className="w-full h-14 rounded-2xl border border-slate-200 bg-white/60 px-5 pr-12 text-slate-700 outline-none focus:border-[#F5C518] focus:ring-4 focus:ring-[#F5C518]/10 transition-all duration-300"
-            />
-            <button
-              type="button"
-              onClick={() => setShowConfirmPassword(!showConfirmPassword)}
-              className="absolute right-4 top-1/2 -translate-y-1/2 text-slate-400 hover:text-[#1E3A5F] transition-colors focus:outline-none"
-            >
-              {showConfirmPassword ? <EyeOffIcon /> : <EyeIcon />}
-            </button>
+          <div className="space-y-3 text-left hidden lg:block">
+            {[
+              "Secure & Confidential Access",
+              "Easy Appointment Management",
+              "24/7 Portal Availability",
+            ].map((text, i) => (
+              <div key={i} className="flex items-center gap-2.5">
+                <div className="w-4 h-4 rounded-full bg-[#F5C518]/20 flex items-center justify-center flex-shrink-0">
+                  <svg
+                    className="w-2.5 h-2.5 text-[#F5C518]"
+                    fill="none"
+                    viewBox="0 0 24 24"
+                    stroke="currentColor"
+                    strokeWidth={3}
+                  >
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      d="M5 13l4 4L19 7"
+                    />
+                  </svg>
+                </div>
+                <span className="text-white/80 text-xs">{text}</span>
+              </div>
+            ))}
           </div>
-
-          {/* ERROR */}
-          {error && (
-            <div className="p-4 rounded-xl bg-red-50 border border-red-100 text-red-600 text-sm font-medium text-center">
-              {error}
-            </div>
-          )}
-
-          {/* BUTTON */}
-          <button
-            type="submit"
-            disabled={!canSubmit}
-            className="w-full h-14 rounded-full bg-[#1E3A5F] text-white font-bold text-lg border-2 border-transparent hover:bg-white hover:border-[#F5C518] hover:text-[#1E3A5F] shadow-[0_8px_20px_rgba(30,58,95,0.15)] transition-all duration-300 transform hover:-translate-y-0.5 disabled:opacity-50 disabled:hover:bg-[#1E3A5F] disabled:hover:border-transparent disabled:hover:text-white disabled:hover:translate-y-0 disabled:cursor-not-allowed flex items-center justify-center gap-2 cursor-pointer"
-          >
-            {isLoading ? <SpinnerIcon /> : "Reset Password"}
-          </button>
-        </form>
+        </div>
       </div>
     </div>
   );

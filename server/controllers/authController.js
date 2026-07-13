@@ -1,7 +1,7 @@
 import bcrypt from "bcryptjs";
 import jwt from "jsonwebtoken";
 
-import resend from "../config/nodeMailer.js";
+import transporter from "../config/nodeMailer.js";
 import userModel from "../models/userModel.js";
 
 export const SignUp = async (req, res) => {
@@ -50,7 +50,7 @@ export const SignUp = async (req, res) => {
 
     //EMAIL SENDER
     const mailOptions = {
-      from: process.env.SENDER_EMAIL,
+      from: `"FPOP HealthHub" <${process.env.GMAIL_USER}>`,
       to: email,
       subject: "Welcome to FPOP HealthHub",
       html: `
@@ -136,7 +136,7 @@ export const SignUp = async (req, res) => {
   `,
     };
 
-    resend.emails.send(mailOptions).then(() => console.log("Welcome email sent to:", email)).catch((err) => console.error("Welcome email failed:", err.message || err));
+    transporter.sendMail(mailOptions).then(() => console.log("Welcome email sent to:", email)).catch((err) => console.error("Welcome email failed:", err.message || err));
 
     res.status(201).json({
       success: true,
@@ -258,7 +258,7 @@ export const SendVerifyEmailOtp = async (req, res) => {
     //otp email ine
 
     const mailOption = {
-      from: process.env.SENDER_EMAIL,
+      from: `"FPOP HealthHub" <${process.env.GMAIL_USER}>`,
       to: user.email,
       subject: "FPOP HealthHub - Account Verification OTP",
       html: `
@@ -345,7 +345,7 @@ export const SendVerifyEmailOtp = async (req, res) => {
   `,
     };
 
-    resend.emails.send(mailOption).then(() => console.log("Verify email sent to:", user.email)).catch((err) => console.error("Verify email failed:", err.message || err));
+    transporter.sendMail(mailOption).then(() => console.log("Verify email sent to:", user.email)).catch((err) => console.error("Verify email failed:", err.message || err));
     res
       .status(200)
       .json({ success: true, message: "Verification sent Successful" });
@@ -449,7 +449,7 @@ export const sendResetOtp = async (req, res) => {
     await user.save({ validateModifiedOnly: true });
 
     const mailOption = {
-      from: process.env.SENDER_EMAIL,
+      from: `"FPOP HealthHub" <${process.env.GMAIL_USER}>`,
       to: user.email,
       subject: "FPOP HealthHub - Password Reset OTP",
       html: `
@@ -536,7 +536,7 @@ export const sendResetOtp = async (req, res) => {
   `,
     };
 
-    resend.emails.send(mailOption).then(() => console.log("Reset OTP email sent to:", user.email)).catch((err) => console.error("Reset OTP email failed:", err.message || err));
+    transporter.sendMail(mailOption).then(() => console.log("Reset OTP email sent to:", user.email)).catch((err) => console.error("Reset OTP email failed:", err.message || err));
 
     return res.status(200).json({
       success: true,

@@ -1,6 +1,6 @@
 import appointmentModel from "../models/appointmentModels.js";
 import userModel from "../models/userModel.js";
-import resend from "../config/nodeMailer.js";
+import transporter from "../config/nodeMailer.js";
 import notificationModel from "../models/notificationModel.js";
 
 const generateTimeSlots = (start, end) => {
@@ -112,7 +112,7 @@ const createAppointment = async (req, res) => {
       });
 
       const mailOptions = {
-        from: process.env.SENDER_EMAIL,
+        from: `"FPOP HealthHub" <${process.env.GMAIL_USER}>`,
         to: patient.email,
         subject: "Appointment Confirmation – FPOP HealthHub",
         html: `
@@ -158,7 +158,7 @@ const createAppointment = async (req, res) => {
   </div>`,
       };
 
-      resend.emails.send(mailOptions).then(() => console.log("Appointment confirmation email sent to:", patient.email)).catch((err) => console.error("Appointment confirmation email failed:", err.message || err));
+      transporter.sendMail(mailOptions).then(() => console.log("Appointment confirmation email sent to:", patient.email)).catch((err) => console.error("Appointment confirmation email failed:", err.message || err));
     }
 
     const staffName = `${populated.staffId?.firstName || ""} ${populated.staffId?.lastName || ""}`.trim();
@@ -264,7 +264,7 @@ const updateAppointmentStatus = async (req, res) => {
     const headingBg = status === "confirmed" ? "#003B6F" : "#991B1B";
 
     const mailOptions = {
-      from: process.env.SENDER_EMAIL,
+      from: `"FPOP HealthHub" <${process.env.GMAIL_USER}>`,
       to: patient.email,
       subject: `Appointment ${statusLabel} – FPOP HealthHub`,
       html: `
@@ -306,7 +306,7 @@ const updateAppointmentStatus = async (req, res) => {
   </div>`,
     };
 
-    resend.emails.send(mailOptions).then(() => console.log("Appointment status email sent to:", patient.email)).catch((err) => console.error("Appointment status email failed:", err.message || err));
+    transporter.sendMail(mailOptions).then(() => console.log("Appointment status email sent to:", patient.email)).catch((err) => console.error("Appointment status email failed:", err.message || err));
 
     Promise.all([
       notificationModel.create({
