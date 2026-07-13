@@ -52,12 +52,36 @@ app.use("/api/admin/notifications", notificationRouter);
 app.use("/api/notifications", myNotificationRouter);
 app.use("/api/inventory", inventoryRouter);
 
+import resend from "./config/nodeMailer.js";
+
 if (!process.env.RESEND_API_KEY) {
   console.warn("⚠ RESEND_API_KEY is not set - emails will not work");
 }
 if (!process.env.SENDER_EMAIL) {
   console.warn("⚠ SENDER_EMAIL is not set - emails will not work");
 }
+console.log("EMAIL CONFIG - SENDER:", process.env.SENDER_EMAIL || "NOT SET");
+console.log("EMAIL CONFIG - API KEY:", process.env.RESEND_API_KEY ? "SET (starts with " + process.env.RESEND_API_KEY.slice(0, 6) + "...)" : "NOT SET");
+
+app.get("/api/test-email", async (req, res) => {
+  const testTo = req.query.to;
+  if (!testTo) {
+    return res.status(400).json({ error: "Add ?to=some@email.com" });
+  }
+  try {
+    const result = await resend.emails.send({
+      from: process.env.SENDER_EMAIL,
+      to: testTo,
+      subject: "FPOP HealthHub - Test Email",
+      html: "<h1>It works!</h1><p>Your email system is configured correctly.</p>",
+    });
+    console.log("TEST EMAIL SUCCESS:", JSON.stringify(result));
+    res.json({ success: true, message: "Email sent!", result });
+  } catch (err) {
+    console.error("TEST EMAIL FAILED:", err.message, err);
+    res.status(500).json({ success: false, error: err.message });
+  }
+});
 
 app.listen(port, () => {
   console.log(`Running on Port: ${port}`);
