@@ -70,6 +70,7 @@ const CombinedDashboard = () => {
     try {
       const body = new FormData();
       body.append("name", formData.name || "");
+      body.append("email", formData.email || "");
       body.append("phone", formData.phone || "");
       body.append("address", formData.address || "");
       body.append("dateOfBirth", formData.dateOfBirth || "");

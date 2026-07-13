@@ -15,6 +15,9 @@ const Icon = ({ type, className = "h-5 w-5" }) => {
     camera:
       "M3 9a2 2 0 012-2h.93a2 2 0 001.664-.89l.812-1.22A2 2 0 0110.07 4h3.86a2 2 0 011.664.89l.812 1.22A2 2 0 0018.07 7H19a2 2 0 012 2v9a2 2 0 01-2 2H5a2 2 0 01-2-2V9zM15 13a3 3 0 11-6 0 3 3 0 016 0z",
     save: "M5 13l4 4L19 7",
+    arrowLeft: "M15 18l-6-6 6-6",
+    close: "M6 18L18 6M6 6l12 12",
+    status: "M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z",
   };
 
   return (
@@ -42,6 +45,45 @@ const ProfileField = ({ disabled, icon, label, type = "text", value, onChange, p
     </div>
   </div>
 );
+
+const MobileProfileRow = ({ icon, label, value, editing, inputValue, onChange, placeholder, type = "text" }) => (
+  <div className="flex min-h-[57px] items-center gap-3 border-b border-slate-100 px-4 last:border-b-0">
+    <Icon type={icon} className="h-4 w-4 shrink-0 text-slate-600" />
+    <div className="min-w-0 flex-1">
+      <p className="text-[11px] leading-tight text-slate-500">{label}</p>
+      {editing && onChange ? (
+        <input
+          type={type}
+          value={inputValue || ""}
+          onChange={(event) => onChange(event.target.value)}
+          placeholder={placeholder}
+          className="mt-0.5 w-full border-b border-slate-200 bg-transparent pb-0.5 text-xs text-[#172033] outline-none placeholder:text-slate-400"
+        />
+      ) : (
+        <p className="mt-0.5 truncate text-xs text-[#4b5563]">{value}</p>
+      )}
+    </div>
+  </div>
+);
+
+const MobileProfileAppointment = ({ appointment }) => {
+  const date = appointment.date ? new Date(appointment.date).toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric" }) : "Date to be confirmed";
+  const status = appointment.status || "upcoming";
+
+  return (
+    <div className="rounded-lg border border-slate-100 bg-white px-3 py-3 shadow-[0_1px_4px_rgba(15,23,42,0.04)]">
+      <div className="flex items-start justify-between gap-3">
+        <div className="min-w-0">
+          <p className="truncate text-sm font-bold text-[#172033]">{appointment.serviceName || "Clinic appointment"}</p>
+          <p className="mt-1 text-xs text-slate-500">{date}{appointment.time ? ` · ${appointment.time}` : ""}</p>
+        </div>
+        <span className={`shrink-0 rounded-full px-2 py-1 text-[10px] font-semibold capitalize ${status === "pending" ? "bg-amber-50 text-amber-700" : status === "completed" ? "bg-emerald-50 text-emerald-700" : "bg-blue-50 text-[#244783]"}`}>
+          {status}
+        </span>
+      </div>
+    </div>
+  );
+};
 
 const StatRow = ({ label, value, tone = "neutral" }) => {
   const tones = {
@@ -93,17 +135,18 @@ const formatMemberSince = (dateStr) => {
   return `${months[d.getMonth()]} ${d.getFullYear()}`;
 };
 
-const ProfileView = ({ profile, onSaveProfile, appointments = [] }) => {
+const ProfileView = ({ profile, onSaveProfile, appointments = [], onBackToDashboard }) => {
   const [formData, setFormData] = useState(() => getInitialProfileData(profile));
   const [isEditing, setIsEditing] = useState(false);
   const [supportOpen, setSupportOpen] = useState(false);
   const [avatarPreview, setAvatarPreview] = useState(null);
+  const [mobileTab, setMobileTab] = useState("personal");
   const fileInputRef = useRef(null);
   const visibleProfile = isEditing ? { ...formData, avatar: avatarPreview || formData.avatar } : getInitialProfileData(profile);
   const appointmentStats = getAppointmentStats(appointments);
 
   const handleSubmit = (event) => {
-    event.preventDefault();
+    event?.preventDefault();
     onSaveProfile({ ...formData, avatarFile: formData.avatarFile || null });
     setIsEditing(false);
     setAvatarPreview(null);
@@ -115,6 +158,14 @@ const ProfileView = ({ profile, onSaveProfile, appointments = [] }) => {
 
   const handleAvatarClick = () => {
     if (!isEditing) return;
+    fileInputRef.current?.click();
+  };
+
+  const handleMobileAvatarClick = () => {
+    if (!isEditing) {
+      setFormData(getInitialProfileData(profile));
+      setIsEditing(true);
+    }
     fileInputRef.current?.click();
   };
 
@@ -137,16 +188,116 @@ const ProfileView = ({ profile, onSaveProfile, appointments = [] }) => {
   const avatarSrc = avatarPreview || (visibleProfile.avatar || null);
 
   return (
-    <main className="flex-1 bg-[#f7f8fa] px-4 py-12 sm:px-6 lg:px-8">
+    <main className="flex-1 bg-[#f7f8fa] px-0 py-0 sm:px-6 sm:py-12 lg:px-8">
       <div className="mx-auto max-w-[1110px]">
-        <header className="mb-10">
+        <input
+          ref={fileInputRef}
+          type="file"
+          accept="image/*"
+          onChange={handleFileChange}
+          className="hidden"
+        />
+        <section className="min-h-[calc(100dvh-44px)] bg-white sm:hidden">
+          <header className="flex h-12 items-center justify-between border-b border-slate-100 px-3">
+            <button
+              type="button"
+              onClick={onBackToDashboard}
+              className="-ml-1 flex h-8 w-8 items-center justify-center rounded-full text-slate-600"
+              aria-label="Back to dashboard"
+            >
+              <Icon type="arrowLeft" className="h-5 w-5" />
+            </button>
+            <h1 className="text-sm font-bold text-[#172033]">My Profile</h1>
+            {isEditing ? (
+              <button type="button" onClick={handleSubmit} className="text-sm font-semibold text-[#244783]">Save</button>
+            ) : (
+              <button
+                type="button"
+                onClick={() => {
+                  setFormData(getInitialProfileData(profile));
+                  setIsEditing(true);
+                }}
+                className="text-sm font-semibold text-[#244783]"
+              >
+                Edit
+              </button>
+            )}
+          </header>
+
+          <div className="px-4 pt-4">
+            <div className="flex items-center gap-3">
+              <div className="relative h-16 w-16 shrink-0">
+                <div className="flex h-16 w-16 items-center justify-center overflow-hidden rounded-full bg-[#dce3e9] text-[#244783]">
+                  {avatarSrc && !avatarError ? (
+                    <img src={avatarSrc} alt="Profile" className="h-full w-full object-cover" onError={() => setAvatarError(true)} />
+                  ) : (
+                    <Icon type="user" className="h-8 w-8" />
+                  )}
+                </div>
+                <button
+                  type="button"
+                  onClick={handleMobileAvatarClick}
+                  className="absolute -bottom-1 -left-1 flex h-6 w-6 items-center justify-center rounded-full border border-slate-200 bg-white text-[#244783] shadow-sm"
+                  aria-label="Change profile picture"
+                >
+                  <Icon type="camera" className="h-3.5 w-3.5" />
+                </button>
+              </div>
+              <div className="min-w-0">
+                <div className="flex items-center gap-2">
+                  {isEditing ? (
+                    <input
+                      value={formData.name || ""}
+                      onChange={(event) => updateField("name", event.target.value)}
+                      className="w-full border-b border-slate-300 bg-transparent text-sm font-bold text-[#172033] outline-none"
+                      placeholder="Your name"
+                    />
+                  ) : (
+                  <h2 className="truncate text-base font-bold text-[#172033]">{visibleProfile.name || "Your Name"}</h2>
+                  )}
+                </div>
+                <div className="mt-1 flex items-center gap-1.5 text-xs text-slate-500">
+                  <Icon type="status" className={`h-3.5 w-3.5 ${profile?.isAccountVerified ? "text-[#244783]" : "text-slate-400"}`} />
+                  <span>{profile?.isAccountVerified ? "Account active" : "Account pending"}</span>
+                 
+                </div>
+              </div>
+            </div>
+
+            <div className="mt-5 grid grid-cols-2 rounded-md bg-[#e8eaee] p-0.5 text-[11px] font-medium">
+              <button type="button" onClick={() => setMobileTab("personal")} className={`rounded-[4px] px-3 py-1.5 text-center ${mobileTab === "personal" ? "bg-white text-[#172033] shadow-sm" : "text-slate-600"}`}>Personal Info</button>
+              <button type="button" onClick={() => setMobileTab("appointments")} className={`rounded-[4px] px-3 py-1.5 text-center ${mobileTab === "appointments" ? "bg-white text-[#172033] shadow-sm" : "text-slate-600"}`}>Appointments</button>
+            </div>
+          </div>
+
+          {mobileTab === "personal" ? (
+            <div className="mt-3 border-y border-slate-100">
+              <MobileProfileRow icon="mail" label="Email" value={visibleProfile.email || "Add an email address"} editing={isEditing} inputValue={formData.email} onChange={(value) => updateField("email", value)} placeholder="Add an email address" type="email" />
+              <MobileProfileRow icon="phone" label="Phone" value={visibleProfile.phone || "Add a phone number"} editing={isEditing} inputValue={formData.phone} onChange={(value) => updateField("phone", value)} placeholder="Add a phone number" />
+              <MobileProfileRow icon="calendar" label="Date of birth" value={visibleProfile.dateOfBirth || "Add your date of birth"} editing={isEditing} inputValue={formData.dateOfBirth} onChange={(value) => updateField("dateOfBirth", value)} placeholder="Add your date of birth" type="date" />
+              <MobileProfileRow icon="location" label="Location" value={visibleProfile.address || "Add a location"} editing={isEditing} inputValue={formData.address} onChange={(value) => updateField("address", value)} placeholder="Add a location" />
+            </div>
+          ) : (
+            <div className="mt-3 space-y-2 bg-slate-50 px-4 py-3">
+              {appointments.length ? appointments.map((appointment) => <MobileProfileAppointment key={appointment._id || appointment.id} appointment={appointment} />) : <p className="py-8 text-center text-sm text-slate-500">No appointments yet.</p>}
+            </div>
+          )}
+
+          {isEditing && (
+            <button type="button" onClick={handleCancel} className="mx-4 mt-5 text-xs font-medium text-slate-500">
+              Cancel editing
+            </button>
+          )}
+        </section>
+
+        <header className="mb-10 hidden sm:block">
           <h1 className="text-4xl font-bold text-[#061022]">Profile</h1>
           <p className="mt-3 text-base text-[#18304d]">
             Manage your personal information and preferences
           </p>
         </header>
 
-        <form onSubmit={handleSubmit} className="grid grid-cols-1 gap-8 lg:grid-cols-[348px_1fr]">
+        <form onSubmit={handleSubmit} className="hidden grid-cols-1 gap-8 sm:grid lg:grid-cols-[348px_1fr]">
           <aside className="space-y-6">
             <section className="rounded-[12px] border border-slate-200 bg-white p-8 text-center shadow-[0_3px_10px_rgba(15,23,42,0.1)]">
               <button
@@ -168,13 +319,6 @@ const ProfileView = ({ profile, onSaveProfile, appointments = [] }) => {
                   </span>
                 )}
               </button>
-              <input
-                ref={fileInputRef}
-                type="file"
-                accept="image/*"
-                onChange={handleFileChange}
-                className="hidden"
-              />
               <h2 className="mt-12 text-2xl font-bold text-[#061022]">{visibleProfile.name || "Your Name"}</h2>
               <p className="mt-8 text-sm text-[#18304d]">{visibleProfile.email || "your@email.com"}</p>
               <div className="my-10 h-px bg-slate-200" />
@@ -256,7 +400,7 @@ const ProfileView = ({ profile, onSaveProfile, appointments = [] }) => {
                 onChange={(value) => updateField("name", value)}
               />
               <ProfileField
-                disabled={true}
+                disabled={!isEditing}
                 label="Email Address"
                 icon="mail"
                 type="email"
