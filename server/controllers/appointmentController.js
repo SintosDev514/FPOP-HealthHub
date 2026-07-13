@@ -112,7 +112,7 @@ const createAppointment = async (req, res) => {
       });
 
       const mailOptions = {
-        from: `"FPOP HealthHub" <${process.env.GMAIL_USER}>`,
+        from: `"FPOP HealthHub" <${process.env.SENDER_EMAIL}>`,
         to: patient.email,
         subject: "Appointment Confirmation – FPOP HealthHub",
         html: `
@@ -264,7 +264,7 @@ const updateAppointmentStatus = async (req, res) => {
     const headingBg = status === "confirmed" ? "#003B6F" : "#991B1B";
 
     const mailOptions = {
-      from: `"FPOP HealthHub" <${process.env.GMAIL_USER}>`,
+      from: `"FPOP HealthHub" <${process.env.SENDER_EMAIL}>`,
       to: patient.email,
       subject: `Appointment ${statusLabel} – FPOP HealthHub`,
       html: `

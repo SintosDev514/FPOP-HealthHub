@@ -50,7 +50,7 @@ export const SignUp = async (req, res) => {
 
     //EMAIL SENDER
     const mailOptions = {
-      from: `"FPOP HealthHub" <${process.env.GMAIL_USER}>`,
+      from: `"FPOP HealthHub" <${process.env.SENDER_EMAIL}>`,
       to: email,
       subject: "Welcome to FPOP HealthHub",
       html: `
@@ -258,7 +258,7 @@ export const SendVerifyEmailOtp = async (req, res) => {
     //otp email ine
 
     const mailOption = {
-      from: `"FPOP HealthHub" <${process.env.GMAIL_USER}>`,
+      from: `"FPOP HealthHub" <${process.env.SENDER_EMAIL}>`,
       to: user.email,
       subject: "FPOP HealthHub - Account Verification OTP",
       html: `
@@ -449,7 +449,7 @@ export const sendResetOtp = async (req, res) => {
     await user.save({ validateModifiedOnly: true });
 
     const mailOption = {
-      from: `"FPOP HealthHub" <${process.env.GMAIL_USER}>`,
+      from: `"FPOP HealthHub" <${process.env.SENDER_EMAIL}>`,
       to: user.email,
       subject: "FPOP HealthHub - Password Reset OTP",
       html: `

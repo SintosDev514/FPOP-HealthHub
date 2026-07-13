@@ -52,16 +52,16 @@ app.use("/api/admin/notifications", notificationRouter);
 app.use("/api/notifications", myNotificationRouter);
 app.use("/api/inventory", inventoryRouter);
 
-import transporter from "./config/nodeMailer.js";
+import mailer from "./config/nodeMailer.js";
 
-if (!process.env.GMAIL_USER) {
-  console.warn("⚠ GMAIL_USER is not set - emails will not work");
+if (!process.env.SENDGRID_API_KEY) {
+  console.warn("⚠ SENDGRID_API_KEY is not set - emails will not work");
 }
-if (!process.env.GMAIL_APP_PASSWORD) {
-  console.warn("⚠ GMAIL_APP_PASSWORD is not set - emails will not work");
+if (!process.env.SENDER_EMAIL) {
+  console.warn("⚠ SENDER_EMAIL is not set - emails will not work");
 }
-console.log("EMAIL CONFIG - GMAIL_USER:", process.env.GMAIL_USER || "NOT SET");
-console.log("EMAIL CONFIG - GMAIL_APP_PASSWORD:", process.env.GMAIL_APP_PASSWORD ? "SET" : "NOT SET");
+console.log("EMAIL CONFIG - SENDER:", process.env.SENDER_EMAIL || "NOT SET");
+console.log("EMAIL CONFIG - SENDGRID_API_KEY:", process.env.SENDGRID_API_KEY ? "SET" : "NOT SET");
 
 app.get("/api/test-email", async (req, res) => {
   const testTo = req.query.to;
@@ -69,17 +69,17 @@ app.get("/api/test-email", async (req, res) => {
     return res.status(400).json({ error: "Add ?to=some@email.com" });
   }
   try {
-    const result = await transporter.sendMail({
-      from: `"FPOP HealthHub" <${process.env.GMAIL_USER}>`,
+    await mailer.sendMail({
+      from: `"FPOP HealthHub" <${process.env.SENDER_EMAIL}>`,
       to: testTo,
       subject: "FPOP HealthHub - Test Email",
-      html: "<h1>It works!</h1><p>Your Gmail email system is configured correctly.</p>",
+      html: "<h1>It works!</h1><p>Your SendGrid email system is configured correctly.</p>",
     });
-    console.log("TEST EMAIL SUCCESS:", result.messageId);
-    res.json({ success: true, message: "Email sent!", messageId: result.messageId });
+    console.log("TEST EMAIL SUCCESS sent to:", testTo);
+    res.json({ success: true, message: "Email sent!" });
   } catch (err) {
-    console.error("TEST EMAIL FAILED:", err.message, err);
-    res.status(500).json({ success: false, error: err.message });
+    console.error("TEST EMAIL FAILED:", err.message, err.response?.body || err);
+    res.status(500).json({ success: false, error: err.message, details: err.response?.body || null });
   }
 });
 
