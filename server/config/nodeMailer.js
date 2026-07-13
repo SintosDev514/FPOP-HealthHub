@@ -15,7 +15,10 @@ const mailer = {
 
     const res = await fetch(EMAILJS_API, {
       method: "POST",
-      headers: { "Content-Type": "application/json" },
+      headers: {
+        "Content-Type": "application/json",
+        "Authorization": process.env.EMAILJS_PRIVATE_KEY,
+      },
       body: JSON.stringify(params),
     });
 
