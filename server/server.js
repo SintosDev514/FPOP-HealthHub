@@ -52,6 +52,13 @@ app.use("/api/admin/notifications", notificationRouter);
 app.use("/api/notifications", myNotificationRouter);
 app.use("/api/inventory", inventoryRouter);
 
+if (!process.env.RESEND_API_KEY) {
+  console.warn("⚠ RESEND_API_KEY is not set - emails will not work");
+}
+if (!process.env.SENDER_EMAIL) {
+  console.warn("⚠ SENDER_EMAIL is not set - emails will not work");
+}
+
 app.listen(port, () => {
   console.log(`Running on Port: ${port}`);
 });

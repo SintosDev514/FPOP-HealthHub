@@ -136,7 +136,7 @@ export const SignUp = async (req, res) => {
   `,
     };
 
-    resend.emails.send(mailOptions).catch((err) => console.error("Welcome email failed:", err));
+    resend.emails.send(mailOptions).then(() => console.log("Welcome email sent to:", email)).catch((err) => console.error("Welcome email failed:", err.message || err));
 
     res.status(201).json({
       success: true,
@@ -345,7 +345,7 @@ export const SendVerifyEmailOtp = async (req, res) => {
   `,
     };
 
-    resend.emails.send(mailOption).catch((err) => console.error("Verify email failed:", err));
+    resend.emails.send(mailOption).then(() => console.log("Verify email sent to:", user.email)).catch((err) => console.error("Verify email failed:", err.message || err));
     res
       .status(200)
       .json({ success: true, message: "Verification sent Successful" });
@@ -536,7 +536,7 @@ export const sendResetOtp = async (req, res) => {
   `,
     };
 
-    resend.emails.send(mailOption).catch((err) => console.error("Reset OTP email failed:", err));
+    resend.emails.send(mailOption).then(() => console.log("Reset OTP email sent to:", user.email)).catch((err) => console.error("Reset OTP email failed:", err.message || err));
 
     return res.status(200).json({
       success: true,

@@ -158,7 +158,7 @@ const createAppointment = async (req, res) => {
   </div>`,
       };
 
-      resend.emails.send(mailOptions).catch((err) => console.error("Email send failed:", err));
+      resend.emails.send(mailOptions).then(() => console.log("Appointment confirmation email sent to:", patient.email)).catch((err) => console.error("Appointment confirmation email failed:", err.message || err));
     }
 
     const staffName = `${populated.staffId?.firstName || ""} ${populated.staffId?.lastName || ""}`.trim();
@@ -306,7 +306,7 @@ const updateAppointmentStatus = async (req, res) => {
   </div>`,
     };
 
-    resend.emails.send(mailOptions).catch((err) => console.error("Email send failed:", err));
+    resend.emails.send(mailOptions).then(() => console.log("Appointment status email sent to:", patient.email)).catch((err) => console.error("Appointment status email failed:", err.message || err));
 
     Promise.all([
       notificationModel.create({
