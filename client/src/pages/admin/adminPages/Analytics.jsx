@@ -224,7 +224,7 @@ export default function Analytics({ isMobile }) {
               { label: "Top service", val: performance.topDepartment.name, color: "#7c3aed", desc: `${performance.topDepartment.count} booking${performance.topDepartment.count !== 1 ? "s" : ""} (${performance.topDepartment.pct}%) across ${performance.totalDepts} services.` },
               { label: "Today", val: `${daily.today}`, color: TEAL, desc: daily.today > 0 ? "Check Appointments page for details." : "No appointments scheduled." },
             ].map((item, i) => (
-              <div key={i} style={{ padding: "12px 16px", background: "#f8fafc", borderRadius: 8, borderLeft: `3px solid ${item.color}` }}>
+              <div key={i} style={{ padding: "12px 16px", background: "#f8fafc", borderRadius: 8 }}>
                 <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 2 }}>
                   <span style={{ fontSize: 11, fontWeight: 600, color: "#64748b", textTransform: "uppercase", letterSpacing: ".3px" }}>{item.label}</span>
                   <span style={{ fontSize: 13, fontWeight: 700, color: NAVY }}>{item.val}</span>
