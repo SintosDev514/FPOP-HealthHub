@@ -406,18 +406,36 @@ const StaffDashboardView = ({ profile, appointments = [], onStartAssessment, onV
   };
 
   return (
-    <main style={{
+    <main className="staff-dashboard" style={{
       height: "calc(100vh - 76px)", background: "#f0f4f8",
       display: "flex", flexDirection: "column", overflow: "hidden",
       fontFamily: "'Inter','Poppins',sans-serif",
     }}>
-      <div style={{
+      <style>{`
+        @media (max-width: 900px) {
+          .staff-dashboard-overview { grid-template-columns: 1fr 1fr !important; }
+          .staff-dashboard-overview > :last-child { grid-column: 1 / -1; }
+        }
+        @media (max-width: 767px) {
+          .staff-dashboard { height: auto !important; min-height: calc(100dvh - 102px); overflow: visible !important; }
+          .staff-dashboard-content { padding: 12px !important; gap: 12px !important; overflow: visible !important; }
+          .staff-dashboard-heading { align-items: flex-start !important; }
+          .staff-dashboard-stats { grid-template-columns: repeat(2, minmax(0, 1fr)) !important; gap: 8px !important; }
+          .staff-dashboard-overview, .staff-dashboard-bottom { grid-template-columns: minmax(0, 1fr) !important; gap: 10px !important; }
+          .staff-dashboard-overview > :last-child { grid-column: auto; }
+          .staff-dashboard-bottom { flex: none !important; }
+        }
+        @media (max-width: 380px) {
+          .staff-dashboard-stats { grid-template-columns: minmax(0, 1fr) !important; }
+        }
+      `}</style>
+      <div className="staff-dashboard-content" style={{
         flex: 1, display: "flex", flexDirection: "column",
         padding: "8px 12px", gap: 6, overflow: "hidden",
       }}>
 
         {/* â”€â”€ HEADER â”€â”€ */}
-        <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", flexShrink: 0 }}>
+        <div className="staff-dashboard-heading" style={{ display: "flex", alignItems: "center", justifyContent: "space-between", flexShrink: 0 }}>
           <div>
             <h2 style={{ fontSize: 16, fontWeight: 800, color: "#1E3A5F", margin: 0, lineHeight: 1.2 }}>Dashboard Overview</h2>
             <p style={{ fontSize: 10, color: "#94a3b8", margin: 0 }}>
@@ -428,7 +446,7 @@ const StaffDashboardView = ({ profile, appointments = [], onStartAssessment, onV
         </div>
 
         {/* â”€â”€ STAT CARDS â”€â”€ */}
-        <div style={{ display: "grid", gridTemplateColumns: "repeat(4,1fr)", gap: 6, flexShrink: 0 }}>
+        <div className="staff-dashboard-stats" style={{ display: "grid", gridTemplateColumns: "repeat(4,1fr)", gap: 6, flexShrink: 0 }}>
           <StatCard title="Total Appointments" value={totalAppts}      sub={`${upcomingCount} upcoming`}  icon="calendar" tone="navy"   />
           <StatCard title="Today"              value={todayCount}      sub={`${todayCount} appointments`} icon="trend"    tone="green"  />
           <StatCard title="Pending"            value={pendingCount}    sub="Awaiting confirmation"        icon="users"    tone="gold"   />
@@ -436,7 +454,7 @@ const StaffDashboardView = ({ profile, appointments = [], onStartAssessment, onV
         </div>
 
         {/* â”€â”€ ROW 3: appointment overview + inventory chart + quick stats â”€â”€ */}
-        <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr 280px", gap: 6, flexShrink: 0 }}>
+        <div className="staff-dashboard-overview" style={{ display: "grid", gridTemplateColumns: "1fr 1fr 280px", gap: 6, flexShrink: 0 }}>
 
           {/* Appointment Overview */}
           <div style={{ ...card, padding: "8px 10px", display: "flex", flexDirection: "column", minHeight: 0 }}>
@@ -494,7 +512,7 @@ const StaffDashboardView = ({ profile, appointments = [], onStartAssessment, onV
         </div>
 
         {/* â”€â”€ ROW 4: schedule + recent appointments + activity  â”€â”€ */}
-        <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr 1fr", gap: 6, flex: 1, minHeight: 0 }}>
+        <div className="staff-dashboard-bottom" style={{ display: "grid", gridTemplateColumns: "1fr 1fr 1fr", gap: 6, flex: 1, minHeight: 0 }}>
 
           {/* Upcoming Schedule */}
           <div style={{ ...card, padding: "8px 10px", display: "flex", flexDirection: "column", minHeight: 0, overflow: "hidden" }}>

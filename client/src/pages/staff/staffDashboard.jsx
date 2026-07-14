@@ -247,6 +247,7 @@ const StaffDashboard = () => {
       id === "inventory"
     ) {
       setCurrentView(id);
+      setMenuOpen(false);
       return;
     }
 
@@ -331,7 +332,23 @@ const StaffDashboard = () => {
 
           {menuOpen && (
             <div className="border-t border-[#F5C518]/10 py-4 md:hidden">
-              <nav className="flex flex-col gap-2">
+              <nav className="flex flex-col gap-1 px-2">
+                {navItems.map((item) => (
+                  <button
+                    key={item.id}
+                    type="button"
+                    onClick={() => handleSideNav(item.id)}
+                    aria-current={currentView === item.id ? "page" : undefined}
+                    className={`flex min-h-11 w-full items-center gap-3 rounded-lg px-3 text-left text-sm font-semibold transition-colors ${
+                      currentView === item.id
+                        ? "bg-[#F5C518] text-[#152c4a]"
+                        : "text-white/85 hover:bg-white/10"
+                    }`}
+                  >
+                    <StaffIcon name={item.icon} className="h-4 w-4" />
+                    {item.label}
+                  </button>
+                ))}
                 <div className="px-2">
                   <button
                     type="button"
@@ -451,24 +468,6 @@ const StaffDashboard = () => {
             overflowY: "auto",
           }}
         >
-          <nav className="flex gap-2 overflow-x-auto border-b border-slate-200 bg-white px-4 py-3 md:hidden">
-            {navItems.map((item) => (
-              <button
-                key={item.id}
-                type="button"
-                onClick={() => handleSideNav(item.id)}
-                className={`inline-flex shrink-0 items-center gap-2 rounded-full px-4 py-2 text-sm font-semibold ${
-                  currentView === item.id
-                    ? "bg-[#1E3A5F] text-white"
-                    : "bg-slate-100 text-[#1E3A5F]"
-                }`}
-              >
-                <StaffIcon name={item.icon} className="h-4 w-4" />
-                {item.label}
-              </button>
-            ))}
-          </nav>
-
           {currentView === "dashboard" && (
             <StaffDashboardView
               profile={profile}
