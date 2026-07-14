@@ -138,11 +138,8 @@ const AppointmentCard = ({ appointment, onSelect }) => {
     <button
       type="button"
       onClick={() => onSelect(appointment)}
-      className={`group relative w-full overflow-hidden rounded-[16px] border border-slate-200/80 bg-white p-0 text-left shadow-[0_2px_12px_rgba(15,23,42,0.06)] transition-all duration-300 hover:-translate-y-1 hover:shadow-[0_8px_30px_rgba(15,23,42,0.12)] ${style.hoverBg}`}
+      className={`group relative w-full overflow-hidden rounded-[16px] bg-white p-0 text-left shadow-[0_2px_12px_rgba(15,23,42,0.06)] transition-all duration-300 hover:-translate-y-1 hover:shadow-[0_8px_30px_rgba(15,23,42,0.12)] ${style.hoverBg}`}
     >
-      {/* Top gradient accent bar */}
-      <div className={`h-[3px] w-full bg-gradient-to-r ${style.gradient}`} />
-
       <div className="p-5">
         <div className="flex items-start gap-4">
           {/* Icon tile with gradient */}
