@@ -353,7 +353,7 @@ const AppointmentBooking = ({ onSaveAppointment }) => {
                 type="button"
                 onClick={handleConfirm}
                 disabled={!canConfirm}
-                className={`flex h-10 flex-1 items-center justify-center gap-3 rounded-[8px] text-sm font-bold text-white shadow-sm transition ${
+                className={`flex h-10 items-center justify-center gap-3 rounded-[8px] px-7 text-sm font-bold text-white shadow-sm transition ${
                   canConfirm
                     ? "bg-[#244783] hover:bg-[#1c396f]"
                     : "cursor-not-allowed bg-[#94a3bd]"

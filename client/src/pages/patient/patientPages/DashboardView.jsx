@@ -65,19 +65,19 @@ const StatCard = ({ icon, label, value, tone = "blue" }) => {
   };
 
   return (
-    <div className="min-w-0 rounded-[12px] border border-slate-200 bg-white p-2.5 shadow-[0_2px_8px_rgba(15,23,42,0.08)] md:min-h-0 md:p-4 md:shadow-[0_1px_4px_rgba(15,23,42,0.04)]">
-      <div className="flex min-h-[110px] min-w-0 flex-col items-start md:block md:min-h-0">
+    <div className="min-w-0 rounded-[8px] border border-slate-100 bg-white p-2.5 shadow-[0_2px_8px_rgba(15,23,42,0.06)] md:min-h-0 md:rounded-[12px] md:p-4 md:shadow-[0_1px_4px_rgba(15,23,42,0.04)]">
+      <div className="flex min-w-0 items-center gap-2.5 md:block">
         <div className="contents md:flex md:items-start md:justify-between">
           <div
-            className={`order-1 flex h-9 w-9 shrink-0 items-center justify-center rounded-[10px] md:h-10 md:w-10 ${tones[tone]}`}
+            className={`flex h-7 w-7 shrink-0 items-center justify-center rounded-[7px] md:h-10 md:w-10 md:rounded-[10px] ${tones[tone]}`}
           >
-            <Icon type={icon} className="h-4 w-4" />
+            <Icon type={icon} className="h-3.5 w-3.5 md:h-4 md:w-4" />
           </div>
-          <p className="order-3 mt-3 text-2xl font-bold leading-none text-[#061022] md:order-none md:mt-0">
+          <p className="order-3 mt-0 text-lg font-bold leading-none text-[#061022] md:order-none md:mt-0 md:text-2xl">
             {value}
           </p>
         </div>
-        <p className="order-2 mt-3 w-full min-w-0 truncate text-[11px] font-semibold leading-tight text-[#061022] min-[390px]:text-xs md:text-xs md:font-medium md:text-[#18304d]">
+        <p className="order-2 mt-0 min-w-0 flex-1 truncate text-[10px] font-semibold leading-tight text-[#18304d] md:mt-3 md:w-full md:text-xs md:font-medium">
           {label}
         </p>
       </div>
@@ -135,6 +135,28 @@ const ActionCard = ({
     <div className={staticClass}>
       {content}
     </div>
+  );
+};
+
+const MobileQuickAction = ({ icon, title, subtitle, onClick, accent = "navy" }) => {
+  const iconClass =
+    accent === "orange" ? "bg-[#fff2d9] text-[#f59e0b]" : "bg-[#e8f0ff] text-[#244783]";
+
+  return (
+    <button
+      type="button"
+      onClick={onClick}
+      className="flex min-w-0 items-center gap-2.5 rounded-[8px] border border-slate-100 bg-white px-2.5 py-3 text-left shadow-[0_2px_7px_rgba(15,23,42,0.06)] transition hover:border-[#244783]/25 hover:shadow-md"
+    >
+      <span className={`flex h-7 w-7 shrink-0 items-center justify-center rounded-[7px] ${iconClass}`}>
+        <Icon type={icon} className="h-3.5 w-3.5" />
+      </span>
+      <span className="min-w-0 flex-1">
+        <span className="block truncate text-[11px] font-bold leading-tight text-[#12213a]">{title}</span>
+        <span className="mt-0.5 block truncate text-[9px] leading-tight text-slate-400">{subtitle}</span>
+      </span>
+      <span className="text-sm leading-none text-slate-400">›</span>
+    </button>
   );
 };
 
@@ -283,9 +305,9 @@ const DashboardView = ({
   };
 
   return (
-    <main className="flex-1 bg-[#f7f8fa] px-4 py-6 sm:px-6 lg:px-8">
-      <div className="mx-auto max-w-[1060px] space-y-6">
-        <section className="relative overflow-hidden rounded-[12px] bg-[#244783] px-7 py-8 text-white shadow-[0_4px_12px_rgba(15,23,42,0.22)]">
+    <main className="flex-1 bg-[#f7f8fa] px-2.5 py-3 sm:px-6 sm:py-6 lg:px-8">
+      <div className="mx-auto max-w-[1060px] space-y-3 sm:space-y-6">
+        <section className="relative hidden overflow-hidden rounded-[12px] bg-[#244783] px-7 py-8 text-white shadow-[0_4px_12px_rgba(15,23,42,0.22)] sm:block">
           <div className="absolute -right-12 -top-28 h-64 w-64 rounded-full bg-white/8" />
           <div className="relative z-10 flex items-center justify-between gap-5">
             <div>
@@ -318,7 +340,7 @@ const DashboardView = ({
           </div>
         </section>
 
-        <section className="grid grid-cols-4 gap-2 min-[390px]:gap-3 md:grid-cols-2 md:gap-4 xl:grid-cols-4">
+        <section className="grid grid-cols-2 gap-2.5 sm:grid-cols-4 sm:gap-3 md:grid-cols-2 md:gap-4 xl:grid-cols-4">
           <StatCard
             icon="calendar"
             label="Upcoming"
@@ -374,40 +396,33 @@ const DashboardView = ({
           )}
         </section>
 
-        <section className="grid min-w-0 grid-cols-[minmax(0,1.35fr)_minmax(0,0.9fr)] gap-3 min-[390px]:gap-4 md:hidden">
-          <div className="min-w-0 rounded-[12px] border border-slate-200 bg-white p-4 shadow-[0_3px_10px_rgba(15,23,42,0.1)] min-[390px]:p-5">
-            <div className="mb-6">
-              <h2 className="break-words text-base font-bold leading-tight text-[#061022] min-[390px]:text-lg">
+        <section className="min-w-0 md:hidden">
+          <div className="min-w-0 rounded-[8px] border border-slate-100 bg-white p-3 shadow-[0_2px_8px_rgba(15,23,42,0.07)]">
+            <div className="mb-3 flex items-start justify-between gap-2">
+              <div>
+              <h2 className="break-words text-sm font-bold leading-tight text-[#061022] sm:text-lg">
                 Upcoming Appointments
               </h2>
-              <p className="mt-1 break-words text-[11px] leading-snug text-[#18304d] min-[390px]:text-xs">
+              <p className="mt-0.5 break-words text-[10px] leading-snug text-[#708095] sm:text-xs">
                 Your next scheduled visits
               </p>
-            </div>
-
-            <div className="mb-5 flex min-w-0 flex-wrap gap-2">
-              <button
-                type="button"
-                onClick={() => setAppointmentFilter("confirmed")}
-                className={`min-w-0 rounded-[8px] border px-2.5 py-1.5 text-[11px] font-semibold min-[390px]:px-3 min-[390px]:text-xs ${
-                  appointmentFilter === "confirmed"
-                    ? "border-[#244783] bg-[#244783] text-white"
-                    : "border-slate-200 text-[#061022]"
-                }`}
-              >
-                Confirmed
-              </button>
-              <button
-                type="button"
-                onClick={() => setAppointmentFilter("pending")}
-                className={`min-w-0 rounded-[8px] border px-2.5 py-1.5 text-[11px] font-semibold min-[390px]:px-3 min-[390px]:text-xs ${
-                  appointmentFilter === "pending"
-                    ? "border-[#ffae0b] bg-[#fff7e6] text-[#f07a00]"
-                    : "border-[#ffae0b] text-[#f07a00]"
-                }`}
-              >
-                Pending
-              </button>
+              </div>
+              <div className="flex shrink-0 gap-1">
+                <button
+                  type="button"
+                  onClick={() => setAppointmentFilter("confirmed")}
+                  className={`rounded-[4px] px-1.5 py-1 text-[9px] font-bold ${appointmentFilter === "confirmed" ? "bg-[#244783] text-white" : "border border-slate-200 text-slate-500"}`}
+                >
+                  Confirmed
+                </button>
+                <button
+                  type="button"
+                  onClick={() => setAppointmentFilter("pending")}
+                  className={`rounded-[4px] px-1.5 py-1 text-[9px] font-bold ${appointmentFilter === "pending" ? "bg-[#fff2d9] text-[#d97706]" : "border border-[#f5b23c] text-[#d97706]"}`}
+                >
+                  Pending
+                </button>
+              </div>
             </div>
 
             {visibleAppointments.length === 0 ? (
@@ -415,7 +430,7 @@ const DashboardView = ({
                 No {appointmentFilter} appointments to show.
               </div>
             ) : (
-              <div className="space-y-3">
+              <div className="space-y-1.5">
                 {visibleAppointments.map((appointment) => (
                   <AppointmentRow
                     key={appointment.id}
@@ -424,84 +439,42 @@ const DashboardView = ({
                 ))}
               </div>
             )}
-            {hasMoreAppointments && (
-              <button
-                type="button"
-                onClick={onViewAppointments}
-                className="mt-5 w-full rounded-[8px] border border-[#244783] px-4 py-2 text-xs font-bold text-[#244783] transition hover:bg-[#244783] hover:text-white"
-              >
-                View more
-              </button>
-            )}
           </div>
 
-          <div className="min-w-0 space-y-4">
-            <ActionCard
+          <div className="mt-3 grid grid-cols-2 gap-2.5">
+            <MobileQuickAction
               icon="calendar"
               title="Book Appointment"
               subtitle="Schedule a new visit"
               onClick={onBookAppointment}
-              mobileStacked
             />
-            <ActionCard
+            <MobileQuickAction
               icon="document"
               title="My Appointments"
               subtitle="View your history"
               onClick={onViewAppointments}
-              mobileStacked
             />
             {profile?.isAccountVerified ? (
-              <ActionCard
+              <MobileQuickAction
                 icon="check"
                 title="Email Verified"
                 subtitle="Your email is verified"
-                mobileStacked
               />
             ) : (
-              <ActionCard
+              <MobileQuickAction
                 icon="mail"
                 title="Verify Email"
                 subtitle="Send OTP verification"
                 accent="orange"
                 onClick={() => setOtpOpen(true)}
-                mobileStacked
               />
             )}
-
-            <div className="min-w-0 rounded-[12px] border border-slate-200 bg-white p-3 shadow-[0_3px_10px_rgba(15,23,42,0.1)] min-[390px]:p-4">
-              <h2 className="break-words text-sm font-bold leading-tight text-[#061022] min-[390px]:text-base">
-                Account Status
-              </h2>
-              <div className="mt-4 space-y-3 text-xs">
-                <div className="min-w-0 rounded-[12px] border border-slate-200 bg-slate-50 p-2.5 min-[390px]:p-3">
-                  <div className="mb-2 flex h-9 w-9 shrink-0 items-center justify-center rounded-[10px] bg-blue-100 text-blue-700 min-[390px]:h-10 min-[390px]:w-10">
-                    <Icon type="mail" className="h-4 w-4 min-[390px]:h-5 min-[390px]:w-5" />
-                  </div>
-                  <p className="break-words text-xs font-bold leading-tight text-[#061022] min-[390px]:text-sm">Email Verification</p>
-                  <p className="mt-0.5 break-words text-[11px] leading-snug text-[#18304d] min-[390px]:text-xs">
-                    {profile?.isAccountVerified ? "Verified" : "Not verified"}
-                  </p>
-                  {!profile?.isAccountVerified && (
-                    <button
-                      type="button"
-                      onClick={() => setOtpOpen(true)}
-                      className="mt-3 rounded-[8px] bg-[#244783] px-3 py-1.5 text-xs font-bold text-white hover:bg-[#1c396f]"
-                    >
-                      Verify
-                    </button>
-                  )}
-                </div>
-                <div className="min-w-0 rounded-[12px] border border-slate-200 bg-slate-50 p-2.5 min-[390px]:p-3">
-                  <div className="mb-2 flex h-9 w-9 shrink-0 items-center justify-center rounded-[10px] bg-blue-100 text-blue-700 min-[390px]:h-10 min-[390px]:w-10">
-                    <Icon type="calendar" className="h-4 w-4 min-[390px]:h-5 min-[390px]:w-5" />
-                  </div>
-                  <p className="break-words text-xs font-bold leading-tight text-[#061022] min-[390px]:text-sm">Total Appointments</p>
-                  <p className="mt-0.5 break-words text-[11px] leading-snug text-[#18304d] min-[390px]:text-xs">
-                    {appointmentStats.total} appointment{appointmentStats.total !== 1 ? "s" : ""}
-                  </p>
-                </div>
-              </div>
-            </div>
+            <MobileQuickAction
+              icon="user"
+              title="Account Status"
+              subtitle={profile?.isAccountVerified ? "Active" : "Needs verification"}
+              onClick={onViewProfile}
+            />
           </div>
         </section>
 
@@ -575,7 +548,7 @@ const DashboardView = ({
           </button>
         </section>
 
-        <section className="rounded-[12px] border border-slate-200 bg-white p-6 shadow-[0_3px_10px_rgba(15,23,42,0.1)] md:hidden">
+        <section className="hidden rounded-[12px] border border-slate-200 bg-white p-6 shadow-[0_3px_10px_rgba(15,23,42,0.1)] md:hidden">
           <h2 className="text-xl font-bold text-[#061022]">Your Profile</h2>
           <div className="mt-8 flex items-center gap-3">
             <div className="relative flex h-14 w-14 shrink-0 items-center justify-center overflow-hidden rounded-full bg-[#244783] text-white">

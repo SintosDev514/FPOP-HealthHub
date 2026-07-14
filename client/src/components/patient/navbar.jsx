@@ -136,12 +136,12 @@ const Navbar = ({
   return (
     <nav className="sticky top-0 z-50 bg-white/80 backdrop-blur-lg border-b border-slate-200/60">
       <div className="px-4 sm:px-6 lg:px-8">
-        <div className="flex items-center justify-between h-16">
-          <div className="flex items-center gap-2.5">
-            <div className="w-9 h-9 rounded-xl bg-[#244783] flex items-center justify-center shadow-sm">
-              <img src={logo} alt="FPOP" className="w-6 h-6 object-contain brightness-0 invert" />
+        <div className="flex h-11 items-center justify-between sm:h-16">
+          <div className="flex items-center gap-1.5 sm:gap-2.5">
+            <div className="flex h-6 w-6 items-center justify-center rounded-md bg-[#244783] shadow-sm sm:h-9 sm:w-9 sm:rounded-xl">
+              <img src={logo} alt="FPOP" className="h-4 w-4 object-contain brightness-0 invert sm:h-6 sm:w-6" />
             </div>
-            <span className="text-lg font-bold text-slate-800 tracking-tight">
+            <span className="text-[10px] font-bold tracking-tight text-slate-800 sm:text-lg">
               FPOP <span className="text-[#244783]">Clinic</span>
             </span>
           </div>
@@ -158,13 +158,13 @@ const Navbar = ({
             ))}
           </div>
 
-          <div className="flex items-center gap-2">
+          <div className="flex items-center gap-0.5 sm:gap-2">
             <div className="relative" ref={notifRef}>
               <button
                 onClick={() => setNotifOpen(!notifOpen)}
-                className="relative p-2 rounded-lg text-slate-400 hover:text-[#244783] hover:bg-[#244783]/8 transition-all duration-200"
+                className="relative rounded-lg p-1.5 text-slate-400 transition-all duration-200 hover:bg-[#244783]/8 hover:text-[#244783] sm:p-2"
               >
-                <Icon type="bell" />
+                <Icon type="bell" className="h-4 w-4 sm:h-5 sm:w-5" />
                 {unreadCount > 0 && (
                   <span className="absolute -top-0.5 -right-0.5 flex items-center justify-center min-w-[18px] h-[18px] px-1 text-[10px] font-bold text-white bg-red-500 rounded-full ring-2 ring-white">
                     {unreadCount > 9 ? "9+" : unreadCount}
@@ -173,7 +173,7 @@ const Navbar = ({
               </button>
 
               {notifOpen && (
-                <div className="absolute right-0 mt-2 w-[380px] bg-white rounded-xl shadow-lg border border-slate-200 overflow-hidden">
+                <div className="fixed left-3 right-3 top-12 z-[60] max-h-[calc(100dvh-4rem)] overflow-hidden rounded-xl border border-slate-200 bg-white shadow-lg sm:absolute sm:left-auto sm:right-0 sm:top-auto sm:mt-2 sm:max-h-none sm:w-[380px]">
                   <div className="flex items-center justify-between px-4 py-3 border-b border-slate-100">
                     <h3 className="text-sm font-bold text-slate-800">Notifications</h3>
                     {unreadCount > 0 && (
@@ -186,7 +186,7 @@ const Navbar = ({
                     )}
                   </div>
 
-                  <div className="max-h-[360px] overflow-y-auto">
+                  <div className="max-h-[calc(100dvh-9rem)] overflow-y-auto sm:max-h-[360px]">
                     {notifLoading && notifications.length === 0 ? (
                       <div className="flex items-center justify-center py-10 text-sm text-slate-400">
                         Loading...
@@ -280,9 +280,9 @@ const Navbar = ({
 
             <button
               onClick={() => setMobileOpen(!mobileOpen)}
-              className="lg:hidden p-2 rounded-lg text-slate-500 hover:text-[#244783] hover:bg-[#244783]/8 transition-all"
+              className="lg:hidden rounded-lg p-1.5 text-slate-500 transition-all hover:bg-[#244783]/8 hover:text-[#244783] sm:p-2"
             >
-              <Icon type={mobileOpen ? "close" : "menu"} />
+              <Icon type={mobileOpen ? "close" : "menu"} className="h-4 w-4 sm:h-5 sm:w-5" />
             </button>
           </div>
         </div>
