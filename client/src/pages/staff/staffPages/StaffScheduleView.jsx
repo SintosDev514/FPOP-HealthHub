@@ -213,8 +213,20 @@ const StaffScheduleView = ({ appointments = [], onRefresh }) => {
                     >
                       <td className="px-5 py-4">
                         <div className="flex items-center gap-4">
-                          <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-lg bg-[#1E3A5F] text-[9px] font-bold text-[#F5C518]">
-                            {getInitials(`${appt.patientId?.firstName || ""} ${appt.patientId?.lastName || ""}`)}
+                          <div className="flex h-10 w-10 shrink-0 items-center justify-center overflow-hidden rounded-lg bg-[#1E3A5F]">
+                            {appt.patientId?.avatar ? (
+                              <img
+                                src={appt.patientId.avatar}
+                                alt=""
+                                className="h-full w-full object-cover"
+                                onError={(e) => { e.currentTarget.style.display = "none"; e.currentTarget.nextElementSibling.style.display = "flex"; }}
+                              />
+                            ) : null}
+                            <div
+                              className={`flex h-10 w-10 items-center justify-center text-[9px] font-bold text-[#F5C518] ${appt.patientId?.avatar ? "hidden" : "flex"}`}
+                            >
+                              {getInitials(`${appt.patientId?.firstName || ""} ${appt.patientId?.lastName || ""}`)}
+                            </div>
                           </div>
                           <span className="text-[10px] font-bold text-[#2d3748]">
                             {appt.patientId?.firstName || "Unknown"} {appt.patientId?.lastName || ""}

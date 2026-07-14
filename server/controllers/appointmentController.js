@@ -210,7 +210,7 @@ const getStaffAppointments = async (req, res) => {
   try {
     const appointments = await appointmentModel
       .find({ staffId: req.user.id })
-      .populate("patientId", "firstName lastName email phone")
+      .populate("patientId", "firstName lastName email phone avatar")
       .sort({ date: -1, time: -1 });
 
     res.json({ success: true, appointments });
