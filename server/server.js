@@ -12,6 +12,7 @@ import adminRouter from "./routes/adminRoutes.js";
 import notificationRouter from "./routes/notificationRoutes.js";
 import myNotificationRouter from "./routes/myNotificationRoutes.js";
 import inventoryRouter from "./routes/inventoryRoutes.js";
+import assessmentRouter from "./routes/assessmentRoutes.js";
 
 import connectDB from "./config/Mongodb.js";
 
@@ -51,6 +52,7 @@ app.use("/api/admin", adminRouter);
 app.use("/api/admin/notifications", notificationRouter);
 app.use("/api/notifications", myNotificationRouter);
 app.use("/api/inventory", inventoryRouter);
+app.use("/api/assessments", assessmentRouter);
 
 import mailer from "./config/nodeMailer.js";
 

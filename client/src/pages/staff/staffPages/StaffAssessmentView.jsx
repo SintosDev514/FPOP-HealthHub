@@ -2283,20 +2283,71 @@ const StaffAssessmentView = () => {
     }
   };
 
-  const handleSubmitFormA = () => {
+  const handleSubmitFormA = async () => {
     setSubmitted(true);
-    // Clear localStorage data after successful submission
+    try {
+      await fetch(`${__API_BASE__}/api/assessments`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        credentials: "include",
+        body: JSON.stringify({
+          formType: "fp",
+          clientFirstName: formData.clientInfo.firstName,
+          clientLastName: formData.clientInfo.lastName,
+          clientId: formData.clientInfo.clientId,
+          formData: { ...formData, visitRecords: visits },
+        }),
+      });
+    } catch (err) {
+      console.error("Failed to save FP assessment:", err);
+    }
     setTimeout(() => {
       fpFormASave.clearData();
     }, 500);
   };
 
-  const handleSubmitFormB = () => {
+  const handleSubmitFormB = async () => {
     setVisitsSubmitted(true);
-    // Clear localStorage data after successful submission
+    try {
+      await fetch(`${__API_BASE__}/api/assessments`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        credentials: "include",
+        body: JSON.stringify({
+          formType: "fp",
+          clientFirstName: formData.clientInfo.firstName,
+          clientLastName: formData.clientInfo.lastName,
+          clientId: formData.clientInfo.clientId,
+          formData: { ...formData, visitRecords: visits },
+        }),
+      });
+    } catch (err) {
+      console.error("Failed to save FP assessment:", err);
+    }
     setTimeout(() => {
       fpFormBSave.clearData();
     }, 500);
+  };
+
+  const handleSaveHIV = async () => {
+    try {
+      await fetch(`${__API_BASE__}/api/assessments`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        credentials: "include",
+        body: JSON.stringify({
+          formType: "hiv",
+          clientFirstName: hivFormData.firstName,
+          clientLastName: hivFormData.lastName,
+          clientId: "",
+          formData: hivFormData,
+        }),
+      });
+    } catch (err) {
+      console.error("Failed to save HIV assessment:", err);
+    }
+    hivFormSave.clearData();
+    setHivSaved(true);
   };
 
   const updateSection = (section) => (field, value) =>
@@ -2841,7 +2892,7 @@ const StaffAssessmentView = () => {
                     ) : (
                       <button
                         type="button"
-                        onClick={() => { hivFormSave.clearData(); setHivSaved(true); }}
+                        onClick={handleSaveHIV}
                         className="flex items-center gap-2 rounded-lg bg-[#1E3A5F] px-7 py-2.5 text-[10px] font-bold text-white shadow-md hover:bg-[#152c4a] hover:-translate-y-0.5 active:translate-y-0 transition-all duration-200"
                       >
                         Save HTS Record

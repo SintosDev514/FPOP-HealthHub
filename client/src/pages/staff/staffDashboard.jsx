@@ -7,6 +7,7 @@ import StaffReportsView from "./staffPages/StaffReportsView";
 import StaffScheduleView from "./staffPages/StaffScheduleView";
 import StaffAssessmentView from "./staffPages/StaffAssessmentView";
 import StaffInventoryView from "./staffPages/StaffInventoryView";
+import StaffAssessmentInventory from "./staffPages/StaffAssessmentInventory";
 
 const navItems = [
   { id: "dashboard", label: "Dashboard", icon: "home" },
@@ -14,6 +15,7 @@ const navItems = [
   { id: "schedule", label: "Schedule", icon: "calendar" },
   { id: "reports", label: "Reports", icon: "file" },
   { id: "assessment", label: "Assessment", icon: "assessment" },
+  { id: "assessmentLogs", label: "Assessment Logs", icon: "clipboard" },
   { id: "inventory", label: "Inventory", icon: "inventory" },
 ];
 
@@ -33,6 +35,8 @@ const StaffIcon = ({ name, className = "h-5 w-5" }) => {
       "M9 5H7a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V7a2 2 0 0 0-2-2h-2M9 5a2 2 0 0 0 2 2h2a2 2 0 0 0 2-2M9 5a2 2 0 0 1 2-2h2a2 2 0 0 1 2 2m-6 9l2 2 4-4",
     inventory:
       "m21 8-9-5-9 5m18 0-9 5m9-5v13m0-13L3 8m9 5 9-5M3 8v8l9 5 9-5V8",
+    clipboard:
+      "M9 5H7a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V7a2 2 0 0 0-2-2h-2M9 5a2 2 0 0 0 2 2h2a2 2 0 0 0 2-2M9 5a2 2 0 0 1 2-2h2a2 2 0 0 1 2 2",
     logout:
       "M15 17l5-5-5-5M20 12H9M12 19H6a2 2 0 0 1-2-2V7a2 2 0 0 1 2-2h6",
   };
@@ -239,6 +243,7 @@ const StaffDashboard = () => {
       id === "reports" ||
       id === "dashboard" ||
       id === "assessment" ||
+      id === "assessmentLogs" ||
       id === "inventory"
     ) {
       setCurrentView(id);
@@ -487,6 +492,8 @@ const StaffDashboard = () => {
           )}
 
           {currentView === "assessment" && <StaffAssessmentView />}
+
+          {currentView === "assessmentLogs" && <StaffAssessmentInventory />}
 
           {currentView === "inventory" && <StaffInventoryView />}
         </div>
