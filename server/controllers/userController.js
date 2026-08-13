@@ -23,6 +23,8 @@ const getUserData = async (req, res) => {
       userData: {
         _id: user._id,
         name: `${user.firstName} ${user.lastName}`,
+        firstName: user.firstName,
+        lastName: user.lastName,
         email: user.email,
         phone: user.phone || "",
         address: user.address || "",
@@ -76,6 +78,8 @@ const updateUserData = async (req, res) => {
       userData: {
         _id: user._id,
         name: `${user.firstName} ${user.lastName}`,
+        firstName: user.firstName,
+        lastName: user.lastName,
         email: user.email,
         phone: user.phone || "",
         address: user.address || "",
