@@ -3,7 +3,6 @@ import { useState, useEffect } from "react";
 const NAVY   = "#1E3A5F";
 const GREEN  = "#22c55e";
 const RED    = "#ef4444";
-const GOLD   = "#F5C518";
 
 export default function Notifications({ isMobile }) {
   const [filter, setFilter] = useState("All");
@@ -74,12 +73,6 @@ export default function Notifications({ isMobile }) {
     return `${days} day ago`;
   };
 
-  const getPriorityColor = (p) => {
-    if (p === "High") return RED;
-    if (p === "Medium") return GOLD;
-    return GREEN;
-  };
-
   return (
     <main style={{ flex: 1, padding: isMobile ? "20px 16px" : "28px 32px", overflowY: "auto", background: "#f1f4f8" }}>
 
@@ -134,7 +127,6 @@ export default function Notifications({ isMobile }) {
               borderRadius: "16px", 
               padding: "20px 24px", 
               border: "1px solid rgba(30,58,95,0.07)", 
-              borderLeft: `5px solid ${getPriorityColor(n.priority)}`,
               boxShadow: "0 2px 12px rgba(30,58,95,0.03)",
               display: "flex",
               justifyContent: "space-between",
