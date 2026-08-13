@@ -39,13 +39,6 @@ export default function Settings({ isMobile }) {
   const [clinicPhone, setClinicPhone] = useState("+63 2 8123 4567");
   const [clinicAddress, setClinicAddress] = useState("123 Brand Street, Manila, Philippines");
 
-  const [toggles, setToggles] = useState({
-    smsAlerts: true,
-    emailAlerts: true,
-    twoFactor: false,
-    devMode: false
-  });
-
   const [saveSuccess, setSaveSuccess] = useState(false);
 
   /* ── Admin profile state ── */
@@ -79,10 +72,6 @@ export default function Settings({ isMobile }) {
   const showProfileMsg = (type, text) => {
     setProfileMsg({ type, text });
     setTimeout(() => setProfileMsg(null), 4000);
-  };
-
-  const handleToggle = (key) => {
-    setToggles({ ...toggles, [key]: !toggles[key] });
   };
 
   const handleSave = (e) => {
@@ -154,7 +143,7 @@ export default function Settings({ isMobile }) {
         </p>
       </div>
 
-      <div className="grid grid-cols-1 lg:grid-cols-[2fr_1fr]" style={{ gap: "24px" }}>
+      <div className="grid grid-cols-1 lg:grid-cols-1" style={{ gap: "24px" }}>
 
         <div style={{ display: "flex", flexDirection: "column", gap: "24px" }}>
 
@@ -363,63 +352,6 @@ export default function Settings({ isMobile }) {
               </div>
             </form>
           </div>
-        </div>
-
-        <div style={{ display: "flex", flexDirection: "column", gap: "20px" }}>
-
-          <div style={cardStyle}>
-            <h3 style={{ margin: "0 0 16px", fontSize: "14px", fontWeight: 700, color: NAVY }}>System Preferences</h3>
-
-            <div style={{ display: "flex", flexDirection: "column", gap: "14px" }}>
-              {[
-                { key: "smsAlerts", label: "Patient SMS reminders", desc: "Automated SMS booking notices" },
-                { key: "emailAlerts", label: "Email reports summaries", desc: "Daily system operations digest" },
-                { key: "twoFactor", label: "Two-Factor Auth (2FA)", desc: "Enforce extra login protection" },
-                { key: "devMode", label: "System developer mode", desc: "Show detailed system debugger logs" }
-              ].map((t) => (
-                <div key={t.key} style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
-                  <div>
-                    <span style={{ fontSize: "13px", fontWeight: 600, color: NAVY, display: "block" }}>{t.label}</span>
-                    <span style={{ fontSize: "11px", color: "#8a96a3" }}>{t.desc}</span>
-                  </div>
-                  <button
-                    onClick={() => handleToggle(t.key)}
-                    style={{
-                      width: "38px",
-                      height: "20px",
-                      borderRadius: "99px",
-                      background: toggles[t.key] ? GREEN : "rgba(30,58,95,0.14)",
-                      border: "none",
-                      cursor: "pointer",
-                      position: "relative",
-                      transition: "background 0.2s"
-                    }}
-                  >
-                    <span style={{
-                      position: "absolute",
-                      width: "14px",
-                      height: "14px",
-                      borderRadius: "50%",
-                      background: "#fff",
-                      top: "3px",
-                      left: toggles[t.key] ? "21px" : "3px",
-                      transition: "left 0.2s"
-                    }} />
-                  </button>
-                </div>
-              ))}
-            </div>
-          </div>
-
-          <div style={{ ...cardStyle, display: "flex", flexDirection: "column", gap: "8px" }}>
-            <span style={{ fontSize: "11px", fontWeight: 700, color: "#8a96a3", textTransform: "uppercase", letterSpacing: "0.5px" }}>Database Status</span>
-            <span style={{ fontSize: "14px", fontWeight: 700, color: NAVY }}>FPOP_HealthHub_Prod</span>
-            <div style={{ display: "flex", justifyContent: "space-between", fontSize: "12px", color: "#4a5568", borderTop: "1px solid rgba(30,58,95,0.08)", paddingTop: "8px", marginTop: "4px" }}>
-              <span>Auto Backup:</span>
-              <span style={{ fontWeight: 700 }}>Daily 02:00 AM</span>
-            </div>
-          </div>
-
         </div>
 
       </div>
