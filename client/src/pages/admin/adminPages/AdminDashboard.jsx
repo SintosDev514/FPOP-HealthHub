@@ -137,9 +137,24 @@ function HeaderIconBtn({ id, title, onClick, isActive, children }) {
 function AdminShell({ activeNav }) {
   const [isHovered, setIsHovered] = useState(false);
   const [isMobile,  setIsMobile]  = useState(false);
-  const [search,    setSearch]    = useState("");
+  const [unreadCount, setUnreadCount] = useState(0);
   const navigate = useNavigate();
-  const { logout } = useAuth();
+  const { user, logout } = useAuth();
+
+  const adminName =
+    `${user?.firstName || ""} ${user?.lastName || ""}`.trim() || user?.email || "Admin";
+  const adminInitial = (user?.firstName || user?.email || "A").charAt(0).toUpperCase();
+
+  useEffect(() => {
+    fetch(`${__API_BASE__}/api/admin/notifications`, { credentials: "include" })
+      .then((r) => r.json())
+      .then((d) => {
+        if (d.success) {
+          setUnreadCount(d.notifications.filter((n) => !n.read).length);
+        }
+      })
+      .catch(() => {});
+  }, []);
 
   const pageTitle = {
     dashboard: "Dashboard",
@@ -260,7 +275,7 @@ function AdminShell({ activeNav }) {
         {/* ── Sidebar footer watermark ── */}
         {!isIconOnly && (
           <div style={{ padding: "10px 18px 16px", fontSize: "10px", color: "rgba(255,255,255,0.18)", whiteSpace: "nowrap", fontStyle: "italic" }}>
-            © 2025 FPOP HealthHub System
+            © {new Date().getFullYear()} FPOP HealthHub System
           </div>
         )}
       </aside>
@@ -344,27 +359,29 @@ function AdminShell({ activeNav }) {
               >
                 <IcoBell />
               </HeaderIconBtn>
-              <span
-                style={{
-                  position: "absolute",
-                  top: "-4px",
-                  right: "-4px",
-                  width: "18px",
-                  height: "18px",
-                  borderRadius: "50%",
-                  background: RED,
-                  color: "#fff",
-                  fontSize: "10px",
-                  fontWeight: 800,
-                  display: "flex",
-                  alignItems: "center",
-                  justifyContent: "center",
-                  border: "2px solid #fff",
-                  boxShadow: "0 2px 6px rgba(220,38,38,0.4)",
-                }}
-              >
-                2
-              </span>
+              {unreadCount > 0 && (
+                <span
+                  style={{
+                    position: "absolute",
+                    top: "-4px",
+                    right: "-4px",
+                    width: "18px",
+                    height: "18px",
+                    borderRadius: "50%",
+                    background: RED,
+                    color: "#fff",
+                    fontSize: "10px",
+                    fontWeight: 800,
+                    display: "flex",
+                    alignItems: "center",
+                    justifyContent: "center",
+                    border: "2px solid #fff",
+                    boxShadow: "0 2px 6px rgba(220,38,38,0.4)",
+                  }}
+                >
+                  {unreadCount > 99 ? "99+" : unreadCount}
+                </span>
+              )}
             </div>
 
             {/* Settings */}
@@ -402,15 +419,20 @@ function AdminShell({ activeNav }) {
                   fontWeight: 800,
                   fontSize: "15px",
                   flexShrink: 0,
+                  overflow: "hidden",
                   boxShadow: "0 2px 8px rgba(30,58,95,0.25)",
                 }}
               >
-                A
+                {user?.avatar ? (
+                  <img src={user.avatar} alt="" style={{ width: "100%", height: "100%", objectFit: "cover" }} />
+                ) : (
+                  adminInitial
+                )}
               </div>
               {!isMobile && (
                 <div>
                   <div style={{ fontSize: "13px", fontWeight: 700, color: NAVY, lineHeight: 1.2, whiteSpace: "nowrap" }}>
-                    Admin User
+                    {adminName}
                   </div>
                   <div style={{ fontSize: "11px", color: "#94a3b8", fontWeight: 500 }}>Administrator</div>
                 </div>

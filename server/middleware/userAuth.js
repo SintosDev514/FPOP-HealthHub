@@ -37,6 +37,9 @@ const userAuth = async (req, res, next) => {
       email: user.email,
       role: user.role,
       isAccountVerified: user.isAccountVerified,
+      firstName: user.firstName,
+      lastName: user.lastName,
+      avatar: user.avatar || "",
     };
 
     next();
