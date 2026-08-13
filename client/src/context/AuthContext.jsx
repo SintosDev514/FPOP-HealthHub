@@ -91,10 +91,8 @@ export const AuthProvider = ({ children }) => {
       });
     } catch (err) {
       console.error(err);
-    } finally {
-      setUser(null);
-      window.location.href = "/";
     }
+    window.location.href = "/";
   };
 
   return (
