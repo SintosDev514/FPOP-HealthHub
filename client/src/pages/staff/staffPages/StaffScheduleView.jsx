@@ -271,9 +271,7 @@ const StaffScheduleView = ({ appointments = [], onRefresh }) => {
                               {updating === appt._id ? "..." : "Decline"}
                             </button>
                           </div>
-                        ) : (
-                          <span className="text-[9px] text-[#8a96a3]">â€”</span>
-                        )}
+                        ) : null}
                       </td>
                     </tr>
                   ))
