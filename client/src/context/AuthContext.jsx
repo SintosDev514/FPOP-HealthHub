@@ -9,6 +9,40 @@ export const AuthProvider = ({ children }) => {
 
   const normalizeUser = (data) => data?.user || data || null;
 
+  const profileKey = (email) => `fpop_profile_${email || "unknown"}`;
+
+  const restoreProfile = (email) => {
+    try {
+      return JSON.parse(localStorage.getItem(profileKey(email)) || "{}");
+    } catch {
+      return {};
+    }
+  };
+
+  const persistProfile = (next) => {
+    if (!next?.email) return;
+    try {
+      localStorage.setItem(
+        profileKey(next.email),
+        JSON.stringify({
+          firstName: next.firstName || "",
+          lastName: next.lastName || "",
+          avatar: next.avatar || "",
+        })
+      );
+    } catch {
+      /* ignore storage errors */
+    }
+  };
+
+  const updateProfile = (patch) => {
+    setUser((prev) => {
+      const next = { ...prev, ...patch };
+      persistProfile(next);
+      return next;
+    });
+  };
+
   const checkAuth = async () => {
     try {
       const res = await fetch(`${__API_BASE__}/api/auth/me`, {
@@ -21,7 +55,21 @@ export const AuthProvider = ({ children }) => {
       }
 
       const data = await res.json();
-      setUser(normalizeUser(data));
+      const serverUser = normalizeUser(data);
+      if (!serverUser) {
+        setUser(null);
+        return;
+      }
+
+      const saved = restoreProfile(serverUser.email);
+      const merged = {
+        ...serverUser,
+        firstName: serverUser.firstName || saved.firstName || "",
+        lastName: serverUser.lastName || saved.lastName || "",
+        avatar: serverUser.avatar || saved.avatar || "",
+      };
+      setUser(merged);
+      persistProfile(merged);
     } catch (err) {
       console.error(err);
       setUser(null);
@@ -54,6 +102,7 @@ export const AuthProvider = ({ children }) => {
       value={{
         user,
         setUser,
+        updateProfile,
         loading,
         initialized,
         checkAuth,

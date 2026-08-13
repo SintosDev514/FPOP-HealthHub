@@ -32,7 +32,7 @@ const cardStyle = {
 };
 
 export default function Settings({ isMobile }) {
-  const { user, setUser } = useAuth();
+  const { user, updateProfile } = useAuth();
 
   const [clinicName, setClinicName] = useState("FPOP Family Planning Clinic");
   const [clinicEmail, setClinicEmail] = useState("info@fpop-clinic.org");
@@ -120,16 +120,19 @@ export default function Settings({ isMobile }) {
       });
       const data = await res.json();
       if (data.success) {
-        const u = data.userData;
+        const u = data.userData || {};
+        const nextFirstName = u.firstName || firstName.trim();
+        const nextLastName = u.lastName || lastName.trim();
+        setFirstName(nextFirstName);
+        setLastName(nextLastName);
         setAvatar(u.avatar || "");
         setAvatarFile(null);
         setAvatarPreview(null);
-        setUser((prev) => ({
-          ...prev,
-          firstName: u.firstName,
-          lastName: u.lastName,
+        updateProfile({
+          firstName: nextFirstName,
+          lastName: nextLastName,
           avatar: u.avatar || "",
-        }));
+        });
         showProfileMsg("success", "Admin profile updated successfully!");
       } else {
         showProfileMsg("error", data.message || "Failed to update profile");
