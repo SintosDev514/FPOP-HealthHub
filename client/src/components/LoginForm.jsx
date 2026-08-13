@@ -4,6 +4,7 @@ import logo from "../assets/logo.png";
 import { EyeIcon, EyeOffIcon } from "../components/icon/EyeIcons";
 import { useAuth } from "../context/AuthContext";
 import API_BASE from "../apiBase";
+import Loader from "../components/Loader";
 
 function LoginForm() {
   const [showPassword, setShowPassword] = useState(false);
@@ -14,12 +15,16 @@ function LoginForm() {
 
   const [message, setMessage] = useState("");
   const [error, setError] = useState("");
+  const [isLoggingIn, setIsLoggingIn] = useState(false);
 
   const [rememberMe, setRememberMe] = useState("");
   const canSubmit = email && password;
 
   const handleLogin = async (e) => {
     e.preventDefault();
+
+    setIsLoggingIn(true);
+    setError("");
 
     try {
       const res = await fetch(`${API_BASE}/api/auth/login`, {
@@ -47,13 +52,17 @@ function LoginForm() {
         else if (role === "staff") navigate("/staff", { replace: true });
         else navigate("/home", { replace: true });
       } else {
+        setIsLoggingIn(false);
         setError(data.message);
       }
     } catch (err) {
       console.error(err);
+      setIsLoggingIn(false);
       setError("Something went wrong. Please try again ");
     }
   };
+
+  if (isLoggingIn) return <Loader />;
 
   return (
     <div className="min-h-[calc(100vh-56px)] flex flex-col lg:flex-row bg-[#F9FAFB]">
