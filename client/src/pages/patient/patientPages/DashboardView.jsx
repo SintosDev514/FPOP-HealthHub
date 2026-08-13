@@ -318,17 +318,19 @@ const DashboardView = ({
                 Here's what's happening with your healthcare today
               </p>
             </div>
-            <div className="relative hidden h-16 w-16 items-center justify-center overflow-hidden rounded-full border border-white/20 bg-white/10 sm:flex">
-              {getAvatarSrc(profile?.avatar) && !imgError ? (
-                <img
-                  src={getAvatarSrc(profile.avatar)}
-                  alt="Profile"
-                  className="h-full w-full object-cover"
-                  onError={() => setImgError(true)}
-                />
-              ) : (
-                <Icon type="user" className="h-8 w-8" />
-              )}
+            <div className="relative hidden h-16 w-16 shrink-0 items-center justify-center sm:flex">
+              <div className="flex h-16 w-16 items-center justify-center overflow-hidden rounded-full border border-white/20 bg-white/10">
+                {getAvatarSrc(profile?.avatar) && !imgError ? (
+                  <img
+                    src={getAvatarSrc(profile.avatar)}
+                    alt="Profile"
+                    className="h-full w-full object-cover"
+                    onError={() => setImgError(true)}
+                  />
+                ) : (
+                  <Icon type="user" className="h-8 w-8" />
+                )}
+              </div>
               {profile?.isAccountVerified && (
                 <span className="absolute -bottom-0.5 -right-0.5 flex h-5 w-5 items-center justify-center rounded-full bg-green-500 text-white shadow-md">
                   <svg className="h-3 w-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -551,17 +553,19 @@ const DashboardView = ({
         <section className="hidden rounded-[12px] border border-slate-200 bg-white p-6 shadow-[0_3px_10px_rgba(15,23,42,0.1)] md:hidden">
           <h2 className="text-xl font-bold text-[#061022]">Your Profile</h2>
           <div className="mt-8 flex items-center gap-3">
-            <div className="relative flex h-14 w-14 shrink-0 items-center justify-center overflow-hidden rounded-full bg-[#244783] text-white">
-              {getAvatarSrc(profile?.avatar) && !imgError ? (
-                <img
-                  src={getAvatarSrc(profile.avatar)}
-                  alt="Profile"
-                  className="h-full w-full object-cover"
-                  onError={() => setImgError(true)}
-                />
-              ) : (
-                <Icon type="user" className="h-8 w-8" />
-              )}
+            <div className="relative h-14 w-14 shrink-0">
+              <div className="flex h-14 w-14 items-center justify-center overflow-hidden rounded-full bg-[#244783] text-white">
+                {getAvatarSrc(profile?.avatar) && !imgError ? (
+                  <img
+                    src={getAvatarSrc(profile.avatar)}
+                    alt="Profile"
+                    className="h-full w-full object-cover"
+                    onError={() => setImgError(true)}
+                  />
+                ) : (
+                  <Icon type="user" className="h-8 w-8" />
+                )}
+              </div>
               {profile?.isAccountVerified && (
                 <span className="absolute -bottom-0.5 -right-0.5 flex h-5 w-5 items-center justify-center rounded-full bg-green-500 text-white shadow-md">
                   <svg className="h-3 w-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -605,17 +609,19 @@ const DashboardView = ({
           <div className="rounded-[12px] border border-slate-200 bg-white p-6 shadow-[0_3px_10px_rgba(15,23,42,0.1)]">
             <h2 className="text-xl font-bold text-[#061022]">Your Profile</h2>
             <div className="mt-8 flex items-center gap-3">
-              <div className="relative flex h-14 w-14 shrink-0 items-center justify-center overflow-hidden rounded-full bg-[#244783] text-white">
-                {getAvatarSrc(profile?.avatar) && !imgError ? (
-                  <img
-                    src={getAvatarSrc(profile.avatar)}
-                    alt="Profile"
-                    className="h-full w-full object-cover"
-                    onError={() => setImgError(true)}
-                  />
-                ) : (
-                  <Icon type="user" className="h-8 w-8" />
-                )}
+              <div className="relative h-14 w-14 shrink-0">
+                <div className="flex h-14 w-14 items-center justify-center overflow-hidden rounded-full bg-[#244783] text-white">
+                  {getAvatarSrc(profile?.avatar) && !imgError ? (
+                    <img
+                      src={getAvatarSrc(profile.avatar)}
+                      alt="Profile"
+                      className="h-full w-full object-cover"
+                      onError={() => setImgError(true)}
+                    />
+                  ) : (
+                    <Icon type="user" className="h-8 w-8" />
+                  )}
+                </div>
                 {profile?.isAccountVerified && (
                   <span className="absolute -bottom-0.5 -right-0.5 flex h-5 w-5 items-center justify-center rounded-full bg-green-500 text-white shadow-md">
                     <svg className="h-3 w-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
