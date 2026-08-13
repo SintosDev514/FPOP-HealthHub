@@ -87,15 +87,26 @@ const createAppointment = async (req, res) => {
       });
     }
 
-    const appointment = await appointmentModel.create({
-      patientId,
-      staffId,
-      serviceId,
-      serviceName,
-      date,
-      time,
-      status: "pending",
-    });
+    let appointment;
+    try {
+      appointment = await appointmentModel.create({
+        patientId,
+        staffId,
+        serviceId,
+        serviceName,
+        date,
+        time,
+        status: "pending",
+      });
+    } catch (error) {
+      if (error.code === 11000) {
+        return res.json({
+          success: false,
+          message: "This time slot is no longer available",
+        });
+      }
+      return res.json({ success: false, message: error.message });
+    }
 
     const populated = await appointmentModel
       .findById(appointment._id)

@@ -11,4 +11,9 @@ const appointmentSchema = new mongoose.Schema({
   createdAt: { type: Date, default: Date.now },
 });
 
+appointmentSchema.index(
+  { staffId: 1, date: 1, time: 1 },
+  { unique: true, partialFilterExpression: { status: { $ne: "cancelled" } } }
+);
+
 export default mongoose.model("appointment", appointmentSchema);
