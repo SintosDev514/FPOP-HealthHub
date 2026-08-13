@@ -309,11 +309,6 @@ export const SendVerifyEmailOtp = async (req, res) => {
           </tr>
         </table>
 
-        <!-- Button -->
-        <div style="margin-bottom: 28px;">
-          <a href="http://localhost:5173/" target="_blank" style="display: inline-block; padding: 14px 32px; background-color: #003B6F; color: #ffffff; font-size: 15px; font-weight: 700; text-decoration: none; border-radius: 8px; box-shadow: 0 4px 12px rgba(0, 59, 111, 0.15); font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;">Go to Portal</a>
-        </div>
-
         <hr style="border: 0; border-top: 1px solid #E6EFF7; margin: 28px 0;" />
 
         <p style="margin: 0; font-size: 11px; font-weight: 700; color: #8A9CB0; letter-spacing: 1px; text-transform: uppercase;">Need Help?</p>
