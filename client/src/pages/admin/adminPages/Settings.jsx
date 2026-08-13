@@ -143,7 +143,7 @@ export default function Settings({ isMobile }) {
         </p>
       </div>
 
-      <div className="grid grid-cols-1 lg:grid-cols-1" style={{ gap: "24px" }}>
+      <div className="grid grid-cols-1 max-w-2xl mx-auto w-full" style={{ gap: "24px" }}>
 
         <div style={{ display: "flex", flexDirection: "column", gap: "24px" }}>
 
