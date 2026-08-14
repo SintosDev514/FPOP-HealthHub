@@ -74,11 +74,18 @@ function LoginForm() {
 
         <div className="w-full max-w-md">
           <div className="bg-white/85 backdrop-blur-md border border-white/40 shadow-[0_20px_42px_rgba(30,58,95,0.06)] rounded-[2rem] p-5 md:p-6">
-            <div className="mb-4">
-              <h2 className="text-xl font-bold text-[#1E3A5F] tracking-tight">
+            <div className="mb-5 flex flex-col items-center text-center">
+              <div className="mb-3 flex items-center justify-center rounded-2xl border border-[#F5C518]/30 bg-[#1E3A5F] p-1 shadow-sm">
+                <img
+                  src="/logoo.png"
+                  alt="FPOP Clinic Portal"
+                  className="h-12 w-12 object-contain sm:h-14 sm:w-14"
+                />
+              </div>
+              <h2 className="text-2xl font-bold tracking-tight text-[#1E3A5F] sm:text-[2rem]">
                 Welcome Back
               </h2>
-              <p className="mt-0.5 text-slate-500 text-xs">
+              <p className="mt-1 text-xs text-slate-500 sm:text-sm">
                 Sign in to your account to continue
               </p>
             </div>
@@ -182,7 +189,7 @@ function LoginForm() {
 
       {/* Right Panel - Branding */}
       <div className="relative lg:w-1/2 min-h-[40vh] lg:min-h-[calc(100vh-56px)] bg-[#1E3A5F] overflow-hidden flex items-center justify-center p-8 lg:p-12">
-        <div className="absolute inset-0 bg-gradient-to-br from-[#1E3A5F] to-[#152a47]" />
+        <div className="absolute inset-0 bg-[#1E3A5F]" />
 
         <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[500px] h-[500px] rounded-full border border-[#F5C518]/10 hidden lg:block" />
         <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[350px] h-[350px] rounded-full border border-[#F5C518]/15 hidden lg:block" />
@@ -195,12 +202,12 @@ function LoginForm() {
         <div className="absolute bottom-1/3 left-1/3 w-3 h-3 bg-[#F5C518]/30 rounded-full hidden lg:block" />
         <div className="absolute top-2/3 right-1/3 w-1.5 h-1.5 bg-white/20 rounded-full hidden lg:block" />
 
-        <div className="relative z-10 flex flex-col items-center text-center max-w-sm">
-          <div className="w-20 h-20 lg:w-24 lg:h-24 bg-white/10 rounded-2xl flex items-center justify-center mb-4 ring-2 ring-[#F5C518]/30 backdrop-blur-sm">
+        <div className="relative z-10 flex flex-col items-center text-center max-w-sm"> 
+          <div className="mb-3 flex items-center justify-center rounded-2xl border border-[#F5C518]/60 bg-[#1E3A5F] p-2 shadow-sm">
             <img
-              src={logo}
+              src="/logoo.png"
               alt="FPOP Clinic"
-              className="w-14 h-14 lg:w-16 lg:h-16"
+              className="h-14 w-14 object-contain sm:h-20 sm:w-20"
             />
           </div>
           <h1 className="text-xl lg:text-2xl font-bold text-white mb-1">
