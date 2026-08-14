@@ -198,7 +198,7 @@ export default function UserManagement({ isMobile }) {
   };
 
   const formatDate = (d) => {
-    if (!d) return "â€”";
+    if (!d) return "N/A";
     return new Date(d).toISOString().split("T")[0];
   };
 
