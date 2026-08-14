@@ -1,5 +1,4 @@
 import React, { useState, useRef, useEffect, useCallback } from "react";
-import logo from "../../assets/logo.png";
 import { useAuth } from "../../context/AuthContext";
 
 const timeAgo = (dateStr) => {
@@ -137,14 +136,28 @@ const Navbar = ({
     <nav className="sticky top-0 z-50 bg-white/80 backdrop-blur-lg border-b border-slate-200/60">
       <div className="px-4 sm:px-6 lg:px-8">
         <div className="flex h-11 items-center justify-between sm:h-16">
-          <div className="flex items-center gap-1.5 sm:gap-2.5">
-            <div className="flex h-6 w-6 items-center justify-center rounded-md bg-[#244783] shadow-sm sm:h-9 sm:w-9 sm:rounded-xl">
-              <img src={logo} alt="FPOP" className="h-4 w-4 object-contain brightness-0 invert sm:h-6 sm:w-6" />
+          <button
+            type="button"
+            onClick={onNavigateToDashboard}
+            className="group flex items-center gap-2 text-left"
+          >
+            <div className="relative">
+              <div className="absolute inset-0 rounded-full bg-[#F5C518]/20 blur-md transition-all duration-300 group-hover:bg-[#F5C518]/30" />
+              <img
+                src="/logoo.png"
+                alt="FPOP Clinic Portal"
+                className="relative h-8 w-8 object-contain transition-all duration-300 group-hover:scale-105 sm:h-10 sm:w-10"
+              />
             </div>
-            <span className="text-[10px] font-bold tracking-tight text-slate-800 sm:text-lg">
-              FPOP <span className="text-[#244783]">Clinic</span>
-            </span>
-          </div>
+            <div className="flex flex-col text-left leading-none">
+              <h1 className="text-[10px] font-bold tracking-wide text-slate-800 transition-colors duration-300 group-hover:text-[#244783] sm:text-sm">
+                FPOP Clinic Portal
+              </h1>
+              <span className="-mt-0.5 text-[8px] font-semibold uppercase tracking-[0.18em] text-[#244783]/80 sm:text-[10px]">
+                Healthcare Hub
+              </span>
+            </div>
+          </button>
 
           <div className="hidden lg:flex items-center gap-1">
             {links.map((link) => (
