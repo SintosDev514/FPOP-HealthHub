@@ -100,7 +100,7 @@ function ContactPage() {
 
         <div
           ref={formRef}
-          className="relative overflow-hidden rounded-[28px] border border-white/10 bg-[#1E3A5F] p-4 shadow-2xl sm:p-6 lg:p-8"
+          className="relative overflow-hidden rounded-[8px] border border-white/10 bg-[#1E3A5F] p-4 shadow-2xl sm:p-6 lg:p-8"
         >
           <div className="pointer-events-none absolute -left-16 top-10 h-44 w-44 rounded-full bg-[#F5C518]/10 blur-3xl" />
           <div className="pointer-events-none absolute right-0 top-0 h-56 w-56 rounded-full bg-[#F5C518]/10 blur-3xl" />
@@ -166,7 +166,7 @@ function ContactPage() {
               </div>
             </div>
 
-            <form className="rounded-3xl border border-white/10 bg-white/5 p-4 backdrop-blur-md sm:p-5">
+            <form className="rounded-[8px] border border-white/10 bg-white/5 p-4 backdrop-blur-md sm:p-5">
               <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
                 <div>
                   <label className="mb-1.5 block text-xs font-medium text-white/90">

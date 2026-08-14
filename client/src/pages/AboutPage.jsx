@@ -188,7 +188,7 @@ function AboutPage() {
       <section className="mx-auto max-w-[1400px] px-4 py-6 sm:px-6 md:px-10 lg:px-16">
         <div
           ref={heroRef}
-          className="overflow-visible rounded-[28px] bg-[#1E3A5F] px-4 pt-6 pb-2 shadow-[0_16px_40px_rgba(30,58,95,0.25)] sm:px-6 md:px-10 md:pt-6 md:pb-2"
+          className="overflow-visible rounded-[8px] bg-[#1E3A5F] px-4 pt-6 pb-2 shadow-[0_16px_40px_rgba(30,58,95,0.25)] sm:px-6 md:px-10 md:pt-6 md:pb-2"
         >
           <div className="grid items-center gap-6 md:grid-cols-2">
             <div
@@ -219,7 +219,7 @@ function AboutPage() {
             >
               <div
                 ref={(el) => setHeroCardRef(el, 0)}
-                className="floating-ui absolute left-10 top-6 z-10 hidden w-44 rounded-2xl bg-white px-4 py-3 shadow-xl md:block"
+                className="floating-ui absolute left-10 top-6 z-10 hidden w-44 rounded-[8px] bg-white px-4 py-3 shadow-xl md:block"
               >
                 <p className="text-xs text-slate-500">Appointments</p>
                 <p className="mt-1 text-xl font-bold text-[#1E3A5F]">24/7</p>
@@ -228,7 +228,7 @@ function AboutPage() {
 
               <div
                 ref={(el) => setHeroCardRef(el, 1)}
-                className="floating-ui absolute right-10 top-0 z-10 hidden w-48 rounded-2xl bg-white px-4 py-3 shadow-xl md:block"
+                className="floating-ui absolute right-10 top-0 z-10 hidden w-48 rounded-[8px] bg-white px-4 py-3 shadow-xl md:block"
               >
                 <p className="text-xs text-slate-500">Patient Access</p>
                 <p className="mt-1 text-xl font-bold text-[#1E3A5F]">Secure</p>
@@ -237,7 +237,7 @@ function AboutPage() {
 
               <div
                 ref={(el) => setHeroCardRef(el, 2)}
-                className="floating-ui absolute left-20 top-40 z-10 hidden w-56 rounded-2xl bg-white px-4 py-3 shadow-xl md:block"
+                className="floating-ui absolute left-20 top-40 z-10 hidden w-56 rounded-[8px] bg-white px-4 py-3 shadow-xl md:block"
               >
                 <p className="text-xs text-slate-500">Portal Experience</p>
                 <p className="mt-1 text-xl font-bold text-[#1E3A5F]">
@@ -270,9 +270,9 @@ function AboutPage() {
               ref={nurseCardRef}
               onMouseEnter={handleNurseEnter}
               onMouseLeave={handleNurseLeave}
-              className="relative flex h-[260px] w-[260px] items-center justify-center rounded-[28px] bg-[#1E3A5F] shadow-[0_18px_45px_rgba(30,58,95,0.16)] sm:h-[320px] sm:w-[320px] md:h-[380px] md:w-[380px]"
+              className="relative flex h-[260px] w-[260px] items-center justify-center rounded-[8px] bg-[#1E3A5F] shadow-[0_18px_45px_rgba(30,58,95,0.16)] sm:h-[320px] sm:w-[320px] md:h-[380px] md:w-[380px]"
             >
-              <div className="pointer-events-none absolute inset-0 rounded-[38px] bg-gradient-to-br from-white/10 to-transparent opacity-40" />
+              <div className="pointer-events-none absolute inset-0 rounded-[8px] bg-gradient-to-br from-white/10 to-transparent opacity-40" />
 
               <div className="absolute -bottom-6 -left-4 h-20 w-16 rounded-[20px] bg-black sm:h-24 sm:w-20 md:-bottom-8 md:-left-8 md:h-28 md:w-24" />
               <div className="absolute -bottom-12 left-10 h-20 w-16 rounded-[20px] bg-black sm:h-24 sm:w-20 md:-bottom-20 md:left-12 md:h-28 md:w-24" />
@@ -289,7 +289,7 @@ function AboutPage() {
           <div className="lg:col-span-2 space-y-5 sm:space-y-6">
             <div
               ref={secondTextRef}
-              className="rounded-2xl border border-white/15 bg-white/8 px-5 py-5 shadow-[0_8px_32px_rgba(30,58,95,0.1)] transition-all duration-300 backdrop-blur-sm hover:border-[#F5C518]/30 hover:shadow-[0_16px_48px_rgba(245,197,24,0.2)] hover:bg-white/12 sm:px-6 sm:py-6 md:px-8 md:py-8"
+              className="rounded-[8px] border border-white/15 bg-white/8 px-5 py-5 shadow-[0_8px_32px_rgba(30,58,95,0.1)] transition-all duration-300 backdrop-blur-sm hover:border-[#F5C518]/30 hover:shadow-[0_16px_48px_rgba(245,197,24,0.2)] hover:bg-white/12 sm:px-6 sm:py-6 md:px-8 md:py-8"
             >
               <p className="text-xs font-bold uppercase tracking-[0.3em] text-black/50">
                 Our Mission
@@ -307,7 +307,7 @@ function AboutPage() {
             </div>
 
            <div className="grid gap-3 sm:grid-cols-2 sm:gap-4 lg:grid-cols-3">
-  <article className="group rounded-xl bg-[#1E3A5F] px-4 py-5 text-left text-white shadow-[0_16px_28px_rgba(30,58,95,0.18)] transition-all duration-300 border-2 border-transparent hover:bg-white hover:border-[#F5C518] hover:shadow-[0_0_20px_rgba(245,197,24,0.3)] sm:px-5 sm:py-6">
+  <article className="group rounded-[8px] bg-[#1E3A5F] px-4 py-5 text-left text-white shadow-[0_16px_28px_rgba(30,58,95,0.18)] transition-all duration-300 border-2 border-transparent hover:bg-white hover:border-[#F5C518] hover:shadow-[0_0_20px_rgba(245,197,24,0.3)] sm:px-5 sm:py-6">
     <p className="text-[11px] font-bold uppercase tracking-[0.16em] text-blue-100 transition-colors duration-300 group-hover:text-[#1E3A5F]">
       Community Outreach
     </p>
@@ -318,7 +318,7 @@ function AboutPage() {
     </p>
   </article>
 
-  <article className="group rounded-xl bg-[#1E3A5F] px-4 py-5 text-left text-white shadow-[0_16px_28px_rgba(30,58,95,0.18)] transition-all duration-300 border-2 border-transparent hover:bg-white hover:border-[#F5C518] hover:shadow-[0_0_20px_rgba(245,197,24,0.3)] sm:px-5 sm:py-6">
+  <article className="group rounded-[8px] bg-[#1E3A5F] px-4 py-5 text-left text-white shadow-[0_16px_28px_rgba(30,58,95,0.18)] transition-all duration-300 border-2 border-transparent hover:bg-white hover:border-[#F5C518] hover:shadow-[0_0_20px_rgba(245,197,24,0.3)] sm:px-5 sm:py-6">
     <p className="text-[11px] font-bold uppercase tracking-[0.16em] text-blue-100 transition-colors duration-300 group-hover:text-[#1E3A5F]">
       Youth Education
     </p>
@@ -329,7 +329,7 @@ function AboutPage() {
     </p>
   </article>
 
-  <article className="group rounded-xl bg-[#1E3A5F] px-4 py-5 text-left text-white shadow-[0_16px_28px_rgba(30,58,95,0.18)] transition-all duration-300 border-2 border-transparent hover:bg-white hover:border-[#F5C518] hover:shadow-[0_0_20px_rgba(245,197,24,0.3)] sm:px-5 sm:py-6">
+  <article className="group rounded-[8px] bg-[#1E3A5F] px-4 py-5 text-left text-white shadow-[0_16px_28px_rgba(30,58,95,0.18)] transition-all duration-300 border-2 border-transparent hover:bg-white hover:border-[#F5C518] hover:shadow-[0_0_20px_rgba(245,197,24,0.3)] sm:px-5 sm:py-6">
     <p className="text-[11px] font-bold uppercase tracking-[0.16em] text-blue-100 transition-colors duration-300 group-hover:text-[#1E3A5F]">
       Clinic Services
     </p>
