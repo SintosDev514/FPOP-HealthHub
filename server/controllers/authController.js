@@ -480,7 +480,7 @@ export const sendResetOtp = async (req, res) => {
         </div>
 
         <!-- Info warning box -->
-        <table cellpadding="0" cellspacing="0" style="width: 100%; background-color: #FFFDF0; border-radius: 10px; padding: 16px; margin-bottom: 28px; border: 1px solid #FFF5CC; border-left: 4px solid #F5C518;">
+        <table cellpadding="0" cellspacing="0" style="width: 100%; background-color: #FFFDF0; border-radius: 10px; padding: 16px; margin-bottom: 28px; border: 1px solid #FFF5CC;">
           <tr>
             <td style="vertical-align: top; width: 20px; padding-right: 12px;">
               <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#003B6F" stroke-width="2.5" style="display: block;">
@@ -494,11 +494,6 @@ export const sendResetOtp = async (req, res) => {
             </td>
           </tr>
         </table>
-
-        <!-- Button -->
-        <div style="margin-bottom: 28px;">
-          <a href="http://localhost:5173/resetpass" target="_blank" style="display: inline-block; padding: 14px 32px; background-color: #003B6F; color: #ffffff; font-size: 15px; font-weight: 700; text-decoration: none; border-radius: 8px; box-shadow: 0 4px 12px rgba(0, 59, 111, 0.15); font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;">Go to Reset Page</a>
-        </div>
 
         <hr style="border: 0; border-top: 1px solid #E6EFF7; margin: 28px 0;" />
 
