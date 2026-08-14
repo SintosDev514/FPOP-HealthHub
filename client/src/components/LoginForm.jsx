@@ -189,7 +189,7 @@ function LoginForm() {
 
       {/* Right Panel - Branding */}
       <div className="relative lg:w-1/2 min-h-[40vh] lg:min-h-[calc(100vh-56px)] bg-[#1E3A5F] overflow-hidden flex items-center justify-center p-8 lg:p-12">
-        <div className="absolute inset-0 bg-[#1E3A5F]" />
+        <div className="absolute inset-0 bg-gradient-to-br from-[#1E3A5F] to-[#152a47]" />
 
         <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[500px] h-[500px] rounded-full border border-[#F5C518]/10 hidden lg:block" />
         <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[350px] h-[350px] rounded-full border border-[#F5C518]/15 hidden lg:block" />

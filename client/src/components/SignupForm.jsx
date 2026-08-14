@@ -333,8 +333,12 @@ function SignupForm() {
           <div className="absolute top-2/3 right-1/3 w-1.5 h-1.5 bg-white/20 rounded-full hidden lg:block" />
 
           <div className="relative z-10 flex flex-col items-center text-center max-w-sm">
-            <div className="w-20 h-20 lg:w-24 lg:h-24 bg-white/10 rounded-2xl flex items-center justify-center mb-4 ring-2 ring-[#F5C518]/30 backdrop-blur-sm">
-              <img src={logo} alt="FPOP Clinic" className="w-14 h-14 lg:w-16 lg:h-16" />
+            <div className="mb-3 flex items-center justify-center rounded-2xl border border-[#F5C518]/60 bg-[#1E3A5F] p-2 shadow-sm">
+              <img 
+              src="/logoo.png" 
+              alt="FPOP Clinic" 
+              className="h-14 w-14 object-contain sm:h-20 sm:w-20" 
+              />
             </div>
             <h1 className="text-xl lg:text-2xl font-bold text-white mb-1">
               FPOP Clinic Portal
