@@ -40,6 +40,8 @@ export default function Settings({ isMobile }) {
   const [clinicAddress, setClinicAddress] = useState("123 Brand Street, Manila, Philippines");
 
   const [saveSuccess, setSaveSuccess] = useState(false);
+  const [savingClinic, setSavingClinic] = useState(false);
+  const [clinicError, setClinicError] = useState("");
 
   /* ── Admin profile state ── */
   const [profileLoading, setProfileLoading] = useState(true);
@@ -52,6 +54,20 @@ export default function Settings({ isMobile }) {
   const [savingProfile, setSavingProfile] = useState(false);
   const [profileMsg, setProfileMsg] = useState(null);
   const fileInputRef = useRef(null);
+
+  useEffect(() => {
+    fetch(`${__API_BASE__}/api/admin/settings`, { credentials: "include" })
+      .then((r) => r.json())
+      .then((data) => {
+        if (data.success && data.settings) {
+          setClinicName(data.settings.clinicName || "FPOP Family Planning Clinic");
+          setClinicEmail(data.settings.clinicEmail || "info@fpop-clinic.org");
+          setClinicPhone(data.settings.clinicPhone || "+63 2 8123 4567");
+          setClinicAddress(data.settings.clinicAddress || "123 Brand Street, Manila, Philippines");
+        }
+      })
+      .catch(() => {});
+  }, []);
 
   useEffect(() => {
     fetch(`${__API_BASE__}/api/user/data`, { credentials: "include" })
@@ -74,10 +90,34 @@ export default function Settings({ isMobile }) {
     setTimeout(() => setProfileMsg(null), 4000);
   };
 
-  const handleSave = (e) => {
+  const handleSave = async (e) => {
     e.preventDefault();
-    setSaveSuccess(true);
-    setTimeout(() => setSaveSuccess(false), 3000);
+    setSavingClinic(true);
+    setClinicError("");
+    try {
+      const res = await fetch(`${__API_BASE__}/api/admin/settings`, {
+        method: "PUT",
+        credentials: "include",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          clinicName,
+          clinicEmail,
+          clinicPhone,
+          clinicAddress,
+        }),
+      });
+      const data = await res.json();
+      if (data.success) {
+        setSaveSuccess(true);
+        setTimeout(() => setSaveSuccess(false), 3000);
+      } else {
+        setClinicError(data.message || "Failed to save settings");
+      }
+    } catch {
+      setClinicError("Network error. Please try again.");
+    } finally {
+      setSavingClinic(false);
+    }
   };
 
   const handleAvatarChange = (e) => {
@@ -339,10 +379,14 @@ export default function Settings({ isMobile }) {
               <div style={{ display: "flex", gap: "12px", alignItems: "center", marginTop: "24px" }}>
                 <button
                   type="submit"
-                  style={{ background: NAVY, color: "#fff", border: "none", borderRadius: "8px", padding: "10px 20px", fontSize: "13px", fontWeight: 600, cursor: "pointer", boxShadow: "0 4px 12px rgba(30,58,95,0.2)" }}
+                  disabled={savingClinic}
+                  style={{ background: NAVY, color: "#fff", border: "none", borderRadius: "8px", padding: "10px 20px", fontSize: "13px", fontWeight: 600, cursor: "pointer", boxShadow: "0 4px 12px rgba(30,58,95,0.2)", opacity: savingClinic ? 0.6 : 1 }}
                 >
-                  Save Changes
+                  {savingClinic ? "Saving..." : "Save Changes"}
                 </button>
+                {clinicError && (
+                  <span style={{ color: "#dc2626", fontSize: "13px", fontWeight: 700 }}>{clinicError}</span>
+                )}
                 {saveSuccess && (
                   <span style={{ color: GREEN, fontSize: "13px", fontWeight: 700, display: "flex", alignItems: "center", gap: "4px" }}>
                     <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3"><polyline points="20 6 9 17 4 12" /></svg>
