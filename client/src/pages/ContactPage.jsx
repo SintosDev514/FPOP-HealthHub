@@ -1,11 +1,71 @@
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, useState } from "react";
 import gsap from "gsap";
+import API_BASE from "../apiBase";
 
 function ContactPage() {
   const titleRef = useRef(null);
   const typewriterRef = useRef(null);
   const formRef = useRef(null);
   const cardsRef = useRef([]);
+
+  const [form, setForm] = useState({ name: "", email: "", message: "", consent: false });
+  const [status, setStatus] = useState("idle");
+  const [error, setError] = useState("");
+
+  const handleChange = (e) => {
+    const { name, type, value, checked } = e.target;
+    setForm((prev) => ({ ...prev, [name]: type === "checkbox" ? checked : value }));
+  };
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+
+    if (!form.name.trim()) {
+      setError("Please enter your full name.");
+      return;
+    }
+    if (!emailRegex.test(form.email.trim())) {
+      setError("Please enter a valid email address.");
+      return;
+    }
+    if (!form.message.trim()) {
+      setError("Please write a message.");
+      return;
+    }
+    if (!form.consent) {
+      setError("Please agree to discuss your concerns with FPOP Clinic.");
+      return;
+    }
+
+    setError("");
+    setStatus("sending");
+
+    try {
+      const res = await fetch(`${API_BASE}/api/contact`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          name: form.name.trim(),
+          email: form.email.trim(),
+          message: form.message.trim(),
+        }),
+      });
+
+      const data = await res.json();
+
+      if (!res.ok) {
+        throw new Error(data.message || "Failed to send your message.");
+      }
+
+      setForm({ name: "", email: "", message: "", consent: false });
+      setStatus("success");
+    } catch (err) {
+      setStatus("error");
+      setError(err.message || "Something went wrong. Please try again.");
+    }
+  };
 
   useEffect(() => {
     const tl = gsap.timeline();
@@ -130,7 +190,7 @@ function ContactPage() {
                   </div>
                   <div>
                     <p className="text-xs font-semibold text-white">Email</p>
-                    <p className="text-xs text-white/75">fpopclinic@gmail.com</p>
+                    <p className="text-xs text-white/75">fpophealthhub@gmail.com</p>
                   </div>
                 </div>
 
@@ -166,7 +226,10 @@ function ContactPage() {
               </div>
             </div>
 
-            <form className="rounded-[8px] border border-white/10 bg-white/5 p-4 backdrop-blur-md sm:p-5">
+            <form
+              onSubmit={handleSubmit}
+              className="rounded-[8px] border border-white/10 bg-white/5 p-4 backdrop-blur-md sm:p-5"
+            >
               <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
                 <div>
                   <label className="mb-1.5 block text-xs font-medium text-white/90">
@@ -174,6 +237,9 @@ function ContactPage() {
                   </label>
                   <input
                     type="text"
+                    name="name"
+                    value={form.name}
+                    onChange={handleChange}
                     placeholder="Your Name"
                     className="h-10 w-full rounded-xl border border-white/10 bg-white/10 px-3 text-xs text-white placeholder:text-white/45 outline-none transition duration-300 focus:border-[#F5C518] focus:bg-white/15"
                   />
@@ -185,6 +251,9 @@ function ContactPage() {
                   </label>
                   <input
                     type="email"
+                    name="email"
+                    value={form.email}
+                    onChange={handleChange}
                     placeholder="Your Email"
                     className="h-10 w-full rounded-xl border border-white/10 bg-white/10 px-3 text-xs text-white placeholder:text-white/45 outline-none transition duration-300 focus:border-[#F5C518] focus:bg-white/15"
                   />
@@ -197,6 +266,9 @@ function ContactPage() {
                 </label>
                 <textarea
                   rows={5}
+                  name="message"
+                  value={form.message}
+                  onChange={handleChange}
                   placeholder="Write your message here..."
                   className="w-full rounded-xl border border-white/10 bg-white/10 px-3 py-2.5 text-xs text-white placeholder:text-white/45 outline-none transition duration-300 focus:border-[#F5C518] focus:bg-white/15"
                 />
@@ -205,16 +277,32 @@ function ContactPage() {
               <label className="mt-3 flex items-center gap-2.5 text-xs text-white/75">
                 <input
                   type="checkbox"
+                  name="consent"
+                  checked={form.consent}
+                  onChange={handleChange}
                   className="h-3.5 w-3.5 rounded border-white/30 bg-transparent accent-[#F5C518]"
                 />
                 I agree to discuss my concerns with FPOP Clinic
               </label>
 
+              {error && (
+                <p className="mt-3 rounded-md bg-red-500/15 px-3 py-2 text-xs text-red-200">
+                  {error}
+                </p>
+              )}
+
+              {status === "success" && (
+                <p className="mt-3 rounded-md bg-green-500/15 px-3 py-2 text-xs text-green-200">
+                  Your message has been sent! We will get back to you soon.
+                </p>
+              )}
+
               <button
                 type="submit"
-                className="mt-4 inline-flex h-10 w-full items-center justify-center gap-2 rounded-xl bg-[#F9FAFB] px-6 font-semibold text-[#1E3A5F] text-xs transition-all duration-300 hover:bg-[#F5C518] hover:text-[#1F2937] sm:w-auto"
+                disabled={status === "sending"}
+                className="mt-4 inline-flex h-10 w-full items-center justify-center gap-2 rounded-xl bg-[#F9FAFB] px-6 font-semibold text-[#1E3A5F] text-xs transition-all duration-300 hover:bg-[#F5C518] hover:text-[#1F2937] disabled:cursor-not-allowed disabled:opacity-60 sm:w-auto"
               >
-                Send Message
+                {status === "sending" ? "Sending..." : "Send Message"}
               </button>
             </form>
           </div>
