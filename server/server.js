@@ -13,6 +13,7 @@ import notificationRouter from "./routes/notificationRoutes.js";
 import myNotificationRouter from "./routes/myNotificationRoutes.js";
 import inventoryRouter from "./routes/inventoryRoutes.js";
 import assessmentRouter from "./routes/assessmentRoutes.js";
+import contactRouter from "./routes/contactRoutes.js";
 import { getPublicSettings } from "./controllers/settingsController.js";
 
 import connectDB from "./config/Mongodb.js";
@@ -54,6 +55,7 @@ app.use("/api/admin/notifications", notificationRouter);
 app.use("/api/notifications", myNotificationRouter);
 app.use("/api/inventory", inventoryRouter);
 app.use("/api/assessments", assessmentRouter);
+app.use("/api/contact", contactRouter);
 app.get("/api/settings", getPublicSettings);
 
 import mailer from "./config/nodeMailer.js";
