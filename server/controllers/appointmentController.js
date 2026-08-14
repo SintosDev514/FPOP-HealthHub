@@ -130,14 +130,7 @@ const createAppointment = async (req, res) => {
   <div style="font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; background-color: #F4F6F8; padding: 40px 20px;">
     <div style="max-width: 560px; margin: 0 auto; background-color: #ffffff; border-radius: 20px; overflow: hidden; box-shadow: 0 8px 40px rgba(0, 59, 111, 0.08);">
       <div style="background: linear-gradient(135deg, #003B6F 0%, #1A5276 100%); padding: 32px 32px 24px; text-align: center;">
-        <div style="margin-bottom: 12px; display: flex; align-items: center; justify-content: center; gap: 10px;">
-          <div style="width: 40px; height: 40px; background: rgba(255,255,255,0.15); border-radius: 12px; display: flex; align-items: center; justify-content: center;">
-            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#F5C518" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
-              <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>
-              <line x1="12" y1="8" x2="12" y2="16"/>
-              <line x1="8" y1="12" x2="16" y2="12"/>
-            </svg>
-          </div>
+        <div style="margin-bottom: 12px; text-align: center;">
           <span style="font-size: 22px; font-weight: 700; letter-spacing: -0.3px; color: #ffffff;">FPOP HealthHub</span>
         </div>
         <div style="display: inline-block; background: rgba(245,197,24,0.15); padding: 6px 18px; border-radius: 20px; margin-top: 4px;">
@@ -156,7 +149,7 @@ const createAppointment = async (req, res) => {
             <tr><td style="padding: 14px 20px; color: #64748b; font-size: 13px; font-weight: 500;">Status</td><td style="padding: 14px 20px; color: #1A2A3A; font-size: 13px;"><span style="display: inline-block; background: #FEF3C7; color: #92400E; padding: 3px 14px; border-radius: 6px; font-size: 12px; font-weight: 600;">Pending</span></td></tr>
           </table>
         </div>
-        <div style="background: #F0F7FF; border-left: 4px solid #003B6F; padding: 16px 20px; border-radius: 10px; margin-bottom: 28px;">
+        <div style="background: #F0F7FF; padding: 16px 20px; border-radius: 10px; margin-bottom: 28px;">
           <p style="margin: 0 0 4px; font-size: 13px; font-weight: 700; color: #003B6F;">📌 Reminder</p>
           <p style="margin: 0; font-size: 13px; color: #475569; line-height: 1.6;">Please arrive 10 minutes before your scheduled time. Bring a valid ID and your appointment reference.</p>
         </div>
@@ -282,14 +275,7 @@ const updateAppointmentStatus = async (req, res) => {
   <div style="font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; background-color: #F4F6F8; padding: 40px 20px;">
     <div style="max-width: 560px; margin: 0 auto; background-color: #ffffff; border-radius: 20px; overflow: hidden; box-shadow: 0 8px 40px rgba(0, 59, 111, 0.08);">
       <div style="background: linear-gradient(135deg, ${headingBg} 0%, ${status === "confirmed" ? "#1A5276" : "#7F1D1D"} 100%); padding: 32px 32px 24px; text-align: center;">
-        <div style="margin-bottom: 12px; display: flex; align-items: center; justify-content: center; gap: 10px;">
-          <div style="width: 40px; height: 40px; background: rgba(255,255,255,0.15); border-radius: 12px; display: flex; align-items: center; justify-content: center;">
-            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#F5C518" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
-              <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>
-              <line x1="12" y1="8" x2="12" y2="16"/>
-              <line x1="8" y1="12" x2="16" y2="12"/>
-            </svg>
-          </div>
+        <div style="margin-bottom: 12px; text-align: center;">
           <span style="font-size: 22px; font-weight: 700; letter-spacing: -0.3px; color: #ffffff;">FPOP HealthHub</span>
         </div>
         <div style="display: inline-block; background: ${status === "confirmed" ? "rgba(34,197,94,0.15)" : "rgba(239,68,68,0.15)"}; padding: 6px 18px; border-radius: 20px; margin-top: 4px;">

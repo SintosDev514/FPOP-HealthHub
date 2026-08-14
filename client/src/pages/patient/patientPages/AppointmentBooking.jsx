@@ -215,7 +215,7 @@ const AppointmentBooking = ({ onSaveAppointment }) => {
   return (
     <>
       <style>{styles}</style>
-      <main className="flex-1 bg-[#f7f8fa] px-4 py-4 h-[calc(100vh-4rem)] overflow-hidden sm:px-6 lg:px-8">
+      <main className="flex-1 bg-[#f7f8fa] px-4 py-4 sm:h-[calc(100vh-4rem)] sm:overflow-hidden sm:px-6 lg:px-8">
       <div className="mx-auto flex h-full max-w-[1120px] flex-col">
         <header className="mb-4 flex flex-col gap-2 sm:flex-row sm:items-end sm:justify-between flex-shrink-0">
           <div>
