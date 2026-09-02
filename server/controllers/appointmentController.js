@@ -3,6 +3,27 @@ import userModel from "../models/userModel.js";
 import transporter from "../config/nodeMailer.js";
 import notificationModel from "../models/notificationModel.js";
 
+const timeToMinutes = (t) => {
+  if (!t) return 0;
+  const m = t.match(/(\d+):(\d+)\s*(AM|PM)/i);
+  if (!m) return 0;
+  let h = parseInt(m[1], 10);
+  const min = parseInt(m[2], 10);
+  if (m[3].toUpperCase() === "PM" && h !== 12) h += 12;
+  if (m[3].toUpperCase() === "AM" && h === 12) h = 0;
+  return h * 60 + min;
+};
+
+const STATUS_ORDER = { pending: 0, confirmed: 1, completed: 2, cancelled: 3 };
+
+const sortAppointments = (list) =>
+  list.sort((a, b) => {
+    const sDiff = (STATUS_ORDER[a.status] ?? 4) - (STATUS_ORDER[b.status] ?? 4);
+    if (sDiff !== 0) return sDiff;
+    if (a.date !== b.date) return a.date.localeCompare(b.date);
+    return timeToMinutes(a.time) - timeToMinutes(b.time);
+  });
+
 const generateTimeSlots = (start, end) => {
   const slots = [];
   const [startH, startM] = start.split(":").map(Number);
@@ -215,7 +236,9 @@ const getStaffAppointments = async (req, res) => {
     const appointments = await appointmentModel
       .find({ staffId: req.user.id })
       .populate("patientId", "firstName lastName email phone avatar")
-      .sort({ date: -1, time: -1 });
+      .sort({ date: -1 });
+
+    sortAppointments(appointments);
 
     res.json({ success: true, appointments });
   } catch (error) {
