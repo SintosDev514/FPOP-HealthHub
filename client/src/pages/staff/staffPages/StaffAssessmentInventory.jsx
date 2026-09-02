@@ -21,6 +21,7 @@ const Icon = ({ name, className = "h-5 w-5" }) => {
     printer: "M7 8V4h10v4M6 18H5a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-1M7 14h10v6H7v-6Z",
     activity:
       "M22 12h-4l-3 9L9 3l-3 9H2",
+    trash: "M3 6h18M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2M10 11v6M14 11v6",
   };
   return (
     <svg
@@ -86,6 +87,8 @@ const StaffAssessmentInventory = () => {
   const [detailModal, setDetailModal] = useState(null);
   const [detailLoading, setDetailLoading] = useState(false);
   const [stats, setStats] = useState({ total: 0, fp: 0, hiv: 0 });
+  const [confirmDelete, setConfirmDelete] = useState(null);
+  const [deleting, setDeleting] = useState(false);
 
   const fetchAssessments = useCallback(async () => {
     try {
@@ -183,6 +186,42 @@ const StaffAssessmentInventory = () => {
     if (fd?.clientType?.method) return fd.clientType.method;
     if (fd?.clientType?.type) return fd.clientType.type;
     return "\u2014";
+  };
+
+  const handleDelete = (a) => {
+    setConfirmDelete(a);
+  };
+
+  const confirmDeleteAssessment = async () => {
+    if (!confirmDelete) return;
+    try {
+      setDeleting(true);
+      const res = await fetch(
+        `${__API_BASE__}/api/assessments/${confirmDelete._id}`,
+        { method: "DELETE", credentials: "include" }
+      );
+      const data = await res.json();
+      if (data.success) {
+        setAssessments((prev) =>
+          prev.filter((item) => item._id !== confirmDelete._id)
+        );
+        setTotal((prev) => Math.max(0, prev - 1));
+        setStats((prev) => ({
+          ...prev,
+          total: Math.max(0, prev.total - 1),
+          fp: confirmDelete.formType === "fp" ? Math.max(0, prev.fp - 1) : prev.fp,
+          hiv: confirmDelete.formType === "hiv" ? Math.max(0, prev.hiv - 1) : prev.hiv,
+        }));
+        if (detailModal?._id === confirmDelete._id) {
+          setDetailModal(null);
+        }
+      }
+    } catch (err) {
+      console.error("Failed to delete assessment:", err);
+    } finally {
+      setDeleting(false);
+      setConfirmDelete(null);
+    }
   };
 
   const getClientAddress = (fd) => {
@@ -662,6 +701,14 @@ const StaffAssessmentInventory = () => {
                             >
                               <Icon name="download" className="h-3.5 w-3.5" />
                             </button>
+                            <button
+                              type="button"
+                              onClick={() => handleDelete(a)}
+                              className="inline-flex h-8 items-center justify-center gap-1 rounded-lg border border-slate-200 bg-white px-3 text-[9px] font-bold text-red-500 transition hover:border-red-300 hover:bg-red-50"
+                              title="Delete"
+                            >
+                              <Icon name="trash" className="h-3.5 w-3.5" />
+                            </button>
                           </div>
                         </td>
                       </tr>
@@ -812,6 +859,70 @@ const StaffAssessmentInventory = () => {
                   Close
                 </button>
               </div>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* ── Delete Confirmation Modal ── */}
+      {confirmDelete && (
+        <div
+          className="fixed inset-0 z-50 flex items-center justify-center bg-slate-950/50 px-4 py-6 backdrop-blur-sm"
+          onClick={(e) => {
+            if (e.target === e.currentTarget && !deleting) setConfirmDelete(null);
+          }}
+        >
+          <div className="w-full max-w-md overflow-hidden rounded-xl bg-white shadow-2xl">
+            <div className="flex items-center gap-3 border-b border-slate-200 bg-red-50 px-6 py-4">
+              <div className="flex h-10 w-10 items-center justify-center rounded-full bg-red-100">
+                <Icon name="trash" className="h-5 w-5 text-red-600" />
+              </div>
+              <div>
+                <h3 className="text-[12px] font-extrabold text-slate-950">
+                  Delete Assessment
+                </h3>
+                <p className="text-[9px] text-slate-500">
+                  This action cannot be undone.
+                </p>
+              </div>
+            </div>
+            <div className="px-6 py-5">
+              <p className="text-[10px] text-slate-600">
+                Are you sure you want to delete this assessment record for{" "}
+                <span className="font-bold text-slate-900">
+                  {confirmDelete.clientLastName || "Unknown"}
+                  {confirmDelete.clientFirstName
+                    ? `, ${confirmDelete.clientFirstName}`
+                    : ""}
+                </span>
+                ?
+              </p>
+              <p className="mt-2 text-[9px] text-slate-400">
+                Form type: {FORM_TYPE_LABEL[confirmDelete.formType] || confirmDelete.formType}
+              </p>
+            </div>
+            <div className="flex items-center justify-end gap-2 border-t border-slate-200 bg-slate-50 px-6 py-3">
+              <button
+                type="button"
+                disabled={deleting}
+                onClick={() => setConfirmDelete(null)}
+                className="inline-flex h-10 items-center justify-center rounded-lg bg-slate-200 px-5 text-[10px] font-bold text-slate-950 transition hover:bg-slate-300 disabled:opacity-50"
+              >
+                Cancel
+              </button>
+              <button
+                type="button"
+                disabled={deleting}
+                onClick={confirmDeleteAssessment}
+                className="inline-flex h-10 items-center justify-center gap-1.5 rounded-lg bg-red-600 px-5 text-[10px] font-bold text-white transition hover:bg-red-700 shadow-md shadow-red-600/20 disabled:opacity-50"
+              >
+                {deleting ? (
+                  <div className="h-4 w-4 animate-spin rounded-full border-2 border-white/30 border-t-white" />
+                ) : (
+                  <Icon name="trash" className="h-4 w-4" />
+                )}
+                {deleting ? "Deleting..." : "Delete"}
+              </button>
             </div>
           </div>
         </div>

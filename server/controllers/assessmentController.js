@@ -69,6 +69,21 @@ export const listAssessments = async (req, res) => {
   }
 };
 
+export const deleteAssessment = async (req, res) => {
+  try {
+    const assessment = await assessmentModel.findByIdAndDelete(req.params.id);
+    if (!assessment) {
+      return res
+        .status(404)
+        .json({ success: false, message: "Assessment not found" });
+    }
+    res.json({ success: true, message: "Assessment deleted successfully" });
+  } catch (error) {
+    console.error("Failed to delete assessment:", error.message);
+    res.status(500).json({ success: false, message: error.message });
+  }
+};
+
 export const getAssessment = async (req, res) => {
   try {
     const assessment = await assessmentModel.findById(req.params.id).lean();
