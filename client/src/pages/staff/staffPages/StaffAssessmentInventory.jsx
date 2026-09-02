@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useCallback } from "react";
+import React, { useState, useEffect, useCallback, useRef } from "react";
 import jsPDF from "jspdf";
 
 const Icon = ({ name, className = "h-5 w-5" }) => {
@@ -89,8 +89,13 @@ const StaffAssessmentInventory = () => {
   const [stats, setStats] = useState({ total: 0, fp: 0, hiv: 0 });
   const [confirmDelete, setConfirmDelete] = useState(null);
   const [deleting, setDeleting] = useState(false);
+  const skipNextFetch = useRef(false);
 
   const fetchAssessments = useCallback(async () => {
+    if (skipNextFetch.current) {
+      skipNextFetch.current = false;
+      return;
+    }
     try {
       setLoading(true);
       const params = new URLSearchParams({
@@ -202,6 +207,7 @@ const StaffAssessmentInventory = () => {
       );
       const data = await res.json();
       if (data.success) {
+        skipNextFetch.current = true;
         setAssessments((prev) =>
           prev.filter((item) => item._id !== confirmDelete._id)
         );
@@ -215,6 +221,9 @@ const StaffAssessmentInventory = () => {
         if (detailModal?._id === confirmDelete._id) {
           setDetailModal(null);
         }
+      } else {
+        skipNextFetch.current = false;
+        console.error("Delete failed:", data.message);
       }
     } catch (err) {
       console.error("Failed to delete assessment:", err);
