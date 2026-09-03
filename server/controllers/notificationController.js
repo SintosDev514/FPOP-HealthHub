@@ -39,4 +39,25 @@ const markAllRead = async (req, res) => {
   }
 };
 
-export { listNotifications, markRead, markAllRead };
+const deleteNotification = async (req, res) => {
+  try {
+    const notif = await notificationModel.findByIdAndDelete(req.params.id);
+    if (!notif) {
+      return res.json({ success: false, message: "Notification not found" });
+    }
+    res.json({ success: true });
+  } catch (error) {
+    res.json({ success: false, message: error.message });
+  }
+};
+
+const clearAll = async (req, res) => {
+  try {
+    await notificationModel.deleteMany({});
+    res.json({ success: true });
+  } catch (error) {
+    res.json({ success: false, message: error.message });
+  }
+};
+
+export { listNotifications, markRead, markAllRead, deleteNotification, clearAll };

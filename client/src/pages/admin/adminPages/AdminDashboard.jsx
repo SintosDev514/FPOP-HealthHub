@@ -138,6 +138,7 @@ function AdminShell({ activeNav }) {
   const [isHovered, setIsHovered] = useState(false);
   const [isMobile,  setIsMobile]  = useState(false);
   const [unreadCount, setUnreadCount] = useState(0);
+  const [notifOpen, setNotifOpen] = useState(false);
   const navigate = useNavigate();
   const { user, logout } = useAuth();
 
@@ -354,8 +355,8 @@ function AdminShell({ activeNav }) {
               <HeaderIconBtn
                 id="notifications-btn"
                 title="Notifications"
-                onClick={() => navigate("/admin/notifications")}
-                isActive={activeNav === "notifications"}
+                onClick={() => setNotifOpen(!notifOpen)}
+                isActive={notifOpen}
               >
                 <IcoBell />
               </HeaderIconBtn>
@@ -382,6 +383,11 @@ function AdminShell({ activeNav }) {
                   {unreadCount > 99 ? "99+" : unreadCount}
                 </span>
               )}
+              <Notifications
+                open={notifOpen}
+                onClose={() => setNotifOpen(false)}
+                isMobile={isMobile}
+              />
             </div>
 
             {/* Settings */}
@@ -450,7 +456,6 @@ function AdminShell({ activeNav }) {
           {activeNav === "inventory"    && <AdminInventoryView />}
           {activeNav === "analytics"   && <Analytics         isMobile={isMobile} />}
           {activeNav === "reports"     && <Reports            isMobile={isMobile} />}
-          {activeNav === "notifications" && <Notifications   isMobile={isMobile} />}
           {activeNav === "settings"    && <Settings           isMobile={isMobile} />}
         </div>
       </div>
@@ -506,7 +511,6 @@ export default function AdminDashboard() {
       <Route path="/inventory"     element={<AdminShell activeNav="inventory"    />} />
       <Route path="/analytics"     element={<AdminShell activeNav="analytics"    />} />
       <Route path="/reports"       element={<AdminShell activeNav="reports"      />} />
-      <Route path="/notifications" element={<AdminShell activeNav="notifications"/>} />
       <Route path="/settings"      element={<AdminShell activeNav="settings"     />} />
       <Route path="*"              element={<Navigate to="" replace />} />
     </Routes>
