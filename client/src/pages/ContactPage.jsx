@@ -140,7 +140,7 @@ function SuggestionBox({ value, onChange }) {
   return (
     <div>
       <label className="mb-1.5 block text-xs font-medium text-white/90">
-        Suggestions for Improvement
+        Suggestions for Improvement <span className="text-white/45">(Optional)</span>
       </label>
       <textarea
         rows={3}
@@ -189,9 +189,27 @@ function FeedbackForm() {
     setError("");
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
     setSubmitted(true);
+
+    try {
+      await fetch(`${window.location.origin}/api/surveys`, {
+        method: "POST",
+        credentials: "include",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          name: form.name,
+          email: form.email,
+          contactNumber: form.contactNumber,
+          satisfaction: ratings.satisfaction,
+          appropriateService: ratings.appropriateService,
+          facilityResources: ratings.facilityResources,
+          providerResponsiveness: ratings.providerResponsiveness,
+          suggestions: form.suggestions,
+        }),
+      });
+    } catch {}
   };
 
   const goToNextStep = () => {
