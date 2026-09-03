@@ -22,6 +22,32 @@ const formatDate = (value) => {
   return Number.isNaN(date.getTime()) ? String(value) : date.toLocaleDateString("en-US");
 };
 
+const formatTime = (value) => {
+  if (!value) return "N/A";
+  const [hours, minutes] = String(value).split(":").map(Number);
+  if (Number.isNaN(hours) || Number.isNaN(minutes)) return String(value);
+  const period = hours >= 12 ? "PM" : "AM";
+  const displayHour = hours % 12 || 12;
+  return `${displayHour}:${String(minutes).padStart(2, "0")} ${period}`;
+};
+
+const formatSchedule = (schedule) => {
+  if (typeof schedule === "string") {
+    try {
+      schedule = JSON.parse(schedule);
+    } catch {
+      return schedule || "N/A";
+    }
+  }
+  if (!schedule || typeof schedule !== "object") return schedule || "N/A";
+  const days = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
+  const activeDays = Object.entries(schedule)
+    .filter(([, details]) => details?.active)
+    .sort(([firstDay], [secondDay]) => Number(firstDay) - Number(secondDay))
+    .map(([day, details]) => `${days[Number(day)] || day}: ${formatTime(details.start)} - ${formatTime(details.end)}`);
+  return activeDays.length ? activeDays.join(", ") : "No active days";
+};
+
 const fileSlug = (title) => title.toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/(^-|-$)/g, "") || "admin-report";
 
 const csvValue = (value) => `"${String(value ?? "").replace(/"/g, '""')}"`;
@@ -100,7 +126,7 @@ export default function Reports({ isMobile }) {
     {
       ...reportTemplates[1],
       columns: ["Staff Member", "Email", "Specialty", "Schedule"],
-      rows: staff.map((member) => [member.name || "N/A", member.email || "N/A", member.specialty || "N/A", typeof member.schedule === "object" ? JSON.stringify(member.schedule) : member.schedule || "N/A"]),
+      rows: staff.map((member) => [member.name || "N/A", member.email || "N/A", member.specialty || "N/A", formatSchedule(member.schedule)]),
     },
     {
       ...reportTemplates[2],
