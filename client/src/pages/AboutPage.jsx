@@ -300,9 +300,13 @@ function AboutPage() {
               </h2>
 
               <p className="mt-3 text-xs leading-5 text-slate-700 md:text-sm">
-                Connecting patients with healthcare providers through an
-                innovative digital platform for better access, education, and
-                care for all communities.
+                FPOP champions sexual and reproductive health rights through
+                advocacy and the provision of services, especially to the poor,
+                under-served and marginalized people including young people.
+                Working in partnership with key stakeholders and the community,
+                we are committed to the eradication of HIV/AIDS and the right of
+                all to enjoy their sexual lives free from ill-health, unwanted
+                pregnancy, violence and discrimination.
               </p>
             </div>
 
