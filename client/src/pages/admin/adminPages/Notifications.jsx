@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef } from "react";
+import { useState, useEffect, useRef, useCallback } from "react";
 
 const NAVY  = "#1E3A5F";
 const GREEN = "#22c55e";
@@ -7,23 +7,26 @@ const RED   = "#ef4444";
 export default function Notifications({ open, onClose, isMobile }) {
   const [filter, setFilter] = useState("All");
   const [notifications, setNotifications] = useState([]);
-  const [loading, setLoading] = useState(true);
+  const [loading, setLoading] = useState(false);
   const [deleting, setDeleting] = useState(null);
   const panelRef = useRef(null);
+  const onCloseRef = useRef(onClose);
+  onCloseRef.current = onClose;
 
   useEffect(() => {
     if (open) fetchNotifications();
   }, [open]);
 
   useEffect(() => {
+    if (!open) return;
     const handleClickOutside = (e) => {
       if (panelRef.current && !panelRef.current.contains(e.target)) {
-        onClose();
+        onCloseRef.current();
       }
     };
-    if (open) document.addEventListener("mousedown", handleClickOutside);
+    document.addEventListener("mousedown", handleClickOutside);
     return () => document.removeEventListener("mousedown", handleClickOutside);
-  }, [open, onClose]);
+  }, [open]);
 
   const fetchNotifications = async () => {
     try {
@@ -109,6 +112,16 @@ export default function Notifications({ open, onClose, isMobile }) {
     return `${days}d ago`;
   };
 
+  const getCatColor = (cat) => {
+    switch (cat) {
+      case "System": return { bg: "rgba(30,58,95,0.1)", stroke: NAVY };
+      case "Alert": return { bg: "rgba(239,68,68,0.1)", stroke: RED };
+      case "Appointment": return { bg: "rgba(34,197,94,0.1)", stroke: GREEN };
+      case "Security": return { bg: "rgba(168,85,247,0.1)", stroke: "#7c3aed" };
+      default: return { bg: "rgba(245,197,24,0.12)", stroke: "#b8860b" };
+    }
+  };
+
   if (!open) return null;
 
   return (
@@ -118,19 +131,18 @@ export default function Notifications({ open, onClose, isMobile }) {
         position: "absolute",
         top: "calc(100% + 8px)",
         right: 0,
-        width: isMobile ? "92vw" : "420px",
-        maxHeight: "520px",
+        width: isMobile ? "92vw" : "440px",
+        maxHeight: "560px",
         background: "#fff",
         borderRadius: "12px",
         boxShadow: "0 12px 48px rgba(0,0,0,0.18), 0 0 0 1px rgba(0,0,0,0.04)",
         display: "flex",
         flexDirection: "column",
         zIndex: 9999,
-        overflow: "hidden"
       }}
     >
       {/* Header */}
-      <div style={{ padding: "16px 18px 12px", borderBottom: "1px solid #eee" }}>
+      <div style={{ padding: "16px 18px 12px", borderBottom: "1px solid #eee", flexShrink: 0 }}>
         <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "12px" }}>
           <h3 style={{ margin: 0, fontSize: "18px", fontWeight: 700, color: NAVY }}>Notifications</h3>
           <div style={{ display: "flex", gap: "6px" }}>
@@ -173,7 +185,7 @@ export default function Notifications({ open, onClose, isMobile }) {
 
         {/* Filter Tabs */}
         <div style={{ display: "flex", gap: "6px", overflowX: "auto" }}>
-          {["All", "Unread", "System", "User", "Appointment", "Alert"].map(tab => (
+          {["All", "Unread", "System", "User", "Security", "Appointment", "Alert"].map(tab => (
             <button
               key={tab}
               onClick={() => setFilter(tab)}
@@ -197,101 +209,96 @@ export default function Notifications({ open, onClose, isMobile }) {
       </div>
 
       {/* Notification List */}
-      <div style={{ flex: 1, overflowY: "auto", maxHeight: "380px" }}>
+      <div style={{ flex: 1, overflowY: "auto", minHeight: 0 }}>
         {loading ? (
           <div style={{ padding: "40px 20px", textAlign: "center", color: "#8a96a3", fontSize: "13px" }}>
             Loading...
           </div>
         ) : filteredNotifs.length > 0 ? (
-          filteredNotifs.map(n => (
-            <div
-              key={n._id}
-              style={{
-                display: "flex",
-                alignItems: "flex-start",
-                gap: "10px",
-                padding: "12px 18px",
-                borderBottom: "1px solid #f5f5f5",
-                background: n.read ? "#fff" : "rgba(30,58,95,0.03)",
-                transition: "background 0.15s"
-              }}
-              onMouseEnter={e => e.currentTarget.style.background = "#f8fafc"}
-              onMouseLeave={e => e.currentTarget.style.background = n.read ? "#fff" : "rgba(30,58,95,0.03)"}
-            >
-              {/* Icon */}
-              <div style={{
-                width: "36px",
-                height: "36px",
-                borderRadius: "50%",
-                background: n.category === "System" ? "rgba(30,58,95,0.1)"
-                  : n.category === "Alert" ? "rgba(239,68,68,0.1)"
-                  : n.category === "Appointment" ? "rgba(34,197,94,0.1)"
-                  : "rgba(245,197,24,0.12)",
-                display: "flex",
-                alignItems: "center",
-                justifyContent: "center",
-                flexShrink: 0
-              }}>
-                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke={
-                  n.category === "System" ? NAVY
-                  : n.category === "Alert" ? RED
-                  : n.category === "Appointment" ? GREEN
-                  : "#b8860b"
-                } strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                  <path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/>
-                  <path d="M13.73 21a2 2 0 0 1-3.46 0"/>
-                </svg>
-              </div>
-
-              {/* Content */}
-              <div style={{ flex: 1, minWidth: 0 }}>
-                <div style={{ display: "flex", alignItems: "center", gap: "6px", marginBottom: "2px" }}>
-                  <span style={{ fontSize: "13px", fontWeight: 700, color: NAVY }}>{n.title}</span>
-                  {!n.read && <span style={{ width: "6px", height: "6px", borderRadius: "50%", background: RED, flexShrink: 0 }} />}
+          filteredNotifs.map(n => {
+            const cat = getCatColor(n.category);
+            return (
+              <div
+                key={n._id}
+                style={{
+                  display: "flex",
+                  alignItems: "flex-start",
+                  gap: "10px",
+                  padding: "12px 18px",
+                  borderBottom: "1px solid #f5f5f5",
+                  background: n.read ? "#fff" : "rgba(30,58,95,0.03)",
+                  transition: "background 0.15s"
+                }}
+                onMouseEnter={e => e.currentTarget.style.background = "#f8fafc"}
+                onMouseLeave={e => e.currentTarget.style.background = n.read ? "#fff" : "rgba(30,58,95,0.03)"}
+              >
+                {/* Icon */}
+                <div style={{
+                  width: "36px",
+                  height: "36px",
+                  borderRadius: "50%",
+                  background: cat.bg,
+                  display: "flex",
+                  alignItems: "center",
+                  justifyContent: "center",
+                  flexShrink: 0
+                }}>
+                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke={cat.stroke} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                    <path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/>
+                    <path d="M13.73 21a2 2 0 0 1-3.46 0"/>
+                  </svg>
                 </div>
-                <p style={{ margin: 0, fontSize: "12px", color: "#4a5568", lineHeight: 1.4, overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>{n.text}</p>
-                <span style={{ fontSize: "10px", color: "#a0aec0", marginTop: "2px", display: "inline-block" }}>{timeAgo(n.createdAt)}</span>
-              </div>
 
-              {/* Actions */}
-              <div style={{ display: "flex", flexDirection: "column", gap: "4px", flexShrink: 0 }}>
-                {!n.read && (
+                {/* Content */}
+                <div style={{ flex: 1, minWidth: 0 }}>
+                  <div style={{ display: "flex", alignItems: "center", gap: "6px", marginBottom: "2px" }}>
+                    <span style={{ fontSize: "13px", fontWeight: 700, color: NAVY }}>{n.title}</span>
+                    {!n.read && <span style={{ width: "6px", height: "6px", borderRadius: "50%", background: RED, flexShrink: 0 }} />}
+                  </div>
+                  <p style={{ margin: 0, fontSize: "12px", color: "#4a5568", lineHeight: 1.4 }}>{n.text}</p>
+                  <span style={{ fontSize: "10px", color: "#a0aec0", marginTop: "2px", display: "inline-block" }}>{timeAgo(n.createdAt)}</span>
+                </div>
+
+                {/* Actions */}
+                <div style={{ display: "flex", flexDirection: "column", gap: "4px", flexShrink: 0 }}>
+                  {!n.read && (
+                    <button
+                      onClick={() => markSingleRead(n._id)}
+                      style={{
+                        border: "none",
+                        background: "rgba(34,197,94,0.1)",
+                        color: GREEN,
+                        padding: "3px 8px",
+                        borderRadius: "4px",
+                        fontSize: "10px",
+                        fontWeight: 600,
+                        cursor: "pointer"
+                      }}
+                    >
+                      Read
+                    </button>
+                  )}
                   <button
-                    onClick={() => markSingleRead(n._id)}
+                    onClick={() => deleteNotification(n._id)}
+                    disabled={deleting === n._id}
                     style={{
                       border: "none",
-                      background: "rgba(34,197,94,0.1)",
-                      color: GREEN,
+                      background: deleting === n._id ? "rgba(239,68,68,0.15)" : "rgba(239,68,68,0.08)",
+                      color: RED,
                       padding: "3px 8px",
                       borderRadius: "4px",
                       fontSize: "10px",
                       fontWeight: 600,
-                      cursor: "pointer"
+                      cursor: deleting === n._id ? "not-allowed" : "pointer",
+                      opacity: deleting === n._id ? 0.6 : 1
                     }}
                   >
-                    Read
+                    {deleting === n._id ? "..." : "Delete"}
                   </button>
-                )}
-                <button
-                  onClick={() => deleteNotification(n._id)}
-                  disabled={deleting === n._id}
-                  style={{
-                    border: "none",
-                    background: deleting === n._id ? "rgba(239,68,68,0.15)" : "rgba(239,68,68,0.08)",
-                    color: RED,
-                    padding: "3px 8px",
-                    borderRadius: "4px",
-                    fontSize: "10px",
-                    fontWeight: 600,
-                    cursor: deleting === n._id ? "not-allowed" : "pointer",
-                    opacity: deleting === n._id ? 0.6 : 1
-                  }}
-                >
-                  {deleting === n._id ? "..." : "Delete"}
-                </button>
+                </div>
               </div>
-            </div>
-          ))
+            );
+          })
         ) : (
           <div style={{ padding: "40px 20px", textAlign: "center", color: "#8a96a3", fontSize: "13px" }}>
             No notifications
