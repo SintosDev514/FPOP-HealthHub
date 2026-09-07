@@ -31,26 +31,51 @@ const formatTime = (value) => {
   return `${displayHour}:${String(minutes).padStart(2, "0")} ${period}`;
 };
 
-const formatSchedule = (schedule) => {
-  if (typeof schedule === "string") {
-    try {
-      schedule = JSON.parse(schedule);
-    } catch {
-      return schedule || "N/A";
-    }
-  }
-  if (!schedule || typeof schedule !== "object") return schedule || "N/A";
-  const days = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
-  const activeDays = Object.entries(schedule)
-    .filter(([, details]) => details?.active)
-    .sort(([firstDay], [secondDay]) => Number(firstDay) - Number(secondDay))
-    .map(([day, details]) => `${days[Number(day)] || day}: ${formatTime(details.start)} - ${formatTime(details.end)}`);
-  return activeDays.length ? activeDays.join(", ") : "No active days";
-};
-
 const fileSlug = (title) => title.toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/(^-|-$)/g, "") || "admin-report";
 
 const csvValue = (value) => `"${String(value ?? "").replace(/"/g, '""')}"`;
+const csvDisplayValue = (value) => /^\d{2}\/\d{2}\/\d{4}$/.test(String(value)) ? `="${value}"` : value;
+
+const dateKey = (date) => [date.getFullYear(), String(date.getMonth() + 1).padStart(2, "0"), String(date.getDate()).padStart(2, "0")].join("-");
+const weekDays = (value) => {
+  const first = new Date(`${value || todayKey()}T12:00:00`);
+  first.setDate(first.getDate() - ((first.getDay() + 6) % 7));
+  return Array.from({ length: 6 }, (_, index) => { const day = new Date(first); day.setDate(first.getDate() + index); return day; });
+};
+const timeForDay = (schedule, date) => {
+  let value = schedule;
+  if (typeof value === "string") { try { value = JSON.parse(value); } catch { value = {}; } }
+  const day = value?.[date.getDay()];
+  return day?.active ? [formatTime(day.start), formatTime(day.end)] : ["-", "-"];
+};
+const makeAttendanceReport = (member, appointments, value) => {
+  const days = weekDays(value);
+  const name = member?.name || "No staff member selected";
+  const relevant = appointments.filter((appointment) => appointment.doctor === `Dr. ${name}` || appointment.doctor === name);
+  const appointmentsByDay = days.map((day) => relevant.filter((appointment) => appointment.date === dateKey(day)));
+  const allAppointments = appointmentsByDay.flat();
+  const attended = allAppointments.filter((appointment) => ["confirmed", "completed"].includes(String(appointment.status).toLowerCase())).length;
+  return { id: 3, title: "CLINIC APPOINTMENT ATTENDANCE", name, month: days[0].toLocaleDateString("en-US", { month: "long", year: "numeric" }), days, times: days.map((day) => timeForDay(member?.schedule, day)), appointmentsByDay, performance: [allAppointments.length, attended, allAppointments.filter((appointment) => String(appointment.status).toLowerCase() === "completed").length, allAppointments.length ? `${Math.round((attended / allAppointments.length) * 100)}%` : "N/A"] };
+};
+const appointmentLabel = (appointment) => appointment ? `${appointment.patient || "Patient"}${appointment.time ? ` ${formatTime(appointment.time)}` : ""}` : "N/A";
+const attendanceRows = (report) => {
+  const appointmentRowCount = Math.max(1, ...report.appointmentsByDay.map((appointments) => appointments.length));
+  return [
+    ["", ...report.days.map((day) => day.toLocaleDateString("en-US", { weekday: "short" }).toUpperCase())],
+    ["DAY / DATE", ...report.days.map((day) => day.toLocaleDateString("en-US", { month: "2-digit", day: "2-digit", year: "numeric" }))],
+    ["TIME IN", ...report.times.map((time) => time[0])], ["TIME OUT", ...report.times.map((time) => time[1])],
+    ...Array.from({ length: appointmentRowCount }, (_, index) => [index === 0 ? "APPOINTMENT" : "", ...report.appointmentsByDay.map((items) => appointmentLabel(items[index]))]),
+  ];
+};
+const attendanceTableRows = (report) => report.days.flatMap((day, index) => {
+  const appointments = report.appointmentsByDay[index];
+  const base = [report.name, report.month, day.toLocaleDateString("en-US", { weekday: "long" }), day.toLocaleDateString("en-US", { month: "2-digit", day: "2-digit", year: "numeric" }), report.times[index][0], report.times[index][1]];
+  return appointments.length ? appointments.map((appointment) => [...base, appointmentLabel(appointment)]) : [[...base, "N/A"]];
+});
+const getLogo = async () => {
+  const response = await fetch("/FPOPLOGO1.png"); const blob = await response.blob();
+  return new Promise((resolve, reject) => { const reader = new FileReader(); reader.onload = () => resolve(reader.result); reader.onerror = reject; reader.readAsDataURL(blob); });
+};
 
 const downloadCsv = (report) => {
   const csv = [report.columns, ...report.rows].map((row) => row.map(csvValue).join(",")).join("\r\n");
@@ -74,6 +99,28 @@ const downloadPdf = (report) => {
   doc.save(`${fileSlug(report.title)}_${todayKey()}.pdf`);
 };
 
+const renderAttendancePdf = (doc, report, logo) => {
+  doc.addImage(logo, "PNG", 35, 18, 44, 44);
+  doc.setFont("helvetica", "bold"); doc.setFontSize(15); doc.text(report.title, 421, 37, { align: "center" });
+  autoTable(doc, { startY: 70, margin: { left: 30, right: 30 }, theme: "grid", body: [["STAFF NAME", ""], [report.name, ""], ["DATE / YEAR", ""], [report.month, ""]], columnStyles: { 0: { cellWidth: 150, fontStyle: "bold" }, 1: { cellWidth: 632 } }, styles: { fontSize: 8, cellPadding: 5, lineColor: [120, 120, 120], lineWidth: 0.35, fillColor: [255, 255, 255], textColor: [0, 0, 0] } });
+  autoTable(doc, { startY: doc.lastAutoTable.finalY, margin: { left: 30, right: 30 }, theme: "grid", body: attendanceRows(report), styles: { fontSize: 8, cellPadding: 6, halign: "center", valign: "middle", lineColor: [120, 120, 120], lineWidth: 0.35, fillColor: [255, 255, 255], textColor: [0, 0, 0] }, columnStyles: { 0: { cellWidth: 104, fontStyle: "bold" } } });
+};
+
+const downloadAllAttendancePdfs = async (reports) => {
+  const doc = new jsPDF({ orientation: "landscape", unit: "pt", format: "a4" });
+  const logo = await getLogo();
+  reports.forEach((report, index) => {
+    if (index > 0) doc.addPage();
+    renderAttendancePdf(doc, report, logo);
+  });
+  doc.save(`staff-attendance_${todayKey()}.pdf`);
+};
+
+const downloadAttendanceCsv = (reports) => {
+  const rows = [["Staff Name", "Date / Year", "Day", "Date", "Time In", "Time Out", "Appointment"], ...reports.flatMap(attendanceTableRows)];
+  saveAs(new Blob([rows.map((row) => row.map(csvDisplayValue).map(csvValue).join(",")).join("\r\n")], { type: "text/csv;charset=utf-8" }), `staff-attendance_${todayKey()}.csv`);
+};
+
 const downloadExcel = async (report) => {
   const workbook = new ExcelJS.Workbook();
   const worksheet = workbook.addWorksheet(report.title.slice(0, 31));
@@ -89,6 +136,21 @@ const downloadExcel = async (report) => {
   saveAs(new Blob([buffer], { type: "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet" }), `${fileSlug(report.title)}_${todayKey()}.xlsx`);
 };
 
+const downloadAttendanceExcel = async (reports) => {
+  const workbook = new ExcelJS.Workbook();
+  reports.forEach((report, index) => {
+    const sheet = workbook.addWorksheet((report.name || `Staff ${index + 1}`).slice(0, 31));
+    sheet.mergeCells("B1:G1"); sheet.getCell("B1").value = report.title; sheet.getCell("B1").font = { bold: true, size: 14 }; sheet.getCell("B1").alignment = { horizontal: "center" };
+    const rows = attendanceRows(report);
+    sheet.addRow(["STAFF NAME"]); sheet.addRow([report.name]); sheet.addRow(["DATE / YEAR"]); sheet.addRow([report.month]); rows.forEach((row) => sheet.addRow(row));
+    const lastTableRow = 5 + rows.length;
+    for (let row = 2; row <= lastTableRow; row += 1) sheet.getRow(row).eachCell((cell) => { cell.border = { top: { style: "thin", color: { argb: "FF808080" } }, left: { style: "thin", color: { argb: "FF808080" } }, bottom: { style: "thin", color: { argb: "FF808080" } }, right: { style: "thin", color: { argb: "FF808080" } } }; cell.alignment = { horizontal: "center", vertical: "middle", wrapText: true }; });
+    [2, 4, ...rows.map((_, rowIndex) => rowIndex + 6)].forEach((row) => sheet.getRow(row).eachCell((cell) => { cell.font = { bold: true }; }));
+    sheet.columns.forEach((column, columnIndex) => { column.width = columnIndex === 0 ? 22 : 24; });
+  });
+  const buffer = await workbook.xlsx.writeBuffer(); saveAs(new Blob([buffer], { type: "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet" }), `staff-attendance_${todayKey()}.xlsx`);
+};
+
 export default function Reports({ isMobile }) {
   const [appointments, setAppointments] = useState([]);
   const [staff, setStaff] = useState([]);
@@ -98,6 +160,8 @@ export default function Reports({ isMobile }) {
   const [exportingId, setExportingId] = useState(null);
   const [successId, setSuccessId] = useState(null);
   const [formats, setFormats] = useState({});
+  const [selectedStaffId, setSelectedStaffId] = useState("");
+  const [attendanceDate, setAttendanceDate] = useState(todayKey());
 
   useEffect(() => {
     const loadData = async () => {
@@ -117,6 +181,9 @@ export default function Reports({ isMobile }) {
     loadData();
   }, []);
 
+  const selectedStaff = staff.find((member) => member._id === selectedStaffId) || staff[0];
+  const attendanceReports = useMemo(() => (selectedStaffId === "all" ? staff : [selectedStaff]).filter(Boolean).map((member) => makeAttendanceReport(member, appointments, attendanceDate)), [selectedStaffId, staff, selectedStaff, appointments, attendanceDate]);
+  const staffAttendance = attendanceReports[0] || makeAttendanceReport(undefined, appointments, attendanceDate);
   const reports = useMemo(() => [
     {
       ...reportTemplates[0],
@@ -125,23 +192,26 @@ export default function Reports({ isMobile }) {
     },
     {
       ...reportTemplates[1],
-      columns: ["Staff Member", "Email", "Specialty", "Schedule"],
-      rows: staff.map((member) => [member.name || "N/A", member.email || "N/A", member.specialty || "N/A", formatSchedule(member.schedule)]),
+      ...staffAttendance,
+      allReports: attendanceReports,
     },
     {
       ...reportTemplates[2],
       columns: ["Table", "Category", "Item", "Beginning", "Receipts", "Issuances", "Ending", "Status"],
       rows: inventory.flatMap((table) => (table.categories || []).flatMap((category) => (category.items || []).map((item) => [table.name || "N/A", category.name || "N/A", item.name || "N/A", item.beginning || 0, item.receipts?.at(-1) || 0, item.issuances?.at(-1) || 0, item.ending || 0, item.status || "In Stock"]))),
     },
-  ], [appointments, inventory, staff]);
+  ], [appointments, attendanceReports, inventory, staffAttendance]);
 
   const handleExport = async (report) => {
     setExportingId(report.id);
     setSuccessId(null);
     try {
       const format = formats[report.id] || "pdf";
-      if (format === "excel") await downloadExcel(report);
-      else if (format === "csv") downloadCsv(report);
+      if (format === "excel") {
+        if (report.id === 3) await downloadAttendanceExcel(report.allReports); else await downloadExcel(report);
+      } else if (format === "csv") {
+        if (report.id === 3) downloadAttendanceCsv(report.allReports); else downloadCsv(report);
+      } else if (report.id === 3) await downloadAllAttendancePdfs(report.allReports);
       else downloadPdf(report);
       setSuccessId(report.id);
       setTimeout(() => setSuccessId(null), 3000);
@@ -183,6 +253,14 @@ export default function Reports({ isMobile }) {
               </span>
               <h3 style={{ margin: "0 0 6px", fontSize: "15px", fontWeight: 700, color: NAVY }}>{report.title}</h3>
               <p style={{ margin: 0, fontSize: "12px", color: "#718096", lineHeight: 1.4 }}>{report.desc}</p>
+              {report.id === 3 && <div style={{ display: "flex", gap: 8, marginTop: 10, flexWrap: "wrap" }}>
+                <select aria-label="Staff member" value={selectedStaffId || selectedStaff?._id || ""} onChange={(event) => setSelectedStaffId(event.target.value)} style={{ padding: "6px 8px", fontSize: 12, border: "1px solid #cbd5e1", borderRadius: 5, background: "#fff" }}>
+                  {staff.length === 0 && <option value="">No staff available</option>}
+                  {staff.length > 0 && <option value="all">All Staff</option>}
+                  {staff.map((member) => <option key={member._id} value={member._id}>{member.name}</option>)}
+                </select>
+                <input aria-label="Week date" type="date" value={attendanceDate} onChange={(event) => setAttendanceDate(event.target.value)} style={{ padding: "5px 8px", fontSize: 12, border: "1px solid #cbd5e1", borderRadius: 5 }} />
+              </div>}
             </div>
             
             <div style={{ display: "flex", alignItems: "center", gap: "12px", minWidth: "180px", justifyContent: "flex-end" }}>
