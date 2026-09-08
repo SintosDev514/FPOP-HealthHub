@@ -10,6 +10,7 @@ const GREEN     = "#22c55e";
 
 const reportTemplates = [
   { id: 1, title: "Monthly Clinical Consultation Summary", desc: "Aggregated volumes of appointments, departments, and patient demographics.", category: "Operational" },
+  { id: 2, title: "Client Feedback & Satisfaction Survey", desc: "Survey responses from clients including satisfaction ratings and suggestions for improvement.", category: "Feedback" },
   { id: 3, title: "Staff Attendance & Performance Analysis", desc: "Consultation durations, attendance metrics, and service delivery benchmarks for physicians.", category: "Staff" },
   { id: 4, title: "Contraceptive Supply & Inventory Report", desc: "Current stock status of family planning supplies, distribution logs, and reorder levels.", category: "Inventory" },
 ];
@@ -155,6 +156,7 @@ export default function Reports({ isMobile }) {
   const [appointments, setAppointments] = useState([]);
   const [staff, setStaff] = useState([]);
   const [inventory, setInventory] = useState([]);
+  const [surveys, setSurveys] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
   const [exportingId, setExportingId] = useState(null);
@@ -166,12 +168,13 @@ export default function Reports({ isMobile }) {
   useEffect(() => {
     const loadData = async () => {
       try {
-        const paths = ["/api/admin/appointments", "/api/staff", "/api/inventory/tables"];
+        const paths = ["/api/admin/appointments", "/api/staff", "/api/inventory/tables", "/api/surveys"];
         const results = await Promise.all(paths.map((path) => fetch(`${API_BASE}${path}`, { credentials: "include" }).then((response) => response.json())));
         if (results.some((result) => !result.success)) throw new Error("Some report data could not be loaded.");
         setAppointments(results[0].appointments || []);
         setStaff(results[1].staff || []);
         setInventory(results[2].tables || []);
+        setSurveys(results[3].surveys || []);
       } catch (loadError) {
         setError(loadError.message || "Unable to load report data.");
       } finally {
@@ -187,20 +190,25 @@ export default function Reports({ isMobile }) {
   const reports = useMemo(() => [
     {
       ...reportTemplates[0],
-      columns: ["Patient", "Service", "Department", "Date", "Time", "Status"],
+      columns: ["Client", "Service", "Department", "Date", "Time", "Status"],
       rows: appointments.map((appointment) => [appointment.patient || "N/A", appointment.serviceName || "N/A", appointment.department || "N/A", formatDate(appointment.date), appointment.time || "N/A", appointment.status || "N/A"]),
     },
     {
       ...reportTemplates[1],
-      ...staffAttendance,
-      allReports: attendanceReports,
+      columns: ["Name", "Email", "Contact", "Satisfaction", "Service Rating", "Facility Rating", "Provider Rating", "Suggestions", "Date"],
+      rows: surveys.map((s) => [s.name || "N/A", s.email || "N/A", s.contactNumber || "N/A", `${s.satisfaction}/5`, `${s.appropriateService}/5`, `${s.facilityResources}/5`, `${s.providerResponsiveness}/5`, s.suggestions || "None", formatDate(s.createdAt)]),
     },
     {
       ...reportTemplates[2],
+      columns: ["Staff Member", "Email", "Specialty", "Schedule"],
+      rows: staff.map((member) => [member.name || "N/A", member.email || "N/A", member.specialty || "N/A", formatSchedule(member.schedule)]),
+    },
+    {
+      ...reportTemplates[3],
       columns: ["Table", "Category", "Item", "Beginning", "Receipts", "Issuances", "Ending", "Status"],
       rows: inventory.flatMap((table) => (table.categories || []).flatMap((category) => (category.items || []).map((item) => [table.name || "N/A", category.name || "N/A", item.name || "N/A", item.beginning || 0, item.receipts?.at(-1) || 0, item.issuances?.at(-1) || 0, item.ending || 0, item.status || "In Stock"]))),
     },
-  ], [appointments, attendanceReports, inventory, staffAttendance]);
+  ], [appointments, inventory, staff, surveys]);
 
   const handleExport = async (report) => {
     setExportingId(report.id);
@@ -244,8 +252,8 @@ export default function Reports({ isMobile }) {
                 fontSize: "10px", 
                 fontWeight: 700, 
                 textTransform: "uppercase",
-                background: report.category === "Operational" ? "rgba(30,58,95,0.08)" : report.category === "Inventory" ? "rgba(34,197,94,0.08)" : "rgba(245,197,24,0.14)",
-                color: report.category === "Operational" ? NAVY : report.category === "Inventory" ? GREEN : "#9a6700",
+                background: report.category === "Operational" ? "rgba(30,58,95,0.08)" : report.category === "Inventory" ? "rgba(34,197,94,0.08)" : report.category === "Feedback" ? "rgba(168,85,247,0.1)" : "rgba(245,197,24,0.14)",
+                color: report.category === "Operational" ? NAVY : report.category === "Inventory" ? GREEN : report.category === "Feedback" ? "#7c3aed" : "#9a6700",
                 display: "inline-block",
                 marginBottom: "8px"
               }}>

@@ -116,7 +116,7 @@ export default function Appointments({ isMobile }) {
 <div style={{ marginBottom: "26px" }}>
         <h1 style={{ margin: 0, fontSize: isMobile ? "22px" : "26px", fontWeight: 800, color: NAVY, letterSpacing: "-0.5px" }}>Appointments</h1>
         <p style={{ margin: "5px 0 0", fontSize: "13px", color: "#8a96a3", fontWeight: 500 }}>
-          Schedule, monitor and manage patient consultation bookings
+          Schedule, monitor and manage client consultation bookings
         </p>
       </div>
 
@@ -160,7 +160,7 @@ export default function Appointments({ isMobile }) {
           <span style={{ position: "absolute", left: "13px", top: "50%", transform: "translateY(-50%)", color: "#9aa5b4", pointerEvents: "none" }}><IcoSearch /></span>
           <input 
             type="text" 
-            placeholder="Search patient or doctor..." 
+            placeholder="Search client or service provider..." 
             value={search} 
             onChange={e => setSearch(e.target.value)}
             style={{ width: "100%", padding: "9px 16px 9px 38px", borderRadius: "8px", border: "1.5px solid rgba(30,58,95,0.12)", fontSize: "13px", color: "#333", outline: "none", background: "#f7fafc", fontFamily: "'Poppins',sans-serif", boxSizing: "border-box" }}
@@ -173,10 +173,19 @@ export default function Appointments({ isMobile }) {
             onChange={e => setDeptFilter(e.target.value)}
             style={{ padding: "8px 16px", borderRadius: "8px", border: "1.5px solid rgba(30,58,95,0.12)", background: "#fff", fontSize: "13px", color: "#4a5568", outline: "none", cursor: "pointer", fontFamily: "'Poppins',sans-serif" }}
           >
-            <option value="All">All Departments</option>
-            <option value="Family Planning">Family Planning</option>
-            <option value="OB-GYN">OB-GYN</option>
-            <option value="General Medicine">General Medicine</option>
+            <option value="All">All Services</option>
+            <option value="Counseling / Consultation">Counseling / Consultation</option>
+            <option value="Oral Contraceptives">Oral Contraceptives</option>
+            <option value="Combined Oral Contraceptive (COC)">Combined Oral Contraceptive (COC)</option>
+            <option value="Lady Pill / Trust / Althea">Lady Pill / Trust / Althea</option>
+            <option value="Progestin-Only Pill (POP)">Progestin-Only Pill (POP)</option>
+            <option value="Injectable (1 Month / 3 Months)">Injectable (1 Month / 3 Months)</option>
+            <option value="IUD (Insertion / Removal)">IUD (Insertion / Removal)</option>
+            <option value="Implant (PSI)">Implant (PSI)</option>
+            <option value="Condom">Condom</option>
+            <option value="Awareness & Counseling">Awareness & Counseling</option>
+            <option value="Community-Based Screening (HIV Testing)">Community-Based Screening (HIV Testing)</option>
+            <option value="Adolescent Sexual Reproductive Health (ASRH)">Adolescent Sexual Reproductive Health (ASRH)</option>
           </select>
 
           <select 
@@ -219,10 +228,10 @@ export default function Appointments({ isMobile }) {
                 </span>
               </div>
               <div style={{ fontSize: "12px", color: "#4a5568", marginBottom: "4px" }}>
-                <b style={{ color: NAVY }}>Doctor:</b> {appt.doctor}
+                <b style={{ color: NAVY }}>Service Provider:</b> {appt.doctor}
               </div>
               <div style={{ fontSize: "12px", color: "#4a5568", marginBottom: "4px" }}>
-                <b style={{ color: NAVY }}>Dept:</b> <span style={{ padding: "2px 8px", borderRadius: "12px", background: "rgba(30,58,95,0.06)", color: NAVY, fontSize: "11px" }}>{appt.department}</span>
+                <b style={{ color: NAVY }}>Service:</b> <span style={{ padding: "2px 8px", borderRadius: "12px", background: "rgba(30,58,95,0.06)", color: NAVY, fontSize: "11px" }}>{appt.department}</span>
               </div>
               <div style={{ fontSize: "12px", color: "#718096", marginBottom: "10px" }}>
                 <b style={{ color: NAVY }}>Schedule:</b> {appt.datetime}
@@ -255,10 +264,10 @@ export default function Appointments({ isMobile }) {
           <table style={{ width: "100%", borderCollapse: "collapse", textAlign: "left", fontSize: "13px" }}>
             <thead>
               <tr style={{ background: "#f8fafc", borderBottom: "1px solid rgba(30,58,95,0.07)" }}>
-                <th style={{ padding: "16px 24px", color: "#4a5568", fontWeight: 600 }}>Patient</th>
+                <th style={{ padding: "16px 24px", color: "#4a5568", fontWeight: 600 }}>Client</th>
                 <th style={{ padding: "16px 24px", color: "#4a5568", fontWeight: 600 }}>Contact</th>
-                <th style={{ padding: "16px 24px", color: "#4a5568", fontWeight: 600 }}>Physician</th>
-                <th style={{ padding: "16px 24px", color: "#4a5568", fontWeight: 600 }}>Department</th>
+                <th style={{ padding: "16px 24px", color: "#4a5568", fontWeight: 600 }}>Service Provider</th>
+                <th style={{ padding: "16px 24px", color: "#4a5568", fontWeight: 600 }}>Service</th>
                 <th style={{ padding: "16px 24px", color: "#4a5568", fontWeight: 600 }}>Schedule</th>
                 <th style={{ padding: "16px 24px", color: "#4a5568", fontWeight: 600 }}>Status</th>
                 <th style={{ padding: "16px 24px", color: "#4a5568", fontWeight: 600, textAlign: "right" }}>Actions</th>

@@ -88,6 +88,26 @@ const getInitials = (name) => {
     .slice(0, 3);
 };
 
+const timeToMinutes = (t) => {
+  if (!t) return 0;
+  const m = t.match(/(\d+):(\d+)\s*(AM|PM)/i);
+  if (!m) return 0;
+  let h = parseInt(m[1], 10);
+  const min = parseInt(m[2], 10);
+  if (m[3].toUpperCase() === "PM" && h !== 12) h += 12;
+  if (m[3].toUpperCase() === "AM" && h === 12) h = 0;
+  return h * 60 + min;
+};
+
+const STATUS_ORDER = { pending: 0, confirmed: 1, completed: 2, cancelled: 3 };
+
+const sortAppointments = (list) =>
+  [...list].sort((a, b) => {
+    const sDiff = (STATUS_ORDER[a.status] ?? 4) - (STATUS_ORDER[b.status] ?? 4);
+    if (sDiff !== 0) return sDiff;
+    return a.date.localeCompare(b.date) || timeToMinutes(a.time) - timeToMinutes(b.time);
+  });
+
 const StaffScheduleView = ({ appointments = [], onRefresh }) => {
   const [updating, setUpdating] = useState(null);
   const [feedback, setFeedback] = useState(null);
@@ -204,9 +224,7 @@ const StaffScheduleView = ({ appointments = [], onRefresh }) => {
                   </td>
                 </tr>
               ) : (
-                [...appointments]
-                  .sort((a, b) => b.date.localeCompare(a.date) || b.time.localeCompare(a.time))
-                  .map((appt) => (
+                sortAppointments(appointments).map((appt) => (
                     <tr
                       key={appt._id}
                       className="border-b border-[#1E3A5F]/[0.06] transition hover:bg-[#f7fafc]"
