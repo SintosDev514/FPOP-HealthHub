@@ -125,6 +125,7 @@ const renderAttendancePdf = (doc, report, logo) => {
 };
 
 const downloadAllAttendancePdfs = async (reports) => {
+  if (!reports?.length) return;
   const doc = new jsPDF({ orientation: "landscape", unit: "pt", format: "a4" });
   const logo = await getLogo();
   reports.forEach((report, index) => {
@@ -135,6 +136,7 @@ const downloadAllAttendancePdfs = async (reports) => {
 };
 
 const downloadAttendanceCsv = (reports) => {
+  if (!reports?.length) return;
   const rows = [["Staff Name", "Date / Year", "Day", "Date", "Time In", "Time Out", "Appointment"], ...reports.flatMap(attendanceTableRows)];
   saveAs(new Blob([rows.map((row) => row.map(csvDisplayValue).map(csvValue).join(",")).join("\r\n")], { type: "text/csv;charset=utf-8" }), `staff-attendance_${todayKey()}.csv`);
 };
@@ -155,6 +157,7 @@ const downloadExcel = async (report) => {
 };
 
 const downloadAttendanceExcel = async (reports) => {
+  if (!reports?.length) return;
   const workbook = new ExcelJS.Workbook();
   reports.forEach((report, index) => {
     const sheet = workbook.addWorksheet((report.name || `Staff ${index + 1}`).slice(0, 31));
@@ -217,6 +220,7 @@ export default function Reports({ isMobile }) {
     },
     {
       ...reportTemplates[2],
+      allReports: attendanceReports,
       columns: ["Staff Member", "Email", "Specialty", "Schedule"],
       rows: staff.map((member) => [member.name || "N/A", member.email || "N/A", member.specialty || "N/A", formatSchedule(member.schedule)]),
     },
@@ -225,7 +229,7 @@ export default function Reports({ isMobile }) {
       columns: ["Table", "Category", "Item", "Beginning", "Receipts", "Issuances", "Ending", "Status"],
       rows: inventory.flatMap((table) => (table.categories || []).flatMap((category) => (category.items || []).map((item) => [table.name || "N/A", category.name || "N/A", item.name || "N/A", item.beginning || 0, item.receipts?.at(-1) || 0, item.issuances?.at(-1) || 0, item.ending || 0, item.status || "In Stock"]))),
     },
-  ], [appointments, inventory, staff, surveys]);
+  ], [appointments, inventory, staff, surveys, attendanceReports]);
 
   const handleExport = async (report) => {
     setExportingId(report.id);

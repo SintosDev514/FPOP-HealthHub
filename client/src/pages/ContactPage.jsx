@@ -169,6 +169,7 @@ function FeedbackForm() {
     providerResponsiveness: null,
   });
   const [submitted, setSubmitted] = useState(false);
+  const [submitting, setSubmitting] = useState(false);
   const [error, setError] = useState("");
 
   const stepLabels = ["Info", "Ratings", "Suggestions"];
@@ -191,10 +192,12 @@ function FeedbackForm() {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    setSubmitted(true);
+    if (submitting || submitted) return;
+    setSubmitting(true);
+    setError("");
 
     try {
-      await fetch(`${window.location.origin}/api/surveys`, {
+      const res = await fetch(`${window.location.origin}/api/surveys`, {
         method: "POST",
         credentials: "include",
         headers: { "Content-Type": "application/json" },
@@ -209,7 +212,17 @@ function FeedbackForm() {
           suggestions: form.suggestions,
         }),
       });
-    } catch {}
+      const data = await res.json();
+      if (data.success) {
+        setSubmitted(true);
+      } else {
+        setError(data.message || "Failed to submit survey.");
+      }
+    } catch {
+      setError("Unable to submit survey. Please try again.");
+    } finally {
+      setSubmitting(false);
+    }
   };
 
   const goToNextStep = () => {
@@ -363,9 +376,10 @@ function FeedbackForm() {
         ) : (
           <button
             type="submit"
-            className="inline-flex h-10 w-full items-center justify-center gap-2 rounded-xl bg-[#F9FAFB] px-6 text-xs font-semibold text-[#1E3A5F] transition-all duration-300 hover:-translate-y-0.5 hover:bg-[#F5C518] hover:text-[#1F2937] hover:shadow-lg sm:w-auto"
+            disabled={submitting || submitted}
+            className="inline-flex h-10 w-full items-center justify-center gap-2 rounded-xl bg-[#F9FAFB] px-6 text-xs font-semibold text-[#1E3A5F] transition-all duration-300 hover:-translate-y-0.5 hover:bg-[#F5C518] hover:text-[#1F2937] hover:shadow-lg disabled:cursor-not-allowed disabled:opacity-60 disabled:hover:translate-y-0 disabled:hover:bg-[#F9FAFB] disabled:hover:text-[#1E3A5F] disabled:hover:shadow-none sm:w-auto"
           >
-            Submit Feedback
+            {submitting ? "Submitting..." : submitted ? "Submitted" : "Submit Feedback"}
           </button>
         )}
       </div>
