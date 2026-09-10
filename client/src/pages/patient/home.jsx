@@ -15,6 +15,8 @@ const CombinedDashboard = () => {
   useEffect(() => {
     fetchUser();
     fetchAppointments();
+    const interval = setInterval(fetchAppointments, 10000);
+    return () => clearInterval(interval);
   }, []);
 
   const fetchUser = async () => {

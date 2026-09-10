@@ -412,9 +412,6 @@ const InventoryTableHeader = () => (
       <th rowSpan="2" className="w-[160px] px-3 py-3 text-[9px] font-semibold">
         TYPE / BRAND
       </th>
-      <th rowSpan="2" className="w-[95px] px-2 py-3 text-right text-[9px] font-semibold">
-        BEGINNING BALANCE
-      </th>
       <th colSpan={6} className="bg-emerald-50 px-2 py-3 text-center text-[9px] font-semibold">
         RECEIPTS
       </th>
@@ -1688,13 +1685,13 @@ const StaffInventoryView = ({ hideHeader }) => {
             </button>
           </div>
           <div className="overflow-x-auto">
-            <table className="min-w-[1050px] w-full border-collapse text-left text-[9px] text-slate-950">
+            <table className="min-w-[950px] w-full border-collapse text-left text-[9px] text-slate-950">
               <InventoryTableHeader />
               <tbody>
                 {table.categories.length === 0 && (
                   <tr className="border-b border-slate-200 bg-white">
                     <td
-                      colSpan={20}
+                      colSpan={19}
                       className="px-5 py-6 text-center text-[10px] font-medium text-slate-500"
                     >
                       No categories yet. Add a category to this table.
@@ -1707,7 +1704,7 @@ const StaffInventoryView = ({ hideHeader }) => {
                   return (
                     <React.Fragment key={cat._id}>
                       <tr className="border-y border-[#F5C518]/20 bg-[#152c4a]">
-                        <td colSpan={20} className="px-4 py-0">
+                        <td colSpan={19} className="px-4 py-0">
                           <div className="flex min-h-11 items-center justify-between gap-3">
                             <button
                               type="button"
@@ -1752,7 +1749,7 @@ const StaffInventoryView = ({ hideHeader }) => {
                       {isOpen && cat.items.length === 0 && (
                         <tr className="border-b border-slate-200 bg-white">
                           <td
-                            colSpan={20}
+                            colSpan={19}
                             className="px-5 py-6 text-center text-[10px] font-medium text-slate-500"
                           >
                             {query.trim()
@@ -1769,9 +1766,6 @@ const StaffInventoryView = ({ hideHeader }) => {
                           >
                             <td className="px-4 py-2.5 text-[9px] font-semibold">
                               {item.name}
-                            </td>
-                            <td className="px-2 py-2.5 text-right text-[9px]">
-                              {formatNumber(item.beginning)}
                             </td>
                             {item.receipts.map((value, index) => (
                               <td

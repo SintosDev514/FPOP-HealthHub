@@ -51,9 +51,11 @@ export default function Appointments({ isMobile }) {
   const [deptFilter, setDeptFilter] = useState("All");
   const [statusFilter, setStatusFilter] = useState("All");
 
-  const fetchAppointments = useCallback(async () => {
-    setLoading(true);
-    setError(null);
+  const fetchAppointments = useCallback(async (isPoll = false) => {
+    if (!isPoll) {
+      setLoading(true);
+      setError(null);
+    }
     try {
       const res = await fetch(`${__API_BASE__}/api/admin/appointments`, {
         credentials: "include",
@@ -61,18 +63,20 @@ export default function Appointments({ isMobile }) {
       const data = await res.json();
       if (data.success) {
         setAppointments(data.appointments);
-      } else {
+      } else if (!isPoll) {
         setError(data.message || "Failed to fetch appointments");
       }
     } catch (err) {
-      setError(err.message || "Network error");
+      if (!isPoll) setError(err.message || "Network error");
     } finally {
-      setLoading(false);
+      if (!isPoll) setLoading(false);
     }
   }, []);
 
   useEffect(() => {
     fetchAppointments();
+    const interval = setInterval(() => fetchAppointments(true), 10000);
+    return () => clearInterval(interval);
   }, [fetchAppointments]);
 
   const handleStatusChange = async (id, newStatus) => {

@@ -175,6 +175,8 @@ const StaffDashboard = () => {
   useEffect(() => {
     fetchProfile();
     fetchAppointments();
+    const interval = setInterval(fetchAppointments, 10000);
+    return () => clearInterval(interval);
   }, []);
 
   useEffect(() => {
@@ -206,18 +208,12 @@ const StaffDashboard = () => {
 
   const fetchAppointments = async () => {
     try {
-      console.log("Fetching staff appointments...");
       const res = await fetch(`${__API_BASE__}/api/appointments/staff`, {
         credentials: "include",
       });
-      console.log("Response status:", res.status);
       const data = await res.json();
-      console.log("Response data:", data);
       if (data.success) {
-        console.log("Setting appointments:", data.appointments?.length);
         setAppointments(data.appointments);
-      } else {
-        console.error("API error:", data.message);
       }
     } catch (err) {
       console.error("Failed to load appointments:", err);
