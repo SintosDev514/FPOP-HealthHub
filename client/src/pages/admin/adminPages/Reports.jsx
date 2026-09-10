@@ -23,6 +23,23 @@ const formatDate = (value) => {
   return Number.isNaN(date.getTime()) ? String(value) : date.toLocaleDateString("en-US");
 };
 
+const formatSchedule = (schedule) => {
+  if (!schedule) return "N/A";
+  let value = schedule;
+  if (typeof value === "string") {
+    try { value = JSON.parse(value); } catch { return value || "N/A"; }
+  }
+  if (typeof value !== "object") return "N/A";
+  const dayNames = ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"];
+  const activeDays = Object.entries(value)
+    .filter(([, day]) => day?.active)
+    .map(([key, day]) => {
+      const name = dayNames[Number(key)] || key;
+      return day.start && day.end ? `${name} ${day.start}-${day.end}` : name;
+    });
+  return activeDays.length ? activeDays.join(", ") : "N/A";
+};
+
 const formatTime = (value) => {
   if (!value) return "N/A";
   const [hours, minutes] = String(value).split(":").map(Number);
