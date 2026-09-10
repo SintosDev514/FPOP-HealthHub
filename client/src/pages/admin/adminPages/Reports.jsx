@@ -200,14 +200,29 @@ export default function Reports({ isMobile }) {
   useEffect(() => {
     const loadData = async () => {
       try {
-        const paths = ["/api/admin/appointments", "/api/staff", "/api/inventory/tables", "/api/surveys", "/api/admin/attendance"];
-        const results = await Promise.all(paths.map((path) => fetch(`${API_BASE}${path}`, { credentials: "include" }).then((response) => response.json())));
-        if (results.some((result) => !result.success)) throw new Error("Some report data could not be loaded.");
-        setAppointments(results[0].appointments || []);
-        setStaff(results[1].staff || []);
-        setInventory(results[2].tables || []);
-        setSurveys(results[3].surveys || []);
-        setAttendance(results[4].attendance || []);
+        const fetchJson = async (path) => {
+          try {
+            const res = await fetch(`${API_BASE}${path}`, {
+              credentials: "include",
+            });
+            const text = await res.text();
+            return JSON.parse(text);
+          } catch {
+            return { success: false };
+          }
+        };
+        const results = await Promise.all([
+          fetchJson("/api/admin/appointments"),
+          fetchJson("/api/staff"),
+          fetchJson("/api/inventory/tables"),
+          fetchJson("/api/surveys"),
+          fetchJson("/api/admin/attendance"),
+        ]);
+        setAppointments(results[0].success ? results[0].appointments || [] : []);
+        setStaff(results[1].success ? results[1].staff || [] : []);
+        setInventory(results[2].success ? results[2].tables || [] : []);
+        setSurveys(results[3].success ? results[3].surveys || [] : []);
+        setAttendance(results[4].success ? results[4].attendance || [] : []);
       } catch (loadError) {
         setError(loadError.message || "Unable to load report data.");
       } finally {

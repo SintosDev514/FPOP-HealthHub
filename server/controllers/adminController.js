@@ -190,6 +190,14 @@ const getDashboardOverview = async (req, res) => {
 const listUsers = async (req, res) => {
   try {
     const users = await userModel.find({}, "-password").sort({ createdAt: -1 });
+    const now = new Date();
+    const todayKey = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, "0")}-${String(now.getDate()).padStart(2, "0")}`;
+    const onlineRecords = await attendanceModel.find({
+      date: todayKey,
+      timeIn: { $ne: "" },
+      timeOut: { $in: ["", null] },
+    });
+    const onlineIds = new Set(onlineRecords.map((r) => String(r.userId)));
     const formatted = users.map((u) => ({
       _id: u._id,
       name: `${u.firstName} ${u.lastName}`.trim(),
@@ -201,6 +209,7 @@ const listUsers = async (req, res) => {
       avatar: u.avatar || "",
       specialty: u.specialty || "",
       schedule: u.schedule || {},
+      isOnline: onlineIds.has(String(u._id)),
     }));
     res.json({ success: true, users: formatted });
   } catch (error) {
@@ -251,6 +260,7 @@ const createUser = async (req, res) => {
         isSuspended: user.isSuspended || false,
         joinDate: user.createdAt,
         avatar: user.avatar || "",
+        isOnline: false,
       },
     });
   } catch (error) {

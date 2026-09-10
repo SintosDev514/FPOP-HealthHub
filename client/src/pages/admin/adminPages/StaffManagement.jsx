@@ -4,8 +4,11 @@ const NAVY = "#1E3A5F";
 const GREEN = "#22c55e";
 const RED = "#ef4444";
 const GOLD = "#F5C518";
+const GRAY = "#9aa5b4";
 
 const DAY_LABELS = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
+
+const avatarColors = [NAVY, "#3b82f6", "#6366f1", "#ec4899", "#06b6d4", "#f59e0b", "#10b981", "#8b5cf6"];
 
 const IcoSearch = () => (
   <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
@@ -38,8 +41,8 @@ export default function StaffManagement({ isMobile }) {
   const [newStaffEmail, setNewStaffEmail] = useState("");
   const [newStaffPassword, setNewStaffPassword] = useState("");
 
-  const fetchStaff = async () => {
-    setLoading(true);
+  const fetchStaff = async (silent = false) => {
+    if (!silent) setLoading(true);
     setError("");
     try {
       const res = await fetch(`${__API_BASE__}/api/admin/users`, {
@@ -54,12 +57,14 @@ export default function StaffManagement({ isMobile }) {
     } catch {
       setError("Failed to load staff");
     } finally {
-      setLoading(false);
+      if (!silent) setLoading(false);
     }
   };
 
   useEffect(() => {
     fetchStaff();
+    const interval = setInterval(() => fetchStaff(true), 10000);
+    return () => clearInterval(interval);
   }, []);
 
   const handleAddStaff = async (e) => {
@@ -454,7 +459,65 @@ export default function StaffManagement({ isMobile }) {
                         color: "#2d3748",
                       }}
                     >
-                      {member.name}
+                      <div style={{ display: "flex", alignItems: "center", gap: "10px" }}>
+                        <span>{member.name}</span>
+                        <div
+                          style={{
+                            width: "36px",
+                            height: "36px",
+                            borderRadius: "50%",
+                            overflow: "hidden",
+                            flexShrink: 0,
+                            position: "relative",
+                            border: "2px solid rgba(30,58,95,0.08)",
+                            background: avatarColors[Math.abs((member.name || "?").split("").reduce((a, c) => a + c.charCodeAt(0), 0)) % avatarColors.length],
+                          }}
+                        >
+                          {member.avatar ? (
+                            <img
+                              src={member.avatar}
+                              alt=""
+                              style={{ width: "100%", height: "100%", objectFit: "cover", display: "block" }}
+                              onError={(e) => {
+                                e.currentTarget.style.display = "none";
+                                e.currentTarget.parentElement.textContent = (member.name || "?").trim().charAt(0).toUpperCase();
+                                e.currentTarget.parentElement.style.display = "flex";
+                                e.currentTarget.parentElement.style.alignItems = "center";
+                                e.currentTarget.parentElement.style.justifyContent = "center";
+                                e.currentTarget.parentElement.style.color = "#fff";
+                                e.currentTarget.parentElement.style.fontWeight = 700;
+                                e.currentTarget.parentElement.style.fontSize = "15px";
+                              }}
+                            />
+                          ) : (
+                            <span
+                              style={{
+                                display: "flex",
+                                alignItems: "center",
+                                justifyContent: "center",
+                                width: "100%",
+                                height: "100%",
+                                color: "#fff",
+                                fontWeight: 700,
+                                fontSize: "15px",
+                              }}
+                            >
+                              {(member.name || "?").trim().charAt(0).toUpperCase()}
+                            </span>
+                          )}
+                        </div>
+                        <span
+                          title={member.isOnline ? "Active" : "Offline"}
+                          style={{
+                            width: "10px",
+                            height: "10px",
+                            borderRadius: "50%",
+                            flexShrink: 0,
+                            background: member.isOnline ? GREEN : GRAY,
+                            boxShadow: `0 0 0 ${member.isOnline ? "3px rgba(34,197,94,0.18)" : "3px rgba(154,165,180,0.2)"}`,
+                          }}
+                        />
+                      </div>
                     </td>
                     <td
                       style={{
