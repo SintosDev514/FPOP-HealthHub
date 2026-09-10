@@ -11,7 +11,7 @@ const GREEN     = "#22c55e";
 const reportTemplates = [
   { id: 1, title: "Monthly Clinical Consultation Summary", desc: "Aggregated volumes of appointments, departments, and patient demographics.", category: "Operational" },
   { id: 2, title: "Client Feedback & Satisfaction Survey", desc: "Survey responses from clients including satisfaction ratings and suggestions for improvement.", category: "Feedback" },
-  { id: 3, title: "Staff Attendance & Performance Analysis", desc: "Consultation durations, attendance metrics, and service delivery benchmarks for physicians.", category: "Staff" },
+  { id: 3, title: "Staff Attendance", desc: "Consultation durations, attendance metrics, and service delivery benchmarks for physicians.", category: "Staff" },
   { id: 4, title: "Contraceptive Supply & Inventory Report", desc: "Current stock status of family planning supplies, distribution logs, and reorder levels.", category: "Inventory" },
 ];
 
@@ -60,20 +60,27 @@ const weekDays = (value) => {
   first.setDate(first.getDate() - ((first.getDay() + 6) % 7));
   return Array.from({ length: 6 }, (_, index) => { const day = new Date(first); day.setDate(first.getDate() + index); return day; });
 };
-const timeForDay = (schedule, date) => {
-  let value = schedule;
-  if (typeof value === "string") { try { value = JSON.parse(value); } catch { value = {}; } }
-  const day = value?.[date.getDay()];
-  return day?.active ? [formatTime(day.start), formatTime(day.end)] : ["-", "-"];
+const attendanceForDay = (attendanceRecords, member, date) => {
+  if (!member?._id) return ["N/A", "N/A"];
+  const key = dateKey(date);
+  const record = (attendanceRecords || []).find(
+    (r) => String(r.userId) === String(member._id) && r.date === key
+  );
+  if (!record) return ["N/A", "N/A"];
+  return [
+    record.timeIn ? formatTime(record.timeIn) : "N/A",
+    record.timeOut ? formatTime(record.timeOut) : "N/A",
+  ];
 };
-const makeAttendanceReport = (member, appointments, value) => {
+
+const makeAttendanceReport = (member, appointments, value, attendanceRecords) => {
   const days = weekDays(value);
   const name = member?.name || "No staff member selected";
   const relevant = appointments.filter((appointment) => appointment.doctor === `Dr. ${name}` || appointment.doctor === name);
   const appointmentsByDay = days.map((day) => relevant.filter((appointment) => appointment.date === dateKey(day)));
   const allAppointments = appointmentsByDay.flat();
   const attended = allAppointments.filter((appointment) => ["confirmed", "completed"].includes(String(appointment.status).toLowerCase())).length;
-  return { id: 3, title: "CLINIC APPOINTMENT ATTENDANCE", name, month: days[0].toLocaleDateString("en-US", { month: "long", year: "numeric" }), days, times: days.map((day) => timeForDay(member?.schedule, day)), appointmentsByDay, performance: [allAppointments.length, attended, allAppointments.filter((appointment) => String(appointment.status).toLowerCase() === "completed").length, allAppointments.length ? `${Math.round((attended / allAppointments.length) * 100)}%` : "N/A"] };
+  return { id: 3, title: "CLINIC APPOINTMENT ATTENDANCE", name, month: days[0].toLocaleDateString("en-US", { month: "long", year: "numeric" }), days, times: days.map((day) => attendanceForDay(attendanceRecords, member, day)), appointmentsByDay, performance: [allAppointments.length, attended, allAppointments.filter((appointment) => String(appointment.status).toLowerCase() === "completed").length, allAppointments.length ? `${Math.round((attended / allAppointments.length) * 100)}%` : "N/A"] };
 };
 const appointmentLabel = (appointment) => appointment ? `${appointment.patient || "Patient"}${appointment.time ? ` ${formatTime(appointment.time)}` : ""}` : "N/A";
 const attendanceRows = (report) => {
@@ -91,8 +98,12 @@ const attendanceTableRows = (report) => report.days.flatMap((day, index) => {
   return appointments.length ? appointments.map((appointment) => [...base, appointmentLabel(appointment)]) : [[...base, "N/A"]];
 });
 const getLogo = async () => {
-  const response = await fetch("/FPOPLOGO1.png"); const blob = await response.blob();
-  return new Promise((resolve, reject) => { const reader = new FileReader(); reader.onload = () => resolve(reader.result); reader.onerror = reject; reader.readAsDataURL(blob); });
+  try {
+    const response = await fetch("/FPOPLOGO1.png");
+    if (!response.ok) return null;
+    const blob = await response.blob();
+    return new Promise((resolve, reject) => { const reader = new FileReader(); reader.onload = () => resolve(reader.result); reader.onerror = reject; reader.readAsDataURL(blob); });
+  } catch { return null; }
 };
 
 const downloadCsv = (report) => {
@@ -118,7 +129,7 @@ const downloadPdf = (report) => {
 };
 
 const renderAttendancePdf = (doc, report, logo) => {
-  doc.addImage(logo, "PNG", 35, 18, 44, 44);
+  if (logo) doc.addImage(logo, "PNG", 35, 18, 44, 44);
   doc.setFont("helvetica", "bold"); doc.setFontSize(15); doc.text(report.title, 421, 37, { align: "center" });
   autoTable(doc, { startY: 70, margin: { left: 30, right: 30 }, theme: "grid", body: [["STAFF NAME", ""], [report.name, ""], ["DATE / YEAR", ""], [report.month, ""]], columnStyles: { 0: { cellWidth: 150, fontStyle: "bold" }, 1: { cellWidth: 632 } }, styles: { fontSize: 8, cellPadding: 5, lineColor: [120, 120, 120], lineWidth: 0.35, fillColor: [255, 255, 255], textColor: [0, 0, 0] } });
   autoTable(doc, { startY: doc.lastAutoTable.finalY, margin: { left: 30, right: 30 }, theme: "grid", body: attendanceRows(report), styles: { fontSize: 8, cellPadding: 6, halign: "center", valign: "middle", lineColor: [120, 120, 120], lineWidth: 0.35, fillColor: [255, 255, 255], textColor: [0, 0, 0] }, columnStyles: { 0: { cellWidth: 104, fontStyle: "bold" } } });
@@ -177,6 +188,7 @@ export default function Reports({ isMobile }) {
   const [staff, setStaff] = useState([]);
   const [inventory, setInventory] = useState([]);
   const [surveys, setSurveys] = useState([]);
+  const [attendance, setAttendance] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
   const [exportingId, setExportingId] = useState(null);
@@ -188,13 +200,14 @@ export default function Reports({ isMobile }) {
   useEffect(() => {
     const loadData = async () => {
       try {
-        const paths = ["/api/admin/appointments", "/api/staff", "/api/inventory/tables", "/api/surveys"];
+        const paths = ["/api/admin/appointments", "/api/staff", "/api/inventory/tables", "/api/surveys", "/api/admin/attendance"];
         const results = await Promise.all(paths.map((path) => fetch(`${API_BASE}${path}`, { credentials: "include" }).then((response) => response.json())));
         if (results.some((result) => !result.success)) throw new Error("Some report data could not be loaded.");
         setAppointments(results[0].appointments || []);
         setStaff(results[1].staff || []);
         setInventory(results[2].tables || []);
         setSurveys(results[3].surveys || []);
+        setAttendance(results[4].attendance || []);
       } catch (loadError) {
         setError(loadError.message || "Unable to load report data.");
       } finally {
@@ -205,8 +218,8 @@ export default function Reports({ isMobile }) {
   }, []);
 
   const selectedStaff = staff.find((member) => member._id === selectedStaffId) || staff[0];
-  const attendanceReports = useMemo(() => (selectedStaffId === "all" ? staff : [selectedStaff]).filter(Boolean).map((member) => makeAttendanceReport(member, appointments, attendanceDate)), [selectedStaffId, staff, selectedStaff, appointments, attendanceDate]);
-  const staffAttendance = attendanceReports[0] || makeAttendanceReport(undefined, appointments, attendanceDate);
+  const attendanceReports = useMemo(() => (selectedStaffId === "all" ? staff : [selectedStaff]).filter(Boolean).map((member) => makeAttendanceReport(member, appointments, attendanceDate, attendance)), [selectedStaffId, staff, selectedStaff, appointments, attendanceDate, attendance]);
+  const staffAttendance = attendanceReports[0] || makeAttendanceReport(undefined, appointments, attendanceDate, attendance);
   const reports = useMemo(() => [
     {
       ...reportTemplates[0],
@@ -236,12 +249,19 @@ export default function Reports({ isMobile }) {
     setSuccessId(null);
     try {
       const format = formats[report.id] || "pdf";
-      if (format === "excel") {
-        if (report.id === 3) await downloadAttendanceExcel(report.allReports); else await downloadExcel(report);
+      if (report.id === 3) {
+        const allReports = report.allReports?.length ? report.allReports : [staffAttendance];
+        if (!allReports.length) throw new Error("No staff data available to export.");
+        if (format === "excel") await downloadAttendanceExcel(allReports);
+        else if (format === "csv") downloadAttendanceCsv(allReports);
+        else await downloadAllAttendancePdfs(allReports);
+      } else if (format === "excel") {
+        await downloadExcel(report);
       } else if (format === "csv") {
-        if (report.id === 3) downloadAttendanceCsv(report.allReports); else downloadCsv(report);
-      } else if (report.id === 3) await downloadAllAttendancePdfs(report.allReports);
-      else downloadPdf(report);
+        downloadCsv(report);
+      } else {
+        downloadPdf(report);
+      }
       setSuccessId(report.id);
       setTimeout(() => setSuccessId(null), 3000);
     } catch (exportError) {

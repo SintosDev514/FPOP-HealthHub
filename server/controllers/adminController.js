@@ -2,6 +2,7 @@ import bcrypt from "bcryptjs";
 import userModel from "../models/userModel.js";
 import appointmentModel from "../models/appointmentModels.js";
 import notificationModel from "../models/notificationModel.js";
+import attendanceModel from "../models/attendanceModel.js";
 
 const monthNames = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
 
@@ -433,6 +434,29 @@ const getAnalytics = async (req, res) => {
   }
 };
 
+const getAttendance = async (req, res) => {
+  try {
+    const records = await attendanceModel.find().populate("userId", "firstName lastName email role");
+
+    const formatted = records.map((record) => ({
+      _id: record._id,
+      userId: record.userId?._id || record.userId,
+      name: record.userId
+        ? `${record.userId.firstName || ""} ${record.userId.lastName || ""}`.trim()
+        : "",
+      role: record.userId?.role || "",
+      email: record.userId?.email || "",
+      date: record.date,
+      timeIn: record.timeIn || "",
+      timeOut: record.timeOut || "",
+    }));
+
+    res.json({ success: true, attendance: formatted });
+  } catch (error) {
+    res.json({ success: false, message: error.message });
+  }
+};
+
 const deleteUser = async (req, res) => {
   try {
     const user = await userModel.findByIdAndDelete(req.params.id);
@@ -443,6 +467,8 @@ const deleteUser = async (req, res) => {
     await appointmentModel.deleteMany({
       $or: [{ patientId: req.params.id }, { staffId: req.params.id }],
     });
+
+    await attendanceModel.deleteMany({ userId: req.params.id });
 
     await notificationModel.create({
       title: "User Deleted",
@@ -457,4 +483,4 @@ const deleteUser = async (req, res) => {
   }
 };
 
-export { getDashboardOverview, listUsers, createUser, updateUser, deleteUser, getAllAppointments, getAnalytics };
+export { getDashboardOverview, listUsers, createUser, updateUser, deleteUser, getAllAppointments, getAnalytics, getAttendance };
