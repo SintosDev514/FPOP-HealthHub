@@ -564,6 +564,17 @@ const StaffInventoryView = ({ hideHeader }) => {
       (item) => item.status === "Low Stock"
     ).length;
 
+    const expiredItems = items.filter(
+      (item) => toSafeNumber(item.issuances[7]) > 0
+    );
+    const expiredCount = expiredItems.length;
+    const topExpired = expiredItems.slice(0, 5);
+    const expiredDetail =
+      expiredCount === 0
+        ? "No items flagged"
+        : topExpired.map((item) => item.name).join(", ") +
+          (expiredCount > 5 ? ` +${expiredCount - 5} more` : "");
+
     return [
       {
         label: "Total Inventory Items",
@@ -592,11 +603,11 @@ const StaffInventoryView = ({ hideHeader }) => {
         detail: "Items distributed",
       },
       {
-        label: "Expiring Soon",
-        value: "0",
+        label: "Expired",
+        value: formatNumber(expiredCount),
         icon: "warning",
         tone: "amber",
-        detail: "No items flagged",
+        detail: expiredDetail,
         featured: true,
       },
       {
