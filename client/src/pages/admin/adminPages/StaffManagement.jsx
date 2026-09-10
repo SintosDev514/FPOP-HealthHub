@@ -460,7 +460,6 @@ export default function StaffManagement({ isMobile }) {
                       }}
                     >
                       <div style={{ display: "flex", alignItems: "center", gap: "10px" }}>
-                        <span>{member.name}</span>
                         <div
                           style={{
                             width: "36px",
@@ -517,6 +516,7 @@ export default function StaffManagement({ isMobile }) {
                             boxShadow: `0 0 0 ${member.isOnline ? "3px rgba(34,197,94,0.18)" : "3px rgba(154,165,180,0.2)"}`,
                           }}
                         />
+                        <span>{member.name}</span>
                       </div>
                     </td>
                     <td
