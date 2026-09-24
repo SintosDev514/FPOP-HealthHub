@@ -15,6 +15,7 @@ import inventoryRouter from "./routes/inventoryRoutes.js";
 import assessmentRouter from "./routes/assessmentRoutes.js";
 import contactRouter from "./routes/contactRoutes.js";
 import surveyRouter from "./routes/surveyRoutes.js";
+import serviceRouter from "./routes/serviceRoutes.js";
 import { getPublicSettings } from "./controllers/settingsController.js";
 
 import connectDB from "./config/Mongodb.js";
@@ -58,6 +59,7 @@ app.use("/api/inventory", inventoryRouter);
 app.use("/api/assessments", assessmentRouter);
 app.use("/api/contact", contactRouter);
 app.use("/api/surveys", surveyRouter);
+app.use("/api/services", serviceRouter);
 app.get("/api/settings", getPublicSettings);
 
 import mailer from "./config/nodeMailer.js";

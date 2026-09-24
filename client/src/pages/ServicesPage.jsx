@@ -1,10 +1,53 @@
-//import svgs
+import { useState, useEffect } from "react";
 import checkIcon from "../assets/checkmark.svg";
 import capsuleIcon from "../assets/capsule.svg";
 import heartIcon from "../assets/heart.svg";
 import stethoscopeIcon from "../assets/stethoscope.svg";
 
+const CATEGORIES = [
+  {
+    key: "family-planning",
+    icon: capsuleIcon,
+    border: "border-blue-200",
+    title: "Family Planning & Contraceptive Services",
+    wide: false,
+  },
+  {
+    key: "sti-hiv",
+    icon: heartIcon,
+    border: "border-emerald-200",
+    title: "STI & HIV-AIDS Services",
+    wide: false,
+  },
+  {
+    key: "asrh",
+    icon: stethoscopeIcon,
+    border: "border-rose-200",
+    title: "Adolescent Sexual Reproductive Health (ASRH)",
+    wide: true,
+  },
+];
+
 function ServicesPage() {
+  const [groups, setGroups] = useState({
+    "family-planning": [],
+    "sti-hiv": [],
+    asrh: [],
+  });
+
+  useEffect(() => {
+    fetch(`${__API_BASE__}/api/services`)
+      .then((res) => res.json())
+      .then((data) => {
+        if (!data.success) return;
+        const next = { "family-planning": [], "sti-hiv": [], asrh: [] };
+        data.services.forEach((service) => {
+          if (next[service.category]) next[service.category].push(service.name);
+        });
+        setGroups(next);
+      })
+      .catch(() => {});
+  }, []);
 
   return (
     <section className="min-h-screen bg-slate-100 px-4 py-8">
@@ -27,108 +70,43 @@ function ServicesPage() {
           </div>
 
           <div className="grid gap-5 md:grid-cols-2">
-            <div className="bg-white/90 backdrop-blur-sm border border-blue-200 rounded-3xl p-5 shadow-sm transition duration-300 hover:-translate-y-1 hover:shadow-lg">
-              <div className="flex items-center gap-3 mb-4">
-                <div className="w-12 h-12 rounded-2xl bg-white flex items-center justify-center shadow-sm">
-                  <img
-                    src={capsuleIcon}
-                    alt="capsule"
-                    className="w-10 h-10 object-contain"
-                  />
+            {CATEGORIES.map((category) => {
+              const items = groups[category.key] || [];
+              return (
+                <div
+                  key={category.key}
+                  className={`bg-white/90 backdrop-blur-sm border ${category.border} rounded-3xl p-5 shadow-sm transition duration-300 hover:-translate-y-1 hover:shadow-lg ${
+                    category.wide ? "md:col-span-2" : ""
+                  }`}
+                >
+                  <div className="flex items-center gap-3 mb-4">
+                    <div className="w-12 h-12 rounded-2xl bg-white flex items-center justify-center shadow-sm">
+                      <img
+                        src={category.icon}
+                        alt={category.title}
+                        className="w-10 h-10 object-contain"
+                      />
+                    </div>
+                    <h2 className="font-poppins font-bold text-base md:text-lg text-slate-900">
+                      {category.title}
+                    </h2>
+                  </div>
+
+                  <ul className="font-poppins text-sm space-y-2 text-slate-700">
+                    {items.length > 0 ? (
+                      items.map((name) => (
+                        <li key={name} className="flex items-start gap-2">
+                          <img src={checkIcon} alt="check" className="w-4 h-4 mt-0.5 shrink-0" />
+                          <span>{name}</span>
+                        </li>
+                      ))
+                    ) : (
+                      <li className="text-slate-400">No services available yet.</li>
+                    )}
+                  </ul>
                 </div>
-
-                <h2 className="font-poppins font-bold text-base md:text-lg text-slate-900">
-                  Family Planning & Contraceptive Services
-                </h2>
-              </div>
-
-              <ul className="font-poppins text-sm space-y-2 text-slate-700">
-                <li className="flex items-start gap-2">
-                  <img src={checkIcon} alt="check" className="w-4 h-4 mt-0.5 shrink-0" />
-                  <span>Counseling / Consultation</span>
-                </li>
-                <li className="flex items-start gap-2">
-                  <img src={checkIcon} alt="check" className="w-4 h-4 mt-0.5 shrink-0" />
-                  <span>Oral Contraceptives</span>
-                </li>
-                <li className="flex items-start gap-2">
-                  <img src={checkIcon} alt="check" className="w-4 h-4 mt-0.5 shrink-0" />
-                  <span>Combined Oral Contraceptive (COC)</span>
-                </li>
-                <li className="flex items-start gap-2">
-                  <img src={checkIcon} alt="check" className="w-4 h-4 mt-0.5 shrink-0" />
-                  <span>Lady Pill / Trust / Althea</span>
-                </li>
-                <li className="flex items-start gap-2">
-                  <img src={checkIcon} alt="check" className="w-4 h-4 mt-0.5 shrink-0" />
-                  <span>Progestin-Only Pill (POP)</span>
-                </li>
-                <li className="flex items-start gap-2">
-                  <img src={checkIcon} alt="check" className="w-4 h-4 mt-0.5 shrink-0" />
-                  <span>Injectable (1 Month / 3 Months)</span>
-                </li>
-                <li className="flex items-start gap-2">
-                  <img src={checkIcon} alt="check" className="w-4 h-4 mt-0.5 shrink-0" />
-                  <span>IUD (Insertion / Removal)</span>
-                </li>
-                <li className="flex items-start gap-2">
-                  <img src={checkIcon} alt="check" className="w-4 h-4 mt-0.5 shrink-0" />
-                  <span>Implant (PSI)</span>
-                </li>
-                <li className="flex items-start gap-2">
-                  <img src={checkIcon} alt="check" className="w-4 h-4 mt-0.5 shrink-0" />
-                  <span>Condom</span>
-                </li>
-              </ul>
-            </div>
-
-            <div className="bg-white/90 backdrop-blur-sm border border-emerald-200 rounded-3xl p-5 shadow-sm transition duration-300 hover:-translate-y-1 hover:shadow-lg">
-              <div className="flex items-center gap-3 mb-4">
-                <div className="w-12 h-12 rounded-2xl bg-white flex items-center justify-center shadow-sm">
-                  <img
-                    src={heartIcon}
-                    alt="heart"
-                    className="w-10 h-10 object-contain"
-                  />
-                </div>
-                <h2 className="font-poppins font-bold text-base md:text-lg text-slate-900">
-                  STI & HIV-AIDS Services
-                </h2>
-              </div>
-
-              <ul className="font-poppins text-sm space-y-2 text-slate-700">
-                <li className="flex items-start gap-2">
-                  <img src={checkIcon} alt="check" className="w-4 h-4 mt-0.5 shrink-0" />
-                  <span>Awareness & Counseling</span>
-                </li>
-                <li className="flex items-start gap-2">
-                  <img src={checkIcon} alt="check" className="w-4 h-4 mt-0.5 shrink-0" />
-                  <span>Community-Based Screening (HIV Testing)</span>
-                </li>
-              </ul>
-            </div>
-
-            <div className="bg-white/90 backdrop-blur-sm border border-rose-200 rounded-3xl p-5 shadow-sm transition duration-300 hover:-translate-y-1 hover:shadow-lg md:col-span-2">
-              <div className="flex items-center gap-3 mb-4">
-                <div className="w-12 h-12 rounded-2xl bg-slate-100 flex items-center justify-center shadow-sm">
-                  <img
-                    src={stethoscopeIcon}
-                    alt="medical"
-                    className="w-10 h-10 object-contain"
-                  />
-                </div>
-                <h2 className="font-poppins font-bold text-base md:text-lg text-slate-900">
-                  Adolescent Sexual Reproductive Health (ASRH)
-                </h2>
-              </div>
-
-              <ul className="font-poppins text-sm space-y-2 text-slate-700">
-                <li className="flex items-start gap-2">
-                  <img src={checkIcon} alt="check" className="w-4 h-4 mt-0.5 shrink-0" />
-                  <span>Counseling & Education</span>
-                </li>
-              </ul>
-            </div>
+              );
+            })}
           </div>
         </div>
       </div>

@@ -50,6 +50,16 @@ export default function Appointments({ isMobile }) {
   const [search, setSearch] = useState("");
   const [deptFilter, setDeptFilter] = useState("All");
   const [statusFilter, setStatusFilter] = useState("All");
+  const [serviceOptions, setServiceOptions] = useState([]);
+
+  useEffect(() => {
+    fetch(`${__API_BASE__}/api/services`)
+      .then((r) => r.json())
+      .then((d) => {
+        if (d.success) setServiceOptions(d.services);
+      })
+      .catch(() => {});
+  }, []);
 
   const fetchAppointments = useCallback(async (isPoll = false) => {
     if (!isPoll) {
@@ -178,18 +188,11 @@ export default function Appointments({ isMobile }) {
             style={{ padding: "8px 16px", borderRadius: "8px", border: "1.5px solid rgba(30,58,95,0.12)", background: "#fff", fontSize: "13px", color: "#4a5568", outline: "none", cursor: "pointer", fontFamily: "'Poppins',sans-serif" }}
           >
             <option value="All">All Services</option>
-            <option value="Counseling / Consultation">Counseling / Consultation</option>
-            <option value="Oral Contraceptives">Oral Contraceptives</option>
-            <option value="Combined Oral Contraceptive (COC)">Combined Oral Contraceptive (COC)</option>
-            <option value="Lady Pill / Trust / Althea">Lady Pill / Trust / Althea</option>
-            <option value="Progestin-Only Pill (POP)">Progestin-Only Pill (POP)</option>
-            <option value="Injectable (1 Month / 3 Months)">Injectable (1 Month / 3 Months)</option>
-            <option value="IUD (Insertion / Removal)">IUD (Insertion / Removal)</option>
-            <option value="Implant (PSI)">Implant (PSI)</option>
-            <option value="Condom">Condom</option>
-            <option value="Awareness & Counseling">Awareness & Counseling</option>
-            <option value="Community-Based Screening (HIV Testing)">Community-Based Screening (HIV Testing)</option>
-            <option value="Adolescent Sexual Reproductive Health (ASRH)">Adolescent Sexual Reproductive Health (ASRH)</option>
+            {serviceOptions.map((service) => (
+              <option key={service._id} value={service.name}>
+                {service.name}
+              </option>
+            ))}
           </select>
 
           <select 
