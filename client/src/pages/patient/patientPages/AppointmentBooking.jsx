@@ -35,22 +35,8 @@ const toInputDate = (date) => {
   return `${year}-${month}-${day}`;
 };
 
-const services = [
-  { id: "counseling-consultation", name: "Counseling / Consultation" },
-  { id: "oral-contraceptives", name: "Oral Contraceptives" },
-  { id: "combined-oral-contraceptive", name: "Combined Oral Contraceptive (COC)" },
-  { id: "lady-pill-trust-althea", name: "Lady Pill / Trust / Althea" },
-  { id: "progestin-only-pill", name: "Progestin-Only Pill (POP)" },
-  { id: "injectable", name: "Injectable (1 Month / 3 Months)" },
-  { id: "iud", name: "IUD (Insertion / Removal)" },
-  { id: "implant", name: "Implant (PSI)" },
-  { id: "condom", name: "Condom" },
-  { id: "awareness-counseling", name: "Awareness & Counseling" },
-  { id: "community-based-screening", name: "Community-Based Screening (HIV Testing)" },
-  { id: "asrh", name: "Adolescent Sexual Reproductive Health (ASRH)" },
-];
-
 const AppointmentBooking = ({ onSaveAppointment }) => {
+  const [services, setServices] = useState([]);
   const [staffList, setStaffList] = useState([]);
   const [loadingStaff, setLoadingStaff] = useState(true);
   const [selectedService, setSelectedService] = useState(null);
@@ -65,7 +51,20 @@ const AppointmentBooking = ({ onSaveAppointment }) => {
 
   useEffect(() => {
     fetchStaff();
+    fetchServices();
   }, []);
+
+  const fetchServices = async () => {
+    try {
+      const res = await fetch(`${__API_BASE__}/api/services`);
+      const data = await res.json();
+      if (data.success) {
+        setServices(data.services);
+      }
+    } catch {
+      setServices([]);
+    }
+  };
 
   const fetchStaff = async () => {
     setLoadingStaff(true);
@@ -126,7 +125,7 @@ const AppointmentBooking = ({ onSaveAppointment }) => {
 
   const selectedStaff = staffList.find((s) => s._id === selectedProvider);
 
-  const selectedServiceDetails = services.find((s) => s.id === selectedService);
+  const selectedServiceDetails = services.find((s) => s.slug === selectedService);
   const hasAnyDetail = selectedService || selectedProvider || selectedDate || selectedTime;
   const canConfirm = selectedService && selectedProvider && selectedDate && selectedTime && !submitting;
 
@@ -254,7 +253,7 @@ const AppointmentBooking = ({ onSaveAppointment }) => {
                   >
                     <option value="">Select the service you need</option>
                     {services.map((service) => (
-                      <option key={service.id} value={service.id}>
+                      <option key={service._id} value={service.slug}>
                         {service.name}
                       </option>
                     ))}

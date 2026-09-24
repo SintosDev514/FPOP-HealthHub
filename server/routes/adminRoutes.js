@@ -18,6 +18,12 @@ import {
   getAdminSettings,
   updateSettings,
 } from "../controllers/settingsController.js";
+import {
+  listServices,
+  createService,
+  updateService,
+  deleteService,
+} from "../controllers/serviceController.js";
 
 const adminRouter = Router();
 
@@ -35,5 +41,10 @@ adminRouter.get("/attendance", getAttendance);
 adminRouter.get("/analytics", getAnalytics);
 adminRouter.get("/settings", getAdminSettings);
 adminRouter.put("/settings", updateSettings);
+
+adminRouter.get("/services", listServices);
+adminRouter.post("/services", createService);
+adminRouter.put("/services/:id", updateService);
+adminRouter.delete("/services/:id", deleteService);
 
 export default adminRouter;

@@ -10,6 +10,7 @@ import Analytics from "./Analytics";
 import Reports from "./Reports";
 import Notifications from "./Notifications";
 import Settings from "./Settings";
+import Services from "./Services";
 
 import { useAuth } from "../../../context/AuthContext";
 
@@ -25,6 +26,7 @@ import {
   IcoStaff,
   IcoClient,
   IcoInventory,
+  IcoService,
 } from "../../../components/icon/AdminIcons";
 
 /* ── Brand palette ──────────────────────────────── */
@@ -45,6 +47,7 @@ const NAV_ITEMS = [
   { key: "users",        label: "Client Management",  Icon: IcoClient,  path: "/admin/users"         },
   { key: "staff",        label: "Staff Management",   Icon: IcoStaff,  path: "/admin/staff"         },
   { key: "appointments", label: "Appointments",       Icon: IcoCal,    path: "/admin/appointments"  },
+  { key: "services",     label: "Services",           Icon: IcoService, path: "/admin/services"     },
   { key: "inventory",    label: "Inventory",          Icon: IcoInventory, path: "/admin/inventory"  },
   { key: "analytics",   label: "Analytics",          Icon: IcoChart,  path: "/admin/analytics"     },
   { key: "reports",     label: "Reports",             Icon: IcoReport, path: "/admin/reports"       },
@@ -162,6 +165,7 @@ function AdminShell({ activeNav }) {
     users: "Client Management",
     staff: "Staff Management",
     appointments: "Appointments",
+    services: "Services",
     inventory: "Inventory",
     analytics: "Analytics",
     reports: "Reports",
@@ -174,6 +178,7 @@ function AdminShell({ activeNav }) {
     users: "Manage clinic clients, accounts, and registration details.",
     staff: "Manage clinic doctors, nurses, and support staff.",
     appointments: "Schedule, track, and manage client medical appointments.",
+    services: "Add and edit the services offered by the clinic.",
     inventory: "Track all stock items by category, receipts, issuances, and balances.",
     analytics: "Detailed visualization and charts of medical metrics.",
     reports: "Generate, review, and print clinic performance reports.",
@@ -453,6 +458,7 @@ function AdminShell({ activeNav }) {
           {activeNav === "users"        && <UserManagement   isMobile={isMobile} />}
           {activeNav === "staff"        && <StaffManagement   isMobile={isMobile} />}
           {activeNav === "appointments" && <Appointments      isMobile={isMobile} />}
+          {activeNav === "services"     && <Services          isMobile={isMobile} />}
           {activeNav === "inventory"    && <AdminInventoryView />}
           {activeNav === "analytics"   && <Analytics         isMobile={isMobile} />}
           {activeNav === "reports"     && <Reports            isMobile={isMobile} />}
@@ -508,6 +514,7 @@ export default function AdminDashboard() {
       <Route path="/users"         element={<AdminShell activeNav="users"        />} />
       <Route path="/staff"         element={<AdminShell activeNav="staff"        />} />
       <Route path="/appointments"  element={<AdminShell activeNav="appointments" />} />
+      <Route path="/services"      element={<AdminShell activeNav="services"     />} />
       <Route path="/inventory"     element={<AdminShell activeNav="inventory"    />} />
       <Route path="/analytics"     element={<AdminShell activeNav="analytics"    />} />
       <Route path="/reports"       element={<AdminShell activeNav="reports"      />} />
