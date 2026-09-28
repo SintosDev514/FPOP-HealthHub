@@ -490,7 +490,7 @@ const StaffDashboard = () => {
 
           {currentView === "assessmentLogs" && <StaffAssessmentInventory />}
 
-          {currentView === "inventory" && <StaffInventoryView />}
+          {currentView === "inventory" && <StaffInventoryView readOnly />}
         </div>
       </div>
     </div>
