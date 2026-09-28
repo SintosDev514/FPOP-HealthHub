@@ -446,20 +446,25 @@ const getAnalytics = async (req, res) => {
 
 const getAttendance = async (req, res) => {
   try {
-    const records = await attendanceModel.find().populate("userId", "firstName lastName email role");
+    const records = await attendanceModel
+      .find()
+      .populate("userId", "firstName lastName email role")
+      .sort({ createdAt: -1 });
 
-    const formatted = records.map((record) => ({
-      _id: record._id,
-      userId: record.userId?._id || record.userId,
-      name: record.userId
-        ? `${record.userId.firstName || ""} ${record.userId.lastName || ""}`.trim()
-        : "",
-      role: record.userId?.role || "",
-      email: record.userId?.email || "",
-      date: record.date,
-      timeIn: record.timeIn || "",
-      timeOut: record.timeOut || "",
-    }));
+    const formatted = records
+      .filter((record) => record.userId && (record.userId.role === "staff" || !record.userId.role))
+      .map((record) => ({
+        _id: record._id,
+        userId: record.userId?._id || record.userId,
+        name: record.userId
+          ? `${record.userId.firstName || ""} ${record.userId.lastName || ""}`.trim()
+          : "",
+        role: record.userId?.role || "staff",
+        email: record.userId?.email || "",
+        date: record.date,
+        timeIn: record.timeIn || "",
+        timeOut: record.timeOut || "",
+      }));
 
     res.json({ success: true, attendance: formatted });
   } catch (error) {
