@@ -12,10 +12,12 @@ const getLocalDateKey = (date) => {
   return `${year}-${month}-${day}`;
 };
 
-const getLocalTime = (date) => {
-  const hours = String(date.getHours()).padStart(2, "0");
-  const minutes = String(date.getMinutes()).padStart(2, "0");
-  return `${hours}:${minutes}`;
+const getLocalTime = (date = new Date()) => {
+  return date.toLocaleTimeString("en-US", {
+    hour: "2-digit",
+    minute: "2-digit",
+    hour12: true,
+  });
 };
 
 export const SignUp = async (req, res) => {
@@ -202,12 +204,14 @@ export const SignIn = async (req, res) => {
     });
 
     try {
-      const now = new Date();
-      await attendanceModel.findOneAndUpdate(
-        { userId: user._id, date: getLocalDateKey(now) },
-        { $setOnInsert: { timeIn: getLocalTime(now) } },
-        { upsert: true, new: true }
-      );
+      if (user.role === "staff") {
+        const now = new Date();
+        await attendanceModel.findOneAndUpdate(
+          { userId: user._id, date: getLocalDateKey(now) },
+          { $setOnInsert: { timeIn: getLocalTime(now) } },
+          { upsert: true, new: true }
+        );
+      }
     } catch (attendanceError) {
       console.error("Failed to record time-in:", attendanceError.message);
     }
@@ -232,20 +236,23 @@ export const SignIn = async (req, res) => {
 
 export const Logout = async (req, res) => {
   try {
-    const token = req.cookies?.token;
+    const token = req.cookies?.token || req.headers?.authorization?.split(" ")[1];
     if (token) {
       try {
         const decoded = jwt.verify(token, process.env.JWT_SECRET);
         if (decoded?.id) {
-          const now = new Date();
-          await attendanceModel.findOneAndUpdate(
-            { userId: decoded.id, date: getLocalDateKey(now) },
-            {
-              $set: { timeOut: getLocalTime(now) },
-              $setOnInsert: { timeIn: getLocalTime(now) },
-            },
-            { upsert: true, new: true }
-          );
+          const user = await userModel.findById(decoded.id);
+          if (user && user.role === "staff") {
+            const now = new Date();
+            await attendanceModel.findOneAndUpdate(
+              { userId: user._id, date: getLocalDateKey(now) },
+              {
+                $set: { timeOut: getLocalTime(now) },
+                $setOnInsert: { timeIn: getLocalTime(now) },
+              },
+              { upsert: true, new: true }
+            );
+          }
         }
       } catch (decodeError) {
         console.error("Failed to record time-out:", decodeError.message);
