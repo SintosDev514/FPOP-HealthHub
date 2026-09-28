@@ -406,7 +406,7 @@ const Icon = ({ name, className = "h-5 w-5" }) => {
   );
 };
 
-const InventoryTableHeader = () => (
+const InventoryTableHeader = ({ showActions = true }) => (
   <thead className="sticky top-0 z-10">
     <tr className="border-b border-slate-200 bg-white">
       <th rowSpan="2" className="w-[160px] px-3 py-3 text-[9px] font-semibold">
@@ -424,44 +424,48 @@ const InventoryTableHeader = () => (
       <th rowSpan="2" className="w-[80px] px-2 py-3 text-center text-[9px] font-semibold">
         STATUS
       </th>
-      <th rowSpan="2" className="w-[70px] px-2 py-3 text-center text-[9px] font-semibold">
-        ACTIONS
-      </th>
+      {showActions && (
+        <th rowSpan="2" className="w-[70px] px-2 py-3 text-center text-[9px] font-semibold">
+          ACTIONS
+        </th>
+      )}
     </tr>
     <tr className="border-b border-slate-300 bg-white">
       {receiptColumns.map((column) => (
         <th
           key={`receipt-${column.label}`}
-          title={column.fullName}
-          className={`group px-1.5 py-2 text-right text-[8px] font-bold ${
+          className={`group relative px-1.5 py-2 text-right text-[8px] font-bold ${
             column.label === "Total" ? "bg-emerald-100" : "bg-emerald-50"
           }`}
         >
-          <span className="block whitespace-nowrap">
-            <span className="group-hover:hidden">{column.label}</span>
-            <span className="hidden group-hover:inline">{column.fullName}</span>
-          </span>
+          <span className="block whitespace-nowrap">{column.label}</span>
+          {column.fullName !== column.label && (
+            <span className="pointer-events-none absolute right-0 top-full z-20 hidden translate-y-1 whitespace-nowrap rounded-md bg-slate-900 px-2 py-1 text-[8px] font-semibold text-white shadow-lg group-hover:block">
+              {column.fullName}
+            </span>
+          )}
         </th>
       ))}
       {issuanceColumns.map((column) => (
         <th
           key={`issuance-${column.label}`}
-          title={column.fullName}
-          className={`group px-1.5 py-2 text-right text-[8px] font-bold ${
+          className={`group relative px-1.5 py-2 text-right text-[8px] font-bold ${
             column.label === "Total" ? "bg-rose-100" : "bg-rose-50"
           }`}
         >
-          <span className="block whitespace-nowrap">
-            <span className="group-hover:hidden">{column.label}</span>
-            <span className="hidden group-hover:inline">{column.fullName}</span>
-          </span>
+          <span className="block whitespace-nowrap">{column.label}</span>
+          {column.fullName !== column.label && (
+            <span className="pointer-events-none absolute right-0 top-full z-20 hidden translate-y-1 whitespace-nowrap rounded-md bg-slate-900 px-2 py-1 text-[8px] font-semibold text-white shadow-lg group-hover:block">
+              {column.fullName}
+            </span>
+          )}
         </th>
       ))}
     </tr>
   </thead>
 );
 
-const StaffInventoryView = ({ hideHeader }) => {
+const StaffInventoryView = ({ hideHeader, readOnly = false }) => {
   const [tables, setTables] = useState([]);
   const [loading, setLoading] = useState(true);
   const [openCategories, setOpenCategories] = useState({});
@@ -619,6 +623,8 @@ const StaffInventoryView = ({ hideHeader }) => {
 
   const statCards = useMemo(() => getStatCards(tables), [tables]);
 
+  const columnCount = readOnly ? 18 : 19;
+
   const toggleCategory = (id) => {
     setOpenCategories((current) => ({
       ...current,
@@ -630,12 +636,17 @@ const StaffInventoryView = ({ hideHeader }) => {
     setSelectedTableFilter(event.target.value);
   };
 
-  const handleExportPDF = () => {
+  const handleDownloadCategory = (table, category) => {
+    handleExportPDF([{ ...table, categories: [category] }]);
+  };
+
+  const handleExportPDF = (tablesOverride) => {
     const { filenameDate, displayDate } = getReportDate();
     const doc = new jsPDF({ orientation: "landscape", unit: "pt", format: "a4" });
+    const sourceTables = tablesOverride || tablesForExport;
     const reportTables =
-      tablesForExport.length > 0
-        ? tablesForExport
+      sourceTables.length > 0
+        ? sourceTables
         : [
             {
               name: "Inventory Report",
@@ -759,15 +770,16 @@ const StaffInventoryView = ({ hideHeader }) => {
     doc.save(`staff_inventory_lis5_report_${filenameDate}.pdf`);
   };
 
-  const handleExportExcel = async () => {
+  const handleExportExcel = async (tablesOverride) => {
     const { filenameDate, displayDate } = getReportDate();
     const workbook = new ExcelJS.Workbook();
     workbook.creator = "FPOP Clinic Portal";
     workbook.created = new Date();
     const worksheetNames = new Set();
+    const sourceTables = tablesOverride || tablesForExport;
     const reportTables =
-      tablesForExport.length > 0
-        ? tablesForExport
+      sourceTables.length > 0
+        ? sourceTables
         : [
             {
               name: "Inventory Report",
@@ -1550,10 +1562,10 @@ const StaffInventoryView = ({ hideHeader }) => {
               </option>
             ))}
           </select>
-          <ToolbarButton icon="download" onClick={handleExportPDF}>
+          <ToolbarButton icon="download" onClick={() => handleExportPDF()}>
             PDF
           </ToolbarButton>
-          <ToolbarButton icon="download" onClick={handleExportExcel}>
+          <ToolbarButton icon="download" onClick={() => handleExportExcel()}>
             Excel
           </ToolbarButton>
           <ToolbarButton icon="printer" onClick={handlePrint}>Print</ToolbarButton>
@@ -1610,18 +1622,22 @@ const StaffInventoryView = ({ hideHeader }) => {
           </h3>
           <p className="mt-1 text-[9px] font-medium text-slate-500">
             {tables.length === 0
-              ? "No tables yet. Create one to start tracking inventory."
+              ? readOnly
+                ? "No tables available yet."
+                : "No tables yet. Create one to start tracking inventory."
               : `You have ${tables.length} ${tables.length === 1 ? "table" : "tables"}.`}
           </p>
         </div>
-        <button
-          type="button"
-          onClick={openCreateTableModal}
-          className="inline-flex h-10 items-center justify-center gap-2 rounded-lg bg-[#F5C518] px-4 text-[10px] font-bold text-[#152c4a] transition-all hover:bg-[#e6b800] hover:-translate-y-0.5 active:translate-y-0 duration-200"
-        >
-          <Icon name="plus" className="h-4 w-4" />
-          Create Table
-        </button>
+        {!readOnly && (
+          <button
+            type="button"
+            onClick={openCreateTableModal}
+            className="inline-flex h-10 items-center justify-center gap-2 rounded-lg bg-[#F5C518] px-4 text-[10px] font-bold text-[#152c4a] transition-all hover:bg-[#e6b800] hover:-translate-y-0.5 active:translate-y-0 duration-200"
+          >
+            <Icon name="plus" className="h-4 w-4" />
+            Create Table
+          </button>
+        )}
       </section>
 
       {tables.length === 0 && (
@@ -1634,17 +1650,20 @@ const StaffInventoryView = ({ hideHeader }) => {
               No Inventory Tables
             </h4>
             <p className="mt-2 max-w-md text-[10px] font-medium text-slate-500">
-              Create your first inventory table to start tracking stock items,
-              receipts, issuances, and balances.
+              {readOnly
+                ? "There are no inventory tables to view yet. They will appear here once an administrator creates them."
+                : "Create your first inventory table to start tracking stock items, receipts, issuances, and balances."}
             </p>
-            <button
-              type="button"
-              onClick={openCreateTableModal}
-              className="mt-6 inline-flex h-11 items-center justify-center gap-2 rounded-lg bg-[#F5C518] px-6 text-[10px] font-bold text-[#152c4a] transition-all hover:bg-[#e6b800] hover:-translate-y-0.5 active:translate-y-0 duration-200"
-            >
-              <Icon name="plus" className="h-4 w-4" />
-              Create Table
-            </button>
+            {!readOnly && (
+              <button
+                type="button"
+                onClick={openCreateTableModal}
+                className="mt-6 inline-flex h-11 items-center justify-center gap-2 rounded-lg bg-[#F5C518] px-6 text-[10px] font-bold text-[#152c4a] transition-all hover:bg-[#e6b800] hover:-translate-y-0.5 active:translate-y-0 duration-200"
+              >
+                <Icon name="plus" className="h-4 w-4" />
+                Create Table
+              </button>
+            )}
           </div>
         </section>
       )}
@@ -1666,35 +1685,41 @@ const StaffInventoryView = ({ hideHeader }) => {
                     .join(" | ")}
                 </span>
               )}
+              {!readOnly && (
+                <button
+                  type="button"
+                  onClick={() => handleDeleteTable(table._id)}
+                  className="inline-flex h-7 w-7 items-center justify-center rounded-md text-slate-400 transition hover:bg-red-50 hover:text-red-600"
+                  aria-label={`Delete ${table.name}`}
+                >
+                  <Icon name="trash" className="h-3.5 w-3.5" />
+                </button>
+              )}
+            </div>
+            {!readOnly && (
               <button
                 type="button"
-                onClick={() => handleDeleteTable(table._id)}
-                className="inline-flex h-7 w-7 items-center justify-center rounded-md text-slate-400 transition hover:bg-red-50 hover:text-red-600"
-                aria-label={`Delete ${table.name}`}
+                onClick={() => openCategoryModal(table._id)}
+                className="inline-flex h-9 items-center justify-center gap-2 rounded-lg bg-[#F5C518] px-4 text-[10px] font-bold text-[#152c4a] transition-all hover:bg-[#e6b800] hover:-translate-y-0.5 active:translate-y-0 duration-200"
               >
-                <Icon name="trash" className="h-3.5 w-3.5" />
+                <Icon name="plus" className="h-4 w-4" />
+                Add Category
               </button>
-            </div>
-            <button
-              type="button"
-              onClick={() => openCategoryModal(table._id)}
-              className="inline-flex h-9 items-center justify-center gap-2 rounded-lg bg-[#F5C518] px-4 text-[10px] font-bold text-[#152c4a] transition-all hover:bg-[#e6b800] hover:-translate-y-0.5 active:translate-y-0 duration-200"
-            >
-              <Icon name="plus" className="h-4 w-4" />
-              Add Category
-            </button>
+            )}
           </div>
           <div className="overflow-x-auto">
             <table className="min-w-[950px] w-full border-collapse text-left text-[9px] text-slate-950">
-              <InventoryTableHeader />
+              <InventoryTableHeader showActions={!readOnly} />
               <tbody>
                 {table.categories.length === 0 && (
                   <tr className="border-b border-slate-200 bg-white">
                     <td
-                      colSpan={19}
+                      colSpan={columnCount}
                       className="px-5 py-6 text-center text-[10px] font-medium text-slate-500"
                     >
-                      No categories yet. Add a category to this table.
+                      {readOnly
+                        ? "No categories in this table yet."
+                        : "No categories yet. Add a category to this table."}
                     </td>
                   </tr>
                 )}
@@ -1704,7 +1729,7 @@ const StaffInventoryView = ({ hideHeader }) => {
                   return (
                     <React.Fragment key={cat._id}>
                       <tr className="border-y border-[#F5C518]/20 bg-[#152c4a]">
-                        <td colSpan={19} className="px-4 py-0">
+                        <td colSpan={columnCount} className="px-4 py-0">
                           <div className="flex min-h-11 items-center justify-between gap-3">
                             <button
                               type="button"
@@ -1722,26 +1747,42 @@ const StaffInventoryView = ({ hideHeader }) => {
                               </span>
                             </button>
                             <div className="flex items-center gap-2">
-                              <button
-                                type="button"
-                                onClick={() =>
-                                  handleDeleteCategory(table._id, cat._id)
-                                }
-                                className="inline-flex h-7 w-7 items-center justify-center rounded-md text-white/40 transition hover:bg-white/10 hover:text-red-400"
-                                aria-label={`Delete ${cat.name}`}
-                              >
-                                <Icon name="trash" className="h-3.5 w-3.5" />
-                              </button>
-                              <button
-                                type="button"
-                                onClick={() =>
-                                  openAddItemModal(table._id, cat._id)
-                                }
-                                className="inline-flex h-8 shrink-0 items-center justify-center gap-2 rounded-lg bg-[#F5C518] text-[#1E3A5F] px-3 text-[9px] font-bold transition-all hover:bg-[#e6b800] hover:-translate-y-0.5 active:translate-y-0 duration-200"
-                              >
-                                <Icon name="plus" className="h-3.5 w-3.5" />
-                                Add Item
-                              </button>
+                              {readOnly ? (
+                                <button
+                                  type="button"
+                                  onClick={() =>
+                                    handleDownloadCategory(table, cat)
+                                  }
+                                  className="inline-flex h-8 shrink-0 items-center justify-center gap-2 rounded-lg bg-[#F5C518] text-[#1E3A5F] px-3 text-[9px] font-bold transition-all hover:bg-[#e6b800] hover:-translate-y-0.5 active:translate-y-0 duration-200"
+                                  aria-label={`Download ${cat.name}`}
+                                >
+                                  <Icon name="download" className="h-3.5 w-3.5" />
+                                  Download
+                                </button>
+                              ) : (
+                                <>
+                                  <button
+                                    type="button"
+                                    onClick={() =>
+                                      handleDeleteCategory(table._id, cat._id)
+                                    }
+                                    className="inline-flex h-7 w-7 items-center justify-center rounded-md text-white/40 transition hover:bg-white/10 hover:text-red-400"
+                                    aria-label={`Delete ${cat.name}`}
+                                  >
+                                    <Icon name="trash" className="h-3.5 w-3.5" />
+                                  </button>
+                                  <button
+                                    type="button"
+                                    onClick={() =>
+                                      openAddItemModal(table._id, cat._id)
+                                    }
+                                    className="inline-flex h-8 shrink-0 items-center justify-center gap-2 rounded-lg bg-[#F5C518] text-[#1E3A5F] px-3 text-[9px] font-bold transition-all hover:bg-[#e6b800] hover:-translate-y-0.5 active:translate-y-0 duration-200"
+                                  >
+                                    <Icon name="plus" className="h-3.5 w-3.5" />
+                                    Add Item
+                                  </button>
+                                </>
+                              )}
                             </div>
                           </div>
                         </td>
@@ -1749,11 +1790,13 @@ const StaffInventoryView = ({ hideHeader }) => {
                       {isOpen && cat.items.length === 0 && (
                         <tr className="border-b border-slate-200 bg-white">
                           <td
-                            colSpan={19}
+                            colSpan={columnCount}
                             className="px-5 py-6 text-center text-[10px] font-medium text-slate-500"
                           >
                             {query.trim()
                               ? "No matching items found in this category."
+                              : readOnly
+                              ? "No items in this category yet."
                               : "No items yet. Add an item to this category."}
                           </td>
                         </tr>
@@ -1797,41 +1840,43 @@ const StaffInventoryView = ({ hideHeader }) => {
                             <td className="px-2 py-2.5 text-center">
                               <StatusBadge status={item.status} />
                             </td>
-                            <td className="px-2 py-2.5 text-center">
-                              <div className="flex items-center justify-center gap-1">
-                                <button
-                                  type="button"
-                                  onClick={() =>
-                                    openEditItemModal(
-                                      table._id,
-                                      cat._id,
-                                      item
-                                    )
-                                  }
-                                  className="inline-flex h-7 w-7 items-center justify-center rounded-md text-blue-600 transition hover:bg-blue-50"
-                                  aria-label={`Edit ${item.name}`}
-                                >
-                                  <Icon name="edit" className="h-3.5 w-3.5" />
-                                </button>
-                                <button
-                                  type="button"
-                                  onClick={() =>
-                                    openDeleteConfirmation(
-                                      table._id,
-                                      cat._id,
-                                      item
-                                    )
-                                  }
-                                  className="inline-flex h-7 w-7 items-center justify-center rounded-md text-red-600 transition hover:bg-red-50"
-                                  aria-label={`Delete ${item.name}`}
-                                >
-                                  <Icon
-                                    name="trash"
-                                    className="h-3.5 w-3.5"
-                                  />
-                                </button>
-                              </div>
-                            </td>
+                            {!readOnly && (
+                              <td className="px-2 py-2.5 text-center">
+                                <div className="flex items-center justify-center gap-1">
+                                  <button
+                                    type="button"
+                                    onClick={() =>
+                                      openEditItemModal(
+                                        table._id,
+                                        cat._id,
+                                        item
+                                      )
+                                    }
+                                    className="inline-flex h-7 w-7 items-center justify-center rounded-md text-blue-600 transition hover:bg-blue-50"
+                                    aria-label={`Edit ${item.name}`}
+                                  >
+                                    <Icon name="edit" className="h-3.5 w-3.5" />
+                                  </button>
+                                  <button
+                                    type="button"
+                                    onClick={() =>
+                                      openDeleteConfirmation(
+                                        table._id,
+                                        cat._id,
+                                        item
+                                      )
+                                    }
+                                    className="inline-flex h-7 w-7 items-center justify-center rounded-md text-red-600 transition hover:bg-red-50"
+                                    aria-label={`Delete ${item.name}`}
+                                  >
+                                    <Icon
+                                      name="trash"
+                                      className="h-3.5 w-3.5"
+                                    />
+                                  </button>
+                                </div>
+                              </td>
+                            )}
                           </tr>
                         ))}
                     </React.Fragment>
