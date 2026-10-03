@@ -255,7 +255,12 @@ export default function Reports({ isMobile }) {
     {
       ...reportTemplates[3],
       columns: ["Table", "Category", "Item", "Beginning", "Receipts", "Issuances", "Ending", "Status"],
-      rows: inventory.flatMap((table) => (table.categories || []).flatMap((category) => (category.items || []).map((item) => [table.name || "N/A", category.name || "N/A", item.name || "N/A", item.beginning || 0, item.receipts?.at(-1) || 0, item.issuances?.at(-1) || 0, item.ending || 0, item.status || "In Stock"]))),
+      rows: inventory.flatMap((table) => (table.categories || []).flatMap((category) => (category.items || []).map((item) => {
+        const beginning = Number(item.beginning || 0);
+        const receiptDetails = Array.isArray(item.receipts) ? item.receipts.slice(0, -1) : [];
+        const receiptsTotal = beginning + receiptDetails.reduce((s, v) => s + (Number(v) || 0), 0);
+        return [table.name || "N/A", category.name || "N/A", item.name || "N/A", beginning, receiptsTotal, item.issuances?.at(-1) || 0, item.ending || 0, item.status || "In Stock"];
+      }))),
     },
   ], [appointments, inventory, staff, surveys, attendanceReports]);
 

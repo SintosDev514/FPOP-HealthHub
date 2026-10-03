@@ -6,9 +6,17 @@ const toNum = (v) => {
 };
 
 const computeEnding = (beginning, receipts, issuances) => {
-  const rTotal = (receipts || []).reduce((s, v) => s + toNum(v), 0);
+  const b = toNum(beginning);
+  const rDetailsTotal = (receipts || []).reduce((s, v) => s + toNum(v), 0);
   const iTotal = (issuances || []).reduce((s, v) => s + toNum(v), 0);
-  return beginning + rTotal - iTotal;
+  const rTotal = b + rDetailsTotal;
+  return rTotal - iTotal;
+};
+
+const computeReceiptsTotal = (beginning, receipts) => {
+  const b = toNum(beginning);
+  const rDetailsTotal = (receipts || []).reduce((s, v) => s + toNum(v), 0);
+  return b + rDetailsTotal;
 };
 
 export const listTables = async (req, res) => {
@@ -105,9 +113,9 @@ export const addItem = async (req, res) => {
     const b = toNum(beginning);
     const rArr = (receipts || []).map(toNum);
     const iArr = (issuances || []).map(toNum);
-    const rTotal = rArr.reduce((s, v) => s + v, 0);
+    const rTotal = b + rArr.reduce((s, v) => s + v, 0);
     const iTotal = iArr.reduce((s, v) => s + v, 0);
-    const ending = b + rTotal - iTotal;
+    const ending = rTotal - iTotal;
 
     cat.items.push({
       name: name.trim(),
@@ -144,13 +152,20 @@ export const updateItem = async (req, res) => {
     if (beginning !== undefined) item.beginning = toNum(beginning);
     if (receipts) {
       const rArr = receipts.map(toNum);
-      const rTotal = rArr.reduce((s, v) => s + v, 0);
+      const rTotal = computeReceiptsTotal(item.beginning, rArr);
       item.receipts = [...rArr, rTotal];
     }
     if (issuances) {
       const iArr = issuances.map(toNum);
       const iTotal = iArr.reduce((s, v) => s + v, 0);
       item.issuances = [...iArr, iTotal];
+    }
+
+    // Recompute receipts Total when Beginning changed but receipts details were not re-sent
+    // (stored receipts = [...details, totalIncludingBeginning])
+    if (beginning !== undefined && !receipts && Array.isArray(item.receipts) && item.receipts.length > 0) {
+      const rDetails = item.receipts.slice(0, -1);
+      item.receipts = [...rDetails, computeReceiptsTotal(item.beginning, rDetails)];
     }
 
     item.ending = computeEnding(
