@@ -56,6 +56,13 @@ const getStockTotal = (values) => {
   return Number.isFinite(total) ? total : 0;
 };
 
+const getReceiptsDisplayTotal = (item) => {
+  const beginning = Number(item?.beginning || 0);
+  const details = Array.isArray(item?.receipts) ? item.receipts.slice(0, -1) : [];
+  const detailsTotal = details.reduce((s, v) => s + (Number(v) || 0), 0);
+  return (Number.isFinite(beginning) ? beginning : 0) + detailsTotal;
+};
+
 const flattenInventoryItems = (tables) =>
   tables.flatMap((table) =>
     (table.categories || []).flatMap((category) =>
@@ -65,7 +72,7 @@ const flattenInventoryItems = (tables) =>
         category: category.name || "Uncategorized",
         item: item.name || "Unnamed Item",
         beginning: Number(item.beginning || 0),
-        receipts: getStockTotal(item.receipts),
+        receipts: getReceiptsDisplayTotal(item),
         issuances: getStockTotal(item.issuances),
         ending: Number(item.ending || 0),
         status: item.status || "In Stock",

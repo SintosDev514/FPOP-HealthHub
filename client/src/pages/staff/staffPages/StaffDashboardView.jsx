@@ -284,8 +284,17 @@ const InventoryLineChart = () => {
 
         if (items.length === 0) { setLoading(false); return; }
 
-        const receiptsTotal = items.reduce((s, i) => s + ((i.receipts || []).reduce((a, b) => a + (b || 0), 0)), 0);
-        const issuancesTotal = items.reduce((s, i) => s + ((i.issuances || []).reduce((a, b) => a + (b || 0), 0)), 0);
+        const receiptsTotal = items.reduce((s, i) => {
+          const beginning = Number(i.beginning || 0);
+          const details = Array.isArray(i.receipts) ? i.receipts.slice(0, -1) : [];
+          const detailsTotal = details.reduce((a, b) => a + (Number(b) || 0), 0);
+          return s + beginning + detailsTotal;
+        }, 0);
+        const issuancesTotal = items.reduce((s, i) => {
+          const arr = Array.isArray(i.issuances) ? i.issuances : [];
+          const total = arr.length > 0 ? Number(arr[arr.length - 1] || 0) : 0;
+          return s + (Number.isFinite(total) ? total : 0);
+        }, 0);
         const endingTotal = items.reduce((s, i) => s + (i.ending || 0), 0);
         const beginningTotal = items.reduce((s, i) => s + (i.beginning || 0), 0);
 

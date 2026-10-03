@@ -103,6 +103,15 @@ const getStockTotal = (values) => {
   return toSafeNumber(values[values.length - 1]);
 };
 
+const getReceiptDetails = (item) => {
+  if (!Array.isArray(item?.receipts) || item.receipts.length === 0) return [];
+  return item.receipts.slice(0, -1);
+};
+
+const getReceiptsDisplayTotal = (item) =>
+  toSafeNumber(item?.beginning) +
+  getReceiptDetails(item).reduce((s, v) => s + toSafeNumber(v), 0);
+
 const getStockValue = (values, index) => {
   if (!Array.isArray(values)) return 0;
   return toSafeNumber(values[index]);
@@ -113,21 +122,23 @@ const formatPdfStockValue = (value) => {
   return numericValue === 0 ? "" : formatNumber(numericValue);
 };
 
+const formatPdfTotalValue = (value) => formatNumber(toSafeNumber(value));
+
 const createLis5HeaderRows = () => [
   [
     { content: "TYPE / BRAND", rowSpan: 2 },
-    { content: "BEGINNING\nBALANCE", rowSpan: 2 },
+    { content: "BEGINNING\nBALANCE" },
     { content: "RECEIPTS", colSpan: 6 },
     { content: "ISSUANCES", colSpan: 9 },
-    { content: "ENDING\nBALANCE", rowSpan: 2 },
+    { content: "ENDING\nBALANCE" },
   ],
   [
     "Stockroom\n(Total)",
     "National\nWarehouse",
-    "Other Agency\n/ ROH, etc.",
+    "Other Agency\n(DOH, etc.)",
     "Chapter\nLocal\nPurchase",
     "*Other\nFPOP\nClinics",
-    "Returned\nby CSV",
+    "Returned\nby CBV's",
     "Total",
     "Private Physicians\nand other\nMedical\nPractitioner",
     "Government",
@@ -145,13 +156,13 @@ const createLis5HeaderRows = () => [
 
 const createLis5ItemRow = (item) => [
   item.name || "",
-  formatPdfStockValue(item.beginning),
-  formatPdfStockValue(getStockValue(item.receipts, 0)),
-  formatPdfStockValue(getStockValue(item.receipts, 1)),
-  formatPdfStockValue(getStockValue(item.receipts, 2)),
-  formatPdfStockValue(getStockValue(item.receipts, 3)),
-  formatPdfStockValue(getStockValue(item.receipts, 4)),
-  formatPdfStockValue(getStockTotal(item.receipts)),
+  formatPdfTotalValue(item.beginning),
+  formatPdfStockValue(getStockValue(getReceiptDetails(item), 0)),
+  formatPdfStockValue(getStockValue(getReceiptDetails(item), 1)),
+  formatPdfStockValue(getStockValue(getReceiptDetails(item), 2)),
+  formatPdfStockValue(getStockValue(getReceiptDetails(item), 3)),
+  formatPdfStockValue(getStockValue(getReceiptDetails(item), 4)),
+  formatPdfTotalValue(getReceiptsDisplayTotal(item)),
   formatPdfStockValue(getStockValue(item.issuances, 0)),
   formatPdfStockValue(getStockValue(item.issuances, 1)),
   formatPdfStockValue(getStockValue(item.issuances, 2)),
@@ -160,8 +171,8 @@ const createLis5ItemRow = (item) => [
   formatPdfStockValue(getStockValue(item.issuances, 5)),
   formatPdfStockValue(getStockValue(item.issuances, 6)),
   formatPdfStockValue(getStockValue(item.issuances, 7)),
-  formatPdfStockValue(getStockTotal(item.issuances)),
-  formatPdfStockValue(item.ending),
+  formatPdfTotalValue(getStockTotal(item.issuances)),
+  formatPdfTotalValue(item.ending),
 ];
 
 const createBlankLis5Row = () => Array.from({ length: 18 }, () => "");
@@ -175,10 +186,10 @@ const createLis5BodyRows = (table) => {
         content: category.name,
         colSpan: 18,
         styles: {
-          fillColor: [229, 231, 235],
+          fillColor: [166, 166, 166],
           fontStyle: "bold",
           halign: "left",
-          textColor: [31, 41, 55],
+          textColor: [0, 0, 0],
         },
       },
     ]);
@@ -209,26 +220,43 @@ const createLis5BodyRows = (table) => {
   return rows;
 };
 
+const toExcelDetailValue = (value) => {
+  const numericValue = toSafeNumber(value);
+  return numericValue === 0 ? "" : numericValue;
+};
+
 const createLis5ExcelItemRow = (item) => [
   item.name || "",
   toSafeNumber(item.beginning),
-  getStockValue(item.receipts, 0),
-  getStockValue(item.receipts, 1),
-  getStockValue(item.receipts, 2),
-  getStockValue(item.receipts, 3),
-  getStockValue(item.receipts, 4),
-  getStockTotal(item.receipts),
-  getStockValue(item.issuances, 0),
-  getStockValue(item.issuances, 1),
-  getStockValue(item.issuances, 2),
-  getStockValue(item.issuances, 3),
-  getStockValue(item.issuances, 4),
-  getStockValue(item.issuances, 5),
-  getStockValue(item.issuances, 6),
-  getStockValue(item.issuances, 7),
+  toExcelDetailValue(getStockValue(getReceiptDetails(item), 0)),
+  toExcelDetailValue(getStockValue(getReceiptDetails(item), 1)),
+  toExcelDetailValue(getStockValue(getReceiptDetails(item), 2)),
+  toExcelDetailValue(getStockValue(getReceiptDetails(item), 3)),
+  toExcelDetailValue(getStockValue(getReceiptDetails(item), 4)),
+  getReceiptsDisplayTotal(item),
+  toExcelDetailValue(getStockValue(item.issuances, 0)),
+  toExcelDetailValue(getStockValue(item.issuances, 1)),
+  toExcelDetailValue(getStockValue(item.issuances, 2)),
+  toExcelDetailValue(getStockValue(item.issuances, 3)),
+  toExcelDetailValue(getStockValue(item.issuances, 4)),
+  toExcelDetailValue(getStockValue(item.issuances, 5)),
+  toExcelDetailValue(getStockValue(item.issuances, 6)),
+  toExcelDetailValue(getStockValue(item.issuances, 7)),
   getStockTotal(item.issuances),
   toSafeNumber(item.ending),
 ];
+
+const LIS5_TEMPLATE_COLORS = {
+  headerPeach: [251, 229, 199],
+  numbersGray: [128, 128, 128],
+  categoryGray: [166, 166, 166],
+  beginningCream: [255, 242, 204],
+  totalBlue: [217, 225, 242],
+  endingPeach: [252, 229, 205],
+  redTotal: [192, 0, 0],
+  black: [0, 0, 0],
+  white: [255, 255, 255],
+};
 
 const sanitizeWorksheetName = (name, fallback, existingNames) => {
   const cleanedName = (name || fallback)
@@ -251,10 +279,19 @@ const sanitizeWorksheetName = (name, fallback, existingNames) => {
 };
 
 const thinExcelBorder = {
-  top: { style: "thin", color: { argb: "FF4B5563" } },
-  left: { style: "thin", color: { argb: "FF4B5563" } },
-  bottom: { style: "thin", color: { argb: "FF4B5563" } },
-  right: { style: "thin", color: { argb: "FF4B5563" } },
+  top: { style: "thin", color: { argb: "FF000000" } },
+  left: { style: "thin", color: { argb: "FF000000" } },
+  bottom: { style: "thin", color: { argb: "FF000000" } },
+  right: { style: "thin", color: { argb: "FF000000" } },
+};
+
+const LIS5_EXCEL_FILL = {
+  headerPeach: "FFFBE5C7",
+  numbersGray: "FF808080",
+  categoryGray: "FFA6A6A6",
+  beginningCream: "FFFFF2CC",
+  totalBlue: "FFD9E1F2",
+  endingPeach: "FFFCE4D6",
 };
 
 const solidExcelFill = (argb) => ({
@@ -412,6 +449,9 @@ const InventoryTableHeader = ({ showActions = true }) => (
       <th rowSpan="2" className="w-[160px] px-3 py-3 text-[9px] font-semibold">
         TYPE / BRAND
       </th>
+      <th rowSpan="2" className="w-[85px] bg-slate-50 px-2 py-3 text-right text-[9px] font-semibold">
+        BEGINNING BALANCE
+      </th>
       <th colSpan={6} className="bg-emerald-50 px-2 py-3 text-center text-[9px] font-semibold">
         RECEIPTS
       </th>
@@ -550,7 +590,7 @@ const StaffInventoryView = ({ hideHeader, readOnly = false }) => {
       table.categories.flatMap((cat) => cat.items)
     );
     const totalReceipts = items.reduce(
-      (sum, item) => sum + (item.receipts[item.receipts.length - 1] || 0),
+      (sum, item) => sum + getReceiptsDisplayTotal(item),
       0
     );
     const totalIssuances = items.reduce(
@@ -623,7 +663,7 @@ const StaffInventoryView = ({ hideHeader, readOnly = false }) => {
 
   const statCards = useMemo(() => getStatCards(tables), [tables]);
 
-  const columnCount = readOnly ? 18 : 19;
+  const columnCount = readOnly ? 19 : 20;
 
   const toggleCategory = (id) => {
     setOpenCategories((current) => ({
@@ -679,8 +719,8 @@ const StaffInventoryView = ({ hideHeader, readOnly = false }) => {
 
       doc.setFontSize(7);
       doc.text(`Chapter: ${chapter}`, 32, 78);
-      doc.text(`Quarter: ${selectedQuarter}`, 32, 91);
-      doc.text(`Year: ${selectedYear}`, 32, 104);
+      doc.text(`Quarter: ${table.quarter || selectedQuarter}`, 32, 91);
+      doc.text(`Year: ${table.year || selectedYear}`, 32, 104);
       doc.setFont("helvetica", "normal");
       doc.text(`Date Generated: ${displayDate}`, pageWidth - 32, 104, {
         align: "right",
@@ -701,20 +741,20 @@ const StaffInventoryView = ({ hideHeader, readOnly = false }) => {
           fontSize: 5.5,
           cellPadding: 1.4,
           overflow: "linebreak",
-          lineColor: [74, 85, 104],
-          lineWidth: 0.25,
-          textColor: [31, 41, 55],
+          lineColor: [0, 0, 0],
+          lineWidth: 0.4,
+          textColor: [0, 0, 0],
           minCellHeight: 9,
           valign: "middle",
         },
         headStyles: {
-          fillColor: [229, 231, 235],
-          textColor: [17, 24, 39],
+          fillColor: [251, 229, 199],
+          textColor: [0, 0, 0],
           fontStyle: "bold",
           halign: "center",
           valign: "middle",
-          lineColor: [55, 65, 81],
-          lineWidth: 0.35,
+          lineColor: [0, 0, 0],
+          lineWidth: 0.4,
         },
         bodyStyles: {
           fillColor: [255, 255, 255],
@@ -724,13 +764,13 @@ const StaffInventoryView = ({ hideHeader, readOnly = false }) => {
         },
         columnStyles: {
           0: { cellWidth: 96, halign: "left" },
-          1: { cellWidth: 42, halign: "right", fillColor: [249, 250, 251] },
+          1: { cellWidth: 42, halign: "right", fillColor: [255, 242, 204] },
           2: { cellWidth: 44, halign: "right" },
           3: { cellWidth: 48, halign: "right" },
           4: { cellWidth: 42, halign: "right" },
           5: { cellWidth: 42, halign: "right" },
           6: { cellWidth: 38, halign: "right" },
-          7: { cellWidth: 38, halign: "right", fillColor: [239, 246, 255] },
+          7: { cellWidth: 38, halign: "right", fillColor: [217, 225, 242], textColor: [192, 0, 0] },
           8: { cellWidth: 50, halign: "right" },
           9: { cellWidth: 44, halign: "right" },
           10: { cellWidth: 42, halign: "right" },
@@ -739,20 +779,43 @@ const StaffInventoryView = ({ hideHeader, readOnly = false }) => {
           13: { cellWidth: 38, halign: "right" },
           14: { cellWidth: 42, halign: "right" },
           15: { cellWidth: 40, halign: "right" },
-          16: { cellWidth: 38, halign: "right", fillColor: [239, 246, 255] },
-          17: { cellWidth: 42, halign: "right", fillColor: [254, 243, 199] },
+          16: { cellWidth: 38, halign: "right", fillColor: [217, 225, 242] },
+          17: { cellWidth: 42, halign: "right", fillColor: [252, 229, 205], textColor: [192, 0, 0] },
         },
         didParseCell: (data) => {
           if (data.section === "head") {
             data.cell.styles.minCellHeight = data.row.index === 0 ? 14 : 26;
+            data.cell.styles.fillColor = [251, 229, 199];
+            data.cell.styles.textColor = [0, 0, 0];
             if (data.row.index === 2) {
               data.cell.styles.minCellHeight = 9;
               data.cell.styles.fontSize = 5;
+              data.cell.styles.fillColor = [128, 128, 128];
+              data.cell.styles.textColor = [255, 255, 255];
             }
           }
 
-          if (data.section === "body" && data.cell.raw === "") {
-            data.cell.styles.minCellHeight = 9.5;
+          if (data.section === "body") {
+            if (data.cell.raw === "") {
+              data.cell.styles.minCellHeight = 9.5;
+            }
+            // Template red totals: receipts Total (col 7) + ending (col 17)
+            if (data.column.index === 7 || data.column.index === 17) {
+              if (data.cell.raw !== "" && data.row.raw?.colSpan === undefined) {
+                data.cell.styles.textColor = [192, 0, 0];
+                data.cell.styles.fontStyle = "bold";
+              }
+            }
+            // Beginning cream + totals blue + ending peach for data rows
+            if (data.row.raw?.colSpan === undefined) {
+              if (data.column.index === 1) data.cell.styles.fillColor = [255, 242, 204];
+              if (data.column.index === 7 || data.column.index === 16) data.cell.styles.fillColor = [217, 225, 242];
+              if (data.column.index === 17) data.cell.styles.fillColor = [252, 229, 205];
+            } else {
+              // Category row gray like template PILLS row
+              data.cell.styles.fillColor = [166, 166, 166];
+              data.cell.styles.textColor = [0, 0, 0];
+            }
           }
         },
         didDrawPage: () => {
@@ -844,8 +907,8 @@ const StaffInventoryView = ({ hideHeader, readOnly = false }) => {
       worksheet.getCell("A2").alignment = { horizontal: "center" };
 
       worksheet.getCell("A4").value = `Chapter: ${table.chapter || ""}`;
-      worksheet.getCell("A5").value = `Quarter: ${selectedQuarter}`;
-      worksheet.getCell("A6").value = `Year: ${selectedYear}`;
+      worksheet.getCell("A5").value = `Quarter: ${table.quarter || selectedQuarter}`;
+      worksheet.getCell("A6").value = `Year: ${table.year || selectedYear}`;
       worksheet.getCell("N6").value = `Generated: ${displayDate}`;
 
       ["A4", "A5", "A6", "N6"].forEach((cellAddress) => {
@@ -863,7 +926,6 @@ const StaffInventoryView = ({ hideHeader, readOnly = false }) => {
       worksheet.mergeCells("R9:R10");
 
       worksheet.getRow(9).values = [
-        "",
         "TYPE / BRAND",
         "BEGINNING\nBALANCE",
         "RECEIPTS",
@@ -886,12 +948,11 @@ const StaffInventoryView = ({ hideHeader, readOnly = false }) => {
       worksheet.getRow(10).values = [
         "",
         "",
-        "",
         "National\nWarehouse",
-        "Other Agency\n/ ROH, etc.",
+        "Other Agency\n(DOH, etc.)",
         "Chapter\nLocal\nPurchase",
         "*Other\nFPOP\nClinics",
-        "Returned\nby CSV",
+        "Returned\nby CBV's",
         "Total",
         "Private Physicians\nand other\nMedical\nPractitioner",
         "Government",
@@ -905,7 +966,6 @@ const StaffInventoryView = ({ hideHeader, readOnly = false }) => {
         "",
       ];
       worksheet.getRow(11).values = [
-        "",
         ...Array.from({ length: 18 }, (_, index) => index + 1),
       ];
 
@@ -914,13 +974,13 @@ const StaffInventoryView = ({ hideHeader, readOnly = false }) => {
         row.height = rowNumber === 10 ? 50 : 20;
         for (let columnNumber = 1; columnNumber <= 18; columnNumber += 1) {
           const cell = row.getCell(columnNumber);
-          cell.font = { bold: true, size: rowNumber === 11 ? 8 : 7 };
+          cell.font = { bold: true, size: rowNumber === 11 ? 8 : 7, color: { argb: rowNumber === 11 ? "FFFFFFFF" : "FF000000" } };
           cell.alignment = {
             horizontal: "center",
             vertical: "middle",
             wrapText: true,
           };
-          cell.fill = solidExcelFill("FFE5E7EB");
+          cell.fill = solidExcelFill(rowNumber === 11 ? LIS5_EXCEL_FILL.numbersGray : LIS5_EXCEL_FILL.headerPeach);
           cell.border = thinExcelBorder;
         }
       });
@@ -932,42 +992,46 @@ const StaffInventoryView = ({ hideHeader, readOnly = false }) => {
         worksheet.mergeCells(`A${nextRowNumber}:R${nextRowNumber}`);
         const categoryCell = worksheet.getCell(`A${nextRowNumber}`);
         categoryCell.value = category.name;
-        categoryCell.font = { bold: true, size: 9 };
-        categoryCell.fill = solidExcelFill("FFE5E7EB");
+        categoryCell.font = { bold: true, size: 9, color: { argb: "FF000000" } };
+        categoryCell.fill = solidExcelFill(LIS5_EXCEL_FILL.categoryGray);
         categoryCell.alignment = { horizontal: "left", vertical: "middle" };
         styleExcelRange(worksheet, nextRowNumber, 1, 18, {
           border: thinExcelBorder,
-          fill: solidExcelFill("FFE5E7EB"),
+          fill: solidExcelFill(LIS5_EXCEL_FILL.categoryGray),
         });
         nextRowNumber += 1;
 
         (category.items || []).forEach((item) => {
           hasItems = true;
           const row = worksheet.getRow(nextRowNumber);
-          row.values = ["", ...createLis5ExcelItemRow(item)];
+          row.values = [...createLis5ExcelItemRow(item)];
           row.height = 18;
 
           for (let columnNumber = 1; columnNumber <= 18; columnNumber += 1) {
             const cell = row.getCell(columnNumber);
             cell.border = thinExcelBorder;
-            cell.font = { size: 8 };
+            cell.font = { size: 8, color: { argb: "FF000000" } };
             cell.alignment = {
               horizontal: columnNumber === 1 ? "left" : "right",
               vertical: "middle",
               wrapText: true,
             };
 
+            if (columnNumber === 2) {
+              cell.fill = solidExcelFill(LIS5_EXCEL_FILL.beginningCream);
+            }
+
             if (columnNumber === 8 || columnNumber === 17) {
-              cell.fill = solidExcelFill("FFEFF6FF");
-              cell.font = { bold: true, size: 8 };
+              cell.fill = solidExcelFill(LIS5_EXCEL_FILL.totalBlue);
+              cell.font = { bold: true, size: 8, color: { argb: columnNumber === 8 ? "FFC00000" : "FF000000" } };
             }
 
             if (columnNumber === 18) {
-              cell.fill = solidExcelFill("FFFEF3C7");
-              cell.font = { bold: true, size: 8 };
+              cell.fill = solidExcelFill(LIS5_EXCEL_FILL.endingPeach);
+              cell.font = { bold: true, size: 8, color: { argb: "FFC00000" } };
             }
 
-            if (columnNumber > 1) {
+            if (columnNumber > 1 && typeof cell.value === "number") {
               cell.numFmt = "#,##0";
             }
           }
@@ -983,11 +1047,14 @@ const StaffInventoryView = ({ hideHeader, readOnly = false }) => {
             const cell = row.getCell(columnNumber);
             cell.border = thinExcelBorder;
             cell.alignment = { vertical: "middle" };
+            if (columnNumber === 2) {
+              cell.fill = solidExcelFill(LIS5_EXCEL_FILL.beginningCream);
+            }
             if (columnNumber === 8 || columnNumber === 17) {
-              cell.fill = solidExcelFill("FFEFF6FF");
+              cell.fill = solidExcelFill(LIS5_EXCEL_FILL.totalBlue);
             }
             if (columnNumber === 18) {
-              cell.fill = solidExcelFill("FFFEF3C7");
+              cell.fill = solidExcelFill(LIS5_EXCEL_FILL.endingPeach);
             }
           }
           nextRowNumber += 1;
@@ -1094,23 +1161,32 @@ const StaffInventoryView = ({ hideHeader, readOnly = false }) => {
               margin-bottom: 10px;
             }
             th, td {
-              border: 0.5px solid #475569;
+              border: 0.5px solid #000;
               padding: 4px 5px;
               text-align: center;
               vertical-align: middle;
             }
             th {
-              background-color: #f1f5f9;
+              background-color: #fbe5c7;
               font-weight: 700;
-              color: #0f172a;
+              color: #000;
               font-size: 7.5px;
+            }
+            th.num-row {
+              background-color: #808080;
+              color: #fff;
+              font-weight: 400;
             }
             .col-left {
               text-align: left;
               font-weight: 600;
             }
+            .col-begin { background-color: #fff2cc; }
+            .col-total-blue { background-color: #d9e1f2; }
+            .col-ending { background-color: #fce4d6; }
+            .total-red { color: #c00000; font-weight: 800; }
             .category-row {
-              background-color: #e2e8f0;
+              background-color: #a6a6a6;
               font-weight: 700;
               text-align: left;
             }
@@ -1142,24 +1218,33 @@ const StaffInventoryView = ({ hideHeader, readOnly = false }) => {
     const reportTables = tablesForExport.length > 0 ? tablesForExport : tables;
 
     reportTables.forEach((table) => {
+      const tableQuarter = table.quarter || selectedQuarter;
+      const tableYear = table.year || selectedYear;
+      const formatPrintCell = (value, isTotal = false) => {
+        if (value === "" || value === null || value === undefined) return "";
+        const numericValue = Number(value);
+        if (!Number.isFinite(numericValue)) return "";
+        if (!isTotal && numericValue === 0) return "";
+        return new Intl.NumberFormat("en-US").format(numericValue);
+      };
       html += `
         <div class="table-container">
-          <div class="table-name">${table.name || "Inventory Report"} ${table.chapter ? `(${table.chapter})` : ""}</div>
+          <div class="table-name">${table.name || "Inventory Report"} ${table.chapter ? `(${table.chapter})` : ""} — Quarter: ${tableQuarter} | Year: ${tableYear}</div>
           <table>
             <thead>
               <tr>
                 <th rowspan="2" style="width: 15%; text-align: left;">TYPE / BRAND</th>
-                <th rowspan="2" style="width: 6%;">BEGINNING BALANCE</th>
+                <th rowspan="2" style="width: 6%;">BEGINNING BALANCE<br/>Stockroom (Total)</th>
                 <th colspan="6">RECEIPTS</th>
                 <th colspan="9">ISSUANCES</th>
-                <th rowspan="2" style="width: 6%;">ENDING BALANCE</th>
+                <th rowspan="2" style="width: 6%;">ENDING BALANCE<br/>Stockroom (Total)</th>
               </tr>
               <tr>
                 <th style="font-size: 7px;">National Warehouse</th>
-                <th style="font-size: 7px;">Other Agency / ROH</th>
+                <th style="font-size: 7px;">Other Agency (DOH, etc.)</th>
                 <th style="font-size: 7px;">Chapter Local Purchase</th>
                 <th style="font-size: 7px;">*Other FPOP Clinics</th>
-                <th style="font-size: 7px;">Returned by CSV</th>
+                <th style="font-size: 7px;">Returned by CBV's</th>
                 <th style="font-weight: 800;">Total</th>
                 <th style="font-size: 7px;">Private Physicians</th>
                 <th style="font-size: 7px;">Government</th>
@@ -1171,8 +1256,8 @@ const StaffInventoryView = ({ hideHeader, readOnly = false }) => {
                 <th style="font-size: 7px;">Expired / Promo</th>
                 <th style="font-weight: 800;">Total</th>
               </tr>
-              <tr style="background-color: #f8fafc; font-size: 7px; height: 12px;">
-                ${Array.from({ length: 18 }, (_, i) => `<th style="padding: 1px 0; font-weight: normal; color: #64748b;">${i + 1}</th>`).join("")}
+              <tr style="font-size: 7px; height: 12px;">
+                ${Array.from({ length: 18 }, (_, i) => `<th class="num-row" style="padding: 1px 0;">${i + 1}</th>`).join("")}
               </tr>
             </thead>
             <tbody>
@@ -1196,23 +1281,23 @@ const StaffInventoryView = ({ hideHeader, readOnly = false }) => {
               html += `
                 <tr>
                   <td class="col-left">${rowData[0]}</td>
-                  <td>${rowData[1] || "-"}</td>
-                  <td>${rowData[2] || "-"}</td>
-                  <td>${rowData[3] || "-"}</td>
-                  <td>${rowData[4] || "-"}</td>
-                  <td>${rowData[5] || "-"}</td>
-                  <td>${rowData[6] || "-"}</td>
-                  <td style="font-weight: 700;">${rowData[7] || "-"}</td>
-                  <td>${rowData[8] || "-"}</td>
-                  <td>${rowData[9] || "-"}</td>
-                  <td>${rowData[10] || "-"}</td>
-                  <td>${rowData[11] || "-"}</td>
-                  <td>${rowData[12] || "-"}</td>
-                  <td>${rowData[13] || "-"}</td>
-                  <td>${rowData[14] || "-"}</td>
-                  <td>${rowData[15] || "-"}</td>
-                  <td style="font-weight: 700;">${rowData[16] || "-"}</td>
-                  <td style="font-weight: 700;">${rowData[17] || "-"}</td>
+                  <td class="col-begin">${formatPrintCell(rowData[1], true)}</td>
+                  <td>${formatPrintCell(rowData[2])}</td>
+                  <td>${formatPrintCell(rowData[3])}</td>
+                  <td>${formatPrintCell(rowData[4])}</td>
+                  <td>${formatPrintCell(rowData[5])}</td>
+                  <td>${formatPrintCell(rowData[6])}</td>
+                  <td class="col-total-blue total-red">${formatPrintCell(rowData[7], true)}</td>
+                  <td>${formatPrintCell(rowData[8])}</td>
+                  <td>${formatPrintCell(rowData[9])}</td>
+                  <td>${formatPrintCell(rowData[10])}</td>
+                  <td>${formatPrintCell(rowData[11])}</td>
+                  <td>${formatPrintCell(rowData[12])}</td>
+                  <td>${formatPrintCell(rowData[13])}</td>
+                  <td>${formatPrintCell(rowData[14])}</td>
+                  <td>${formatPrintCell(rowData[15])}</td>
+                  <td class="col-total-blue" style="font-weight: 700;">${formatPrintCell(rowData[16], true)}</td>
+                  <td class="col-ending total-red">${formatPrintCell(rowData[17], true)}</td>
                 </tr>
               `;
             });
@@ -1223,7 +1308,7 @@ const StaffInventoryView = ({ hideHeader, readOnly = false }) => {
           Array.from({ length: blankRowsCount }).forEach(() => {
             html += `
               <tr style="height: 18px;">
-                ${Array.from({ length: 18 }, () => `<td></td>`).join("")}
+                <td></td><td class="col-begin"></td><td></td><td></td><td></td><td></td><td></td><td class="col-total-blue"></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td class="col-total-blue"></td><td class="col-ending"></td>
               </tr>
             `;
           });
@@ -1708,7 +1793,7 @@ const StaffInventoryView = ({ hideHeader, readOnly = false }) => {
             )}
           </div>
           <div className="overflow-x-auto">
-            <table className="min-w-[950px] w-full border-collapse text-left text-[9px] text-slate-950">
+            <table className="min-w-[1050px] w-full border-collapse text-left text-[9px] text-slate-950">
               <InventoryTableHeader showActions={!readOnly} />
               <tbody>
                 {table.categories.length === 0 && (
@@ -1810,7 +1895,10 @@ const StaffInventoryView = ({ hideHeader, readOnly = false }) => {
                             <td className="px-4 py-2.5 text-[9px] font-semibold">
                               {item.name}
                             </td>
-                            {item.receipts.map((value, index) => (
+                            <td className="bg-slate-50 px-1.5 py-2.5 text-right text-[9px] font-semibold">
+                              {formatNumber(toSafeNumber(item.beginning))}
+                            </td>
+                            {[...getReceiptDetails(item), getReceiptsDisplayTotal(item)].map((value, index) => (
                               <td
                                 key={`${item._id}-receipt-${index}`}
                                 className={`px-1.5 py-2.5 text-right text-[9px] ${
@@ -1819,7 +1907,7 @@ const StaffInventoryView = ({ hideHeader, readOnly = false }) => {
                                     : "bg-emerald-50"
                                 }`}
                               >
-                                {formatNumber(value)}
+                                {formatNumber(toSafeNumber(value))}
                               </td>
                             ))}
                             {item.issuances.map((value, index) => (
