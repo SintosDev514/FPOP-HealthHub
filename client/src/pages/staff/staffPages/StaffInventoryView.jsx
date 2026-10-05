@@ -505,6 +505,8 @@ const InventoryTableHeader = ({ showActions = true }) => (
   </thead>
 );
 
+const FIXED_CHAPTER = "Branch Calbayog";
+
 const StaffInventoryView = ({ hideHeader, readOnly = false }) => {
   const [tables, setTables] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -524,7 +526,7 @@ const StaffInventoryView = ({ hideHeader, readOnly = false }) => {
   const [itemForm, setItemForm] = useState(createEmptyItemForm);
   const [deleteTarget, setDeleteTarget] = useState(null);
   const [tableNameForm, setTableNameForm] = useState("");
-  const [tableChapterForm, setTableChapterForm] = useState("");
+  
   const [tableQuarterForm, setTableQuarterForm] = useState("");
   const [tableYearForm, setTableYearForm] = useState("");
   const [isCreateTableOpen, setIsCreateTableOpen] = useState(false);
@@ -1340,7 +1342,6 @@ const StaffInventoryView = ({ hideHeader, readOnly = false }) => {
 
   const openCreateTableModal = () => {
     setTableNameForm("");
-    setTableChapterForm("");
     setTableQuarterForm("");
     setTableYearForm(new Date().getFullYear().toString());
     setIsCreateTableOpen(true);
@@ -1348,7 +1349,6 @@ const StaffInventoryView = ({ hideHeader, readOnly = false }) => {
 
   const closeCreateTableModal = () => {
     setTableNameForm("");
-    setTableChapterForm("");
     setTableQuarterForm("");
     setTableYearForm("");
     setIsCreateTableOpen(false);
@@ -1365,7 +1365,7 @@ const StaffInventoryView = ({ hideHeader, readOnly = false }) => {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           name,
-          chapter: tableChapterForm.trim(),
+          chapter: FIXED_CHAPTER,
           quarter: tableQuarterForm,
           year: tableYearForm,
         }),
@@ -1765,7 +1765,12 @@ const StaffInventoryView = ({ hideHeader, readOnly = false }) => {
               </h3>
               {(table.chapter || table.quarter || table.year) && (
                 <span className="inline-flex items-center gap-1.5 rounded-md bg-slate-100 px-2.5 py-1 text-[9px] font-semibold text-slate-600">
-                  {[table.chapter && `Ch. ${table.chapter}`, table.quarter, table.year]
+                  {[
+                    table.chapter &&
+                      (table.chapter === FIXED_CHAPTER ? table.chapter : `Ch. ${table.chapter}`),
+                    table.quarter,
+                    table.year,
+                  ]
                     .filter(Boolean)
                     .join(" | ")}
                 </span>
@@ -2019,10 +2024,10 @@ const StaffInventoryView = ({ hideHeader, readOnly = false }) => {
                       Chapter
                     </span>
                     <input
-                      value={tableChapterForm}
-                      onChange={(event) => setTableChapterForm(event.target.value)}
-                      className="mt-2 h-11 w-full rounded-lg border border-slate-300 px-4 text-[10px] font-semibold text-slate-950 outline-none focus:border-blue-500"
-                      placeholder="e.g. 1"
+                      value={FIXED_CHAPTER}
+                      readOnly
+                      aria-readonly="true"
+                      className="mt-2 h-11 w-full cursor-not-allowed rounded-lg border border-slate-300 bg-slate-100 px-4 text-[10px] font-semibold text-slate-500 outline-none"
                     />
                   </label>
                   <label className="block">
