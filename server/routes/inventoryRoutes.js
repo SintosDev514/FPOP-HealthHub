@@ -3,6 +3,7 @@ import userAuth from "../middleware/userAuth.js";
 import {
   listTables,
   createTable,
+  updateTable,
   deleteTable,
   addCategory,
   deleteCategory,
@@ -17,6 +18,7 @@ inventoryRouter.use(userAuth);
 
 inventoryRouter.get("/tables", listTables);
 inventoryRouter.post("/tables", createTable);
+inventoryRouter.put("/tables/:id", updateTable);
 inventoryRouter.delete("/tables/:id", deleteTable);
 
 inventoryRouter.post("/tables/:id/categories", addCategory);

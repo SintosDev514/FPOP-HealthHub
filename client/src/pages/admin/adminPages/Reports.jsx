@@ -3,6 +3,7 @@ import ExcelJS from "exceljs";
 import { saveAs } from "file-saver";
 import jsPDF from "jspdf";
 import autoTable from "jspdf-autotable";
+import { addReportLogosToPdf, addReportLogosToWorksheet } from "../../../utils/reportLogos";
 import API_BASE from "../../../apiBase";
 
 const NAVY      = "#1E3A5F";
@@ -76,31 +77,33 @@ const downloadPdf = (report) => {
     tables.forEach((table, index) => {
       if (index) doc.addPage("a4", "landscape");
       const width = doc.internal.pageSize.getWidth();
-      doc.setFont("helvetica", "bold"); doc.setFontSize(8); doc.text("F A M I L Y  P L A N N I N G  O R G A N I Z A T I O N  O F  T H E  P H I L I P P I N E S", width / 2, 28, { align: "center" });
-      doc.setFontSize(7.5); doc.text("CONSUMABLE/DISPOSABLE COMMODITIES INVENTORY LIS-5", width / 2, 43, { align: "center" });
-      doc.setFontSize(7); doc.text(`Chapter: ${table.chapter || ""}`, 28, 68); doc.text(`Quarter: ${table.quarter || "N/A"}`, 28, 81); doc.text(`Year: ${table.year || "N/A"}`, 28, 94); doc.text(`Date Generated: ${new Date().toLocaleDateString()}`, width - 28, 94, { align: "right" }); doc.text(table.name || "Inventory Report", 28, 115);
-      autoTable(doc, { startY: 122, margin: { left: 28, right: 28 }, head: lis5Head, body: lis5Rows(table), theme: "grid", styles: { font: "helvetica", fontSize: 5.5, cellPadding: 1.5, overflow: "linebreak", valign: "middle", minCellHeight: 9, lineColor: [74, 85, 104], lineWidth: 0.25 }, headStyles: { fillColor: [250, 230, 195], textColor: [31, 41, 55], fontStyle: "bold", halign: "center", lineColor: [55, 65, 81], lineWidth: 0.35 }, columnStyles: { 0: { cellWidth: 96, halign: "left" }, 1: { cellWidth: 42, halign: "right" }, 7: { fillColor: [239, 246, 255] }, 16: { fillColor: [239, 246, 255] }, 17: { fillColor: [254, 243, 199] } }, didParseCell: (data) => { if (data.section === "head") data.cell.styles.minCellHeight = data.row.index === 0 ? 14 : data.row.index === 2 ? 9 : 26; } });
+      addReportLogosToPdf(doc, { x: 28, y: 16, height: 22 });
+      doc.setFont("helvetica", "bold"); doc.setFontSize(8); doc.text("F A M I L Y  P L A N N I N G  O R G A N I Z A T I O N  O F  T H E  P H I L I P P I N E S", width / 2, 46, { align: "center" });
+      doc.setFontSize(7.5); doc.text("CONSUMABLE/DISPOSABLE COMMODITIES INVENTORY LIS-5", width / 2, 60, { align: "center" });
+      doc.setFontSize(7); doc.text(`Chapter: ${table.chapter || ""}`, 28, 82); doc.text(`Quarter: ${table.quarter || "N/A"}`, 28, 95); doc.text(`Year: ${table.year || "N/A"}`, 28, 108); doc.text(`Date Generated: ${new Date().toLocaleDateString()}`, width - 28, 108, { align: "right" }); doc.text(table.name || "Inventory Report", 28, 129);
+      autoTable(doc, { startY: 136, margin: { left: 28, right: 28 }, head: lis5Head, body: lis5Rows(table), theme: "grid", styles: { font: "helvetica", fontSize: 5.5, cellPadding: 1.5, overflow: "linebreak", valign: "middle", minCellHeight: 9, lineColor: [74, 85, 104], lineWidth: 0.25 }, headStyles: { fillColor: [250, 230, 195], textColor: [31, 41, 55], fontStyle: "bold", halign: "center", lineColor: [55, 65, 81], lineWidth: 0.35 }, columnStyles: { 0: { cellWidth: 96, halign: "left" }, 1: { cellWidth: 42, halign: "right" }, 7: { fillColor: [239, 246, 255] }, 16: { fillColor: [239, 246, 255] }, 17: { fillColor: [254, 243, 199] } }, didParseCell: (data) => { if (data.section === "head") data.cell.styles.minCellHeight = data.row.index === 0 ? 14 : data.row.index === 2 ? 9 : 26; } });
     });
     doc.save(`contraceptive-supply-inventory_${todayKey()}.pdf`);
     return;
   }
   const doc = new jsPDF({ orientation: "landscape", unit: "pt", format: "a4" });
   const pageWidth = doc.internal.pageSize.getWidth();
+  addReportLogosToPdf(doc, { x: 28, y: 16, height: 22 });
   doc.setFont("helvetica", "bold");
   doc.setFontSize(8);
-  doc.text("F A M I L Y  P L A N N I N G  O R G A N I Z A T I O N  O F  T H E  P H I L I P P I N E S", pageWidth / 2, 28, { align: "center" });
+  doc.text("F A M I L Y  P L A N N I N G  O R G A N I Z A T I O N  O F  T H E  P H I L I P P I N E S", pageWidth / 2, 46, { align: "center" });
   doc.setFontSize(7.5);
-  doc.text("SYSTEM REPORT", pageWidth / 2, 43, { align: "center" });
+  doc.text("SYSTEM REPORT", pageWidth / 2, 60, { align: "center" });
   doc.setFont("helvetica", "normal");
   doc.setFontSize(7);
-  doc.text(`Category: ${report.category}`, 28, 68);
-  doc.text(`Generated: ${new Date().toLocaleString()}`, pageWidth - 28, 68, { align: "right" });
-  doc.text(`Records: ${report.rows.length}`, pageWidth - 28, 81, { align: "right" });
+  doc.text(`Category: ${report.category}`, 28, 82);
+  doc.text(`Generated: ${new Date().toLocaleString()}`, pageWidth - 28, 82, { align: "right" });
+  doc.text(`Records: ${report.rows.length}`, pageWidth - 28, 95, { align: "right" });
   doc.setFont("helvetica", "bold");
   doc.setFontSize(8);
-  doc.text(report.title, 28, 105);
+  doc.text(report.title, 28, 119);
   autoTable(doc, {
-    startY: 112,
+    startY: 126,
     margin: { left: 28, right: 28 },
     head: [report.columns],
     body: report.rows.length ? report.rows : [[`No records available for ${report.title}.`]],
@@ -126,6 +129,8 @@ const downloadExcel = async (report) => {
       sheet.columns = labels.map((_, i) => ({ width: i === 0 ? 28 : i === 8 ? 20 : 13 }));
       sheet.mergeCells("A1:R1"); sheet.getCell("A1").value = "FAMILY PLANNING ORGANIZATION OF THE PHILIPPINES"; sheet.mergeCells("A2:R2"); sheet.getCell("A2").value = "CONSUMABLE/DISPOSABLE COMMODITIES INVENTORY LIS-5";
       ["A1", "A2"].forEach((address) => { sheet.getCell(address).font = { bold: true, size: address === "A1" ? 12 : 10 }; sheet.getCell(address).alignment = { horizontal: "center" }; });
+      addReportLogosToWorksheet(sheet, { row: 0, col: 0, height: 20 });
+      sheet.getRow(1).height = 18; sheet.getRow(2).height = 14;
       sheet.getCell("A4").value = `Chapter: ${table.chapter || ""}`; sheet.getCell("A5").value = `Quarter: ${table.quarter || "N/A"}`; sheet.getCell("A6").value = `Year: ${table.year || "N/A"}`; sheet.getCell("N6").value = `Date Generated: ${new Date().toLocaleDateString()}`; sheet.mergeCells("A8:R8"); sheet.getCell("A8").value = table.name || "Inventory Report";
       sheet.mergeCells("A9:A10"); sheet.mergeCells("B9:B10"); sheet.mergeCells("C9:H9"); sheet.mergeCells("I9:Q9"); sheet.mergeCells("R9:R10");
       sheet.getCell("A9").value = "TYPE / BRAND";
@@ -150,6 +155,8 @@ const downloadExcel = async (report) => {
   worksheet.mergeCells(`A1:${lastColumn}1`); worksheet.getCell("A1").value = "FAMILY PLANNING ORGANIZATION OF THE PHILIPPINES";
   worksheet.mergeCells(`A2:${lastColumn}2`); worksheet.getCell("A2").value = "SYSTEM REPORT";
   ["A1", "A2"].forEach((address) => { worksheet.getCell(address).font = { bold: true, size: address === "A1" ? 12 : 10 }; worksheet.getCell(address).alignment = { horizontal: "center" }; });
+  addReportLogosToWorksheet(worksheet, { row: 0, col: 0, height: 20 });
+  worksheet.getRow(1).height = 18; worksheet.getRow(2).height = 14;
   worksheet.getCell("A4").value = `Category: ${report.category}`; worksheet.getCell("D4").value = `Generated: ${new Date().toLocaleString()}`; worksheet.getCell("D5").value = `Records: ${report.rows.length}`;
   worksheet.mergeCells(`A7:${lastColumn}7`); worksheet.getCell("A7").value = report.title; worksheet.getCell("A7").font = { bold: true, size: 10 };
   const header = worksheet.getRow(9);

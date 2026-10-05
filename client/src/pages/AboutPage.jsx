@@ -1,6 +1,8 @@
 import React, { useLayoutEffect, useRef } from "react";
 import { gsap } from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
+import missionImage from "../assets/mg1.jpg";
+import heroImage from "../assets/mg2.jpg";
 
 gsap.registerPlugin(ScrollTrigger);
 
@@ -219,7 +221,7 @@ function AboutPage() {
             >
               <div
                 ref={(el) => setHeroCardRef(el, 0)}
-                className="floating-ui absolute left-10 top-6 z-10 hidden w-44 rounded-[8px] bg-white px-4 py-3 shadow-xl md:block"
+                className="floating-ui absolute left-10 top-6 z-30 hidden w-44 rounded-[8px] bg-white px-4 py-3 shadow-xl md:block"
               >
                 <p className="text-xs text-slate-500">Appointments</p>
                 <p className="mt-1 text-xl font-bold text-[#1E3A5F]">24/7</p>
@@ -228,7 +230,7 @@ function AboutPage() {
 
               <div
                 ref={(el) => setHeroCardRef(el, 1)}
-                className="floating-ui absolute right-10 top-0 z-10 hidden w-48 rounded-[8px] bg-white px-4 py-3 shadow-xl md:block"
+                className="floating-ui absolute right-10 top-0 z-30 hidden w-48 rounded-[8px] bg-white px-4 py-3 shadow-xl md:block"
               >
                 <p className="text-xs text-slate-500">Patient Access</p>
                 <p className="mt-1 text-xl font-bold text-[#1E3A5F]">Secure</p>
@@ -237,7 +239,7 @@ function AboutPage() {
 
               <div
                 ref={(el) => setHeroCardRef(el, 2)}
-                className="floating-ui absolute left-20 top-40 z-10 hidden w-56 rounded-[8px] bg-white px-4 py-3 shadow-xl md:block"
+                className="floating-ui absolute left-20 top-40 z-30 hidden w-56 rounded-[8px] bg-white px-4 py-3 shadow-xl md:block"
               >
                 <p className="text-xs text-slate-500">Portal Experience</p>
                 <p className="mt-1 text-xl font-bold text-[#1E3A5F]">
@@ -249,9 +251,9 @@ function AboutPage() {
               </div>
 
               <img
-                src="/doc2.png"
-                alt="Doctor"
-                className="relative z-20 -mb-6 h-[260px] w-auto max-w-full object-contain sm:h-[340px] md:-mb-16 md:h-[550px] lg:-mb-20 lg:h-[538px]"
+                src={heroImage}
+                alt="FPOP clinic"
+                className="relative z-20 -mb-6 h-[220px] w-full max-w-full rounded-[8px] object-cover sm:h-[300px] md:-mb-16 md:h-[380px] lg:-mb-20 lg:h-[420px]"
               />
             </div>
           </div>
@@ -278,9 +280,9 @@ function AboutPage() {
               <div className="absolute -bottom-12 left-10 h-20 w-16 rounded-[20px] bg-black sm:h-24 sm:w-20 md:-bottom-20 md:left-12 md:h-28 md:w-24" />
 
               <img
-                src="/NURSE1.png"
-                alt="Nurse"
-                className="relative z-10 h-[320px] w-auto object-contain sm:h-[420px] md:h-[950px]"
+                src={missionImage}
+                alt="FPOP clinic"
+                className="relative z-10 h-full w-full rounded-[8px] object-cover"
               />
             </div>
           </div>

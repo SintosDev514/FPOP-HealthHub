@@ -47,6 +47,28 @@ export const createTable = async (req, res) => {
   }
 };
 
+export const updateTable = async (req, res) => {
+  try {
+    const { name, quarter, year } = req.body;
+    const table = await InventoryTable.findById(req.params.id);
+    if (!table) {
+      return res.json({ success: false, message: "Table not found" });
+    }
+    if (name !== undefined) {
+      if (!name.trim()) {
+        return res.json({ success: false, message: "Table name is required" });
+      }
+      table.name = name.trim();
+    }
+    if (quarter !== undefined) table.quarter = quarter;
+    if (year !== undefined) table.year = year;
+    await table.save();
+    res.json({ success: true, table });
+  } catch (error) {
+    res.json({ success: false, message: error.message });
+  }
+};
+
 export const deleteTable = async (req, res) => {
   try {
     const table = await InventoryTable.findByIdAndDelete(req.params.id);

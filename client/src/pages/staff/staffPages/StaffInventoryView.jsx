@@ -3,6 +3,7 @@ import ExcelJS from "exceljs";
 import { saveAs } from "file-saver";
 import jsPDF from "jspdf";
 import autoTable from "jspdf-autotable";
+import { addReportLogosToPdf, addReportLogosToWorksheet } from "../../../utils/reportLogos";
 
 const receiptColumns = [
   { label: "NW", fullName: "National Warehouse" },
@@ -526,10 +527,10 @@ const StaffInventoryView = ({ hideHeader, readOnly = false }) => {
   const [itemForm, setItemForm] = useState(createEmptyItemForm);
   const [deleteTarget, setDeleteTarget] = useState(null);
   const [tableNameForm, setTableNameForm] = useState("");
-  
   const [tableQuarterForm, setTableQuarterForm] = useState("");
   const [tableYearForm, setTableYearForm] = useState("");
   const [isCreateTableOpen, setIsCreateTableOpen] = useState(false);
+  const [editingTableId, setEditingTableId] = useState(null);
   const [categoryNameForm, setCategoryNameForm] = useState("");
   const [isCategoryModalOpen, setIsCategoryModalOpen] = useState(false);
   const [activeCategoryTableId, setActiveCategoryTableId] = useState(null);
@@ -703,36 +704,37 @@ const StaffInventoryView = ({ hideHeader, readOnly = false }) => {
       const pageWidth = doc.internal.pageSize.getWidth();
       const chapter = table.chapter || "";
 
+      addReportLogosToPdf(doc, { x: 32, y: 18, height: 22 });
       doc.setFont("helvetica", "bold");
       doc.setFontSize(8);
       doc.text(
         "F A M I L Y  P L A N N I N G  O R G A N I Z A T I O N  O F  T H E  P H I L I P P I N E S",
         pageWidth / 2,
-        32,
+        50,
         { align: "center" }
       );
       doc.setFontSize(7.5);
       doc.text(
         "CONSUMABLE/DISPOSABLE COMMODITIES INVENTORY LIS-5",
         pageWidth / 2,
-        48,
+        64,
         { align: "center" }
       );
 
       doc.setFontSize(7);
-      doc.text(`Chapter: ${chapter}`, 32, 78);
-      doc.text(`Quarter: ${table.quarter || selectedQuarter}`, 32, 91);
-      doc.text(`Year: ${table.year || selectedYear}`, 32, 104);
+      doc.text(`Chapter: ${chapter}`, 32, 86);
+      doc.text(`Quarter: ${table.quarter || selectedQuarter}`, 32, 99);
+      doc.text(`Year: ${table.year || selectedYear}`, 32, 112);
       doc.setFont("helvetica", "normal");
-      doc.text(`Date Generated: ${displayDate}`, pageWidth - 32, 104, {
+      doc.text(`Date Generated: ${displayDate}`, pageWidth - 32, 112, {
         align: "right",
       });
 
       doc.setFont("helvetica", "bold");
-      doc.text(table.name || "Inventory Report", 32, 128);
+      doc.text(table.name || "Inventory Report", 32, 136);
 
       autoTable(doc, {
-        startY: 136,
+        startY: 144,
         margin: { left: 32, right: 32 },
         tableWidth: "auto",
         head: createLis5HeaderRows(),
@@ -907,6 +909,10 @@ const StaffInventoryView = ({ hideHeader, readOnly = false }) => {
         "CONSUMABLE/DISPOSABLE COMMODITIES INVENTORY LIS-5";
       worksheet.getCell("A2").font = { bold: true, size: 10 };
       worksheet.getCell("A2").alignment = { horizontal: "center" };
+
+      addReportLogosToWorksheet(worksheet, { row: 0, col: 0, height: 20 });
+      worksheet.getRow(1).height = 18;
+      worksheet.getRow(2).height = 14;
 
       worksheet.getCell("A4").value = `Chapter: ${table.chapter || ""}`;
       worksheet.getCell("A5").value = `Quarter: ${table.quarter || selectedQuarter}`;
@@ -1341,13 +1347,23 @@ const StaffInventoryView = ({ hideHeader, readOnly = false }) => {
   };
 
   const openCreateTableModal = () => {
+    setEditingTableId(null);
     setTableNameForm("");
     setTableQuarterForm("");
     setTableYearForm(new Date().getFullYear().toString());
     setIsCreateTableOpen(true);
   };
 
+  const openEditTableModal = (table) => {
+    setEditingTableId(table._id);
+    setTableNameForm(table.name || "");
+    setTableQuarterForm(table.quarter || "");
+    setTableYearForm(table.year || "");
+    setIsCreateTableOpen(true);
+  };
+
   const closeCreateTableModal = () => {
+    setEditingTableId(null);
     setTableNameForm("");
     setTableQuarterForm("");
     setTableYearForm("");
@@ -1358,9 +1374,10 @@ const StaffInventoryView = ({ hideHeader, readOnly = false }) => {
     event.preventDefault();
     const name = tableNameForm.trim();
     if (!name) return;
+    const isEdit = Boolean(editingTableId);
     try {
-      const res = await fetch(`${API}/tables`, {
-        method: "POST",
+      const res = await fetch(isEdit ? `${API}/tables/${editingTableId}` : `${API}/tables`, {
+        method: isEdit ? "PUT" : "POST",
         credentials: "include",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
@@ -1372,11 +1389,15 @@ const StaffInventoryView = ({ hideHeader, readOnly = false }) => {
       });
       const data = await res.json();
       if (data.success) {
-        setTables((current) => [data.table, ...current]);
+        setTables((current) =>
+          isEdit
+            ? current.map((table) => (table._id === editingTableId ? data.table : table))
+            : [data.table, ...current]
+        );
         closeCreateTableModal();
       }
     } catch (err) {
-      console.error("Failed to create table:", err);
+      console.error(isEdit ? "Failed to update table:" : "Failed to create table:", err);
     }
   };
 
@@ -1776,14 +1797,24 @@ const StaffInventoryView = ({ hideHeader, readOnly = false }) => {
                 </span>
               )}
               {!readOnly && (
-                <button
-                  type="button"
-                  onClick={() => handleDeleteTable(table._id)}
-                  className="inline-flex h-7 w-7 items-center justify-center rounded-md text-slate-400 transition hover:bg-red-50 hover:text-red-600"
-                  aria-label={`Delete ${table.name}`}
-                >
-                  <Icon name="trash" className="h-3.5 w-3.5" />
-                </button>
+                <div className="flex items-center gap-1">
+                  <button
+                    type="button"
+                    onClick={() => handleDeleteTable(table._id)}
+                    className="inline-flex h-7 w-7 items-center justify-center rounded-md text-slate-400 transition hover:bg-red-50 hover:text-red-600"
+                    aria-label={`Delete ${table.name}`}
+                  >
+                    <Icon name="trash" className="h-3.5 w-3.5" />
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => openEditTableModal(table)}
+                    className="inline-flex h-7 w-7 items-center justify-center rounded-md text-slate-400 transition hover:bg-blue-50 hover:text-blue-600"
+                    aria-label={`Edit ${table.name}`}
+                  >
+                    <Icon name="edit" className="h-3.5 w-3.5" />
+                  </button>
+                </div>
               )}
             </div>
             {!readOnly && (
@@ -1987,17 +2018,19 @@ const StaffInventoryView = ({ hideHeader, readOnly = false }) => {
             <div className="flex items-center justify-between border-b border-slate-200 px-6 py-4">
               <div>
                 <h3 className="text-[11px] font-extrabold text-slate-950">
-                  Create Table
+                  {editingTableId ? "Edit Table" : "Create Table"}
                 </h3>
                 <p className="mt-1 text-[10px] font-medium text-slate-500">
-                  Name the empty inventory table you want to add.
+                  {editingTableId
+                    ? "Update the table name, quarter, and year."
+                    : "Name the empty inventory table you want to add."}
                 </p>
               </div>
               <button
                 type="button"
                 onClick={closeCreateTableModal}
                 className="inline-flex h-9 w-9 items-center justify-center rounded-lg text-slate-500 transition hover:bg-slate-100 hover:text-slate-950"
-                aria-label="Close create table modal"
+                aria-label={`Close ${editingTableId ? "edit" : "create"} table modal`}
               >
                 <span className="text-2xl leading-none">&times;</span>
               </button>
@@ -2077,8 +2110,8 @@ const StaffInventoryView = ({ hideHeader, readOnly = false }) => {
                   type="submit"
                   className="inline-flex h-11 items-center justify-center gap-2 rounded-lg bg-[#F5C518] px-6 text-[10px] font-bold text-[#152c4a] transition-all hover:bg-[#e6b800] hover:-translate-y-0.5 active:translate-y-0 duration-200"
                 >
-                  <Icon name="plus" className="h-4 w-4" />
-                  Create Table
+                  <Icon name={editingTableId ? "edit" : "plus"} className="h-4 w-4" />
+                  {editingTableId ? "Save Changes" : "Create Table"}
                 </button>
               </div>
             </form>

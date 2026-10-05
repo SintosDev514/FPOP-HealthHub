@@ -3,6 +3,7 @@ import jsPDF from "jspdf";
 import autoTable from "jspdf-autotable";
 import ExcelJS from "exceljs";
 import { saveAs } from "file-saver";
+import { addReportLogosToPdf, addReportLogosToWorksheet } from "../../../utils/reportLogos";
 
 /* ── Colors matching screenshot design ── */
 const NAVY_DARK   = "#0f2942";
@@ -302,15 +303,16 @@ export default function Attendance({ isMobile }) {
       ? `Attendance Records — ${monthLabel}`
       : `Attendance Records — ${formattedDates.full}`;
 
+    addReportLogosToPdf(doc, { x: 14, y: 10, height: 20 });
     doc.setFontSize(14);
     doc.setTextColor(30, 58, 95);
-    doc.text("FPOP HealthHub", 14, 14);
+    doc.text("FPOP HealthHub", 14, 42);
     doc.setFontSize(11);
     doc.setTextColor(100, 116, 139);
-    doc.text(title, 14, 21);
+    doc.text(title, 14, 52);
 
     autoTable(doc, {
-      startY: 28,
+      startY: 60,
       head: [["#", "Staff Name", "Date", "Time In", "Time Out", "Status"]],
       body: recordsForDate.map((r, i) => [
         i + 1,
@@ -349,6 +351,8 @@ export default function Attendance({ isMobile }) {
     titleCell.font = { bold: true, size: 13, color: { argb: "FF1E3A5F" } };
     titleCell.alignment = { horizontal: "left" };
     sheet.getRow(1).height = 24;
+
+    addReportLogosToWorksheet(sheet, { row: 1, col: 0, height: 20 });
 
     // Header row
     sheet.addRow(["#", "Staff Name", "Date", "Time In", "Time Out", "Status"]);
