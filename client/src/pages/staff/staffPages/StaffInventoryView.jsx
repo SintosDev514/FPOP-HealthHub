@@ -679,10 +679,6 @@ const StaffInventoryView = ({ hideHeader, readOnly = false }) => {
     setSelectedTableFilter(event.target.value);
   };
 
-  const handleDownloadCategory = (table, category) => {
-    handleExportPDF([{ ...table, categories: [category] }]);
-  };
-
   const handleExportPDF = (tablesOverride) => {
     const { filenameDate, displayDate } = getReportDate();
     const doc = new jsPDF({ orientation: "landscape", unit: "pt", format: "a4" });
@@ -1868,19 +1864,7 @@ const StaffInventoryView = ({ hideHeader, readOnly = false }) => {
                               </span>
                             </button>
                             <div className="flex items-center gap-2">
-                              {readOnly ? (
-                                <button
-                                  type="button"
-                                  onClick={() =>
-                                    handleDownloadCategory(table, cat)
-                                  }
-                                  className="inline-flex h-8 shrink-0 items-center justify-center gap-2 rounded-lg bg-[#F5C518] text-[#1E3A5F] px-3 text-[9px] font-bold transition-all hover:bg-[#e6b800] hover:-translate-y-0.5 active:translate-y-0 duration-200"
-                                  aria-label={`Download ${cat.name}`}
-                                >
-                                  <Icon name="download" className="h-3.5 w-3.5" />
-                                  Download
-                                </button>
-                              ) : (
+                              {!readOnly && (
                                 <>
                                   <button
                                     type="button"

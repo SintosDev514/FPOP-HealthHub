@@ -16,8 +16,8 @@ const logoImg1Split = splitDataUrl(logoImg1);
 
 export const REPORT_LOGOS = [
   { dataUrl: logoImg3, jsPdfFormat: "JPEG", ...logoImg3Split, ratio: 559 / 314 },
-  { dataUrl: logoImg2, jsPdfFormat: "PNG", ...logoImg2Split, ratio: 469 / 212 },
   { dataUrl: logoImg1, jsPdfFormat: "PNG", ...logoImg1Split, ratio: 1280 / 668 },
+  { dataUrl: logoImg2, jsPdfFormat: "PNG", ...logoImg2Split, ratio: 469 / 212 },
 ];
 
 const EMU_PER_PIXEL = 9525;

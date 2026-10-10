@@ -107,7 +107,7 @@ const groupByService = (appointments) => {
 const getAppointmentsByStatus = (appointments, status) =>
   appointments.filter((appointment) => appointment.status === status);
 
-const buildAppointmentStatusReport = (appointments, status, title) => ({
+const buildAppointmentStatusReport = (appointments, status, title, showTotal = false) => ({
   id: `${status}-appointments`,
   title,
   department: "Appointments",
@@ -116,16 +116,21 @@ const buildAppointmentStatusReport = (appointments, status, title) => ({
   date: formatDate(new Date()),
   records: appointments.length,
   columns: ["Patient", "Service", "Date", "Time", "Status"],
-  rows: appointments.map((appointment) => [
-    getPatientName(appointment),
-    appointment.serviceName || "N/A",
-    formatDate(appointment.date),
-    appointment.time || "N/A",
-    appointment.status || "N/A",
-  ]),
+  rows: [
+    ...appointments.map((appointment) => [
+      getPatientName(appointment),
+      appointment.serviceName || "N/A",
+      formatDate(appointment.date),
+      appointment.time || "N/A",
+      appointment.status || "N/A",
+    ]),
+    ...(showTotal
+      ? [["TOTAL", "", "", "", formatNumber(appointments.length)]]
+      : []),
+  ],
 });
 
-const buildReportRows = ({ appointments, staff, inventoryTables }) => {
+const buildReportRows = ({ appointments, inventoryTables }) => {
   const today = todayKey();
   const inventoryItems = flattenInventoryItems(inventoryTables);
   const lowStockItems = inventoryItems.filter(
@@ -149,13 +154,18 @@ const buildReportRows = ({ appointments, staff, inventoryTables }) => {
       date: generatedDate,
       records: appointments.length,
       columns: ["Patient", "Service", "Date", "Time", "Status"],
-      rows: appointments.map((appointment) => [
-        getPatientName(appointment),
-        appointment.serviceName || "N/A",
-        formatDate(appointment.date),
-        appointment.time || "N/A",
-        appointment.status || "N/A",
-      ]),
+      rows: [
+        ...appointments.map((appointment) => [
+          getPatientName(appointment),
+          appointment.serviceName || "N/A",
+          formatDate(appointment.date),
+          appointment.time || "N/A",
+          appointment.status || "N/A",
+        ]),
+        ...(appointments.length > 0
+          ? [["TOTAL", "", "", "", formatNumber(appointments.length)]]
+          : []),
+      ],
     },
     {
       id: "today-schedule",
@@ -181,7 +191,8 @@ const buildReportRows = ({ appointments, staff, inventoryTables }) => {
     buildAppointmentStatusReport(
       confirmedAppointments,
       "confirmed",
-      "Confirmed Appointment Report"
+      "Confirmed Appointment Report",
+      true
     ),
     buildAppointmentStatusReport(
       completedAppointments,
@@ -212,22 +223,6 @@ const buildReportRows = ({ appointments, staff, inventoryTables }) => {
       ]),
     },
     {
-      id: "staff-directory",
-      title: "Staff Directory Report",
-      department: "Staff",
-      type: "Directory",
-      generatedBy: "System",
-      date: generatedDate,
-      records: staff.length,
-      columns: ["Name", "Email", "Specialty", "Status"],
-      rows: staff.map((member) => [
-        member.name || personName(member),
-        member.email || "N/A",
-        member.specialty || "N/A",
-        member.status || "Active",
-      ]),
-    },
-    {
       id: "inventory-stock",
       title: "Inventory Stock Report",
       department: "Inventory",
@@ -236,14 +231,26 @@ const buildReportRows = ({ appointments, staff, inventoryTables }) => {
       date: generatedDate,
       records: inventoryItems.length,
       columns: ["Table", "Category", "Item", "Beginning", "Ending", "Status"],
-      rows: inventoryItems.map((item) => [
-        item.tableName,
-        item.category,
-        item.item,
-        formatNumber(item.beginning),
-        formatNumber(item.ending),
-        item.status,
-      ]),
+      rows: [
+        ...inventoryItems.map((item) => [
+          item.tableName,
+          item.category,
+          item.item,
+          formatNumber(item.beginning),
+          formatNumber(item.ending),
+          item.status,
+        ]),
+        ...(inventoryItems.length > 0
+          ? [[
+              "TOTAL",
+              "",
+              "",
+              formatNumber(inventoryItems.reduce((sum, item) => sum + item.beginning, 0)),
+              formatNumber(inventoryItems.reduce((sum, item) => sum + item.ending, 0)),
+              "",
+            ]]
+          : []),
+      ],
     },
     {
       id: "low-stock",
@@ -271,13 +278,24 @@ const buildReportRows = ({ appointments, staff, inventoryTables }) => {
       date: generatedDate,
       records: inventoryItems.length,
       columns: ["Table", "Item", "Receipts", "Issuances", "Ending"],
-      rows: inventoryItems.map((item) => [
-        item.tableName,
-        item.item,
-        formatNumber(item.receipts),
-        formatNumber(item.issuances),
-        formatNumber(item.ending),
-      ]),
+      rows: [
+        ...inventoryItems.map((item) => [
+          item.tableName,
+          item.item,
+          formatNumber(item.receipts),
+          formatNumber(item.issuances),
+          formatNumber(item.ending),
+        ]),
+        ...(inventoryItems.length > 0
+          ? [[
+              "TOTAL",
+              "",
+              formatNumber(inventoryItems.reduce((sum, item) => sum + item.receipts, 0)),
+              formatNumber(inventoryItems.reduce((sum, item) => sum + item.issuances, 0)),
+              formatNumber(inventoryItems.reduce((sum, item) => sum + item.ending, 0)),
+            ]]
+          : []),
+      ],
     },
   ].map((report) => ({
     ...report,
@@ -590,7 +608,6 @@ const fetchJson = async (path) => {
 
 const StaffReportsView = () => {
   const [appointments, setAppointments] = useState([]);
-  const [staff, setStaff] = useState([]);
   const [inventoryTables, setInventoryTables] = useState([]);
   const [loading, setLoading] = useState(true);
   const [errors, setErrors] = useState([]);
@@ -601,25 +618,17 @@ const StaffReportsView = () => {
 
     const results = await Promise.allSettled([
       fetchJson("/api/appointments/staff"),
-      fetchJson("/api/staff"),
       fetchJson("/api/inventory/tables"),
     ]);
 
     const nextErrors = [];
-    const [appointmentsResult, staffResult, inventoryResult] = results;
+    const [appointmentsResult, inventoryResult] = results;
 
     if (appointmentsResult.status === "fulfilled") {
       setAppointments(appointmentsResult.value.appointments || []);
     } else {
       setAppointments([]);
       nextErrors.push("Appointments");
-    }
-
-    if (staffResult.status === "fulfilled") {
-      setStaff(staffResult.value.staff || []);
-    } else {
-      setStaff([]);
-      nextErrors.push("Staff directory");
     }
 
     if (inventoryResult.status === "fulfilled") {
@@ -638,15 +647,15 @@ const StaffReportsView = () => {
   }, []);
 
   const reports = useMemo(
-    () => buildReportRows({ appointments, staff, inventoryTables }),
-    [appointments, staff, inventoryTables]
+    () => buildReportRows({ appointments, inventoryTables }),
+    [appointments, inventoryTables]
   );
   const availableReports = useMemo(
     () => reports.filter((report) => report.status === "Available"),
     [reports]
   );
 
-  const sourceCount = 3 - errors.length;
+  const sourceCount = 2 - errors.length;
   const downloadableRecords = availableReports.reduce(
     (sum, report) => sum + report.records,
     0
@@ -666,7 +675,7 @@ const StaffReportsView = () => {
     },
     {
       label: "Data Sources",
-      value: loading ? "..." : `${sourceCount}/3`,
+      value: loading ? "..." : `${sourceCount}/2`,
       icon: errors.length ? "alert" : "check",
       tone: errors.length ? "orange" : "green",
     },

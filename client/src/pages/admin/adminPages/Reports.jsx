@@ -13,7 +13,60 @@ const reportTemplates = [
   { id: 1, title: "Monthly Clinical Consultation Summary", desc: "Aggregated volumes of appointments, departments, and patient demographics.", category: "Operational" },
   { id: 2, title: "Client Feedback & Satisfaction Survey", desc: "Survey responses from clients including satisfaction ratings and suggestions for improvement.", category: "Feedback" },
   { id: 4, title: "Contraceptive Supply & Inventory Report", desc: "Current stock status of family planning supplies, distribution logs, and reorder levels.", category: "Inventory" },
+  { id: 5, title: "Inventory Stock Report", desc: "Stock on hand per item with beginning and ending balances across all inventory tables.", category: "Inventory" },
+  { id: 6, title: "Inventory Movement Summary", desc: "Receipts, issuances and ending balances per item across all inventory tables.", category: "Inventory" },
+  { id: 7, title: "Service Activity Report", desc: "Appointment volume per service with status breakdown.", category: "Operational" },
+  { id: 8, title: "Staff Directory Report", desc: "Registered staff members with email, specialty and status.", category: "Staff" },
 ];
+
+const formatNumber = (value) => new Intl.NumberFormat("en-US").format(value || 0);
+
+const groupByService = (appointments) => {
+  const grouped = new Map();
+
+  appointments.forEach((appointment) => {
+    const service = appointment.serviceName || "Unspecified Service";
+    const current = grouped.get(service) || {
+      service,
+      total: 0,
+      pending: 0,
+      confirmed: 0,
+      completed: 0,
+      cancelled: 0,
+    };
+    current.total += 1;
+    if (current[appointment.status] !== undefined) {
+      current[appointment.status] += 1;
+    }
+    grouped.set(service, current);
+  });
+
+  return Array.from(grouped.values());
+};
+
+const flattenInventoryItems = (tables) =>
+  tables.flatMap((table) =>
+    (table.categories || []).flatMap((category) =>
+      (category.items || []).map((item) => {
+        const beginning = Number(item.beginning || 0);
+        const receiptDetails = Array.isArray(item.receipts) ? item.receipts.slice(0, -1) : [];
+        const receiptsTotal = beginning + receiptDetails.reduce((s, v) => s + (Number(v) || 0), 0);
+        const issuances = Array.isArray(item.issuances) && item.issuances.length
+          ? Number(item.issuances[item.issuances.length - 1]) || 0
+          : 0;
+        return {
+          tableName: table.name || "Inventory Table",
+          category: category.name || "Uncategorized",
+          item: item.name || "Unnamed Item",
+          beginning,
+          receipts: receiptsTotal,
+          issuances,
+          ending: Number(item.ending || 0),
+          status: item.status || "In Stock",
+        };
+      })
+    )
+  );
 
 const todayKey = () => new Date().toISOString().slice(0, 10);
 
@@ -185,6 +238,7 @@ export default function Reports({ isMobile }) {
   const [appointments, setAppointments] = useState([]);
   const [inventory, setInventory] = useState([]);
   const [surveys, setSurveys] = useState([]);
+  const [staff, setStaff] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
   const [exportingId, setExportingId] = useState(null);
@@ -209,10 +263,12 @@ export default function Reports({ isMobile }) {
           fetchJson("/api/admin/appointments"),
           fetchJson("/api/inventory/tables"),
           fetchJson("/api/surveys"),
+          fetchJson("/api/staff"),
         ]);
         setAppointments(results[0].success ? results[0].appointments || [] : []);
         setInventory(results[1].success ? results[1].tables || [] : []);
         setSurveys(results[2].success ? results[2].surveys || [] : []);
+        setStaff(results[3].success ? results[3].staff || [] : []);
       } catch (loadError) {
         setError(loadError.message || "Unable to load report data.");
       } finally {
@@ -222,7 +278,10 @@ export default function Reports({ isMobile }) {
     loadData();
   }, []);
 
-  const reports = useMemo(() => [
+  const reports = useMemo(() => {
+    const inventoryItems = flattenInventoryItems(inventory);
+
+    return [
     {
       ...reportTemplates[0],
       columns: ["Client", "Service", "Department", "Date", "Time", "Status"],
@@ -244,7 +303,76 @@ export default function Reports({ isMobile }) {
         return [table.name || "N/A", category.name || "N/A", item.name || "N/A", beginning, receiptsTotal, item.issuances?.at(-1) || 0, item.ending || 0, item.status || "In Stock"];
       }))),
     },
-  ], [appointments, inventory, surveys]);
+    {
+      ...reportTemplates[3],
+      columns: ["Table", "Category", "Item", "Beginning", "Ending", "Status"],
+      rows: [
+        ...inventoryItems.map((item) => [
+          item.tableName,
+          item.category,
+          item.item,
+          formatNumber(item.beginning),
+          formatNumber(item.ending),
+          item.status,
+        ]),
+        ...(inventoryItems.length > 0
+          ? [[
+              "TOTAL",
+              "",
+              "",
+              formatNumber(inventoryItems.reduce((sum, item) => sum + item.beginning, 0)),
+              formatNumber(inventoryItems.reduce((sum, item) => sum + item.ending, 0)),
+              "",
+            ]]
+          : []),
+      ],
+    },
+    {
+      ...reportTemplates[4],
+      columns: ["Table", "Item", "Receipts", "Issuances", "Ending"],
+      rows: [
+        ...inventoryItems.map((item) => [
+          item.tableName,
+          item.item,
+          formatNumber(item.receipts),
+          formatNumber(item.issuances),
+          formatNumber(item.ending),
+        ]),
+        ...(inventoryItems.length > 0
+          ? [[
+              "TOTAL",
+              "",
+              formatNumber(inventoryItems.reduce((sum, item) => sum + item.receipts, 0)),
+              formatNumber(inventoryItems.reduce((sum, item) => sum + item.issuances, 0)),
+              formatNumber(inventoryItems.reduce((sum, item) => sum + item.ending, 0)),
+            ]]
+          : []),
+      ],
+    },
+    {
+      ...reportTemplates[5],
+      columns: ["Service", "Total", "Pending", "Confirmed", "Completed", "Cancelled"],
+      rows: groupByService(appointments).map((service) => [
+        service.service,
+        service.total,
+        service.pending,
+        service.confirmed,
+        service.completed,
+        service.cancelled,
+      ]),
+    },
+    {
+      ...reportTemplates[6],
+      columns: ["Name", "Email", "Specialty", "Status"],
+      rows: staff.map((member) => [
+        member.name || "N/A",
+        member.email || "N/A",
+        member.specialty || "N/A",
+        member.status || "Active",
+      ]),
+    },
+    ];
+  }, [appointments, inventory, surveys, staff]);
 
   const handleExport = async (report) => {
     setExportingId(report.id);
