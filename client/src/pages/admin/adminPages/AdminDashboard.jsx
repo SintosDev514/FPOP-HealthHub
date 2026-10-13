@@ -11,7 +11,6 @@ import Reports from "./Reports";
 import Notifications from "./Notifications";
 import Settings from "./Settings";
 import Services from "./Services";
-import Attendance from "./Attendance";
 
 import { useAuth } from "../../../context/AuthContext";
 
@@ -28,7 +27,6 @@ import {
   IcoClient,
   IcoInventory,
   IcoService,
-  IcoAttendance,
 } from "../../../components/icon/AdminIcons";
 
 /* ── Brand palette ──────────────────────────────── */
@@ -48,7 +46,6 @@ const NAV_ITEMS = [
   { key: "dashboard",    label: "Dashboard",         Icon: IcoDash,        path: "/admin"              },
   { key: "users",        label: "Client Management",  Icon: IcoClient,       path: "/admin/users"         },
   { key: "staff",        label: "Staff Management",   Icon: IcoStaff,        path: "/admin/staff"         },
-  { key: "attendance",   label: "Attendance",         Icon: IcoAttendance,  path: "/admin/attendance"    },
   { key: "appointments", label: "Appointments",       Icon: IcoCal,         path: "/admin/appointments"  },
   { key: "services",     label: "Services",           Icon: IcoService,      path: "/admin/services"     },
   { key: "inventory",    label: "Inventory",          Icon: IcoInventory,    path: "/admin/inventory"  },
@@ -167,7 +164,6 @@ function AdminShell({ activeNav }) {
     dashboard: "Dashboard",
     users: "Client Management",
     staff: "Staff Management",
-    attendance: "Attendance",
     appointments: "Appointments",
     services: "Services",
     inventory: "Inventory",
@@ -181,7 +177,6 @@ function AdminShell({ activeNav }) {
     dashboard: "Overview of your health hub analytics and stats.",
     users: "Manage clinic clients, accounts, and registration details.",
     staff: "Manage clinic doctors, nurses, and support staff.",
-    attendance: "Monitor real-time staff attendance, active duty shifts, time-ins, and time-outs.",
     appointments: "Schedule, track, and manage client medical appointments.",
     services: "Add and edit the services offered by the clinic.",
     inventory: "Track all stock items by category, receipts, issuances, and balances.",
@@ -462,7 +457,6 @@ function AdminShell({ activeNav }) {
           {activeNav === "dashboard"    && <DashboardOverview isMobile={isMobile} />}
           {activeNav === "users"        && <UserManagement   isMobile={isMobile} />}
           {activeNav === "staff"        && <StaffManagement   isMobile={isMobile} />}
-          {activeNav === "attendance"   && <Attendance        isMobile={isMobile} />}
           {activeNav === "appointments" && <Appointments      isMobile={isMobile} />}
           {activeNav === "services"     && <Services          isMobile={isMobile} />}
           {activeNav === "inventory"    && <AdminInventoryView />}
@@ -519,7 +513,6 @@ export default function AdminDashboard() {
       <Route path="/"              element={<AdminShell activeNav="dashboard"    />} />
       <Route path="/users"         element={<AdminShell activeNav="users"        />} />
       <Route path="/staff"         element={<AdminShell activeNav="staff"        />} />
-      <Route path="/attendance"    element={<AdminShell activeNav="attendance"   />} />
       <Route path="/appointments"  element={<AdminShell activeNav="appointments" />} />
       <Route path="/services"      element={<AdminShell activeNav="services"     />} />
       <Route path="/inventory"     element={<AdminShell activeNav="inventory"    />} />

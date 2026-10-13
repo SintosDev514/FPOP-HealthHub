@@ -3,22 +3,6 @@ import jwt from "jsonwebtoken";
 
 import transporter from "../config/nodeMailer.js";
 import userModel from "../models/userModel.js";
-import attendanceModel from "../models/attendanceModel.js";
-
-const getLocalDateKey = (date) => {
-  const year = date.getFullYear();
-  const month = String(date.getMonth() + 1).padStart(2, "0");
-  const day = String(date.getDate()).padStart(2, "0");
-  return `${year}-${month}-${day}`;
-};
-
-const getLocalTime = (date = new Date()) => {
-  return date.toLocaleTimeString("en-US", {
-    hour: "2-digit",
-    minute: "2-digit",
-    hour12: true,
-  });
-};
 
 export const SignUp = async (req, res) => {
   const { firstName, lastName, email, password, phone, address, dateOfBirth } = req.body;
@@ -203,19 +187,6 @@ export const SignIn = async (req, res) => {
       maxAge,
     });
 
-    try {
-      if (user.role === "staff") {
-        const now = new Date();
-        await attendanceModel.findOneAndUpdate(
-          { userId: user._id, date: getLocalDateKey(now) },
-          { $setOnInsert: { timeIn: getLocalTime(now) } },
-          { upsert: true, new: true }
-        );
-      }
-    } catch (attendanceError) {
-      console.error("Failed to record time-in:", attendanceError.message);
-    }
-
     res.json({
       success: true,
       message: "User Login successfully",
@@ -236,29 +207,6 @@ export const SignIn = async (req, res) => {
 
 export const Logout = async (req, res) => {
   try {
-    const token = req.cookies?.token || req.headers?.authorization?.split(" ")[1];
-    if (token) {
-      try {
-        const decoded = jwt.verify(token, process.env.JWT_SECRET);
-        if (decoded?.id) {
-          const user = await userModel.findById(decoded.id);
-          if (user && user.role === "staff") {
-            const now = new Date();
-            await attendanceModel.findOneAndUpdate(
-              { userId: user._id, date: getLocalDateKey(now) },
-              {
-                $set: { timeOut: getLocalTime(now) },
-                $setOnInsert: { timeIn: getLocalTime(now) },
-              },
-              { upsert: true, new: true }
-            );
-          }
-        }
-      } catch (decodeError) {
-        console.error("Failed to record time-out:", decodeError.message);
-      }
-    }
-
     res.clearCookie("token", {
       httpOnly: true,
       secure: process.env.NODE_ENV === "production",

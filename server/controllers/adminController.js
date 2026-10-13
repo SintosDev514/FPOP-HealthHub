@@ -2,7 +2,6 @@ import bcrypt from "bcryptjs";
 import userModel from "../models/userModel.js";
 import appointmentModel from "../models/appointmentModels.js";
 import notificationModel from "../models/notificationModel.js";
-import attendanceModel from "../models/attendanceModel.js";
 
 const monthNames = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
 
@@ -190,14 +189,6 @@ const getDashboardOverview = async (req, res) => {
 const listUsers = async (req, res) => {
   try {
     const users = await userModel.find({}, "-password").sort({ createdAt: -1 });
-    const now = new Date();
-    const todayKey = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, "0")}-${String(now.getDate()).padStart(2, "0")}`;
-    const onlineRecords = await attendanceModel.find({
-      date: todayKey,
-      timeIn: { $ne: "" },
-      timeOut: { $in: ["", null] },
-    });
-    const onlineIds = new Set(onlineRecords.map((r) => String(r.userId)));
     const formatted = users.map((u) => ({
       _id: u._id,
       name: `${u.firstName} ${u.lastName}`.trim(),
@@ -209,7 +200,7 @@ const listUsers = async (req, res) => {
       avatar: u.avatar || "",
       specialty: u.specialty || "",
       schedule: u.schedule || {},
-      isOnline: onlineIds.has(String(u._id)),
+      isOnline: false,
     }));
     res.json({ success: true, users: formatted });
   } catch (error) {
@@ -444,34 +435,6 @@ const getAnalytics = async (req, res) => {
   }
 };
 
-const getAttendance = async (req, res) => {
-  try {
-    const records = await attendanceModel
-      .find()
-      .populate("userId", "firstName lastName email role")
-      .sort({ createdAt: -1 });
-
-    const formatted = records
-      .filter((record) => record.userId && (record.userId.role === "staff" || !record.userId.role))
-      .map((record) => ({
-        _id: record._id,
-        userId: record.userId?._id || record.userId,
-        name: record.userId
-          ? `${record.userId.firstName || ""} ${record.userId.lastName || ""}`.trim()
-          : "",
-        role: record.userId?.role || "staff",
-        email: record.userId?.email || "",
-        date: record.date,
-        timeIn: record.timeIn || "",
-        timeOut: record.timeOut || "",
-      }));
-
-    res.json({ success: true, attendance: formatted });
-  } catch (error) {
-    res.json({ success: false, message: error.message });
-  }
-};
-
 const deleteUser = async (req, res) => {
   try {
     const user = await userModel.findByIdAndDelete(req.params.id);
@@ -482,8 +445,6 @@ const deleteUser = async (req, res) => {
     await appointmentModel.deleteMany({
       $or: [{ patientId: req.params.id }, { staffId: req.params.id }],
     });
-
-    await attendanceModel.deleteMany({ userId: req.params.id });
 
     await notificationModel.create({
       title: "User Deleted",
@@ -498,4 +459,4 @@ const deleteUser = async (req, res) => {
   }
 };
 
-export { getDashboardOverview, listUsers, createUser, updateUser, deleteUser, getAllAppointments, getAnalytics, getAttendance };
+export { getDashboardOverview, listUsers, createUser, updateUser, deleteUser, getAllAppointments, getAnalytics };
