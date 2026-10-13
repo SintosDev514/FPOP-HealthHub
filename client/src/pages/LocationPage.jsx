@@ -1,5 +1,6 @@
 import React, { useLayoutEffect, useRef } from "react";
 import { gsap } from "gsap";
+import locationImage from "../assets/imgimg.jfif";
 
 function LocationPage() {
   const rootRef = useRef(null);
@@ -244,8 +245,8 @@ function LocationPage() {
 
                 <img
                   ref={nurseRef}
-                  src="/nurseloc.png"
-                  alt="Nurse"
+                  src={locationImage}
+                  alt="FPOP clinic"
                   className="relative z-20 h-[220px] w-auto object-contain sm:h-[270px] md:h-[300px] lg:h-[470px] xl:h-[500px] px-4"
                 />
               </div>

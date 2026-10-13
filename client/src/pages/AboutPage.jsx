@@ -11,7 +11,6 @@ function AboutPage() {
   const heroRef = useRef(null);
   const heroTextRef = useRef(null);
   const heroImageRef = useRef(null);
-  const heroCardsRef = useRef([]);
   const secondSectionRef = useRef(null);
   const secondImageRef = useRef(null);
   const secondTextRef = useRef(null);
@@ -54,26 +53,7 @@ function AboutPage() {
             duration: 0.9,
           },
           "-=0.6"
-        )
-        .from(
-          heroCardsRef.current,
-          {
-            opacity: 0,
-            y: 24,
-            stagger: 0.12,
-            duration: 0.5,
-          },
-          "-=0.5"
         );
-
-      gsap.to(".floating-ui", {
-        y: -10,
-        duration: 2.5,
-        repeat: -1,
-        yoyo: true,
-        ease: "sine.inOut",
-        stagger: 0.2,
-      });
 
       gsap.from(secondSectionRef.current, {
         scrollTrigger: {
@@ -155,10 +135,6 @@ function AboutPage() {
     return () => ctx.revert();
   }, []);
 
-  const setHeroCardRef = (el, index) => {
-    heroCardsRef.current[index] = el;
-  };
-
   const handleNurseEnter = () => {
     if (!nurseCardRef.current || window.innerWidth < 768) return;
     gsap.to(nurseCardRef.current, {
@@ -219,37 +195,6 @@ function AboutPage() {
               ref={heroImageRef}
               className="relative flex min-h-[260px] items-end justify-center md:min-h-[380px]"
             >
-              <div
-                ref={(el) => setHeroCardRef(el, 0)}
-                className="floating-ui absolute left-10 top-6 z-30 hidden w-44 rounded-[8px] bg-white px-4 py-3 shadow-xl md:block"
-              >
-                <p className="text-xs text-slate-500">Appointments</p>
-                <p className="mt-1 text-xl font-bold text-[#1E3A5F]">24/7</p>
-                <p className="mt-1 text-sm text-slate-500">Book anytime</p>
-              </div>
-
-              <div
-                ref={(el) => setHeroCardRef(el, 1)}
-                className="floating-ui absolute right-10 top-0 z-30 hidden w-48 rounded-[8px] bg-white px-4 py-3 shadow-xl md:block"
-              >
-                <p className="text-xs text-slate-500">Patient Access</p>
-                <p className="mt-1 text-xl font-bold text-[#1E3A5F]">Secure</p>
-                <p className="mt-1 text-sm text-slate-500">Safe & private</p>
-              </div>
-
-              <div
-                ref={(el) => setHeroCardRef(el, 2)}
-                className="floating-ui absolute left-20 top-40 z-30 hidden w-56 rounded-[8px] bg-white px-4 py-3 shadow-xl md:block"
-              >
-                <p className="text-xs text-slate-500">Portal Experience</p>
-                <p className="mt-1 text-xl font-bold text-[#1E3A5F]">
-                  Fast & Simple
-                </p>
-                <p className="mt-1 text-sm text-slate-500">
-                  Easy workflow for patients and staff
-                </p>
-              </div>
-
               <img
                 src={heroImage}
                 alt="FPOP clinic"
