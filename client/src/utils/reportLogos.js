@@ -45,7 +45,10 @@ export const addReportLogosToWorksheet = (worksheet, options = {}) => {
 
   REPORT_LOGOS.forEach((logo) => {
     const width = Math.round(height * logo.ratio);
-    const imageId = worksheet.addImage({ base64: logo.base64, extension: logo.extension });
+    const imageId = worksheet.workbook.addImage({
+      base64: logo.base64,
+      extension: logo.extension,
+    });
     worksheet.addImage(imageId, {
       tl: { col, row, colOff: Math.round(cursorPx * EMU_PER_PIXEL), rowOff: 0 },
       ext: { width, height },

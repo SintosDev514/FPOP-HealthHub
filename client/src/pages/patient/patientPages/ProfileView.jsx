@@ -1,4 +1,10 @@
-import React, { useState, useRef } from "react";
+import React, { useState, useRef, useEffect } from "react";
+
+const DEFAULT_CLINIC = {
+  clinicEmail: "fpophealthhub@gmail.com",
+  clinicPhone: "09556127415",
+  clinicAddress: "Rosales Blvd Corner Galit St.\nBrgy. East Awang, Calbayog City, Samar.\nPhilippines",
+};
 
 const Icon = ({ type, className = "h-5 w-5" }) => {
   const paths = {
@@ -141,7 +147,23 @@ const ProfileView = ({ profile, onSaveProfile, appointments = [], onBackToDashbo
   const [supportOpen, setSupportOpen] = useState(false);
   const [avatarPreview, setAvatarPreview] = useState(null);
   const [mobileTab, setMobileTab] = useState("personal");
+  const [clinic, setClinic] = useState(DEFAULT_CLINIC);
   const fileInputRef = useRef(null);
+
+  useEffect(() => {
+    fetch(`${__API_BASE__}/api/settings`)
+      .then((res) => res.json())
+      .then((data) => {
+        if (data.success && data.settings) {
+          setClinic({
+            clinicEmail: data.settings.clinicEmail || DEFAULT_CLINIC.clinicEmail,
+            clinicPhone: data.settings.clinicPhone || DEFAULT_CLINIC.clinicPhone,
+            clinicAddress: data.settings.clinicAddress || DEFAULT_CLINIC.clinicAddress,
+          });
+        }
+      })
+      .catch(() => {});
+  }, []);
   const visibleProfile = isEditing ? { ...formData, avatar: avatarPreview || formData.avatar } : getInitialProfileData(profile);
   const appointmentStats = getAppointmentStats(appointments);
 
@@ -452,15 +474,15 @@ const ProfileView = ({ profile, onSaveProfile, appointments = [], onBackToDashbo
             <div className="mt-6 space-y-3 text-sm">
               <div className="rounded-[8px] bg-slate-50 p-4">
                 <p className="font-bold text-[#061022]">Email</p>
-                <p className="mt-1 text-[#18304d]">support@fpopclinic.com</p>
+                <p className="mt-1 text-[#18304d]">{clinic.clinicEmail}</p>
               </div>
               <div className="rounded-[8px] bg-slate-50 p-4">
                 <p className="font-bold text-[#061022]">Phone</p>
-                <p className="mt-1 text-[#18304d]">(555) 123-4567</p>
+                <p className="mt-1 text-[#18304d]">{clinic.clinicPhone}</p>
               </div>
               <div className="rounded-[8px] bg-slate-50 p-4">
-                <p className="font-bold text-[#061022]">Hours</p>
-                <p className="mt-1 text-[#18304d]">Monday to Friday, 8:00 AM - 5:00 PM</p>
+                <p className="font-bold text-[#061022]">Address</p>
+                <p className="mt-1 whitespace-pre-line text-[#18304d]">{clinic.clinicAddress}</p>
               </div>
             </div>
           </div>
