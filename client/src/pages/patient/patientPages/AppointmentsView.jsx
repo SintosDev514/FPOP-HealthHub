@@ -35,6 +35,23 @@ const formatDate = (date) => {
 
 const getAppointmentStatus = (appointment) => appointment.status || "upcoming";
 
+const isUpcomingAppointment = (appointment) => {
+  const status = getAppointmentStatus(appointment);
+  if (status === "completed" || status === "cancelled") return false;
+
+  const date =
+    appointment.date instanceof Date
+      ? appointment.date
+      : appointment.date
+        ? new Date(appointment.date)
+        : null;
+  if (!date) return true;
+
+  const today = new Date();
+  today.setHours(0, 0, 0, 0);
+  return date.getTime() >= today.getTime();
+};
+
 const getAppointmentStats = (appointmentList = []) =>
   appointmentList.reduce(
     (stats, appointment) => {
@@ -42,12 +59,13 @@ const getAppointmentStats = (appointmentList = []) =>
       return {
         ...stats,
         total: stats.total + 1,
-        upcoming: stats.upcoming + (status === "upcoming" ? 1 : 0),
+        upcoming: stats.upcoming + (isUpcomingAppointment(appointment) ? 1 : 0),
+        confirmed: stats.confirmed + (status === "confirmed" ? 1 : 0),
         completed: stats.completed + (status === "completed" ? 1 : 0),
         pending: stats.pending + (status === "pending" ? 1 : 0),
       };
     },
-    { total: 0, upcoming: 0, completed: 0, pending: 0 }
+    { total: 0, upcoming: 0, confirmed: 0, completed: 0, pending: 0 }
   );
 
 const StatCard = ({ icon, label, value, tone = "neutral" }) => {
@@ -196,6 +214,7 @@ const MyAppointmentsView = ({ appointments = [], onNavigateToBook }) => {
   const appointmentStats = getAppointmentStats(normalizedAppointments);
   const filteredAppointments = normalizedAppointments.filter((appointment) => {
     if (statusFilter === "all") return true;
+    if (statusFilter === "upcoming") return isUpcomingAppointment(appointment);
     return getAppointmentStatus(appointment) === statusFilter;
   });
 
@@ -220,7 +239,7 @@ const MyAppointmentsView = ({ appointments = [], onNavigateToBook }) => {
         <section className="grid grid-cols-1 gap-4 md:grid-cols-2 xl:grid-cols-4">
           <StatCard icon="chart" label="Total Appointments" value={appointmentStats.total} />
           <StatCard icon="calendar" label="Upcoming" value={appointmentStats.upcoming} tone="blue" />
-          <StatCard icon="check" label="Completed" value={appointmentStats.completed} tone="green" />
+          <StatCard icon="check" label="Confirmed" value={appointmentStats.confirmed} tone="green" />
           <StatCard icon="alert" label="Pending" value={appointmentStats.pending} tone="orange" />
         </section>
 

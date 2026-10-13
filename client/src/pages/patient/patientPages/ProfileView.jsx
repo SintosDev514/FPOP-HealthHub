@@ -115,11 +115,12 @@ const getAppointmentStats = (appointmentList = []) =>
         ...stats,
         total: stats.total + 1,
         upcoming: stats.upcoming + (s === "upcoming" ? 1 : 0),
+        confirmed: stats.confirmed + (s === "confirmed" ? 1 : 0),
         completed: stats.completed + (s === "completed" ? 1 : 0),
         pending: stats.pending + (s === "pending" ? 1 : 0),
       };
     },
-    { total: 0, upcoming: 0, completed: 0, pending: 0 }
+    { total: 0, upcoming: 0, confirmed: 0, completed: 0, pending: 0 }
   );
 
 const getInitialProfileData = (profile) => ({
@@ -354,7 +355,7 @@ const ProfileView = ({ profile, onSaveProfile, appointments = [], onBackToDashbo
               <div className="mt-12 space-y-4">
                 <StatRow label="Total" value={appointmentStats.total} />
                 <StatRow label="Upcoming" value={appointmentStats.upcoming} tone="blue" />
-                <StatRow label="Completed" value={appointmentStats.completed} tone="green" />
+                <StatRow label="Confirmed" value={appointmentStats.confirmed} tone="green" />
                 <StatRow label="Pending" value={appointmentStats.pending} tone="orange" />
               </div>
             </section>

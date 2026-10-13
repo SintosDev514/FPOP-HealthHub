@@ -50,11 +50,12 @@ const getAppointmentStats = (appointmentList = []) =>
         ...stats,
         total: stats.total + 1,
         upcoming: stats.upcoming + (status === "upcoming" ? 1 : 0),
+        confirmed: stats.confirmed + (status === "confirmed" ? 1 : 0),
         completed: stats.completed + (status === "completed" ? 1 : 0),
         pending: stats.pending + (status === "pending" ? 1 : 0),
       };
     },
-    { total: 0, upcoming: 0, completed: 0, pending: 0 },
+    { total: 0, upcoming: 0, confirmed: 0, completed: 0, pending: 0 },
   );
 
 const StatCard = ({ icon, label, value, tone = "blue" }) => {
@@ -350,8 +351,8 @@ const DashboardView = ({
           />
           <StatCard
             icon="check"
-            label="Completed"
-            value={appointmentStats.completed}
+            label="Confirmed"
+            value={appointmentStats.confirmed}
             tone="green"
           />
           <StatCard

@@ -115,7 +115,7 @@ const buildAppointmentStatusReport = (appointments, status, title, showTotal = f
   generatedBy: "System",
   date: formatDate(new Date()),
   records: appointments.length,
-  columns: ["Patient", "Service", "Date", "Time", "Status"],
+  columns: ["Client", "Service", "Date", "Time", "Status"],
   rows: [
     ...appointments.map((appointment) => [
       getPatientName(appointment),
@@ -153,7 +153,7 @@ const buildReportRows = ({ appointments, inventoryTables }) => {
       generatedBy: "System",
       date: generatedDate,
       records: appointments.length,
-      columns: ["Patient", "Service", "Date", "Time", "Status"],
+      columns: ["Client", "Service", "Date", "Time", "Status"],
       rows: [
         ...appointments.map((appointment) => [
           getPatientName(appointment),
@@ -175,7 +175,7 @@ const buildReportRows = ({ appointments, inventoryTables }) => {
       generatedBy: "System",
       date: generatedDate,
       records: todayAppointments.length,
-      columns: ["Patient", "Service", "Time", "Status"],
+      columns: ["Client", "Service", "Time", "Status"],
       rows: todayAppointments.map((appointment) => [
         getPatientName(appointment),
         appointment.serviceName || "N/A",
