@@ -50,7 +50,12 @@ export const addReportLogosToWorksheet = (worksheet, options = {}) => {
       extension: logo.extension,
     });
     worksheet.addImage(imageId, {
-      tl: { col, row, colOff: Math.round(cursorPx * EMU_PER_PIXEL), rowOff: 0 },
+      tl: {
+        nativeCol: col,
+        nativeColOff: Math.round(cursorPx * EMU_PER_PIXEL),
+        nativeRow: row,
+        nativeRowOff: 0,
+      },
       ext: { width, height },
       editAs: "oneCell",
     });

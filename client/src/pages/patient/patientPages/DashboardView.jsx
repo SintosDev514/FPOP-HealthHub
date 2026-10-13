@@ -42,6 +42,23 @@ const formatAppointmentDate = (date) => {
 
 const getAppointmentStatus = (appointment) => appointment.status || "upcoming";
 
+const isUpcomingAppointment = (appointment) => {
+  const status = getAppointmentStatus(appointment);
+  if (status === "completed" || status === "cancelled") return false;
+
+  const date =
+    appointment.date instanceof Date
+      ? appointment.date
+      : appointment.date
+        ? new Date(appointment.date)
+        : null;
+  if (!date) return true;
+
+  const today = new Date();
+  today.setHours(0, 0, 0, 0);
+  return date.getTime() >= today.getTime();
+};
+
 const getAppointmentStats = (appointmentList = []) =>
   appointmentList.reduce(
     (stats, appointment) => {
@@ -49,7 +66,7 @@ const getAppointmentStats = (appointmentList = []) =>
       return {
         ...stats,
         total: stats.total + 1,
-        upcoming: stats.upcoming + (status === "upcoming" ? 1 : 0),
+        upcoming: stats.upcoming + (isUpcomingAppointment(appointment) ? 1 : 0),
         confirmed: stats.confirmed + (status === "confirmed" ? 1 : 0),
         completed: stats.completed + (status === "completed" ? 1 : 0),
         pending: stats.pending + (status === "pending" ? 1 : 0),

@@ -107,6 +107,23 @@ const StatRow = ({ label, value, tone = "neutral" }) => {
   );
 };
 
+const isUpcomingAppointment = (appointment) => {
+  const status = appointment.status || "upcoming";
+  if (status === "completed" || status === "cancelled") return false;
+
+  const date =
+    appointment.date instanceof Date
+      ? appointment.date
+      : appointment.date
+        ? new Date(appointment.date)
+        : null;
+  if (!date) return true;
+
+  const today = new Date();
+  today.setHours(0, 0, 0, 0);
+  return date.getTime() >= today.getTime();
+};
+
 const getAppointmentStats = (appointmentList = []) =>
   appointmentList.reduce(
     (stats, a) => {
@@ -114,7 +131,7 @@ const getAppointmentStats = (appointmentList = []) =>
       return {
         ...stats,
         total: stats.total + 1,
-        upcoming: stats.upcoming + (s === "upcoming" ? 1 : 0),
+        upcoming: stats.upcoming + (isUpcomingAppointment(a) ? 1 : 0),
         confirmed: stats.confirmed + (s === "confirmed" ? 1 : 0),
         completed: stats.completed + (s === "completed" ? 1 : 0),
         pending: stats.pending + (s === "pending" ? 1 : 0),
