@@ -99,7 +99,7 @@ function LoginForm() {
                   type="email"
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
-                  placeholder="FPOPHealthHub@gmail.com"
+                  placeholder="client@gmail.com"
                   required
                   className="w-full h-9 rounded-xl border border-slate-200 bg-white/60 px-3 outline-none focus:border-[#F5C518] focus:ring-4 focus:ring-[#F5C518]/10 transition-all duration-300 text-xs text-slate-700"
                 />
@@ -202,7 +202,7 @@ function LoginForm() {
         <div className="absolute bottom-1/3 left-1/3 w-3 h-3 bg-[#F5C518]/30 rounded-full hidden lg:block" />
         <div className="absolute top-2/3 right-1/3 w-1.5 h-1.5 bg-white/20 rounded-full hidden lg:block" />
 
-        <div className="relative z-10 flex flex-col items-center text-center max-w-sm"> 
+        <div className="relative z-10 flex flex-col items-center text-center max-w-sm">
           <div className="mb-3 flex items-center justify-center rounded-2xl border border-[#F5C518]/60 bg-[#1E3A5F] p-2 shadow-sm">
             <img
               src="/logoo.png"
