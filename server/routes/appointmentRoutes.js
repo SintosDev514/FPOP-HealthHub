@@ -6,6 +6,7 @@ import {
   getUserAppointments,
   getStaffAppointments,
   updateAppointmentStatus,
+  cancelAppointment,
 } from "../controllers/appointmentController.js";
 
 const appointmentRouter = Router();
@@ -15,5 +16,6 @@ appointmentRouter.get("/slots", userAuth, getAvailableSlots);
 appointmentRouter.get("/staff", userAuth, getStaffAppointments);
 appointmentRouter.post("/", userAuth, createAppointment);
 appointmentRouter.put("/:id/status", userAuth, updateAppointmentStatus);
+appointmentRouter.put("/:id/cancel", userAuth, cancelAppointment);
 
 export default appointmentRouter;

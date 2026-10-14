@@ -223,6 +223,7 @@ const getUserAppointments = async (req, res) => {
     const appointments = await appointmentModel
       .find({ patientId: req.user.id })
       .populate("staffId", "firstName lastName specialty")
+      .populate("cancelledBy", "firstName lastName role")
       .sort({ createdAt: -1 });
 
     res.json({ success: true, appointments });
@@ -236,11 +237,65 @@ const getStaffAppointments = async (req, res) => {
     const appointments = await appointmentModel
       .find({ staffId: req.user.id })
       .populate("patientId", "firstName lastName email phone avatar")
+      .populate("cancelledBy", "firstName lastName role")
       .sort({ date: -1 });
 
     sortAppointments(appointments);
 
     res.json({ success: true, appointments });
+  } catch (error) {
+    res.json({ success: false, message: error.message });
+  }
+};
+
+const cancelAppointment = async (req, res) => {
+  try {
+    const { id } = req.params;
+    const { reason } = req.body || {};
+
+    const appointment = await appointmentModel
+      .findById(id)
+      .populate("staffId", "firstName lastName specialty");
+
+    if (!appointment) {
+      return res.json({ success: false, message: "Appointment not found" });
+    }
+
+    if (req.user.role !== "admin" && appointment.patientId.toString() !== req.user.id.toString()) {
+      return res.json({ success: false, message: "Unauthorized" });
+    }
+
+    if (["cancelled", "completed"].includes(appointment.status)) {
+      return res.json({ success: false, message: "This appointment can no longer be cancelled" });
+    }
+
+    appointment.status = "cancelled";
+    appointment.cancelledBy = req.user.id;
+    appointment.cancelledByRole = req.user.role || "";
+    appointment.cancelledAt = new Date();
+    appointment.cancellationReason = reason || "";
+    await appointment.save();
+
+    const staff = appointment.staffId;
+    if (staff?._id) {
+      Promise.all([
+        notificationModel.create({
+          title: "Appointment Cancelled",
+          text: `An appointment for ${appointment.serviceName} on ${appointment.date} at ${appointment.time} has been cancelled.`,
+          category: "Appointment",
+          priority: "High",
+          userId: staff._id,
+        }),
+        notificationModel.create({
+          title: "Appointment Cancelled",
+          text: `A patient cancelled their ${appointment.serviceName} appointment with ${staff.firstName || ""} ${staff.lastName || ""} on ${appointment.date} at ${appointment.time}.`,
+          category: "Appointment",
+          priority: "High",
+        }),
+      ]).catch(() => {});
+    }
+
+    res.json({ success: true, appointment });
   } catch (error) {
     res.json({ success: false, message: error.message });
   }
@@ -273,6 +328,11 @@ const updateAppointmentStatus = async (req, res) => {
     }
 
     appointment.status = status;
+    if (status === "cancelled") {
+      appointment.cancelledBy = req.user.id;
+      appointment.cancelledByRole = req.user.role || "";
+      appointment.cancelledAt = new Date();
+    }
     await appointment.save();
 
     const patient = appointment.patientId;
@@ -350,4 +410,4 @@ const updateAppointmentStatus = async (req, res) => {
   }
 };
 
-export { getAvailableSlots, createAppointment, getUserAppointments, getStaffAppointments, updateAppointmentStatus };
+export { getAvailableSlots, createAppointment, getUserAppointments, getStaffAppointments, updateAppointmentStatus, cancelAppointment };

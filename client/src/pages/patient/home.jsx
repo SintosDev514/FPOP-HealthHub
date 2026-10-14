@@ -68,6 +68,27 @@ const CombinedDashboard = () => {
     await fetchUser();
   };
 
+  const handleCancelAppointment = async (appointmentId) => {
+    try {
+      const res = await fetch(`${__API_BASE__}/api/appointments/${appointmentId}/cancel`, {
+        method: "PUT",
+        credentials: "include",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({}),
+      });
+      const data = await res.json();
+      if (data.success) {
+        await fetchAppointments();
+        return true;
+      }
+      console.error("Failed to cancel appointment:", data.message);
+      return false;
+    } catch (err) {
+      console.error("Cancel error:", err);
+      return false;
+    }
+  };
+
   const handleSaveProfile = async (formData) => {
     try {
       const body = new FormData();
@@ -167,6 +188,7 @@ const CombinedDashboard = () => {
           onBackToDashboard={() => setCurrentView("dashboard")}
           onNavigateToBook={() => setCurrentView("booking")}
           onViewProfile={() => setCurrentView("profile")}
+          onCancelAppointment={handleCancelAppointment}
         />
       )}
 

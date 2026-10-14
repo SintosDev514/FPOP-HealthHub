@@ -240,9 +240,22 @@ const actTime = appt => {
 const ACOLOR = { completed: "#22c55e", pending: "#f59e0b", confirmed: "#3b82f6", cancelled: "#ef4444" };
 const ALABEL = { completed: "Assessment completed", pending: "Appointment pending", confirmed: "Appointment confirmed", cancelled: "Appointment cancelled" };
 
+const getCancelledByName = (appt) => {
+  const by = appt?.cancelledBy;
+  if (by && typeof by === "object") {
+    const name = `${by.firstName || ""} ${by.lastName || ""}`.trim();
+    if (name) return name;
+  }
+  const role = (by && by.role) || appt?.cancelledByRole || "";
+  if (role === "staff") return "Clinic staff";
+  if (role === "patient") return "The patient";
+  return role;
+};
+
 const ActivityItem = ({ appt }) => {
   const color = ACOLOR[appt.status] || "#94a3b8";
-  const label = ALABEL[appt.status] || "Appointment";
+  const cancelledBy = appt.status === "cancelled" ? getCancelledByName(appt) : "";
+  const label = cancelledBy ? `Cancelled by ${cancelledBy}` : ALABEL[appt.status] || "Appointment";
   const service = appt.serviceName || "General";
   const name = `${appt.patientId?.firstName || ""} ${appt.patientId?.lastName || ""}`.trim() || "Patient";
   return (

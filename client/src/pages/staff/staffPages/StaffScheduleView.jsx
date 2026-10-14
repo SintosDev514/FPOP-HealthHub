@@ -188,6 +188,19 @@ const timeToMinutes = (t) => {
 
 const STATUS_ORDER = { pending: 0, confirmed: 1, completed: 2, cancelled: 3 };
 
+const getCancelledByLabel = (appt) => {
+  if (appt?.status !== "cancelled") return "";
+  const by = appt.cancelledBy;
+  const name =
+    by && typeof by === "object"
+      ? `${by.firstName || ""} ${by.lastName || ""}`.trim()
+      : "";
+  const role = (by && by.role) || appt.cancelledByRole || "";
+  if (name) return `${name}${role ? ` (${role})` : ""}`;
+  if (role) return role === "staff" ? "Clinic staff" : role === "patient" ? "The patient" : role;
+  return "Unknown";
+};
+
 const sortAppointments = (list) =>
   [...list].sort((a, b) => {
     const sDiff = (STATUS_ORDER[a.status] ?? 4) - (STATUS_ORDER[b.status] ?? 4);
@@ -358,6 +371,11 @@ const StaffScheduleView = ({ profile, appointments = [], onRefresh }) => {
                         <span className={`inline-flex whitespace-nowrap rounded-full px-3 py-1 text-[9px] font-bold ${statusStyle(appt.status)}`}>
                           {appt.status}
                         </span>
+                        {appt.status === "cancelled" && (
+                          <p className="mt-1.5 text-[8px] font-semibold text-[#8a96a3]">
+                            Cancelled by {getCancelledByLabel(appt)}
+                          </p>
+                        )}
                       </td>
                       <td className="px-5 py-4">
                         {appt.status === "pending" ? (

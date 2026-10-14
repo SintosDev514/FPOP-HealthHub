@@ -148,15 +148,22 @@ const normalizeAppointment = (appointment) => {
   };
 };
 
-const AppointmentCard = ({ appointment, onSelect }) => {
+const canCancelAppointment = (appointment) =>
+  (appointment.status === "pending" || appointment.status === "confirmed") &&
+  isUpcomingAppointment(appointment);
+
+const AppointmentCard = ({ appointment, onSelect, onCancel }) => {
   const status = appointment.status || "upcoming";
   const style = statusStyles[status] || statusStyles.upcoming;
+  const cancellable = canCancelAppointment(appointment);
 
   return (
-    <button
-      type="button"
+    <div
+      role="button"
+      tabIndex={0}
       onClick={() => onSelect(appointment)}
-      className={`group relative w-full overflow-hidden rounded-[16px] bg-white p-0 text-left shadow-[0_2px_12px_rgba(15,23,42,0.06)] transition-all duration-300 hover:-translate-y-1 hover:shadow-[0_8px_30px_rgba(15,23,42,0.12)] ${style.hoverBg}`}
+      onKeyDown={(e) => { if (e.key === "Enter" || e.key === " ") onSelect(appointment); }}
+      className={`group relative w-full cursor-pointer overflow-hidden rounded-[16px] bg-white p-0 text-left shadow-[0_2px_12px_rgba(15,23,42,0.06)] transition-all duration-300 hover:-translate-y-1 hover:shadow-[0_8px_30px_rgba(15,23,42,0.12)] ${style.hoverBg}`}
     >
       <div className="p-5">
         <div className="flex items-start gap-4">
@@ -202,14 +209,30 @@ const AppointmentCard = ({ appointment, onSelect }) => {
             </div>
           </div>
         </div>
+
+        {cancellable && (
+          <div className="mt-4 flex justify-end border-t border-slate-100 pt-4">
+            <button
+              type="button"
+              onClick={(e) => { e.stopPropagation(); onCancel(appointment); }}
+              className="inline-flex items-center gap-2 rounded-[7px] border border-red-200 bg-red-50 px-4 py-2 text-xs font-bold text-red-600 transition hover:bg-red-100"
+            >
+              <Icon type="alert" className="h-3.5 w-3.5" />
+              Cancel Appointment
+            </button>
+          </div>
+        )}
       </div>
-    </button>
+    </div>
   );
 };
 
-const MyAppointmentsView = ({ appointments = [], onNavigateToBook }) => {
+const MyAppointmentsView = ({ appointments = [], onNavigateToBook, onCancelAppointment }) => {
   const [statusFilter, setStatusFilter] = useState("all");
   const [selectedAppointment, setSelectedAppointment] = useState(null);
+  const [cancelTarget, setCancelTarget] = useState(null);
+  const [cancelling, setCancelling] = useState(false);
+  const [cancelError, setCancelError] = useState(null);
   const normalizedAppointments = appointments.map(normalizeAppointment);
   const appointmentStats = getAppointmentStats(normalizedAppointments);
   const filteredAppointments = normalizedAppointments.filter((appointment) => {
@@ -283,6 +306,7 @@ const MyAppointmentsView = ({ appointments = [], onNavigateToBook }) => {
                 key={appointment.id}
                 appointment={appointment}
                 onSelect={setSelectedAppointment}
+                onCancel={setCancelTarget}
               />
             ))}
           </section>
@@ -319,6 +343,59 @@ const MyAppointmentsView = ({ appointments = [], onNavigateToBook }) => {
                 <p className="text-slate-500">Location</p>
                 <p className="mt-1 font-bold text-[#061022]">{selectedAppointment.location}</p>
               </div>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {cancelTarget && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-slate-900/40 px-4">
+          <div className="w-full max-w-md rounded-[12px] bg-white p-6 shadow-xl">
+            <div className="flex items-start gap-4">
+              <span className="flex h-11 w-11 shrink-0 items-center justify-center rounded-full bg-red-50 text-red-600">
+                <Icon type="alert" className="h-6 w-6" />
+              </span>
+              <div>
+                <h2 className="text-lg font-bold text-[#061022]">Cancel Appointment</h2>
+                <p className="mt-2 text-sm text-[#334155]">
+                  Are you sure you want to cancel your <strong>{cancelTarget.serviceName}</strong> appointment on{" "}
+                  {formatDate(cancelTarget.date)} at {cancelTarget.time}? This action cannot be undone.
+                </p>
+              </div>
+            </div>
+
+            {cancelError && (
+              <p className="mt-4 rounded-[8px] bg-red-50 px-4 py-3 text-xs font-semibold text-red-600">{cancelError}</p>
+            )}
+
+            <div className="mt-6 flex justify-end gap-3">
+              <button
+                type="button"
+                onClick={() => { setCancelTarget(null); setCancelError(null); }}
+                disabled={cancelling}
+                className="rounded-[7px] border border-slate-200 px-5 py-2.5 text-sm font-bold text-[#061022] transition hover:bg-slate-50 disabled:opacity-60"
+              >
+                Keep Appointment
+              </button>
+              <button
+                type="button"
+                disabled={cancelling}
+                onClick={async () => {
+                  if (!onCancelAppointment) return;
+                  setCancelling(true);
+                  setCancelError(null);
+                  const ok = await onCancelAppointment(cancelTarget.id);
+                  setCancelling(false);
+                  if (ok) {
+                    setCancelTarget(null);
+                  } else {
+                    setCancelError("Failed to cancel appointment. Please try again.");
+                  }
+                }}
+                className="rounded-[7px] bg-red-600 px-5 py-2.5 text-sm font-bold text-white transition hover:bg-red-700 disabled:opacity-60"
+              >
+                {cancelling ? "Cancelling..." : "Cancel Appointment"}
+              </button>
             </div>
           </div>
         </div>

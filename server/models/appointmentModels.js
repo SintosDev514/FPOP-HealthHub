@@ -8,6 +8,10 @@ const appointmentSchema = new mongoose.Schema({
   date: { type: String, required: true },
   time: { type: String, required: true },
   status: { type: String, enum: ["pending", "confirmed", "completed", "cancelled"], default: "pending" },
+  cancelledBy: { type: mongoose.Schema.Types.ObjectId, ref: "user", default: null },
+  cancelledByRole: { type: String, default: "" },
+  cancelledAt: { type: Date, default: null },
+  cancellationReason: { type: String, default: "" },
   createdAt: { type: Date, default: Date.now },
 });
 
