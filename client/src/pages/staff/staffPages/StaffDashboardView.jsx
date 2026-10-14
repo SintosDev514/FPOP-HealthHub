@@ -436,11 +436,16 @@ const StaffDashboardView = ({ profile, appointments = [], onStartAssessment, onV
   const todayAppts   = sortAppointments(appointments.filter(a => a.date === todayStr)).slice(0, 2);
   const actItems     = sortAppointments(appointments).slice(0, 4);
 
+  /* Appointment Overview — all appointments broken down by status */
+  const confirmedCount = appointments.filter(a => a.status === "confirmed").length;
+  const cancelledCount = appointments.filter(a => a.status === "cancelled").length;
+
   const donutData = [
-    { label: "Upcoming",      value: upcomingCount,     color: "#1E3A5F" },
+    { label: "Confirmed",     value: confirmedCount,    color: "#3b82f6" },
     { label: "Pending",       value: pendingCount,      color: "#f59e0b" },
     { label: "Completed",     value: completedCount,    color: "#22c55e" },
     { label: "Not Completed", value: notCompletedCount, color: "#f97316" },
+    { label: "Cancelled",     value: cancelledCount,    color: "#ef4444" },
   ];
 
   const initials = profile
@@ -517,7 +522,7 @@ const StaffDashboardView = ({ profile, appointments = [], onStartAssessment, onV
                 <Ico d={IC.pulse} size={13} />
                 <span style={hdg}>Appointment Overview</span>
               </div>
-              <span style={{ fontSize: 9, color: "#94a3b8", fontWeight: 600 }}>This Month</span>
+                <span style={{ fontSize: 9, color: "#94a3b8", fontWeight: 600 }}>All Appointments</span>
             </div>
             <div style={{ flex: 1, display: "flex", alignItems: "center", justifyContent: "center", minHeight: 0 }}>
               <DonutChart data={donutData} total={totalAppts} />
