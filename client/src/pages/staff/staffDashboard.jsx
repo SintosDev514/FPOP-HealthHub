@@ -154,7 +154,6 @@ const StaffDashboard = () => {
   const viewParam = searchParams.get("view");
   const [currentView, setCurrentViewState] = useState(viewParam || "dashboard");
   const [menuOpen, setMenuOpen] = useState(false);
-  const [sidebarHovered, setSidebarHovered] = useState(false);
   const [isMobile, setIsMobile] = useState(window.innerWidth < 768);
   const [profile, setProfile] = useState(null);
   const [appointments, setAppointments] = useState([]);
@@ -190,11 +189,9 @@ const StaffDashboard = () => {
     return () => window.removeEventListener("resize", onResize);
   }, []);
 
-  const SIDEBAR_COLLAPSED = "68px";
-  const SIDEBAR_EXPANDED = "260px";
-  const isSidebarExpanded = !isMobile && sidebarHovered;
-  const sidebarW = isMobile ? "0px" : isSidebarExpanded ? SIDEBAR_EXPANDED : SIDEBAR_COLLAPSED;
-  const isIconOnly = !isSidebarExpanded;
+  const SIDEBAR_WIDTH = "260px";
+  const sidebarW = isMobile ? "0px" : SIDEBAR_WIDTH;
+  const isIconOnly = false;
 
   const fetchProfile = async () => {
     try {
@@ -402,8 +399,6 @@ const StaffDashboard = () => {
       <div style={{ height: "calc(100vh - 48px)", position: "relative", display: "flex", overflow: "hidden" }}>
         {/* â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• SIDEBAR â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• */}
         <aside
-          onMouseEnter={() => setSidebarHovered(true)}
-          onMouseLeave={() => setSidebarHovered(false)}
           className="hidden md:block"
           style={{
             width: sidebarW,
@@ -415,7 +410,6 @@ const StaffDashboard = () => {
             display: "flex",
             flexDirection: "column",
             background: `linear-gradient(180deg, ${NAVY_DARK} 0%, ${NAVY_MID} 55%, ${NAVY_LITE} 100%)`,
-            transition: "width 0.3s cubic-bezier(0.4, 0, 0.2, 1)",
             overflow: "hidden",
             boxShadow: "4px 0 32px rgba(21,44,74,0.22)",
           }}
