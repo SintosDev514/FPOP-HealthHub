@@ -88,6 +88,93 @@ const getInitials = (name) => {
     .slice(0, 3);
 };
 
+const DAY_LABELS = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
+
+const formatTime = (t) => {
+  if (!t) return "";
+  const [h, m] = t.split(":").map(Number);
+  const period = h >= 12 ? "PM" : "AM";
+  const hour = h % 12 === 0 ? 12 : h % 12;
+  return `${hour}:${String(m).padStart(2, "0")} ${period}`;
+};
+
+const ProfileHeader = ({ profile }) => {
+  const name = profile?.name || `${profile?.firstName || ""} ${profile?.lastName || ""}`.trim();
+  const schedule = profile?.schedule || {};
+  const activeDays = DAY_LABELS.map((label, i) => ({ label, index: i, ...(schedule[i] || schedule[String(i)] || {}) }));
+
+  return (
+    <section className="mb-6 overflow-hidden rounded-lg border border-[#1E3A5F]/[0.07] bg-white shadow-[0_2px_14px_rgba(30,58,95,0.07)]">
+      <div className="flex flex-col gap-5 border-b border-[#1E3A5F]/[0.06] bg-gradient-to-r from-[#1E3A5F] to-[#264a77] px-5 py-5 sm:flex-row sm:items-center sm:px-7">
+        <div className="flex h-16 w-16 shrink-0 items-center justify-center overflow-hidden rounded-xl bg-[#F5C518] text-lg font-extrabold text-[#1E3A5F]">
+          {profile?.avatar ? (
+            <img
+              src={profile.avatar}
+              alt={name}
+              className="h-full w-full object-cover"
+              onError={(e) => { e.currentTarget.style.display = "none"; }}
+            />
+          ) : (
+            getInitials(name)
+          )}
+        </div>
+        <div className="min-w-0 flex-1">
+          <div className="flex items-center gap-2">
+            <h2 className="truncate text-lg font-extrabold text-white">{name || "Staff"}</h2>
+            {profile?.isAccountVerified ? (
+              <span className="inline-flex items-center gap-1 rounded-full bg-[#F5C518]/20 px-2 py-0.5 text-[9px] font-bold text-[#F5C518]">
+                Verified
+              </span>
+            ) : null}
+          </div>
+          <p className="mt-1 text-[10px] font-semibold uppercase tracking-[0.08em] text-[#F5C518]">
+            {profile?.specialty || "Healthcare Staff"}
+          </p>
+          <div className="mt-3 flex flex-wrap items-center gap-x-5 gap-y-1.5 text-[10px] text-white/80">
+            <span className="inline-flex items-center gap-2">
+              <svg className="h-4 w-4 text-white/60" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
+              </svg>
+              {profile?.email || "No email"}
+            </span>
+            {profile?.phone ? (
+              <span className="inline-flex items-center gap-2">
+                <svg className="h-4 w-4 text-white/60" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z" />
+                </svg>
+                {profile.phone}
+              </span>
+            ) : null}
+          </div>
+        </div>
+      </div>
+
+      <div className="px-5 py-4 sm:px-7">
+        <p className="mb-3 text-[9px] font-bold uppercase tracking-[0.08em] text-[#8a96a3]">Weekly Schedule</p>
+        <div className="flex flex-wrap gap-2">
+          {activeDays.map((day) => (
+            <div
+              key={day.label}
+              className={`min-w-[86px] rounded-lg border px-3 py-2 text-center ${
+                day.active
+                  ? "border-[#15803d]/20 bg-[#dcfce7]"
+                  : "border-[#1E3A5F]/[0.08] bg-[#f7fafc]"
+              }`}
+            >
+              <p className={`text-[9px] font-bold uppercase ${day.active ? "text-[#15803d]" : "text-[#8a96a3]"}`}>
+                {day.label}
+              </p>
+              <p className={`mt-1 text-[9px] font-semibold ${day.active ? "text-[#166534]" : "text-[#b0b8c1]"}`}>
+                {day.active ? `${formatTime(day.start)} – ${formatTime(day.end)}` : "Off"}
+              </p>
+            </div>
+          ))}
+        </div>
+      </div>
+    </section>
+  );
+};
+
 const timeToMinutes = (t) => {
   if (!t) return 0;
   const m = t.match(/(\d+):(\d+)\s*(AM|PM)/i);
@@ -108,7 +195,7 @@ const sortAppointments = (list) =>
     return a.date.localeCompare(b.date) || timeToMinutes(a.time) - timeToMinutes(b.time);
   });
 
-const StaffScheduleView = ({ appointments = [], onRefresh }) => {
+const StaffScheduleView = ({ profile, appointments = [], onRefresh }) => {
   const [updating, setUpdating] = useState(null);
   const [feedback, setFeedback] = useState(null);
   const todayStr = new Date().toISOString().split("T")[0];
@@ -141,7 +228,7 @@ const StaffScheduleView = ({ appointments = [], onRefresh }) => {
       } else {
         showFeedback(data.message || "Failed to update appointment", "error");
       }
-    } catch (err) {
+    } catch {
       showFeedback("Network error. Please try again.", "error");
     } finally {
       setUpdating(null);
@@ -160,6 +247,7 @@ const StaffScheduleView = ({ appointments = [], onRefresh }) => {
 
   return (
     <main className="flex-1 bg-[#f1f4f8] px-4 py-7 sm:px-8 lg:px-[32px]">
+      {profile && <ProfileHeader profile={profile} />}
       {feedback && (
         <div
           className={`mb-4 rounded-lg px-5 py-3 text-[10px] font-bold shadow-lg transition-all ${

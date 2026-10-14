@@ -515,6 +515,7 @@ const StaffDashboard = () => {
 
           {currentView === "schedule" && (
             <StaffScheduleView
+              profile={profile}
               appointments={appointments}
               onRefresh={fetchAppointments}
               onBackToDashboard={() => setCurrentView("dashboard")}

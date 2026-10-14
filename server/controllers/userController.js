@@ -31,6 +31,8 @@ const getUserData = async (req, res) => {
         avatar: user.avatar || "",
         dateOfBirth: user.dateOfBirth || "",
         specialty: user.specialty || "",
+        schedule: user.schedule || {},
+        role: user.role,
         isAccountVerified: user.isAccountVerified,
         createdAt: user.createdAt,
       },
