@@ -561,7 +561,7 @@ const StaffDashboardView = ({ profile, appointments = [], onStartAssessment, onV
             </div>
             {/* inline footer */}
             <div style={{ display: "flex", justifyContent: "space-between", marginTop: "auto", paddingTop: 4, flexShrink: 0 }}>
-              <span style={{ fontSize: 8, color: "#cbd5e1" }}>Â© 2026 Your Company. All rights reserved.</span>
+              <span style={{ fontSize: 8, color: "#cbd5e1" }}>© 2026 FPOP HealthHub. All rights reserved.</span>
               <div style={{ display: "flex", gap: 8 }}>
                 <span style={{ fontSize: 8, color: "#94a3b8", cursor: "pointer" }}>Privacy Policy</span>
                 <span style={{ fontSize: 8, color: "#94a3b8", cursor: "pointer" }}>Terms of Service</span>

@@ -8,6 +8,7 @@ import StaffScheduleView from "./staffPages/StaffScheduleView";
 import StaffAssessmentView from "./staffPages/StaffAssessmentView";
 import StaffInventoryView from "./staffPages/StaffInventoryView";
 import StaffAssessmentInventory from "./staffPages/StaffAssessmentInventory";
+import StaffProfileView from "./staffPages/StaffProfileView";
 
 const navItems = [
   { id: "dashboard", label: "Dashboard", icon: "home" },
@@ -17,6 +18,7 @@ const navItems = [
   { id: "assessment", label: "Assessment", icon: "assessment" },
   { id: "assessmentLogs", label: "Assessment Logs", icon: "clipboard" },
   { id: "inventory", label: "Inventory", icon: "inventory" },
+  { id: "profile", label: "Profile", icon: "profile" },
 ];
 
 const NAVY_DARK = "#152c4a";
@@ -37,6 +39,8 @@ const StaffIcon = ({ name, className = "h-5 w-5" }) => {
       "m21 8-9-5-9 5m18 0-9 5m9-5v13m0-13L3 8m9 5 9-5M3 8v8l9 5 9-5V8",
     clipboard:
       "M9 5H7a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V7a2 2 0 0 0-2-2h-2M9 5a2 2 0 0 0 2 2h2a2 2 0 0 0 2-2M9 5a2 2 0 0 1 2-2h2a2 2 0 0 1 2 2",
+    profile:
+      "M16 7a4 4 0 1 1-8 0 4 4 0 0 1 8 0ZM12 14a7 7 0 0 0-7 7h14a7 7 0 0 0-7-7Z",
     logout:
       "M15 17l5-5-5-5M20 12H9M12 19H6a2 2 0 0 1-2-2V7a2 2 0 0 1 2-2h6",
   };
@@ -222,6 +226,36 @@ const StaffDashboard = () => {
     }
   };
 
+  const handleSaveProfile = async (formData) => {
+    try {
+      const body = new FormData();
+      body.append("name", formData.name || "");
+      body.append("phone", formData.phone || "");
+      body.append("address", formData.address || "");
+      body.append("dateOfBirth", formData.dateOfBirth || "");
+      body.append("specialty", formData.specialty || "");
+      if (formData.avatarFile) {
+        body.append("avatar", formData.avatarFile);
+      }
+
+      const res = await fetch(`${__API_BASE__}/api/user/update`, {
+        method: "PUT",
+        credentials: "include",
+        body,
+      });
+
+      const data = await res.json();
+      if (data.success) {
+        setProfile(data.userData);
+        setCurrentView("dashboard");
+      } else {
+        console.error("Failed to update profile:", data.message);
+      }
+    } catch (err) {
+      console.error("Update error:", err);
+    }
+  };
+
   const todayStr = new Date().toISOString().split("T")[0];
   const todayAppointments = appointments.filter((a) => a.date === todayStr);
   const pendingAppointments = appointments.filter((a) => a.status === "pending");
@@ -240,7 +274,8 @@ const StaffDashboard = () => {
       id === "dashboard" ||
       id === "assessment" ||
       id === "assessmentLogs" ||
-      id === "inventory"
+      id === "inventory" ||
+      id === "profile"
     ) {
       setCurrentView(id);
       setMenuOpen(false);
@@ -491,6 +526,15 @@ const StaffDashboard = () => {
           {currentView === "assessmentLogs" && <StaffAssessmentInventory />}
 
           {currentView === "inventory" && <StaffInventoryView readOnly />}
+
+          {currentView === "profile" && (
+            <StaffProfileView
+              profile={profile}
+              appointments={appointments}
+              onSaveProfile={handleSaveProfile}
+              onBackToDashboard={() => setCurrentView("dashboard")}
+            />
+          )}
         </div>
       </div>
     </div>

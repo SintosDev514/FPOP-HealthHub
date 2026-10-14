@@ -30,6 +30,7 @@ const getUserData = async (req, res) => {
         address: user.address || "",
         avatar: user.avatar || "",
         dateOfBirth: user.dateOfBirth || "",
+        specialty: user.specialty || "",
         isAccountVerified: user.isAccountVerified,
         createdAt: user.createdAt,
       },
@@ -48,7 +49,7 @@ const updateUserData = async (req, res) => {
       return res.status(401).json({ success: false, message: "Unauthorized" });
     }
 
-    const { name, phone, address, dateOfBirth } = req.body;
+    const { name, phone, address, dateOfBirth, specialty } = req.body;
     const avatar = req.file ? req.file.path : undefined;
 
     const updateFields = {};
@@ -60,6 +61,7 @@ const updateUserData = async (req, res) => {
     if (phone !== undefined) updateFields.phone = phone;
     if (address !== undefined) updateFields.address = address;
     if (dateOfBirth !== undefined) updateFields.dateOfBirth = dateOfBirth;
+    if (specialty !== undefined) updateFields.specialty = specialty;
     if (avatar !== undefined) updateFields.avatar = avatar;
 
     const user = await userModel.findByIdAndUpdate(
@@ -85,6 +87,7 @@ const updateUserData = async (req, res) => {
         address: user.address || "",
         avatar: user.avatar || "",
         dateOfBirth: user.dateOfBirth || "",
+        specialty: user.specialty || "",
         isAccountVerified: user.isAccountVerified,
         createdAt: user.createdAt,
       },
