@@ -350,7 +350,10 @@ const getAllAppointments = async (req, res) => {
       date: a.date,
       time: a.time,
       datetime: `${a.date} ${a.time}`,
-      status: a.status.charAt(0).toUpperCase() + a.status.slice(1),
+      status:
+        a.status === "not_completed"
+          ? "Not Completed"
+          : a.status.charAt(0).toUpperCase() + a.status.slice(1),
       serviceName: a.serviceName,
     }));
 
@@ -368,6 +371,7 @@ const getAnalytics = async (req, res) => {
     const confirmed = appointments.filter(a => a.status === "confirmed").length;
     const completed = appointments.filter(a => a.status === "completed").length;
     const pending = appointments.filter(a => a.status === "pending").length;
+    const notCompleted = appointments.filter(a => a.status === "not_completed").length;
     const cancelled = appointments.filter(a => a.status === "cancelled").length;
     const completedRate = total > 0 ? ((confirmed + completed) / total * 100).toFixed(1) : 0;
 
@@ -418,7 +422,7 @@ const getAnalytics = async (req, res) => {
     res.json({
       success: true,
       analytics: {
-        overview: { total, confirmed, completed, pending, cancelled, completedRate },
+        overview: { total, confirmed, completed, notCompleted, pending, cancelled, completedRate },
         byDepartment,
         monthlyTrend,
         daily: { today: todayCount },

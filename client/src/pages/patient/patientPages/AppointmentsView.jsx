@@ -35,9 +35,14 @@ const formatDate = (date) => {
 
 const getAppointmentStatus = (appointment) => appointment.status || "upcoming";
 
+const formatStatus = (status) => {
+  if (status === "not_completed") return "Not Completed";
+  return status ? status.charAt(0).toUpperCase() + status.slice(1) : "";
+};
+
 const isUpcomingAppointment = (appointment) => {
   const status = getAppointmentStatus(appointment);
-  if (status === "completed" || status === "cancelled") return false;
+  if (status === "completed" || status === "not_completed" || status === "cancelled") return false;
 
   const date =
     appointment.date instanceof Date
@@ -121,6 +126,15 @@ const statusStyles = {
     hoverBg: "hover:bg-emerald-50/40",
     icon: "check",
   },
+  not_completed: {
+    gradient: "from-orange-400 via-amber-400 to-rose-400",
+    dotColor: "bg-orange-500",
+    dotGlow: "shadow-[0_0_8px_rgba(249,115,22,0.5)]",
+    iconBg: "bg-gradient-to-br from-orange-500 to-rose-500",
+    badge: "bg-orange-500/10 text-orange-700 ring-1 ring-orange-500/20",
+    hoverBg: "hover:bg-orange-50/40",
+    icon: "alert",
+  },
   pending: {
     gradient: "from-amber-400 via-orange-400 to-rose-400",
     dotColor: "bg-amber-500",
@@ -189,7 +203,7 @@ const AppointmentCard = ({ appointment, onSelect, onCancel }) => {
                   <span className={`absolute inline-flex h-full w-full animate-ping rounded-full opacity-75 ${style.dotColor}`}></span>
                   <span className={`relative inline-flex h-2 w-2 rounded-full ${style.dotColor} ${style.dotGlow}`}></span>
                 </span>
-                {status}
+                {formatStatus(status)}
               </span>
             </div>
 
@@ -279,6 +293,7 @@ const MyAppointmentsView = ({ appointments = [], onNavigateToBook, onCancelAppoi
               <option value="all">All Appointments</option>
               <option value="upcoming">Upcoming</option>
               <option value="completed">Completed</option>
+              <option value="not_completed">Not Completed</option>
               <option value="pending">Pending</option>
             </select>
           </div>
@@ -318,7 +333,7 @@ const MyAppointmentsView = ({ appointments = [], onNavigateToBook, onCancelAppoi
             <div className="flex items-start justify-between gap-4">
               <div>
                 <h2 className="text-lg font-bold text-[#061022]">{selectedAppointment.serviceName}</h2>
-                <p className="mt-2 text-sm capitalize text-[#18304d]">{selectedAppointment.status}</p>
+                <p className="mt-2 text-sm text-[#18304d]">{formatStatus(selectedAppointment.status)}</p>
               </div>
               <button
                 type="button"

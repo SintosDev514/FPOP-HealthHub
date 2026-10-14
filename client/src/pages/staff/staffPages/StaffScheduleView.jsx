@@ -186,16 +186,14 @@ const timeToMinutes = (t) => {
   return h * 60 + min;
 };
 
-const STATUS_ORDER = { pending: 0, confirmed: 1, completed: 2, cancelled: 3 };
+const STATUS_ORDER = { pending: 0, confirmed: 1, completed: 2, not_completed: 3, cancelled: 4 };
 
-const getCancelledByLabel = (appt) => {
-  if (appt?.status !== "cancelled") return "";
-  const by = appt.cancelledBy;
+const getActorLabel = (person, fallbackRole) => {
   const name =
-    by && typeof by === "object"
-      ? `${by.firstName || ""} ${by.lastName || ""}`.trim()
+    person && typeof person === "object"
+      ? `${person.firstName || ""} ${person.lastName || ""}`.trim()
       : "";
-  const role = (by && by.role) || appt.cancelledByRole || "";
+  const role = (person && person.role) || fallbackRole || "";
   if (name) return `${name}${role ? ` (${role})` : ""}`;
   if (role) return role === "staff" ? "Clinic staff" : role === "patient" ? "The patient" : role;
   return "Unknown";
@@ -248,11 +246,38 @@ const StaffScheduleView = ({ profile, appointments = [], onRefresh }) => {
     }
   };
 
+  const handleOutcome = async (id, status) => {
+    setUpdating(id);
+    try {
+      const res = await fetch(`${__API_BASE__}/api/appointments/${id}/outcome`, {
+        method: "PUT",
+        credentials: "include",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ status }),
+      });
+      const data = await res.json();
+      if (data.success) {
+        const label = status === "completed" ? "completed" : "marked as not completed";
+        showFeedback(`Appointment ${label} successfully`, "success");
+        if (onRefresh) {
+          setTimeout(() => onRefresh(), 500);
+        }
+      } else {
+        showFeedback(data.message || "Failed to update appointment", "error");
+      }
+    } catch {
+      showFeedback("Network error. Please try again.", "error");
+    } finally {
+      setUpdating(null);
+    }
+  };
+
   const statusStyle = (status) => {
     const styles = {
       pending: "bg-[#ffedd5] text-[#ea580c]",
       confirmed: "bg-[#1E3A5F]/10 text-[#1E3A5F]",
       completed: "bg-[#dcfce7] text-[#15803d]",
+      not_completed: "bg-[#fee2e2] text-[#b91c1c]",
       cancelled: "bg-slate-100 text-slate-500",
     };
     return styles[status] || styles.pending;
@@ -373,7 +398,12 @@ const StaffScheduleView = ({ profile, appointments = [], onRefresh }) => {
                         </span>
                         {appt.status === "cancelled" && (
                           <p className="mt-1.5 text-[8px] font-semibold text-[#8a96a3]">
-                            Cancelled by {getCancelledByLabel(appt)}
+                            Cancelled by {getActorLabel(appt.cancelledBy, appt.cancelledByRole)}
+                          </p>
+                        )}
+                        {(appt.status === "completed" || appt.status === "not_completed") && (
+                          <p className="mt-1.5 text-[8px] font-semibold text-[#8a96a3]">
+                            Marked by {getActorLabel(appt.completedBy)}
                           </p>
                         )}
                       </td>
@@ -393,6 +423,23 @@ const StaffScheduleView = ({ profile, appointments = [], onRefresh }) => {
                               className="inline-flex items-center gap-1 rounded-lg bg-[#DC2626] px-3 py-1.5 text-[9px] font-bold text-white transition hover:bg-[#B91C1C] disabled:opacity-50"
                             >
                               {updating === appt._id ? "..." : "Decline"}
+                            </button>
+                          </div>
+                        ) : appt.status === "confirmed" ? (
+                          <div className="flex items-center gap-2">
+                            <button
+                              onClick={() => handleOutcome(appt._id, "completed")}
+                              disabled={updating === appt._id}
+                              className="inline-flex items-center gap-1 rounded-lg bg-[#15803d] px-3 py-1.5 text-[9px] font-bold text-white transition hover:bg-[#166534] disabled:opacity-50"
+                            >
+                              {updating === appt._id ? "..." : "Completed"}
+                            </button>
+                            <button
+                              onClick={() => handleOutcome(appt._id, "not_completed")}
+                              disabled={updating === appt._id}
+                              className="inline-flex items-center gap-1 rounded-lg bg-[#ea580c] px-3 py-1.5 text-[9px] font-bold text-white transition hover:bg-[#c2410c] disabled:opacity-50"
+                            >
+                              {updating === appt._id ? "..." : "Not Completed"}
                             </button>
                           </div>
                         ) : null}

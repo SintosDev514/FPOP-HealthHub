@@ -14,6 +14,7 @@ const IC = {
   users:     "M16 11a4 4 0 1 0-8 0m8 0a4 4 0 1 1-8 0m8 0c2.2.5 4 2 4 4v1M8 11c-2.2.5-4 2-4 4v1",
   trend:     "m4 16 6-6 4 4 6-8M15 6h5v5",
   check:     "m8 12 3 3 6-7M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z",
+  x:         "M18 6 6 18M6 6l12 12",
   dots:      "M5 12h.01M12 12h.01M19 12h.01",
   plus:      "M12 4v16m8-8H4",
   pulse:     "M4 12h3l2-7 4 14 2-7h5",
@@ -30,6 +31,7 @@ const TONES = {
   green:  { bg: "#dcfce7", ic: "#16a34a", num: "#15803d", sub: "#16a34a" },
   gold:   { bg: "#fef9c3", ic: "#ca8a04", num: "#a16207", sub: "#ca8a04" },
   orange: { bg: "#ffedd5", ic: "#ea580c", num: "#c2410c", sub: "#ea580c" },
+  red:    { bg: "#fee2e2", ic: "#dc2626", num: "#b91c1c", sub: "#dc2626" },
 };
 
 /* â”€â”€â”€ stat card â”€â”€â”€ */
@@ -174,6 +176,7 @@ const SB = {
   completed: { bg: "#dcfce7", color: "#16a34a" },
   pending:   { bg: "#fef9c3", color: "#92400e" },
   confirmed: { bg: "#dbeafe", color: "#1d4ed8" },
+  not_completed: { bg: "#ffedd5", color: "#c2410c" },
   cancelled: { bg: "#fee2e2", color: "#dc2626" },
 };
 
@@ -237,16 +240,15 @@ const actTime = appt => {
   if (h > 0) return `${h}h ago`;
   return `${Math.floor(diff / 60000)}m ago`;
 };
-const ACOLOR = { completed: "#22c55e", pending: "#f59e0b", confirmed: "#3b82f6", cancelled: "#ef4444" };
-const ALABEL = { completed: "Assessment completed", pending: "Appointment pending", confirmed: "Appointment confirmed", cancelled: "Appointment cancelled" };
+const ACOLOR = { completed: "#22c55e", pending: "#f59e0b", confirmed: "#3b82f6", not_completed: "#f97316", cancelled: "#ef4444" };
+const ALABEL = { completed: "Appointment completed", pending: "Appointment pending", confirmed: "Appointment confirmed", not_completed: "Marked not completed", cancelled: "Appointment cancelled" };
 
-const getCancelledByName = (appt) => {
-  const by = appt?.cancelledBy;
-  if (by && typeof by === "object") {
-    const name = `${by.firstName || ""} ${by.lastName || ""}`.trim();
+const getActorName = (person, fallbackRole) => {
+  if (person && typeof person === "object") {
+    const name = `${person.firstName || ""} ${person.lastName || ""}`.trim();
     if (name) return name;
   }
-  const role = (by && by.role) || appt?.cancelledByRole || "";
+  const role = (person && person.role) || fallbackRole || "";
   if (role === "staff") return "Clinic staff";
   if (role === "patient") return "The patient";
   return role;
@@ -254,8 +256,14 @@ const getCancelledByName = (appt) => {
 
 const ActivityItem = ({ appt }) => {
   const color = ACOLOR[appt.status] || "#94a3b8";
-  const cancelledBy = appt.status === "cancelled" ? getCancelledByName(appt) : "";
-  const label = cancelledBy ? `Cancelled by ${cancelledBy}` : ALABEL[appt.status] || "Appointment";
+  let label = ALABEL[appt.status] || "Appointment";
+  if (appt.status === "cancelled") {
+    const by = getActorName(appt.cancelledBy, appt.cancelledByRole);
+    if (by) label = `Cancelled by ${by}`;
+  } else if (appt.status === "completed" || appt.status === "not_completed") {
+    const by = getActorName(appt.completedBy);
+    if (by) label = `${ALABEL[appt.status]} by ${by}`;
+  }
   const service = appt.serviceName || "General";
   const name = `${appt.patientId?.firstName || ""} ${appt.patientId?.lastName || ""}`.trim() || "Patient";
   return (
@@ -404,7 +412,7 @@ const timeToMinutes = (t) => {
   return h * 60 + min;
 };
 
-const STATUS_ORDER = { pending: 0, confirmed: 1, completed: 2, cancelled: 3 };
+const STATUS_ORDER = { pending: 0, confirmed: 1, completed: 2, not_completed: 3, cancelled: 4 };
 
 const sortAppointments = (list) =>
   [...list].sort((a, b) => {
@@ -418,6 +426,7 @@ const StaffDashboardView = ({ profile, appointments = [], onStartAssessment, onV
   const todayCount   = appointments.filter(a => a.date === todayStr).length;
   const pendingCount = appointments.filter(a => a.status === "pending").length;
   const completedCount = appointments.filter(a => a.status === "completed").length;
+  const notCompletedCount = appointments.filter(a => a.status === "not_completed").length;
   const upcomingCount  = appointments.filter(
     a => (a.status === "pending" || a.status === "confirmed") && a.date >= todayStr
   ).length;
@@ -428,9 +437,10 @@ const StaffDashboardView = ({ profile, appointments = [], onStartAssessment, onV
   const actItems     = sortAppointments(appointments).slice(0, 4);
 
   const donutData = [
-    { label: "Upcoming",  value: upcomingCount,  color: "#1E3A5F" },
-    { label: "Pending",   value: pendingCount,   color: "#f59e0b" },
-    { label: "Completed", value: completedCount, color: "#22c55e" },
+    { label: "Upcoming",      value: upcomingCount,     color: "#1E3A5F" },
+    { label: "Pending",       value: pendingCount,      color: "#f59e0b" },
+    { label: "Completed",     value: completedCount,    color: "#22c55e" },
+    { label: "Not Completed", value: notCompletedCount, color: "#f97316" },
   ];
 
   const initials = profile
@@ -489,11 +499,12 @@ const StaffDashboardView = ({ profile, appointments = [], onStartAssessment, onV
         </div>
 
         {/* â”€â”€ STAT CARDS â”€â”€ */}
-        <div className="staff-dashboard-stats" style={{ display: "grid", gridTemplateColumns: "repeat(4,1fr)", gap: 6, flexShrink: 0 }}>
+        <div className="staff-dashboard-stats" style={{ display: "grid", gridTemplateColumns: "repeat(5,1fr)", gap: 6, flexShrink: 0 }}>
           <StatCard title="Total Appointments" value={totalAppts}      sub={`${upcomingCount} upcoming`}  icon="calendar" tone="navy"   />
           <StatCard title="Today"              value={todayCount}      sub={`${todayCount} appointments`} icon="trend"    tone="green"  />
           <StatCard title="Pending"            value={pendingCount}    sub="Awaiting confirmation"        icon="users"    tone="gold"   />
           <StatCard title="Completed"          value={completedCount}  sub="Successfully done"            icon="check"    tone="orange" />
+          <StatCard title="Not Completed"      value={notCompletedCount} sub="Missed / no-show"           icon="x"        tone="red"    />
         </div>
 
         {/* â”€â”€ ROW 3: appointment overview + inventory chart + quick stats â”€â”€ */}
@@ -530,6 +541,7 @@ const StaffDashboardView = ({ profile, appointments = [], onStartAssessment, onV
               { label: "Today's Appointments", value: todayCount,     max: Math.max(todayCount, 10),                      color: "#3b82f6", icon: IC.calendar },
               { label: "Pending",              value: pendingCount,   max: Math.max(pendingCount, 10),                    color: "#f59e0b", icon: IC.users },
               { label: "Completed",            value: completedCount, max: Math.max(completedCount, totalAppts, 1),       color: "#22c55e", icon: IC.check },
+              { label: "Not Completed",        value: notCompletedCount, max: Math.max(notCompletedCount, totalAppts, 1), color: "#f97316", icon: IC.x },
             ].map(({ label, value, max, color, icon }, idx) => (
               <div key={label}>
                 <div style={{ display: "flex", alignItems: "center", gap: 8 }}>

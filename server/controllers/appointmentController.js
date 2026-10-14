@@ -224,6 +224,7 @@ const getUserAppointments = async (req, res) => {
       .find({ patientId: req.user.id })
       .populate("staffId", "firstName lastName specialty")
       .populate("cancelledBy", "firstName lastName role")
+      .populate("completedBy", "firstName lastName role")
       .sort({ createdAt: -1 });
 
     res.json({ success: true, appointments });
@@ -238,6 +239,7 @@ const getStaffAppointments = async (req, res) => {
       .find({ staffId: req.user.id })
       .populate("patientId", "firstName lastName email phone avatar")
       .populate("cancelledBy", "firstName lastName role")
+      .populate("completedBy", "firstName lastName role")
       .sort({ date: -1 });
 
     sortAppointments(appointments);
@@ -410,4 +412,62 @@ const updateAppointmentStatus = async (req, res) => {
   }
 };
 
-export { getAvailableSlots, createAppointment, getUserAppointments, getStaffAppointments, updateAppointmentStatus, cancelAppointment };
+const markAppointmentOutcome = async (req, res) => {
+  try {
+    const { id } = req.params;
+    const { status } = req.body;
+
+    if (!["completed", "not_completed"].includes(status)) {
+      return res.json({ success: false, message: "Invalid status" });
+    }
+
+    const appointment = await appointmentModel
+      .findById(id)
+      .populate("patientId", "firstName lastName email")
+      .populate("staffId", "firstName lastName specialty");
+
+    if (!appointment) {
+      return res.json({ success: false, message: "Appointment not found" });
+    }
+
+    if (req.user.role !== "admin" && appointment.staffId._id.toString() !== req.user.id.toString()) {
+      return res.json({ success: false, message: "Unauthorized" });
+    }
+
+    if (["cancelled"].includes(appointment.status)) {
+      return res.json({ success: false, message: "This appointment is cancelled" });
+    }
+
+    appointment.status = status;
+    appointment.completedBy = req.user.id;
+    appointment.completedAt = new Date();
+    await appointment.save();
+
+    const patient = appointment.patientId;
+    const staff = appointment.staffId;
+    const outcomeLabel = status === "completed" ? "Completed" : "Not Completed";
+    const patientName = `${patient?.firstName || ""} ${patient?.lastName || ""}`.trim();
+
+    Promise.all([
+      notificationModel.create({
+        title: `Appointment ${outcomeLabel}`,
+        text: `Your ${appointment.serviceName} appointment on ${appointment.date} at ${appointment.time} has been marked as ${outcomeLabel}.`,
+        category: "Appointment",
+        priority: status === "completed" ? "Low" : "Medium",
+        userId: patient?._id,
+      }),
+      notificationModel.create({
+        title: `Appointment ${outcomeLabel}`,
+        text: `${patientName || "A patient"}'s ${appointment.serviceName} appointment on ${appointment.date} at ${appointment.time} was marked as ${outcomeLabel} by ${staff?.firstName || ""} ${staff?.lastName || ""}`.trim() + ".",
+        category: "Appointment",
+        priority: "Low",
+      }),
+    ]).catch(() => {});
+
+    res.json({ success: true, appointment });
+  } catch (error) {
+    res.json({ success: false, message: error.message });
+  }
+};
+
+export { getAvailableSlots, createAppointment, getUserAppointments, getStaffAppointments, updateAppointmentStatus, cancelAppointment, markAppointmentOutcome };

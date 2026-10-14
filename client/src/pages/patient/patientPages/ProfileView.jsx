@@ -83,8 +83,8 @@ const MobileProfileAppointment = ({ appointment }) => {
           <p className="truncate text-sm font-bold text-[#172033]">{appointment.serviceName || "Clinic appointment"}</p>
           <p className="mt-1 text-xs text-slate-500">{date}{appointment.time ? ` · ${appointment.time}` : ""}</p>
         </div>
-        <span className={`shrink-0 rounded-full px-2 py-1 text-[10px] font-semibold capitalize ${status === "pending" ? "bg-amber-50 text-amber-700" : status === "completed" ? "bg-emerald-50 text-emerald-700" : "bg-blue-50 text-[#244783]"}`}>
-          {status}
+        <span className={`shrink-0 rounded-full px-2 py-1 text-[10px] font-semibold ${status === "pending" ? "bg-amber-50 text-amber-700" : status === "completed" ? "bg-emerald-50 text-emerald-700" : status === "not_completed" ? "bg-orange-50 text-orange-700" : "bg-blue-50 text-[#244783]"}`}>
+          {status === "not_completed" ? "Not Completed" : status.charAt(0).toUpperCase() + status.slice(1)}
         </span>
       </div>
     </div>
@@ -109,7 +109,7 @@ const StatRow = ({ label, value, tone = "neutral" }) => {
 
 const isUpcomingAppointment = (appointment) => {
   const status = appointment.status || "upcoming";
-  if (status === "completed" || status === "cancelled") return false;
+  if (status === "completed" || status === "not_completed" || status === "cancelled") return false;
 
   const date =
     appointment.date instanceof Date

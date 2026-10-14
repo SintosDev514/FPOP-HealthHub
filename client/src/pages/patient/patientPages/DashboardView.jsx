@@ -44,7 +44,7 @@ const getAppointmentStatus = (appointment) => appointment.status || "upcoming";
 
 const isUpcomingAppointment = (appointment) => {
   const status = getAppointmentStatus(appointment);
-  if (status === "completed" || status === "cancelled") return false;
+  if (status === "completed" || status === "not_completed" || status === "cancelled") return false;
 
   const date =
     appointment.date instanceof Date
@@ -189,6 +189,9 @@ const getDoctorName = (appointment) => {
 const AppointmentRow = ({ appointment }) => {
   const status = appointment.status || "upcoming";
   const isPending = status === "pending";
+  const isNotCompleted = status === "not_completed";
+  const statusLabel =
+    status === "not_completed" ? "Not Completed" : status.charAt(0).toUpperCase() + status.slice(1);
 
   return (
     <div className="min-w-0 rounded-[12px] border border-slate-200 bg-slate-50/40 px-3 py-4 sm:px-4">
@@ -218,10 +221,12 @@ const AppointmentRow = ({ appointment }) => {
           className={`max-w-[72px] shrink-0 truncate rounded-[8px] border px-1.5 py-0.5 text-[10px] font-semibold leading-5 min-[390px]:max-w-[82px] min-[390px]:px-2 min-[390px]:text-[11px] sm:max-w-[92px] sm:px-2.5 sm:text-xs ${
             isPending
               ? "border-amber-300 bg-amber-100 text-[#b45309]"
-              : "border-blue-200 bg-blue-100 text-blue-700"
+              : isNotCompleted
+                ? "border-orange-300 bg-orange-100 text-orange-700"
+                : "border-blue-200 bg-blue-100 text-blue-700"
           }`}
         >
-          {status}
+          {statusLabel}
         </span>
       </div>
     </div>
