@@ -51,7 +51,7 @@ function LandingPage() {
         </h1>
 
         <p className="mt-3 text-sm text-slate-300 leading-relaxed max-w-lg mx-auto">
-          Empowering you to take control of your health. Book appointments, view records, and communicate with your doctor — all from the comfort of your home.
+          Empowering you to take control of your health. Book appointments, view records, and communicate with your service provider — all from the comfort of your home.
         </p>
 
         {/* CTAs */}
