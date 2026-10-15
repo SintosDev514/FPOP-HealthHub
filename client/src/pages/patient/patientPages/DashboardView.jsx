@@ -181,7 +181,7 @@ const MobileQuickAction = ({ icon, title, subtitle, onClick, accent = "navy" }) 
 const getDoctorName = (appointment) => {
   if (appointment.staffId && typeof appointment.staffId === "object") {
     const s = appointment.staffId;
-    return `Dr. ${s.firstName || ""} ${s.lastName || ""}`.trim();
+    return `${s.firstName || ""} ${s.lastName || ""}`.trim();
   }
   return appointment.doctorName || "Unknown";
 };

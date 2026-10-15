@@ -345,7 +345,7 @@ const getAllAppointments = async (req, res) => {
       patient: `${a.patientId?.firstName || ""} ${a.patientId?.lastName || ""}`.trim(),
       phone: a.patientId?.phone || "",
       email: a.patientId?.email || "",
-      doctor: `Dr. ${a.staffId?.firstName || ""} ${a.staffId?.lastName || ""}`.trim(),
+      doctor: `${a.staffId?.firstName || ""} ${a.staffId?.lastName || ""}`.trim(),
       specialty: a.staffId?.specialty || "",
       department: a.serviceName || a.staffId?.specialty || "General",
       date: a.date,

@@ -149,7 +149,7 @@ const statusStyles = {
 const normalizeAppointment = (appointment) => {
   const staffName =
     appointment.staffId && typeof appointment.staffId === "object"
-      ? `Dr. ${appointment.staffId.firstName || ""} ${appointment.staffId.lastName || ""}`.trim()
+      ? `${appointment.staffId.firstName || ""} ${appointment.staffId.lastName || ""}`.trim()
       : appointment.doctorName || "Unknown";
   return {
     id: appointment._id || appointment.id,
