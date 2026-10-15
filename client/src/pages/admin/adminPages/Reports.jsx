@@ -237,7 +237,16 @@ const downloadExcel = async (report) => {
   recordsSheet.getRow(1).height = 28;
   recordsSheet.getRow(1).eachCell((cell) => { cell.font = { bold: true, size: 8 }; cell.alignment = { horizontal: "center", vertical: "middle", wrapText: true }; cell.fill = { type: "pattern", pattern: "solid", fgColor: { argb: "FFFAE6C3" } }; cell.border = { top: { style: "thin" }, left: { style: "thin" }, bottom: { style: "thin" }, right: { style: "thin" } }; });
   report.rows.forEach((_, rowIndex) => recordsSheet.getRow(rowIndex + 2).eachCell({ includeEmpty: true }, (cell) => { cell.border = { top: { style: "thin" }, left: { style: "thin" }, bottom: { style: "thin" }, right: { style: "thin" } }; cell.alignment = { vertical: "middle", wrapText: true }; }));
-  worksheet.columns.forEach((column) => { column.width = Math.min(Math.max(...column.values.map((value) => String(value ?? "").length), 12) + 2, 36); });
+  worksheet.columns.forEach((column) => {
+    const lengths = [];
+    column.eachCell({ includeEmpty: false }, (cell) => {
+      const value = cell?.value;
+      if (value !== null && value !== undefined && value !== "") lengths.push(String(value).length);
+    });
+    const longest = lengths.length ? Math.max(...lengths) : 12;
+    const width = Math.min(Math.max(longest, 12) + 2, 36);
+    column.width = Number.isFinite(width) ? width : 12;
+  });
   const buffer = await workbook.xlsx.writeBuffer();
   saveAs(new Blob([buffer], { type: "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet" }), `${fileSlug(report.title)}_${todayKey()}.xlsx`);
 };
