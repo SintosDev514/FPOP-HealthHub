@@ -5,7 +5,6 @@ const NAVY2 = "#2a4a6e";
 const GOLD  = "#e8a838";
 const GREEN = "#16a34a";
 const RED   = "#dc2626";
-const TEAL  = "#0891b2";
 
 const Ic = ({ d, w = 18 }) => (
   <svg width={w} height={w} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
@@ -17,7 +16,6 @@ const icons = {
   bookings: <Ic d={["M3 4h18", "M3 8h18", "M3 12h18", "M3 16h18", "M3 20h18"]} w={20} />,
   completed: <Ic d={["M22 11.08V12a10 10 0 1 1-5.93-9.14", "M22 4 12 14.01 9 11.01"]} w={20} />,
   pending: <Ic d={["M12 22c5.523 0 10-4.477 10-10S17.523 2 12 2 2 6.477 2 12s4.477 10 10 10z", "M12 6v6l4 2"]} w={20} />,
-  attendance: <Ic d={["M9 12l2 2 4-4", "M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0z"]} w={20} />,
 };
 
 function Donut({ segments, total, size = 160 }) {
@@ -101,13 +99,12 @@ export default function Analytics({ isMobile }) {
     );
   }
 
-  const { overview, byDepartment, monthlyTrend, daily, performance } = data;
+  const { overview, byDepartment, monthlyTrend, daily } = data;
 
   const cards = [
     { icon: icons.bookings, label: "Total Bookings", value: String(overview.total), sub: `${daily.today} today`, color: NAVY, bg: "#eef2f6" },
     { icon: icons.completed, label: "Completed", value: `${overview.completedRate}%`, sub: `${overview.completed + overview.confirmed} of ${overview.total}`, color: GREEN, bg: "#f0fdf4" },
     { icon: icons.pending, label: "Pending", value: String(overview.pending), sub: "awaiting confirmation", color: "#d97706", bg: "#fffbeb" },
-    { icon: icons.attendance, label: "Attendance", value: `${performance.attendanceRate}%`, sub: `peak ${performance.peakDay}`, color: TEAL, bg: "#ecfeff" },
   ];
 
   const statusSegments = [
@@ -139,7 +136,7 @@ export default function Analytics({ isMobile }) {
       </div>
 
       {/* â”€â”€ Metric cards â”€â”€ */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 mb-6">
         {cards.map((c, i) => (
           <div key={i} style={{ background: "#fff", borderRadius: 12, padding: "18px 20px", border: "1px solid #eef2f6", boxShadow: "0 1px 3px rgba(0,0,0,.04)" }}>
             <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 12 }}>
@@ -191,50 +188,26 @@ export default function Analytics({ isMobile }) {
 
       </div>
 
-      {/* â”€â”€ Row 3: Department bars + Performance â”€â”€ */}
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-5">
-
-        <div style={{ background: "#fff", borderRadius: 12, padding: 24, border: "1px solid #eef2f6", boxShadow: "0 1px 3px rgba(0,0,0,.04)" }}>
-          <h3 style={{ margin: "0 0 20px", fontSize: 14, fontWeight: 600, color: NAVY }}>Consultations by Department</h3>
-          {byDepartment.length > 0 ? (
-            <div style={{ display: "flex", flexDirection: "column", gap: 16 }}>
-              {byDepartment.map((d, i) => (
-                <div key={i}>
-                  <div style={{ display: "flex", justifyContent: "space-between", fontSize: 13, marginBottom: 5, fontWeight: 500 }}>
-                    <span style={{ color: "#334155" }}>{d.name}</span>
-                    <span style={{ color: NAVY, fontWeight: 600 }}>{d.count} ({d.pct}%)</span>
-                  </div>
-                  <div style={{ height: 8, borderRadius: 99, background: "#f1f5f9", overflow: "hidden" }}>
-                    <div style={{ width: `${d.pct}%`, height: "100%", background: deptColors[i % deptColors.length], borderRadius: 99, transition: "width .8s" }} />
-                  </div>
+      {/* â”€â”€ Row 3: Department bars â”€â”€ */}
+      <div style={{ background: "#fff", borderRadius: 12, padding: 24, border: "1px solid #eef2f6", boxShadow: "0 1px 3px rgba(0,0,0,.04)" }}>
+        <h3 style={{ margin: "0 0 20px", fontSize: 14, fontWeight: 600, color: NAVY }}>Consultations by Department</h3>
+        {byDepartment.length > 0 ? (
+          <div style={{ display: "flex", flexDirection: "column", gap: 16 }}>
+            {byDepartment.map((d, i) => (
+              <div key={i}>
+                <div style={{ display: "flex", justifyContent: "space-between", fontSize: 13, marginBottom: 5, fontWeight: 500 }}>
+                  <span style={{ color: "#334155" }}>{d.name}</span>
+                  <span style={{ color: NAVY, fontWeight: 600 }}>{d.count} ({d.pct}%)</span>
                 </div>
-              ))}
-            </div>
-          ) : (
-            <p style={{ color: "#94a3b8", fontSize: 13, textAlign: "center", padding: "40px 0" }}>No data yet.</p>
-          )}
-        </div>
-
-        <div style={{ background: "#fff", borderRadius: 12, padding: 24, border: "1px solid #eef2f6", boxShadow: "0 1px 3px rgba(0,0,0,.04)" }}>
-          <h3 style={{ margin: "0 0 20px", fontSize: 14, fontWeight: 600, color: NAVY }}>Performance Summary</h3>
-          <div style={{ display: "flex", flexDirection: "column", gap: 14 }}>
-            {[
-              { label: "Pending reviews", val: `${overview.pending}`, color: GOLD, desc: overview.pending > 0 ? `${overview.pending} appointment${overview.pending !== 1 ? "s" : ""} awaiting confirmation.` : "All appointments have been reviewed." },
-              { label: "Attendance rate", val: `${performance.attendanceRate}%`, color: GREEN, desc: `${overview.completed + overview.confirmed} attended of ${overview.total} total. Peak day: ${performance.peakDay}.` },
-              { label: "Top service", val: performance.topDepartment.name, color: "#7c3aed", desc: `${performance.topDepartment.count} booking${performance.topDepartment.count !== 1 ? "s" : ""} (${performance.topDepartment.pct}%) across ${performance.totalDepts} services.` },
-              { label: "Today", val: `${daily.today}`, color: TEAL, desc: daily.today > 0 ? "Check Appointments page for details." : "No appointments scheduled." },
-            ].map((item, i) => (
-              <div key={i} style={{ padding: "12px 16px", background: "#f8fafc", borderRadius: 8 }}>
-                <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 2 }}>
-                  <span style={{ fontSize: 11, fontWeight: 600, color: "#64748b", textTransform: "uppercase", letterSpacing: ".3px" }}>{item.label}</span>
-                  <span style={{ fontSize: 13, fontWeight: 700, color: NAVY }}>{item.val}</span>
+                <div style={{ height: 8, borderRadius: 99, background: "#f1f5f9", overflow: "hidden" }}>
+                  <div style={{ width: `${d.pct}%`, height: "100%", background: deptColors[i % deptColors.length], borderRadius: 99, transition: "width .8s" }} />
                 </div>
-                <p style={{ margin: 0, fontSize: 12, color: "#94a3b8", lineHeight: 1.5 }}>{item.desc}</p>
               </div>
             ))}
           </div>
-        </div>
-
+        ) : (
+          <p style={{ color: "#94a3b8", fontSize: 13, textAlign: "center", padding: "40px 0" }}>No data yet.</p>
+        )}
       </div>
 
     </main>

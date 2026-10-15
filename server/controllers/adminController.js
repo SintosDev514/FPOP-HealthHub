@@ -341,6 +341,7 @@ const getAllAppointments = async (req, res) => {
 
     const formatted = appointments.map((a) => ({
       _id: a._id,
+      staffId: a.staffId?._id || null,
       patient: `${a.patientId?.firstName || ""} ${a.patientId?.lastName || ""}`.trim(),
       phone: a.patientId?.phone || "",
       email: a.patientId?.email || "",
