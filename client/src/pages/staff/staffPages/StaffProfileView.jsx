@@ -1,10 +1,4 @@
-import React, { useState, useRef, useEffect } from "react";
-
-const DEFAULT_CLINIC = {
-  clinicEmail: "fpophealthhub@gmail.com",
-  clinicPhone: "09556127415",
-  clinicAddress: "Rosales Blvd Corner Galit St.\nBrgy. East Awang, Calbayog City, Samar.\nPhilippines",
-};
+import React, { useState, useRef } from "react";
 
 const Icon = ({ type, className = "h-5 w-5" }) => {
   const paths = {
@@ -170,26 +164,9 @@ const formatMemberSince = (dateStr) => {
 const StaffProfileView = ({ profile, onSaveProfile, appointments = [], onBackToDashboard }) => {
   const [formData, setFormData] = useState(() => getInitialProfileData(profile));
   const [isEditing, setIsEditing] = useState(false);
-  const [supportOpen, setSupportOpen] = useState(false);
   const [avatarPreview, setAvatarPreview] = useState(null);
   const [mobileTab, setMobileTab] = useState("personal");
-  const [clinic, setClinic] = useState(DEFAULT_CLINIC);
   const fileInputRef = useRef(null);
-
-  useEffect(() => {
-    fetch(`${__API_BASE__}/api/settings`)
-      .then((res) => res.json())
-      .then((data) => {
-        if (data.success && data.settings) {
-          setClinic({
-            clinicEmail: data.settings.clinicEmail || DEFAULT_CLINIC.clinicEmail,
-            clinicPhone: data.settings.clinicPhone || DEFAULT_CLINIC.clinicPhone,
-            clinicAddress: data.settings.clinicAddress || DEFAULT_CLINIC.clinicAddress,
-          });
-        }
-      })
-      .catch(() => {});
-  }, []);
 
   const visibleProfile = isEditing
     ? { ...formData, avatar: avatarPreview || formData.avatar }
@@ -331,10 +308,6 @@ const StaffProfileView = ({ profile, onSaveProfile, appointments = [], onBackToD
           {mobileTab === "personal" ? (
             <div className="mt-3 border-y border-slate-100">
               <MobileProfileRow icon="mail" label="Email" value={visibleProfile.email || "Add an email address"} editing={isEditing} inputValue={formData.email} onChange={(value) => updateField("email", value)} placeholder="Add an email address" type="email" />
-              <MobileProfileRow icon="phone" label="Phone" value={visibleProfile.phone || "Add a phone number"} editing={isEditing} inputValue={formData.phone} onChange={(value) => updateField("phone", value)} placeholder="Add a phone number" />
-              <MobileProfileRow icon="badge" label="Specialty" value={visibleProfile.specialty || "Add your specialty"} editing={isEditing} inputValue={formData.specialty} onChange={(value) => updateField("specialty", value)} placeholder="Add your specialty" />
-              <MobileProfileRow icon="calendar" label="Date of birth" value={visibleProfile.dateOfBirth || "Add your date of birth"} editing={isEditing} inputValue={formData.dateOfBirth} onChange={(value) => updateField("dateOfBirth", value)} placeholder="Add your date of birth" type="date" />
-              <MobileProfileRow icon="location" label="Location" value={visibleProfile.address || "Add a location"} editing={isEditing} inputValue={formData.address} onChange={(value) => updateField("address", value)} placeholder="Add a location" />
             </div>
           ) : (
             <div className="mt-3 space-y-2 bg-slate-50 px-4 py-3">
@@ -380,9 +353,6 @@ const StaffProfileView = ({ profile, onSaveProfile, appointments = [], onBackToD
               </button>
               <h2 className="mt-12 text-2xl font-bold text-[#061022]">{visibleProfile.name || "Your Name"}</h2>
               <p className="mt-8 text-sm text-[#18304d]">{visibleProfile.email || "your@email.com"}</p>
-              {visibleProfile.specialty ? (
-                <p className="mt-2 text-sm font-semibold text-[#244783]">{visibleProfile.specialty}</p>
-              ) : null}
               <div className="my-10 h-px bg-slate-200" />
               <p className="text-sm text-[#18304d]">
                 Member since <strong className="font-bold text-[#061022]">{formatMemberSince(profile?.memberSince || profile?.createdAt)}</strong>
@@ -397,20 +367,6 @@ const StaffProfileView = ({ profile, onSaveProfile, appointments = [], onBackToD
                 <StatRow label="Confirmed" value={appointmentStats.confirmed} tone="green" />
                 <StatRow label="Pending" value={appointmentStats.pending} tone="orange" />
               </div>
-            </section>
-
-            <section className="rounded-[12px] bg-[#244783] p-6 text-white shadow-[0_3px_10px_rgba(15,23,42,0.16)]">
-              <h2 className="text-lg font-bold">Need Help?</h2>
-              <p className="mt-10 text-sm leading-6 text-white">
-                Contact our support team for assistance with your account
-              </p>
-              <button
-                type="button"
-                onClick={() => setSupportOpen(true)}
-                className="mt-12 h-11 w-full rounded-[8px] bg-white/90 text-sm font-bold text-[#061022] transition hover:bg-white"
-              >
-                Contact Support
-              </button>
             </section>
           </aside>
 
@@ -470,72 +426,10 @@ const StaffProfileView = ({ profile, onSaveProfile, appointments = [], onBackToD
                 placeholder="staff@email.com"
                 onChange={(value) => updateField("email", value)}
               />
-              <ProfileField
-                disabled={!isEditing}
-                label="Phone Number"
-                icon="phone"
-                type="tel"
-                value={visibleProfile.phone}
-                placeholder="+63 912 345 6789"
-                onChange={(value) => updateField("phone", value)}
-              />
-              <ProfileField
-                disabled={!isEditing}
-                label="Specialty"
-                icon="badge"
-                value={visibleProfile.specialty}
-                placeholder="e.g., Cardiothoracic Surgery"
-                onChange={(value) => updateField("specialty", value)}
-              />
-              <ProfileField
-                disabled={!isEditing}
-                label="Address"
-                icon="location"
-                value={visibleProfile.address}
-                placeholder="123 Healthcare Ave, Medical City, MC 12345"
-                onChange={(value) => updateField("address", value)}
-              />
-              <ProfileField
-                disabled={!isEditing}
-                label="Date of Birth"
-                icon="calendar"
-                type="date"
-                value={visibleProfile.dateOfBirth}
-                onChange={(value) => updateField("dateOfBirth", value)}
-              />
             </div>
           </section>
         </form>
       </div>
-      {supportOpen && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-slate-900/40 px-4">
-          <div className="w-full max-w-md rounded-[12px] bg-white p-6 shadow-xl">
-            <div className="flex items-start justify-between gap-4">
-              <div>
-                <h2 className="text-xl font-bold text-[#061022]">Contact Support</h2>
-                <p className="mt-2 text-sm text-[#18304d]">Reach out to us for assistance</p>
-              </div>
-              <button type="button" className="text-slate-500" onClick={() => setSupportOpen(false)}>
-                x
-              </button>
-            </div>
-            <div className="mt-6 space-y-3 text-sm">
-              <div className="rounded-[8px] bg-slate-50 p-4">
-                <p className="font-bold text-[#061022]">Email</p>
-                <p className="mt-1 text-[#18304d]">{clinic.clinicEmail}</p>
-              </div>
-              <div className="rounded-[8px] bg-slate-50 p-4">
-                <p className="font-bold text-[#061022]">Phone</p>
-                <p className="mt-1 text-[#18304d]">{clinic.clinicPhone}</p>
-              </div>
-              <div className="rounded-[8px] bg-slate-50 p-4">
-                <p className="font-bold text-[#061022]">Address</p>
-                <p className="mt-1 whitespace-pre-line text-[#18304d]">{clinic.clinicAddress}</p>
-              </div>
-            </div>
-          </div>
-        </div>
-      )}
     </main>
   );
 };

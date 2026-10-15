@@ -273,7 +273,12 @@ const StaffAssessmentInventory = () => {
       y = 90;
     };
 
+    let sectionCount = 0;
     const sectionTitle = (title) => {
+      if (sectionCount > 0 && sectionCount % 3 === 0 && y > 45) {
+        doc.addPage("a4", "portrait");
+        y = 40;
+      }
       doc.setFillColor(241, 245, 249);
       doc.rect(margin, y - 4, pageW - margin * 2, 22, "F");
       doc.setDrawColor(226, 232, 240);
@@ -284,6 +289,7 @@ const StaffAssessmentInventory = () => {
       doc.setFontSize(9);
       doc.text(title.toUpperCase(), margin + 6, y + 12);
       y += 30;
+      sectionCount += 1;
     };
 
     const fieldRow = (label, value) => {
