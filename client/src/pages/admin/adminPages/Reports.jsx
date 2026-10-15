@@ -35,13 +35,16 @@ const groupByService = (appointments) => {
       cancelled: 0,
     };
     current.total += 1;
-    if (current[appointment.status] !== undefined) {
-      current[appointment.status] += 1;
+    const statusKey = String(appointment.status || "").trim().toLowerCase().replace(/\s+/g, "_");
+    if (current[statusKey] !== undefined) {
+      current[statusKey] += 1;
+    } else if (statusKey === "not_completed") {
+      current.cancelled += 1;
     }
     grouped.set(service, current);
   });
 
-  return Array.from(grouped.values());
+  return Array.from(grouped.values()).sort((a, b) => b.total - a.total);
 };
 
 const flattenInventoryItems = (tables) =>
@@ -77,6 +80,11 @@ const formatDate = (value) => {
 };
 
 const fileSlug = (title) => title.toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/(^-|-$)/g, "") || "admin-report";
+
+const excelSheetName = (title, fallback = "Report") => {
+  const cleaned = String(title || "").replace(/[*?:/\\[\]]/g, " ").replace(/\s+/g, " ").trim();
+  return cleaned.slice(0, 31).trim() || fallback;
+};
 
 const csvValue = (value) => `"${String(value ?? "").replace(/"/g, '""')}"`;
 
@@ -176,7 +184,7 @@ const downloadExcel = async (report) => {
     const usedNames = new Set();
     const labels = ["TYPE / BRAND", "BEGINNING BALANCE", "National Warehouse", "Other Agency / ROH, etc.", "Chapter Local Purchase", "Other FPOP Clinics", "Returned by CSV", "Receipt Total", "Private Physicians and other Medical Practitioner", "Government", "Other Agency", "CBV", "Clinic", "Outreach / Mobile", "Other FPOP Clinics", "Expired / Promo", "Issuance Total", "ENDING BALANCE"];
     tables.forEach((table, index) => {
-      const rawName = (table.name || `Inventory ${index + 1}`).replace(/[*?:/\\[\]]/g, " ").slice(0, 31) || `Inventory ${index + 1}`;
+      const rawName = excelSheetName(table.name, `Inventory ${index + 1}`);
       let name = rawName; let suffix = 2; while (usedNames.has(name)) name = `${rawName.slice(0, 27)} ${suffix++}`; usedNames.add(name);
       const sheet = workbook.addWorksheet(name, { views: [{ state: "frozen", ySplit: 11, topLeftCell: "A1", activeCell: "A1" }], pageSetup: { orientation: "landscape", fitToPage: true, fitToWidth: 1, fitToHeight: 0 } });
       sheet.columns = labels.map((_, i) => ({ width: i === 0 ? 28 : i === 8 ? 20 : 13 }));
@@ -200,7 +208,7 @@ const downloadExcel = async (report) => {
   }
   const workbook = new ExcelJS.Workbook();
   workbook.views = [{ activeTab: 0, firstSheet: 0, visibility: "visible" }];
-  const worksheet = workbook.addWorksheet(report.title.slice(0, 31), {
+  const worksheet = workbook.addWorksheet(excelSheetName(report.title), {
     views: [{ state: "normal", topLeftCell: "A1", activeCell: "A1", zoomScale: 90 }],
   });
   const columnCount = Math.max(report.columns.length, 5);
