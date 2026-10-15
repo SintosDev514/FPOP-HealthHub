@@ -817,17 +817,6 @@ const StaffAssessmentInventory = () => {
                   </p>
                 </div>
                 <div className="flex items-center gap-2">
-                  {detailModal && (
-                    <button
-                      type="button"
-                      onClick={() => buildPDF(detailModal)}
-                      className="inline-flex h-9 items-center justify-center gap-1.5 rounded-lg bg-white/15 px-4 text-[10px] font-bold text-white transition hover:bg-white/25"
-                      title="Download PDF"
-                    >
-                      <Icon name="download" className="h-4 w-4" />
-                      PDF
-                    </button>
-                  )}
                   <button
                     type="button"
                     onClick={() => setDetailModal(null)}
