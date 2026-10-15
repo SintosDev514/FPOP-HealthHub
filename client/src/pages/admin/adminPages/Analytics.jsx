@@ -5,6 +5,7 @@ const NAVY2 = "#2a4a6e";
 const GOLD  = "#e8a838";
 const GREEN = "#16a34a";
 const RED   = "#dc2626";
+const TEAL  = "#0891b2";
 
 const Ic = ({ d, w = 18 }) => (
   <svg width={w} height={w} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
