@@ -12,11 +12,8 @@ const GREEN     = "#22c55e";
 const reportTemplates = [
   { id: 1, title: "Monthly Clinical Consultation Summary", desc: "Aggregated volumes of appointments, departments, and patient demographics.", category: "Operational" },
   { id: 2, title: "Client Feedback & Satisfaction Survey", desc: "Survey responses from clients including satisfaction ratings and suggestions for improvement.", category: "Feedback" },
-  { id: 4, title: "Contraceptive Supply & Inventory Report", desc: "Current stock status of family planning supplies, distribution logs, and reorder levels.", category: "Inventory" },
-  { id: 5, title: "Inventory Stock Report", desc: "Stock on hand per item with beginning and ending balances across all inventory tables.", category: "Inventory" },
   { id: 6, title: "Inventory Movement Summary", desc: "Receipts, issuances and ending balances per item across all inventory tables.", category: "Inventory" },
   { id: 7, title: "Service Activity Report", desc: "Appointment volume per service with status breakdown.", category: "Operational" },
-  { id: 8, title: "Staff Directory Report", desc: "Registered staff members with email, specialty and status.", category: "Staff" },
 ];
 
 const formatNumber = (value) => new Intl.NumberFormat("en-US").format(value || 0);
@@ -86,67 +83,7 @@ const excelSheetName = (title, fallback = "Report") => {
   return cleaned.slice(0, 31).trim() || fallback;
 };
 
-const csvValue = (value) => `"${String(value ?? "").replace(/"/g, '""')}"`;
-
-const lis5Head = [
-  [{ content: "TYPE / BRAND", rowSpan: 2 }, { content: "BEGINNING\nBALANCE", rowSpan: 2 }, { content: "RECEIPTS", colSpan: 6 }, { content: "ISSUANCES", colSpan: 9 }, { content: "ENDING\nBALANCE", rowSpan: 2 }],
-  ["National\nWarehouse", "Other Agency\n/ ROH, etc.", "Chapter\nLocal\nPurchase", "*Other\nFPOP\nClinics", "Returned\nby CSV", "Total", "Private Physicians\nand other\nMedical\nPractitioner", "Government", "Other\nAgency", "CBV", "Clinic", "Outreach /\nMobile", "*Other\nFPOP\nClinics", "Expired /\nPromo", "Total"],
-  Array.from({ length: 18 }, (_, index) => String(index + 1)),
-];
-const numAt = (values, index) => Number(values?.[index]) || 0;
-const sumAt = (values) => Array.isArray(values) ? Number(values[values.length - 1]) || values.reduce((sum, value) => sum + (Number(value) || 0), 0) : 0;
-const lis5Row = (item) => [item.name || "", Number(item.beginning) || 0, ...Array.from({ length: 5 }, (_, i) => numAt(item.receipts, i)), sumAt(item.receipts), ...Array.from({ length: 8 }, (_, i) => numAt(item.issuances, i)), sumAt(item.issuances), Number(item.ending) || 0];
-const lis5Rows = (table) => (table.categories || []).flatMap((category) => [[{ content: category.name || "Uncategorized", colSpan: 18, styles: { fillColor: [229, 231, 235], fontStyle: "bold" } }], ...(category.items || []).map(lis5Row)]);
-
-const downloadCsv = (report) => {
-  if (report.id === 4) {
-    const rows = [["FAMILY PLANNING ORGANIZATION OF THE PHILIPPINES"], ["CONSUMABLE/DISPOSABLE COMMODITIES INVENTORY LIS-5"], [`Generated: ${new Date().toLocaleString()}`], []];
-    const groupHeader = Array(18).fill(""); groupHeader[0] = "TYPE / BRAND"; groupHeader[1] = "BEGINNING BALANCE"; groupHeader[2] = "RECEIPTS"; groupHeader[8] = "ISSUANCES"; groupHeader[17] = "ENDING BALANCE";
-    const subHeaders = ["", "", "National Warehouse", "Other Agency / ROH, etc.", "Chapter Local Purchase", "Other FPOP Clinics", "Returned by CSV", "Receipt Total", "Private Physicians and other Medical Practitioner", "Government", "Other Agency", "CBV", "Clinic", "Outreach / Mobile", "Other FPOP Clinics", "Expired / Promo", "Issuance Total", ""];
-    const tables = report.inventoryTables || [];
-    tables.forEach((table) => {
-      rows.push([`Chapter: ${table.chapter || ""}`, `Quarter: ${table.quarter || "N/A"}`, `Year: ${table.year || "N/A"}`]);
-      rows.push([table.name || "Inventory Report"]);
-      rows.push(groupHeader, subHeaders, Array.from({ length: 18 }, (_, index) => index + 1));
-      (table.categories || []).forEach((category) => {
-        rows.push([category.name || "Uncategorized"]);
-        (category.items || []).forEach((item) => rows.push(lis5Row(item)));
-      });
-      rows.push([]);
-    });
-    const csv = rows.map((row) => row.map(csvValue).join(",")).join("\r\n");
-    saveAs(new Blob([csv], { type: "text/csv;charset=utf-8" }), `${fileSlug(report.title)}_${todayKey()}.csv`);
-    return;
-  }
-  const csvRows = [
-    ["FAMILY PLANNING ORGANIZATION OF THE PHILIPPINES"],
-    ["SYSTEM REPORT"],
-    [report.title],
-    [`Category: ${report.category}`, `Generated: ${new Date().toLocaleString()}`, `Records: ${report.rows.length}`],
-    [],
-    report.columns,
-    ...report.rows,
-  ];
-  const csv = csvRows.map((row) => row.map(csvValue).join(",")).join("\r\n");
-  saveAs(new Blob([csv], { type: "text/csv;charset=utf-8" }), `${fileSlug(report.title)}_${todayKey()}.csv`);
-};
-
 const downloadPdf = (report) => {
-  if (report.id === 4) {
-    const doc = new jsPDF({ orientation: "landscape", unit: "pt", format: "a4" });
-    const tables = report.inventoryTables?.length ? report.inventoryTables : [{ name: "Inventory Report", categories: [] }];
-    tables.forEach((table, index) => {
-      if (index) doc.addPage("a4", "landscape");
-      const width = doc.internal.pageSize.getWidth();
-      addReportLogosToPdf(doc, { x: 28, y: 16, height: 22 });
-      doc.setFont("helvetica", "bold"); doc.setFontSize(8); doc.text("F A M I L Y  P L A N N I N G  O R G A N I Z A T I O N  O F  T H E  P H I L I P P I N E S", width / 2, 46, { align: "center" });
-      doc.setFontSize(7.5); doc.text("CONSUMABLE/DISPOSABLE COMMODITIES INVENTORY LIS-5", width / 2, 60, { align: "center" });
-      doc.setFontSize(7); doc.text(`Chapter: ${table.chapter || ""}`, 28, 82); doc.text(`Quarter: ${table.quarter || "N/A"}`, 28, 95); doc.text(`Year: ${table.year || "N/A"}`, 28, 108); doc.text(`Date Generated: ${new Date().toLocaleDateString()}`, width - 28, 108, { align: "right" }); doc.text(table.name || "Inventory Report", 28, 129);
-      autoTable(doc, { startY: 136, margin: { left: 28, right: 28 }, head: lis5Head, body: lis5Rows(table), theme: "grid", styles: { font: "helvetica", fontSize: 5.5, cellPadding: 1.5, overflow: "linebreak", valign: "middle", minCellHeight: 9, lineColor: [74, 85, 104], lineWidth: 0.25 }, headStyles: { fillColor: [250, 230, 195], textColor: [31, 41, 55], fontStyle: "bold", halign: "center", lineColor: [55, 65, 81], lineWidth: 0.35 }, columnStyles: { 0: { cellWidth: 96, halign: "left" }, 1: { cellWidth: 42, halign: "right" }, 7: { fillColor: [239, 246, 255] }, 16: { fillColor: [239, 246, 255] }, 17: { fillColor: [254, 243, 199] } }, didParseCell: (data) => { if (data.section === "head") data.cell.styles.minCellHeight = data.row.index === 0 ? 14 : data.row.index === 2 ? 9 : 26; } });
-    });
-    doc.save(`contraceptive-supply-inventory_${todayKey()}.pdf`);
-    return;
-  }
   const doc = new jsPDF({ orientation: "landscape", unit: "pt", format: "a4" });
   const pageWidth = doc.internal.pageSize.getWidth();
   addReportLogosToPdf(doc, { x: 28, y: 16, height: 22 });
@@ -177,35 +114,6 @@ const downloadPdf = (report) => {
 };
 
 const downloadExcel = async (report) => {
-  if (report.id === 4) {
-    const workbook = new ExcelJS.Workbook();
-    workbook.views = [{ activeTab: 0, firstSheet: 0, visibility: "visible" }];
-    const tables = report.inventoryTables?.length ? report.inventoryTables : [{ name: "Inventory Report", categories: [] }];
-    const usedNames = new Set();
-    const labels = ["TYPE / BRAND", "BEGINNING BALANCE", "National Warehouse", "Other Agency / ROH, etc.", "Chapter Local Purchase", "Other FPOP Clinics", "Returned by CSV", "Receipt Total", "Private Physicians and other Medical Practitioner", "Government", "Other Agency", "CBV", "Clinic", "Outreach / Mobile", "Other FPOP Clinics", "Expired / Promo", "Issuance Total", "ENDING BALANCE"];
-    tables.forEach((table, index) => {
-      const rawName = excelSheetName(table.name, `Inventory ${index + 1}`);
-      let name = rawName; let suffix = 2; while (usedNames.has(name)) name = `${rawName.slice(0, 27)} ${suffix++}`; usedNames.add(name);
-      const sheet = workbook.addWorksheet(name, { views: [{ state: "frozen", ySplit: 11, topLeftCell: "A1", activeCell: "A1" }], pageSetup: { orientation: "landscape", fitToPage: true, fitToWidth: 1, fitToHeight: 0 } });
-      sheet.columns = labels.map((_, i) => ({ width: i === 0 ? 28 : i === 8 ? 20 : 13 }));
-      sheet.mergeCells("A1:R1"); sheet.getCell("A1").value = "FAMILY PLANNING ORGANIZATION OF THE PHILIPPINES"; sheet.mergeCells("A2:R2"); sheet.getCell("A2").value = "CONSUMABLE/DISPOSABLE COMMODITIES INVENTORY LIS-5";
-      ["A1", "A2"].forEach((address) => { sheet.getCell(address).font = { bold: true, size: address === "A1" ? 12 : 10 }; sheet.getCell(address).alignment = { horizontal: "center" }; });
-      addReportLogosToWorksheet(sheet, { row: 0, col: 0, height: 20 });
-      sheet.getRow(1).height = 18; sheet.getRow(2).height = 14;
-      sheet.getCell("A4").value = `Chapter: ${table.chapter || ""}`; sheet.getCell("A5").value = `Quarter: ${table.quarter || "N/A"}`; sheet.getCell("A6").value = `Year: ${table.year || "N/A"}`; sheet.getCell("N6").value = `Date Generated: ${new Date().toLocaleDateString()}`; sheet.mergeCells("A8:R8"); sheet.getCell("A8").value = table.name || "Inventory Report";
-      sheet.mergeCells("A9:A10"); sheet.mergeCells("B9:B10"); sheet.mergeCells("C9:H9"); sheet.mergeCells("I9:Q9"); sheet.mergeCells("R9:R10");
-      sheet.getCell("A9").value = "TYPE / BRAND";
-      sheet.getCell("B9").value = "BEGINNING BALANCE";
-      sheet.getCell("C9").value = "RECEIPTS";
-      sheet.getCell("I9").value = "ISSUANCES";
-      sheet.getCell("R9").value = "ENDING BALANCE";
-      labels.slice(2, 17).forEach((value, i) => { sheet.getRow(10).getCell(i + 3).value = value; }); sheet.getRow(11).values = Array.from({ length: 18 }, (_, i) => i + 1);
-      [9, 10, 11].forEach((rowNumber) => sheet.getRow(rowNumber).eachCell({ includeEmpty: true }, (cell) => { cell.font = { bold: true, size: 7 }; cell.alignment = { horizontal: "center", vertical: "middle", wrapText: true }; cell.fill = { type: "pattern", pattern: "solid", fgColor: { argb: "FFFAE6C3" } }; cell.border = { top: { style: "thin" }, left: { style: "thin" }, bottom: { style: "thin" }, right: { style: "thin" } }; }));
-      let rowNumber = 12; (table.categories || []).forEach((category) => { sheet.mergeCells(`A${rowNumber}:R${rowNumber}`); sheet.getCell(`A${rowNumber}`).value = category.name || "Uncategorized"; sheet.getCell(`A${rowNumber}`).font = { bold: true }; sheet.getCell(`A${rowNumber}`).fill = { type: "pattern", pattern: "solid", fgColor: { argb: "FFE5E7EB" } }; rowNumber += 1; (category.items || []).forEach((item) => { const row = sheet.getRow(rowNumber++); row.values = lis5Row(item); row.eachCell({ includeEmpty: true }, (cell, column) => { cell.border = { top: { style: "thin" }, left: { style: "thin" }, bottom: { style: "thin" }, right: { style: "thin" } }; cell.alignment = { horizontal: column === 1 ? "left" : "right", vertical: "middle", wrapText: true }; if (column === 8 || column === 17) cell.fill = { type: "pattern", pattern: "solid", fgColor: { argb: "FFEFF6FF" } }; if (column === 18) cell.fill = { type: "pattern", pattern: "solid", fgColor: { argb: "FFFEF3C7" } }; }); }); });
-      sheet.pageSetup.printArea = `A1:R${Math.max(12, rowNumber - 1)}`;
-    });
-    const buffer = await workbook.xlsx.writeBuffer(); saveAs(new Blob([buffer], { type: "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet" }), `contraceptive-supply-inventory_${todayKey()}.xlsx`); return;
-  }
   const workbook = new ExcelJS.Workbook();
   workbook.views = [{ activeTab: 0, firstSheet: 0, visibility: "visible" }];
   const worksheet = workbook.addWorksheet(excelSheetName(report.title), {
@@ -255,7 +163,6 @@ export default function Reports({ isMobile }) {
   const [appointments, setAppointments] = useState([]);
   const [inventory, setInventory] = useState([]);
   const [surveys, setSurveys] = useState([]);
-  const [staff, setStaff] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
   const [exportingId, setExportingId] = useState(null);
@@ -280,12 +187,10 @@ export default function Reports({ isMobile }) {
           fetchJson("/api/admin/appointments"),
           fetchJson("/api/inventory/tables"),
           fetchJson("/api/surveys"),
-          fetchJson("/api/staff"),
         ]);
         setAppointments(results[0].success ? results[0].appointments || [] : []);
         setInventory(results[1].success ? results[1].tables || [] : []);
         setSurveys(results[2].success ? results[2].surveys || [] : []);
-        setStaff(results[3].success ? results[3].staff || [] : []);
       } catch (loadError) {
         setError(loadError.message || "Unable to load report data.");
       } finally {
@@ -298,98 +203,51 @@ export default function Reports({ isMobile }) {
   const reports = useMemo(() => {
     const inventoryItems = flattenInventoryItems(inventory);
 
-    return [
-    {
-      ...reportTemplates[0],
-      columns: ["Client", "Service", "Department", "Date", "Time", "Status"],
-      rows: appointments.map((appointment) => [appointment.patient || "N/A", appointment.serviceName || "N/A", appointment.department || "N/A", formatDate(appointment.date), appointment.time || "N/A", appointment.status || "N/A"]),
-    },
-    {
-      ...reportTemplates[1],
-      columns: ["Name", "Email", "Contact", "Satisfaction", "Service Rating", "Facility Rating", "Provider Rating", "Suggestions", "Date"],
-      rows: surveys.map((s) => [s.name || "N/A", s.email || "N/A", s.contactNumber || "N/A", `${s.satisfaction}/5`, `${s.appropriateService}/5`, `${s.facilityResources}/5`, `${s.providerResponsiveness}/5`, s.suggestions || "None", formatDate(s.createdAt)]),
-    },
-    {
-      ...reportTemplates[2],
-      inventoryTables: inventory,
-      columns: ["Table", "Category", "Item", "Beginning", "Receipts", "Issuances", "Ending", "Status"],
-      rows: inventory.flatMap((table) => (table.categories || []).flatMap((category) => (category.items || []).map((item) => {
-        const beginning = Number(item.beginning || 0);
-        const receiptDetails = Array.isArray(item.receipts) ? item.receipts.slice(0, -1) : [];
-        const receiptsTotal = beginning + receiptDetails.reduce((s, v) => s + (Number(v) || 0), 0);
-        return [table.name || "N/A", category.name || "N/A", item.name || "N/A", beginning, receiptsTotal, item.issuances?.at(-1) || 0, item.ending || 0, item.status || "In Stock"];
-      }))),
-    },
-    {
-      ...reportTemplates[3],
-      columns: ["Table", "Category", "Item", "Beginning", "Ending", "Status"],
-      rows: [
-        ...inventoryItems.map((item) => [
-          item.tableName,
-          item.category,
-          item.item,
-          formatNumber(item.beginning),
-          formatNumber(item.ending),
-          item.status,
+    const sections = {
+      1: {
+        columns: ["Client", "Service", "Department", "Date", "Time", "Status"],
+        rows: appointments.map((appointment) => [appointment.patient || "N/A", appointment.serviceName || "N/A", appointment.department || "N/A", formatDate(appointment.date), appointment.time || "N/A", appointment.status || "N/A"]),
+      },
+      2: {
+        columns: ["Name", "Email", "Contact", "Satisfaction", "Service Rating", "Facility Rating", "Provider Rating", "Suggestions", "Date"],
+        rows: surveys.map((s) => [s.name || "N/A", s.email || "N/A", s.contactNumber || "N/A", `${s.satisfaction}/5`, `${s.appropriateService}/5`, `${s.facilityResources}/5`, `${s.providerResponsiveness}/5`, s.suggestions || "None", formatDate(s.createdAt)]),
+      },
+      6: {
+        columns: ["Table", "Item", "Receipts", "Issuances", "Ending"],
+        rows: [
+          ...inventoryItems.map((item) => [
+            item.tableName,
+            item.item,
+            formatNumber(item.receipts),
+            formatNumber(item.issuances),
+            formatNumber(item.ending),
+          ]),
+          ...(inventoryItems.length > 0
+            ? [[
+                "TOTAL",
+                "",
+                formatNumber(inventoryItems.reduce((sum, item) => sum + item.receipts, 0)),
+                formatNumber(inventoryItems.reduce((sum, item) => sum + item.issuances, 0)),
+                formatNumber(inventoryItems.reduce((sum, item) => sum + item.ending, 0)),
+              ]]
+            : []),
+        ],
+      },
+      7: {
+        columns: ["Service", "Total", "Pending", "Confirmed", "Completed", "Cancelled"],
+        rows: groupByService(appointments).map((service) => [
+          service.service,
+          service.total,
+          service.pending,
+          service.confirmed,
+          service.completed,
+          service.cancelled,
         ]),
-        ...(inventoryItems.length > 0
-          ? [[
-              "TOTAL",
-              "",
-              "",
-              formatNumber(inventoryItems.reduce((sum, item) => sum + item.beginning, 0)),
-              formatNumber(inventoryItems.reduce((sum, item) => sum + item.ending, 0)),
-              "",
-            ]]
-          : []),
-      ],
-    },
-    {
-      ...reportTemplates[4],
-      columns: ["Table", "Item", "Receipts", "Issuances", "Ending"],
-      rows: [
-        ...inventoryItems.map((item) => [
-          item.tableName,
-          item.item,
-          formatNumber(item.receipts),
-          formatNumber(item.issuances),
-          formatNumber(item.ending),
-        ]),
-        ...(inventoryItems.length > 0
-          ? [[
-              "TOTAL",
-              "",
-              formatNumber(inventoryItems.reduce((sum, item) => sum + item.receipts, 0)),
-              formatNumber(inventoryItems.reduce((sum, item) => sum + item.issuances, 0)),
-              formatNumber(inventoryItems.reduce((sum, item) => sum + item.ending, 0)),
-            ]]
-          : []),
-      ],
-    },
-    {
-      ...reportTemplates[5],
-      columns: ["Service", "Total", "Pending", "Confirmed", "Completed", "Cancelled"],
-      rows: groupByService(appointments).map((service) => [
-        service.service,
-        service.total,
-        service.pending,
-        service.confirmed,
-        service.completed,
-        service.cancelled,
-      ]),
-    },
-    {
-      ...reportTemplates[6],
-      columns: ["Name", "Email", "Specialty", "Status"],
-      rows: staff.map((member) => [
-        member.name || "N/A",
-        member.email || "N/A",
-        member.specialty || "N/A",
-        member.status || "Active",
-      ]),
-    },
-    ];
-  }, [appointments, inventory, surveys, staff]);
+      },
+    };
+
+    return reportTemplates.map((template) => ({ ...template, ...(sections[template.id] || {}) }));
+  }, [appointments, inventory, surveys]);
 
   const handleExport = async (report) => {
     setExportingId(report.id);
@@ -398,8 +256,6 @@ export default function Reports({ isMobile }) {
       const format = formats[report.id] || "pdf";
       if (format === "excel") {
         await downloadExcel(report);
-      } else if (format === "csv") {
-        downloadCsv(report);
       } else {
         downloadPdf(report);
       }
@@ -460,7 +316,6 @@ export default function Reports({ isMobile }) {
                       <select value={formats[report.id] || "pdf"} onChange={(event) => setFormats({ ...formats, [report.id]: event.target.value })} style={{ padding: "6px 12px", borderRadius: "6px", border: "1.5px solid rgba(30,58,95,0.12)", background: "#fff", fontSize: "12px", outline: "none", cursor: "pointer", fontFamily: "'Poppins',sans-serif" }}>
                         <option value="pdf">PDF Format</option>
                         <option value="excel">Excel Format</option>
-                        <option value="csv">CSV Format</option>
                       </select>
                       <button 
                         onClick={() => handleExport(report)}
